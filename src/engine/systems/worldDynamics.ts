@@ -1,5 +1,5 @@
 import type { CountryState, GameState } from '../../domain/game';
-import { addTreaty, changeRelations, relationFor } from './diplomacy';
+import { addTreaty, changeRelations, embassyFor, openEmbassy, relationFor } from './diplomacy';
 
 function stableHash(value:string){let h=2166136261;for(const ch of value){h^=ch.charCodeAt(0);h=Math.imul(h,16777619);}return h>>>0;}
 function affinity(a:CountryState,b:CountryState){
@@ -32,7 +32,8 @@ export function processWorldDiplomacy(state:GameState):GameState{
   const drift=source.ai.strategicGoal==='expand_influence'?3:source.ai.strategicGoal==='grow_economy'?2:1;
   if(current.score<75)next=changeRelations(next,source.id,target.id,drift);
   const rel=relationFor(next.countries[source.id],target.id);
-  if(rel.score>=18&&!rel.treaties.includes('trade')){next=addTreaty(next,source.id,target.id,'trade');notes.push(`DIPLOMACY // ${source.name} and ${target.name} signed a trade pact.`);}
+  if(rel.score>=12&&!embassyFor(next,source.id,target.id)&&stableHash(`emb-${source.id}-${target.id}-${state.day}`)%5===0){next=openEmbassy(next,source.id,target.id,1);notes.push(`DIPLOMACY // ${source.name} and ${target.name} opened reciprocal embassies.`);}
+  else if(rel.score>=18&&!rel.treaties.includes('trade')){next=addTreaty(next,source.id,target.id,'trade');notes.push(`DIPLOMACY // ${source.name} and ${target.name} signed a trade pact.`);}
   else if(rel.score>=40&&!rel.treaties.includes('nonAggression')){next=addTreaty(next,source.id,target.id,'nonAggression');notes.push(`DIPLOMACY // ${source.name} and ${target.name} signed a non-aggression pact.`);}
   else if(rel.score>=72&&!rel.treaties.includes('alliance')){next=addTreaty(next,source.id,target.id,'alliance');notes.push(`DIPLOMACY // ${source.name} and ${target.name} entered a strategic alliance.`);}
  }
