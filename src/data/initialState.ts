@@ -1,8 +1,11 @@
 import { initialCountries } from './countries';
 import type { GameState } from '../domain/game';
+import { createInitialProductionMap } from '../engine/systems/production';
 
-export const makeInitialState = (): GameState => ({
-  schemaVersion: 10,
+export const makeInitialState = (): GameState => {
+  const countries=structuredClone(initialCountries);
+  return ({
+  schemaVersion: 11,
   simulationSeed: 0xA17E5EED,
   day: 1,
   speed: 0,
@@ -14,7 +17,7 @@ export const makeInitialState = (): GameState => ({
   mapMode: 'political',
   mapPresentation: 'political',
   mapNotice: 'Living Diplomacy 0.71 online — embassies, diplomatic offers and pressure-based domestic agenda enabled.',
-  countries: structuredClone(initialCountries),
+  countries,
   tradeDeals: {},
   wars: {},
   blocs: {},
@@ -28,10 +31,12 @@ export const makeInitialState = (): GameState => ({
   advisorCooldownUntil: 7,
   embassies: {},
   diplomaticOffers: [],
+  production: createInitialProductionMap(countries),
   lastAiDay: 1,
   lastStrategicReviewDay: 1,
   sitrep: [
-    'AlpyX Living Diplomacy 0.71 online.',
+    'AlpyX Production & Industry 0.72 online.',
     'Strategic AI, covert operations and influence networks loaded alongside Strategic Command systems.',
   ],
-});
+  });
+};
