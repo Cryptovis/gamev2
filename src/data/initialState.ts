@@ -2,14 +2,17 @@ import { initialCountries } from './countries';
 import type { GameState } from '../domain/game';
 
 export const makeInitialState = (): GameState => ({
-  schemaVersion: 8,
+  schemaVersion: 9,
   simulationSeed: 0xA17E5EED,
   day: 1,
   speed: 0,
+  preferredSpeed: 1,
   campaignStatus: 'active',
+  playerProfile: { commanderName: 'Commander', avatarId: 'avatar-01', language: 'en', setupComplete: false },
   playerCountryId: 'TUR',
   selectedCountryId: 'TUR',
   mapMode: 'political',
+  mapPresentation: 'political',
   mapNotice: 'Living World 0.5 online — strategic AI, intelligence operations and influence networks enabled.',
   countries: structuredClone(initialCountries),
   tradeDeals: {},
@@ -21,6 +24,8 @@ export const makeInitialState = (): GameState => ({
   culturalInfluence: {},
   activeEvent: null,
   eventCooldownUntil: 12,
+  activeAdvisor: null,
+  advisorCooldownUntil: 7,
   lastAiDay: 1,
   lastStrategicReviewDay: 1,
   sitrep: [
