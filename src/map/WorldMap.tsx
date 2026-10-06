@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { geoCentroid, geoDistance, geoGraticule10, geoNaturalEarth1, geoOrthographic, geoPath } from 'd3-geo';
 import { findCountryAtGeoPoint } from './mapSelection';
+import { labelFontSize, labelRevealThreshold, layoutScreenLabels, maxCountryLabels, type ScreenLabelCandidate } from './labelLayout';
 import { useGameStore } from '../store/gameStore';
 import { calculateMilitaryPower } from '../store/selectors';
 import { MICROSTATE_POINTS } from '../data/microstates';
@@ -102,6 +103,12 @@ export function WorldMap() {
   const hoveredCountry = hovered ? countries[hovered] : null;
   const selectedCountry = selectedCountryId ? countries[selectedCountryId] : null;
   const flatTransform = `translate(${flatPan.x} ${flatPan.y}) translate(${W/2} ${H/2}) scale(${flatZoom}) translate(${-W/2} ${-H/2})`;
+  const projectToScreen=(position:[number,number])=>{
+    const p=projection?.(position);
+    if(!p)return null;
+    if(projectionMode==='flat')return [flatPan.x+W/2+flatZoom*(p[0]-W/2),flatPan.y+H/2+flatZoom*(p[1]-H/2)] as [number,number];
+    return p as [number,number];
+  };
   const viewportKey = projectionMode === 'globe' ? `g-${rotation[0].toFixed(1)}-${rotation[1].toFixed(1)}-${globeZoom.toFixed(2)}` : 'flat-static-geometry';
 
   const resetView = () => {
@@ -173,12 +180,19 @@ export function WorldMap() {
       setMapNotice(`${country.name} selected — sovereign territory acquired.`);
       return;
     }
+    const clickScreen=screenPoint(e);
+    const globeCenter:[number,number]=[-rotation[0],-rotation[1]];
     const micro=Object.entries(MICROSTATE_POINTS)
-      .map(([id,pos])=>({id,distance:geoDistance(pos as [number,number],geo as [number,number])}))
-      .filter((item)=>countries[item.id])
+      .map(([id,pos])=>{
+        if(!countries[id])return null;
+        if(projectionMode==='globe'&&geoDistance(pos as [number,number],globeCenter)>Math.PI/2)return null;
+        const p=projectToScreen(pos as [number,number]);
+        if(!p)return null;
+        return {id,distance:Math.hypot(p[0]-clickScreen[0],p[1]-clickScreen[1])};
+      })
+      .filter((item):item is {id:string;distance:number}=>Boolean(item))
       .sort((a,b)=>a.distance-b.distance)[0];
-    const hitRadius=(projectionMode==='flat'?1.2/Math.max(1,flatZoom):1.0/Math.max(.8,globeZoom))*Math.PI/180;
-    if (micro && micro.distance<=hitRadius) {
+    if (micro && micro.distance<=16) {
       selectCountry(micro.id);
       setMapNotice(`${countries[micro.id].name} selected — microstate command profile loaded.`);
       return;
@@ -230,23 +244,78 @@ export function WorldMap() {
 
 
   const mapZoom=projectionMode==='globe'?globeZoom:flatZoom;
-  const countryLabels=geojson.features.map((feature)=>{
+  const labelCandidates:ScreenLabelCandidate[]=[];
+  const revealThreshold=labelRevealThreshold(mapZoom,projectionMode==='flat');
+  const globeCenter:[number,number]=[-rotation[0],-rotation[1]];
+
+  for(const feature of geojson.features){
     const id=String(feature.properties?.iso_a3??'');
     const country=countries[id];
-    if(!country||id===selectedCountryId||MICROSTATE_POINTS[id as keyof typeof MICROSTATE_POINTS])return null;
-    const d=path(feature as any); if(!d)return null;
+    if(!country||MICROSTATE_POINTS[id as keyof typeof MICROSTATE_POINTS])continue;
+    const d=path(feature as any);
+    if(!d)continue;
     const centroid=geoCentroid(feature as any);
-    if(projectionMode==='globe'){
-      const center:[number,number]=[-rotation[0],-rotation[1]];
-      if(geoDistance(centroid,center)>Math.PI/2)return null;
-    }
-    const p=projection(centroid); if(!p)return null;
+    if(projectionMode==='globe'&&geoDistance(centroid,globeCenter)>Math.PI/2)continue;
+    const p=projectToScreen(centroid);
+    if(!p)continue;
     const bounds=path.bounds(feature as any);
-    const projectedArea=Math.abs((bounds[1][0]-bounds[0][0])*(bounds[1][1]-bounds[0][1]))*(projectionMode==='flat'?flatZoom*flatZoom:1);
-    const threshold=mapZoom>=4.2?55:mapZoom>=3?135:mapZoom>=2?240:mapZoom>=1.4?600:1250;
-    if(projectedArea<threshold)return null;
-    const labelSize=mapZoom>=4?14:mapZoom>=2.8?13:mapZoom>=2?12:11;
-    return <text key={`country-label-${id}`} x={p[0]} y={p[1]} className="country-map-label" style={{fontSize:labelSize}}>{country.name.toUpperCase()}</text>;
+    const baseArea=Math.abs((bounds[1][0]-bounds[0][0])*(bounds[1][1]-bounds[0][1]));
+    const screenArea=baseArea*(projectionMode==='flat'?flatZoom*flatZoom:1);
+    const forced=id===selectedCountryId;
+    if(!forced&&screenArea<revealThreshold)continue;
+    const priority=screenArea
+      +(id===playerCountryId?8500:0)
+      +(id===hovered?7000:0)
+      +(forced?20000:0)
+      +(country.population??0)/2_000_000;
+    labelCandidates.push({
+      id,
+      text:country.name.toUpperCase(),
+      x:p[0],
+      y:p[1],
+      fontSize:forced?Math.min(16,13.5+(mapZoom>=2?1:0)):labelFontSize(screenArea,mapZoom),
+      priority,
+      force:forced,
+      className:forced?'country-map-label selected-screen-label':'country-map-label',
+    });
+  }
+
+  for(const label of WATER_LABELS){
+    if(label.minZoom&&mapZoom<label.minZoom)continue;
+    if(projectionMode==='globe'&&geoDistance(label.position,globeCenter)>Math.PI/2)continue;
+    const p=projectToScreen(label.position);
+    if(!p)continue;
+    labelCandidates.push({
+      id:'water-'+label.name,
+      text:label.name,
+      x:p[0],
+      y:p[1],
+      fontSize:label.major?10.5:9.5,
+      priority:label.major?-120:-180,
+      className:label.major?'water-label major':'water-label',
+    });
+  }
+
+  const screenLabels=layoutScreenLabels(labelCandidates,{width:W,height:H},{
+    padding:projectionMode==='flat'?5.5:4.5,
+    maxCount:maxCountryLabels(mapZoom,projectionMode==='flat')+WATER_LABELS.length,
+    margin:10,
+  });
+
+  const microstateMarkers=Object.entries(MICROSTATE_POINTS).map(([id,pos])=>{
+    const c=countries[id];
+    if(!c)return null;
+    if(projectionMode==='globe'&&geoDistance(pos as [number,number],globeCenter)>Math.PI/2)return null;
+    const p=projectToScreen(pos as [number,number]);
+    if(!p)return null;
+    const selected=id===selectedCountryId;
+    const hover=id===hovered;
+    const reveal=selected||hover||(projectionMode==='flat'?flatZoom>=2.6:globeZoom>=1.55);
+    if(!reveal)return null;
+    return <g key={id} className={`microstate-point screen-microstate ${selected?'selected':''}`} transform={`translate(${p[0]},${p[1]})`} onPointerEnter={()=>setHovered(id)} onPointerLeave={()=>setHovered((v)=>v===id?null:v)}>
+      <circle r={selected?5:3.5}/>
+      {(selected||hover||mapZoom>=4)&&<text y="-10">{c.name}</text>}
+    </g>;
   });
 
   return <div className="world-map political-map">
@@ -270,34 +339,11 @@ export function WorldMap() {
       </>}
       <g key={viewportKey} className="map-viewport" transform={projectionMode === 'flat' ? flatTransform : undefined}>
         <g className="country-layer">{shapeLayer}</g>
-        <g className="country-label-layer">{countryLabels}</g>
-        <g className="water-label-layer">{WATER_LABELS.map((label)=>{
-          const zoom=projectionMode==='globe'?globeZoom:flatZoom;
-          if(label.minZoom&&zoom<label.minZoom)return null;
-          if(projectionMode==='globe'){
-            const center:[number,number]=[-rotation[0],-rotation[1]];
-            if(geoDistance(label.position,center)>Math.PI/2)return null;
-          }
-          const p=projection(label.position); if(!p)return null;
-          return <text key={label.name} x={p[0]} y={p[1]} className={label.major?'water-label major':'water-label'}>{label.name}</text>;
-        })}</g>
-        {Object.entries(MICROSTATE_POINTS).map(([id,pos]) => {
-          const c=countries[id]; if(!c) return null;
-          if (projectionMode==='globe') { const center:[number,number]=[-rotation[0],-rotation[1]]; if(geoDistance(pos as [number,number],center)>Math.PI/2) return null; }
-          const p=projection(pos as [number,number]); if(!p) return null;
-          const reveal=id===selectedCountryId||id===hovered||(projectionMode==='flat'?flatZoom>=2.2:globeZoom>=1.45);
-          return <g key={id} className={`microstate-point ${reveal?'revealed':''} ${id===selectedCountryId?'selected':''}`} transform={`translate(${p[0]},${p[1]})`} onPointerEnter={()=>setHovered(id)} onPointerLeave={()=>setHovered((v)=>v===id?null:v)}><circle r={id===selectedCountryId?5:3.2}/>{(id===selectedCountryId||id===hovered)&&<text y="-10">{c.name}</text>}</g>;
-        })}
-        {selectedCountry && geojson.features.map((f) => String(f.properties?.iso_a3 ?? '') === selectedCountry.id ? f : null).filter(Boolean).map((f: any) => {
-          const centroid = geoCentroid(f); const p = projection(centroid); if (!p) return null;
-          if (projectionMode === 'globe') {
-            const center: [number,number] = [-rotation[0],-rotation[1]];
-            if (geoDistance(centroid, center) > Math.PI/2) return null;
-          }
-          const selectedSize=mapZoom>=2.8?16:14;
-          return <g key="selected-label" transform={`translate(${p[0]},${p[1]})`} className="selected-map-label"><circle r="4.5"/><text y="-12" style={{fontSize:selectedSize}}>{selectedCountry.name.toUpperCase()}</text></g>;
-        })}
       </g>
+      <g className="screen-label-layer" pointerEvents="none">
+        {screenLabels.map(label=><text key={label.id} x={label.x} y={label.y} className={label.className} style={{fontSize:label.fontSize}}>{label.text}</text>)}
+      </g>
+      <g className="screen-microstate-layer">{microstateMarkers}</g>
     </svg>
   </div>;
 }
