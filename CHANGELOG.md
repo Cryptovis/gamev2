@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.72.1-playtest.1 — Strategic UI / Map Readability
+- Increased sovereign country-label readability with zoom-aware 11–14px sizing and stronger map contrast
+- Increased selected-country label prominence while keeping dense regions controlled with revised reveal thresholds
+- Removed the redundant bottom-center PLAYER / map-state chip from the map surface
+- Moved player/map-state context into the right side of the WORLD COMMAND CHANNEL / SITREP footer
+- Reworked National Command into a viewport-safe panel with maximum height, internal vertical scrolling and no horizontal overflow
+- Widened National Command on desktop so Production, Diplomacy and War content have more breathing room
+- Rebalanced the ten country tabs into a 4+4+2 layout; WORLD and WAR are centered instead of being pushed to the far-right edge
+- Strengthened Declare War and operational-assessment wrapping so long country names and war content remain inside the panel
+- Repositioned strategic map modes into a compact bottom-left MAP LAYERS command card inspired by clearer grand-strategy HUD hierarchy
+- Map Layers now uses grouped 2-column controls and retains the current selection notice without occupying the top-left map surface
+- Adjusted right command rail spacing to track the wider National Command panel
+- No save-schema change; schema v11 remains compatible with 0.72 campaigns
+
 ## 0.72.0-playtest.1 — Production / Industry & Equipment
 - Added persistent national production state for every sovereign country
 - Added six equipment classes: infantry equipment, artillery, armor, fighters, logistics equipment and naval equipment
