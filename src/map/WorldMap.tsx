@@ -5,12 +5,10 @@ import { useGameStore } from '../store/gameStore';
 import { calculateMilitaryPower } from '../store/selectors';
 import { MICROSTATE_POINTS } from '../data/microstates';
 import { terrainForCountry } from '../engine/systems/warfare';
-import { tr } from '../i18n/gameI18n';
 
 const W = 1200;
 const H = 700;
 
-type ProjectionMode = 'globe' | 'flat';
 type Feature = { type: 'Feature'; geometry: any; properties: { iso_a3?: string; name?: string } };
 type FeatureCollection = { type: 'FeatureCollection'; features: Feature[] };
 type DragState = { x: number; y: number; rotation: [number, number, number]; pan: { x: number; y: number }; moved: boolean };
@@ -45,13 +43,11 @@ function stablePoliticalColor(id: string) {
 
 export function WorldMap() {
   const [geojson, setGeojson] = useState<FeatureCollection | null>(null);
-  const [projectionMode, setProjectionMode] = useState<ProjectionMode>('globe');
   const [rotation, setRotation] = useState<[number, number, number]>([-26,-24,0]);
   const [globeZoom, setGlobeZoom] = useState(1);
   const [flatZoom, setFlatZoom] = useState(1);
   const [flatPan, setFlatPan] = useState({ x: 0, y: 0 });
   const [hovered, setHovered] = useState<string | null>(null);
-  const [mapMenuOpen,setMapMenuOpen]=useState(false);
   const dragRef = useRef<DragState | null>(null);
   const justDraggedRef = useRef(false);
   const rafRef = useRef<number | null>(null);
@@ -61,8 +57,8 @@ export function WorldMap() {
   const selectedCountryId = useGameStore((s) => s.selectedCountryId);
   const mapMode = useGameStore((s) => s.mapMode);
   const mapPresentation = useGameStore((s) => s.mapPresentation);
-  const setMapPresentation = useGameStore((s) => s.setMapPresentation);
-  const language = useGameStore((s) => s.playerProfile.language);
+  const projectionMode = useGameStore((s) => s.mapProjection);
+  const mapControlCommand = useGameStore((s)=>s.mapControlCommand);
   const playerCountryId = useGameStore((s) => s.playerCountryId);
   const selectCountry = useGameStore((s) => s.selectCountry);
   const setMapNotice = useGameStore((s) => s.setMapNotice);
@@ -210,6 +206,14 @@ export function WorldMap() {
     }
   };
 
+  useEffect(()=>{
+    if(!mapControlCommand)return;
+    if(mapControlCommand.action==='zoomIn')zoomBy(1.25);
+    else if(mapControlCommand.action==='zoomOut')zoomBy(.8);
+    else if(mapControlCommand.action==='focus')focusSelected();
+    else if(mapControlCommand.action==='reset')resetView();
+  },[mapControlCommand?.nonce]);
+
   if (!geojson || !projection || !path) return <div className="world-map political-map"><div className="map-loading">INITIALIZING WORLD GEOMETRY…</div></div>;
 
   const shapeLayer = geojson.features.map((feature) => {
@@ -246,16 +250,6 @@ export function WorldMap() {
   });
 
   return <div className="world-map political-map">
-    <div className={`map-dock ${mapMenuOpen?'open':''}`}>
-      {mapMenuOpen&&<section className="map-dock-popover" aria-label="Map settings">
-        <header><span><small>WORLD VIEW</small><strong>MAP SETTINGS</strong></span><button onClick={()=>setMapMenuOpen(false)} aria-label="Close map settings">×</button></header>
-        <div className="map-setting-group"><small>BASE MAP</small><div><button className={mapPresentation==='political'?'active':''} onClick={()=>setMapPresentation('political')}>{tr(language,'political')}</button><button className={mapPresentation==='geographic'?'active':''} onClick={()=>setMapPresentation('geographic')}>{tr(language,'geographic')}</button></div></div>
-        <div className="map-setting-group"><small>PROJECTION</small><div><button className={projectionMode==='globe'?'active':''} onClick={()=>setProjectionMode('globe')}>GLOBE</button><button className={projectionMode==='flat'?'active':''} onClick={()=>setProjectionMode('flat')}>FLAT</button></div></div>
-        <div className="map-setting-group"><small>CAMERA</small><div className="map-camera-grid"><button onClick={()=>zoomBy(.8)}>− ZOOM</button><button onClick={()=>zoomBy(1.25)}>+ ZOOM</button><button disabled={!selectedCountry} onClick={focusSelected}>FOCUS</button><button onClick={resetView}>RESET</button></div></div>
-        <footer>{projectionMode==='flat'?flatZoom.toFixed(1):globeZoom.toFixed(1)}× · {mapPresentation.toUpperCase()} · {projectionMode.toUpperCase()}</footer>
-      </section>}
-      <button className="map-dock-trigger" onClick={()=>setMapMenuOpen(v=>!v)}><span>⌖</span><strong>MAP</strong><small>{projectionMode==='globe'?'GLOBE':'FLAT'} · {mapPresentation==='political'?'POL':'GEO'}</small></button>
-    </div>
     <div className="map-hover-readout">
       <strong>{hoveredCountry?.name ?? selectedCountry?.name ?? 'WORLD COMMAND'}</strong>
       <span>{hoveredCountry ? `${hoveredCountry.region || 'Global'} · ${hoveredCountry.military.assessment.capability.toFixed(0)} MIL` : projectionMode === 'globe' ? 'drag globe · wheel zoom · click sovereign territory' : 'drag to pan · wheel zoom · click sovereign territory'}</span>
