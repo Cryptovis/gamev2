@@ -1,10 +1,10 @@
 import { useMemo, useState, type ReactNode } from 'react';
 import { MARKET_RESOURCES, getMarketBoard, resourceReserveDays, resourceStrategicStatus } from '../../store/marketSelectors';
 import { useGameStore } from '../../store/gameStore';
-import { BlocIcon, CouncilIcon, IntelligenceIcon, ResourceIcon, TreasuryIcon } from '../icons/GameIcons';
+import { BlocIcon, CouncilIcon, DiplomacyIcon, EmbassyIcon, IntelligenceIcon, ResourceIcon, TreasuryIcon } from '../icons/GameIcons';
 import { DraggableWindow } from '../windows/DraggableWindow';
 
-type ToolId='objectives'|'market'|'pulse'|'sitrep'|'alerts';
+type ToolId='objectives'|'market'|'pulse'|'sitrep'|'alerts'|'diplomacy';
 
 function RailButton({active,badge,label,children,onClick}:{active:boolean;badge?:number|string;label:string;children:ReactNode;onClick:()=>void}){
  return <button className={active?'rail-button active':'rail-button'} onClick={onClick} title={label}><span>{children}</span>{badge!==undefined&&badge!==0&&<b>{badge}</b>}<small>{label}</small></button>;
@@ -19,6 +19,8 @@ export function CommandRails(){
  const activeTrades=Object.values(state.tradeDeals).filter(d=>d.active);
  const activeOps=Object.values(state.intelOperations).filter(o=>o.status==='active');
  const sanctions=Object.values(state.countries).filter(c=>c.globalSanctions);
+ const offers=state.diplomaticOffers.filter(o=>o.expiresDay>=state.day);
+ const embassies=Object.values(state.embassies).filter(e=>e.countryA===player.id||e.countryB===player.id);
  const objectives=useMemo(()=>[
   {label:'Establish a player trade flow',done:activeTrades.some(d=>d.buyerId===player.id||d.sellerId===player.id)},
   {label:'Resolve a covert operation',done:Object.values(state.intelOperations).some(o=>o.sourceCountryId===player.id&&o.status!=='active')},
@@ -39,6 +41,7 @@ export function CommandRails(){
    <RailButton active={open.has('pulse')} badge={activeWars.length} label="WORLD" onClick={()=>toggle('pulse')}><BlocIcon size={20}/></RailButton>
   </nav>
   <nav className={`command-rail command-rail-right ${state.selectedCountryId?'country-open':'country-closed'}`} aria-label="Information tools">
+   <RailButton active={open.has('diplomacy')} badge={offers.length} label="DIPLO" onClick={()=>toggle('diplomacy')}><DiplomacyIcon size={20}/></RailButton>
    <RailButton active={open.has('alerts')} badge={critical.length} label="ALERTS" onClick={()=>toggle('alerts')}><ResourceIcon resource={critical[0]?.resource??'oil'} size={20}/></RailButton>
    <RailButton active={open.has('sitrep')} badge={state.sitrep.length} label="LOG" onClick={()=>toggle('sitrep')}><IntelligenceIcon size={20}/></RailButton>
   </nav>
@@ -56,6 +59,11 @@ export function CommandRails(){
   {open.has('pulse')&&<DraggableWindow id="pulse-window" kicker="LIVING WORLD" title="World Pulse" initialX={145} initialY={240} width={520} onClose={()=>close('pulse')}>
    <div className="pulse-summary"><span className={activeWars.length?'danger-card':''}><small>ACTIVE WARS</small><strong>{activeWars.length}</strong></span><span><small>TRADE FLOWS</small><strong>{activeTrades.length}</strong></span><span><small>ACTIVE OPS</small><strong>{activeOps.length}</strong></span><span><small>BLOCS</small><strong>{Object.values(state.blocs).length}</strong></span><span><small>SANCTIONED</small><strong>{sanctions.length}</strong></span></div>
    <div className="world-activity-list">{activeWars.slice(0,4).map(w=><div key={w.id}><b>WAR</b><span>{state.countries[w.attackerId]?.name} ↔ {state.countries[w.defenderId]?.name}</span><em>{w.progress.toFixed(0)}%</em></div>)}{activeOps.slice(0,4).map(o=><div key={o.id}><b>INTEL</b><span>{state.countries[o.sourceCountryId]?.name} → {state.countries[o.targetCountryId]?.name}</span><em>D{o.completeDay}</em></div>)}{!activeWars.length&&!activeOps.length&&<p>No major military or covert activity currently detected.</p>}</div>
+  </DraggableWindow>}
+
+  {open.has('diplomacy')&&<DraggableWindow id="diplomacy-window" kicker="FOREIGN MINISTRY" title="Diplomatic Inbox" initialX={window.innerWidth-650} initialY={150} width={590} onClose={()=>close('diplomacy')}>
+   <div className="diplomatic-summary"><span><EmbassyIcon size={22}/><i><small>ACTIVE EMBASSIES</small><strong>{embassies.length}</strong></i></span><span><DiplomacyIcon size={22}/><i><small>PENDING OFFERS</small><strong>{offers.length}</strong></i></span></div>
+   <div className="diplomatic-offer-list">{offers.length?offers.map(offer=>{const sender=state.countries[offer.senderId];return <article key={offer.id}><header><b>{sender?.iso2??'--'}</b><span><small>{offer.type==='embassy'?'EMBASSY EXCHANGE':'TRADE FRAMEWORK'}</small><strong>{sender?.name??offer.senderId}</strong></span><em>D{offer.expiresDay-state.day}</em></header><p>{offer.message}</p><div><button onClick={()=>state.resolveDiplomaticOffer(offer.id,false)}>DECLINE</button><button className="primary" onClick={()=>state.resolveDiplomaticOffer(offer.id,true)}>ACCEPT</button></div></article>}):<div className="diplomatic-empty"><DiplomacyIcon size={30}/><strong>No pending diplomatic proposals</strong><span>Foreign governments will contact you when relations and strategic interests align.</span></div>}</div>
   </DraggableWindow>}
 
   {open.has('alerts')&&<DraggableWindow id="alerts-window" kicker="NATIONAL SECURITY" title="Resource Alerts" initialX={window.innerWidth-560} initialY={175} width={500} onClose={()=>close('alerts')}>
