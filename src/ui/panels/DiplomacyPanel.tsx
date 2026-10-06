@@ -1,9 +1,9 @@
 import { blocForCountry } from '../../engine/systems/blocs';
-import { relationFor, relationshipIndex, relationshipStance } from '../../engine/systems/diplomacy';
+import { embassyFor, relationFor, relationshipIndex, relationshipStance } from '../../engine/systems/diplomacy';
 import type { TradeResource } from '../../domain/game';
 import { flagEmoji } from '../../data/countryThemes';
 import { useGameStore } from '../../store/gameStore';
-import { ResourceIcon } from '../icons/GameIcons';
+import { DiplomacyIcon, EmbassyIcon, ResourceIcon } from '../icons/GameIcons';
 
 const resources:TradeResource[]=['food','oil','iron','uranium'];
 const humanize=(value:string)=>value.replaceAll('_',' ').replace(/\b\w/g,(m)=>m.toUpperCase());
@@ -20,6 +20,7 @@ export function DiplomacyPanel({selectedId}:{selectedId:string}){
  const relationScore=relationshipIndex(relation);
  const relationLabel=relationshipStance(relation);
  const playerBloc=blocForCountry(state,player.id);
+ const embassy=embassyFor(state,player.id,selected.id);
  const tradeDeals=Object.values(state.tradeDeals).filter(d=>d.active&&((d.sellerId===selected.id&&d.buyerId===player.id)||(d.buyerId===selected.id&&d.sellerId===player.id)));
 
  return <div className="diplomacy-v2">
@@ -32,12 +33,13 @@ export function DiplomacyPanel({selectedId}:{selectedId:string}){
   <div className="relation-context">
    <span><small>CURRENT STATUS</small><strong>{relation.status.toUpperCase()}</strong></span>
    <span><small>ACTIVE TREATIES</small><strong>{relation.treaties.length?relation.treaties.map(humanize).join(' · '):'None'}</strong></span>
-   <span><small>SANCTIONS</small><strong>{relation.sanctions?'ACTIVE':'NONE'}</strong></span>
+   <span><small>EMBASSY</small><strong>{embassy?`LEVEL ${embassy.level}`:'NONE'}</strong></span>
   </div>
 
   <div className="subhead">DIPLOMATIC ACTIONS</div>
   <div className="action-grid diplomacy-actions">
-   <button onClick={()=>state.improveRelations(selected.id)}>Diplomatic Mission <small>-$2B · gradual goodwill</small></button>
+   <button onClick={()=>state.improveRelations(selected.id)}><DiplomacyIcon size={15}/><span>Diplomatic Mission <small>-$2B · gradual goodwill</small></span></button>
+   <button disabled={Boolean(embassy)} onClick={()=>state.openEmbassyWith(selected.id)}><EmbassyIcon size={15}/><span>{embassy?'Embassy Established':'Open Embassy'} <small>{embassy?'relations & trade boosted':'-$3B · diplomatic booster'}</small></span></button>
    <button onClick={()=>state.signTradePact(selected.id)}>Trade Pact <small>-$5B · improves commerce</small></button>
    <button onClick={()=>state.signNonAggression(selected.id)}>Non-Aggression <small>-$4B</small></button>
    <button onClick={()=>state.signAlliance(selected.id)}>Alliance <small>-$10B · high trust</small></button>
@@ -51,7 +53,7 @@ export function DiplomacyPanel({selectedId}:{selectedId:string}){
    <div className="goodwill-card"><small>RESOURCE AID</small><strong>Support strategic shortages</strong><p>Resource shipments improve relations and are more effective when the recipient is genuinely short.</p><div>{resources.map(resource=><button key={resource} disabled={player.resources[resource]<=0||relation.status==='war'} onClick={()=>state.giftResource(selected.id,resource)}><ResourceIcon resource={resource} size={14}/>{resource.toUpperCase()}</button>)}</div></div>
   </div>
 
-  <p className="diplomacy-rule-note">Trade and aid improve bilateral trust over time. Cooperation with a state's hostile rival can reduce your standing with that rival. Below 10/100, relations are openly hostile.</p>
+  <p className="diplomacy-rule-note">Trade and aid improve bilateral trust over time. Embassies accelerate diplomatic access and commercial trust. Cooperation with a state's hostile rival can reduce your standing with that rival. Below 10/100, relations are openly hostile.</p>
 
   <div className="subhead">ACTIVE TRADE FLOWS</div>
   {tradeDeals.length>0?<div className="deal-list">{tradeDeals.map(d=><div key={d.id}><span>{d.resource.toUpperCase()} {d.quantityPerDay.toFixed(2)}/day @ ${d.pricePerUnit.toFixed(3)} {d.contractType==='long_term'?(`· ${d.contractYears}Y`):''}</span><button onClick={()=>state.cancelTrade(d.id)}>Cancel</button></div>)}</div>:<p className="muted tiny">No active bilateral commodity flow.</p>}
