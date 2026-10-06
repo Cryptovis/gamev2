@@ -1,4 +1,5 @@
 import { createPortal } from 'react-dom';
+import { useState } from 'react';
 import type { StrategicDecisionSpec, StrategicActionKind } from '../../domain/interaction';
 import { flagEmoji } from '../../data/countryThemes';
 import { useGameStore } from '../../store/gameStore';
@@ -21,7 +22,7 @@ export function StrategicDecisionModal({
  const state=useGameStore();
  const player=state.countries[state.playerCountryId];
  const target=state.countries[spec.targetCountryId];
- const skip=Boolean(state.confirmationSkips[spec.kind]);
+ const [autoApprove,setAutoApprove]=useState(false);
  if(!player||!target)return null;
 
  const tone=spec.tone??'neutral';
@@ -47,11 +48,11 @@ export function StrategicDecisionModal({
     </div>
 
     <label className="strategic-autoconfirm">
-     <input type="checkbox" checked={skip} onChange={e=>state.setConfirmationSkip(spec.kind,e.target.checked)}/>
+     <input type="checkbox" checked={autoApprove} onChange={e=>setAutoApprove(e.target.checked)}/>
      <span><strong>Automatically approve similar decisions this session</strong><small>You can still review other strategic action types individually.</small></span>
     </label>
 
-    <footer><button onClick={onCancel}>CANCEL</button><button className={'confirm '+(tone==='danger'?'danger':'')} onClick={onConfirm}>{spec.confirmLabel}</button></footer>
+    <footer><button onClick={onCancel}>CANCEL</button><button className={'confirm '+(tone==='danger'?'danger':'')} onClick={()=>{if(autoApprove)state.setConfirmationSkip(spec.kind,true);onConfirm();}}>{spec.confirmLabel}</button></footer>
    </div>
   </section>
  </div>;
