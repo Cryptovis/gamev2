@@ -1,10 +1,12 @@
 import { useMemo, useState, type ReactNode } from 'react';
 import { MARKET_RESOURCES, getMarketBoard, resourceReserveDays, resourceStrategicStatus } from '../../store/marketSelectors';
 import { useGameStore } from '../../store/gameStore';
-import { BlocIcon, CouncilIcon, DiplomacyIcon, EmbassyIcon, IntelligenceIcon, ResourceIcon, TreasuryIcon } from '../icons/GameIcons';
+import { BlocIcon, CouncilIcon, DiplomacyIcon, EmbassyIcon, IntelligenceIcon, ResourceIcon, TreasuryIcon, WorldIcon } from '../icons/GameIcons';
 import { DraggableWindow } from '../windows/DraggableWindow';
+import { MapModeBar } from './MapModeBar';
+import { ResourceCommandWindow } from '../panels/ResourceCommandWindow';
 
-type ToolId='objectives'|'market'|'pulse'|'sitrep'|'alerts'|'diplomacy';
+type ToolId='objectives'|'market'|'pulse'|'map'|'resources'|'sitrep'|'alerts'|'diplomacy';
 
 function RailButton({active,badge,label,children,onClick}:{active:boolean;badge?:number|string;label:string;children:ReactNode;onClick:()=>void}){
  return <button className={active?'rail-button active':'rail-button'} onClick={onClick} title={label}><span>{children}</span>{badge!==undefined&&badge!==0&&<b>{badge}</b>}<small>{label}</small></button>;
@@ -39,12 +41,17 @@ export function CommandRails(){
    <RailButton active={open.has('objectives')} badge={`${done}/6`} label="OBJECTIVES" onClick={()=>toggle('objectives')}><CouncilIcon size={20}/></RailButton>
    <RailButton active={open.has('market')} badge={activeTrades.length} label="MARKET" onClick={()=>toggle('market')}><TreasuryIcon size={20}/></RailButton>
    <RailButton active={open.has('pulse')} badge={activeWars.length} label="WORLD" onClick={()=>toggle('pulse')}><BlocIcon size={20}/></RailButton>
+   <RailButton active={open.has('map')} label="MAP" onClick={()=>toggle('map')}><WorldIcon size={20}/></RailButton>
+   <RailButton active={open.has('resources')} badge={critical.length} label="RESOURCES" onClick={()=>toggle('resources')}><ResourceIcon resource={critical[0]?.resource??'oil'} size={20}/></RailButton>
   </nav>
   <nav className={`command-rail command-rail-right ${state.selectedCountryId?'country-open':'country-closed'}`} aria-label="Information tools">
    <RailButton active={open.has('diplomacy')} badge={offers.length} label="DIPLO" onClick={()=>toggle('diplomacy')}><DiplomacyIcon size={20}/></RailButton>
    <RailButton active={open.has('alerts')} badge={critical.length} label="ALERTS" onClick={()=>toggle('alerts')}><ResourceIcon resource={critical[0]?.resource??'oil'} size={20}/></RailButton>
    <RailButton active={open.has('sitrep')} badge={state.sitrep.length} label="LOG" onClick={()=>toggle('sitrep')}><IntelligenceIcon size={20}/></RailButton>
   </nav>
+
+  {open.has('map')&&<div className="left-command-dock map-command-dock"><MapModeBar/></div>}
+  {open.has('resources')&&<ResourceCommandWindow onClose={()=>close('resources')}/>}
 
   {open.has('objectives')&&<DraggableWindow id="objectives-window" kicker="CAMPAIGN / GUIDANCE" title="Strategic Objectives" initialX={88} initialY={170} width={470} onClose={()=>close('objectives')}>
    <div className="floating-progress"><span><b>{done}</b> of {objectives.length} complete</span><i><b style={{width:`${done/objectives.length*100}%`}}/></i></div>
