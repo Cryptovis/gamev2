@@ -13,6 +13,7 @@ import { canUnlockTechnology } from '../../engine/systems/technology';
 import { blocForCountry } from '../../engine/systems/blocs';
 import { strategicGoalLabel } from '../../engine/systems/strategicGoals';
 import { getWarPreview } from '../../engine/systems/warfare';
+import { tr } from '../../i18n/gameI18n';
 
 const signed=(value:number,digits=2)=>`${value>=0?'+':''}${value.toFixed(digits)}`;
 const resources:TradeResource[]=['food','oil','iron','uranium'];
@@ -30,6 +31,7 @@ export function CountryPanel(){
   const [tab,setTab]=useState<PanelTab>('overview');
   const [commandWindow,setCommandWindow]=useState<'dossier'|'supply'|null>(null);
   const state=useGameStore();
+  const language=state.playerProfile.language;
   const selected=state.countries[state.selectedCountryId ?? state.playerCountryId];
   const player=state.countries[state.playerCountryId];
   const isPlayer=selected.id===state.playerCountryId;
@@ -44,14 +46,14 @@ export function CountryPanel(){
   const warPreview=!isPlayer?getWarPreview(player,selected):null;
 
   return <aside className="command-panel">
-    <div className="panel-kicker">STATE / NATIONAL COMMAND</div>
+    <div className="panel-kicker">{tr(language,'state_command','STATE / NATIONAL COMMAND')}</div>
     <select className="country-select" value={selected.id} onChange={(e)=>state.selectCountry(e.target.value)} aria-label="Select country">{countryList.map((country)=><option key={country.id} value={country.id}>{country.name} ({country.iso2})</option>)}</select>
     <div className="panel-title-row"><div><h1>{selected.name}</h1><p className="muted">{isPlayer?'Player nation':'Observed nation'} · {humanize(selected.politics.regime)} · {selected.region || 'Global'}</p></div>{selected.controllerCountryId&&<span className="occupation-badge">CONTROLLED</span>}</div>
     <div className="identity-strip"><span className="identity-with-icon"><ReligionGlyph religion={selected.society.dominantReligion}/><i><small>RELIGION</small><strong>{humanize(selected.society.dominantReligion)}</strong></i></span><span><small>IDEOLOGY</small><strong>{humanize(selected.society.ideology)}</strong></span><span><small>MILITARY</small><strong>{selected.military.assessment.gfpRank ? `GFP #${selected.military.assessment.gfpRank}` : 'ESTIMATE'}</strong></span></div>
-    <div className="panel-command-actions"><button onClick={()=>setCommandWindow('dossier')}>STRATEGIC DOSSIER</button><button onClick={()=>setCommandWindow('supply')}>SUPPLY COMMAND</button></div>
+    <div className="panel-command-actions"><button onClick={()=>setCommandWindow('dossier')}>{tr(language,'dossier','STRATEGIC DOSSIER')}</button><button onClick={()=>setCommandWindow('supply')}>{tr(language,'supply','SUPPLY COMMAND')}</button></div>
 
     <div className="panel-tabs panel-tabs-9">
-      {(['overview','economy','diplomacy','military','intel','cabinet','technology','world','war'] as PanelTab[]).map((id)=><button key={id} className={tab===id?'active':''} onClick={()=>setTab(id)}>{id==='technology'?'TECH':id.toUpperCase()}</button>)}
+      {(['overview','economy','diplomacy','military','intel','cabinet','technology','world','war'] as PanelTab[]).map((id)=><button key={id} className={tab===id?'active':''} onClick={()=>setTab(id)}>{tr(language,id==='technology'?'tech':id,id==='technology'?'TECH':id.toUpperCase())}</button>)}
     </div>
 
     {tab==='overview'&&<>
