@@ -1,5 +1,30 @@
 # Changelog
 
+## 0.73.1-playtest.1 — Cartography & Interaction Stabilization
+- Rebuilt country labeling into a collision-aware screen-space cartography engine instead of scaling text with map geometry
+- Flat-map zoom no longer magnifies country names into unreadable giant labels
+- Added priority-based label placement using projected country area, player/selected/hover priority and population weight
+- Added progressive zoom thresholds and maximum visible-label budgets; large states appear first and smaller states reveal as the player zooms in
+- Selected-country labels are forced through collision resolution and displace lower-priority labels
+- Ocean/sea labels now participate in the same decluttering pass instead of freely overlapping country labels
+- Added non-scaling map borders for calmer Flat projection zoom behavior
+- Corrected invalid [0,0] microstate coordinates for Andorra, Micronesia, Sao Tome and Principe, and Vatican City
+- Microstates now use screen-pixel hit testing with enlarged click targets, making tiny states and island countries selectable without giant fake geometry
+- Added regression tests preventing zero-coordinate microstates from returning
+- Rebuilt left command rail sizing/alignment so long labels such as RESOURCES remain centered and do not spill out of buttons
+- Added category color language to right information rail and diplomatic action icons
+- Added shared Strategic Decision confirmation framework for diplomatic missions, embassies, trade pacts, non-aggression pacts, alliances, embargoes, strategic blocs, treasury aid, resource aid and war declarations
+- Strategic Decision modal includes national flags, themed visual emblem, treasury/relationship/strategic impacts and contextual warnings
+- Trade-pact previews explicitly warn when hostile rivals may react negatively
+- High-impact decision modals pause the simulation and resume the player's previous speed when closed
+- Added optional per-action 'automatically approve similar decisions this session' behavior; preference applies only after the current action is confirmed
+- Added relationship gating directly to Trade Pact, Non-Aggression and Alliance buttons instead of allowing a doomed confirmation flow
+- Resource supplier PACT shortcuts now use the same confirmation framework and expose low-relationship gating
+- War declarations now require a consequence preview showing relationship collapse, reputation loss and trade cancellation
+- Added another targeted typography debt sweep across diplomacy, advisor, event, command-window, supply and floating-tool interactive text
+- Save schema remains v12; existing 0.73 campaigns remain compatible
+- Added dedicated cartography, microstate and strategic-decision regression tests
+
 ## 0.73.0-playtest.1 — Command Architecture & Logistics Foundation
 - Rebuilt the strategic HUD around a governance-first command hierarchy
 - Top HUD now prioritizes Treasury, strategic Budget/Day, Approval and Stability; raw resource clutter moved into a dedicated Resources command window
