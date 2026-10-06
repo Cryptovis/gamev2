@@ -31,7 +31,7 @@ export function TopBar(){
  return <header className="topbar">
   <div className="leader-brand">
    <button className="leader-avatar-button" onClick={()=>setOptionsOpen(true)} title="Open commander options"><AvatarPortrait id={profile.avatarId} size={52}/><span>⋯</span></button>
-   <div className="brand-block"><div className="eyebrow">ALPYX // GLOBAL COMMAND · PRODUCTION & INDUSTRY 0.72 PLAYTEST</div><div className="brand-line"><strong>{profile.commanderName}</strong><span className="day-chip">{tr(lang,'day')} {day}</span></div><small className="leader-country">{player.name} · {player.politics.regime.toUpperCase()}</small></div>
+   <div className="brand-block"><div className="eyebrow">ALPYX // GLOBAL COMMAND · STRATEGIC UI 0.72.1 PLAYTEST</div><div className="brand-line"><strong>{profile.commanderName}</strong><span className="day-chip">{tr(lang,'day')} {day}</span></div><small className="leader-country">{player.name} · {player.politics.regime.toUpperCase()}</small></div>
   </div>
 
   <div className="metrics" aria-label="National resources">
