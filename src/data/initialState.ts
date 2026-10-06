@@ -1,11 +1,12 @@
 import { initialCountries } from './countries';
 import type { GameState } from '../domain/game';
 import { createInitialProductionMap } from '../engine/systems/production';
+import { createInitialInfrastructureMap } from '../engine/systems/infrastructure';
 
 export const makeInitialState = (): GameState => {
   const countries=structuredClone(initialCountries);
   return ({
-  schemaVersion: 11,
+  schemaVersion: 12,
   simulationSeed: 0xA17E5EED,
   day: 1,
   speed: 0,
@@ -16,7 +17,7 @@ export const makeInitialState = (): GameState => {
   selectedCountryId: 'TUR',
   mapMode: 'political',
   mapPresentation: 'political',
-  mapNotice: 'Production & Industry 0.72 online — manufacturing lines, equipment stockpiles and industrial bottlenecks enabled.',
+  mapNotice: 'Command Architecture & Logistics 0.73 online — governance HUD, resource command and national infrastructure enabled.',
   countries,
   tradeDeals: {},
   wars: {},
@@ -32,10 +33,11 @@ export const makeInitialState = (): GameState => {
   embassies: {},
   diplomaticOffers: [],
   production: createInitialProductionMap(countries),
+  infrastructure: createInitialInfrastructureMap(countries),
   lastAiDay: 1,
   lastStrategicReviewDay: 1,
   sitrep: [
-    'AlpyX Production & Industry 0.72 online.',
+    'AlpyX Command Architecture & Logistics 0.73 online.',
     'Strategic AI, covert operations and influence networks loaded alongside Strategic Command systems.',
   ],
   });
