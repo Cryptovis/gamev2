@@ -224,6 +224,26 @@ export function WorldMap() {
     return <path key={id || feature.properties?.name} d={d} className={`country-shape ${mapPresentation==='geographic'?'geographic':''} ${isSelected ? 'selected' : ''} ${isHovered ? 'hovered' : ''}`} fill={fill} onPointerEnter={() => country && setHovered(id)} onPointerLeave={() => setHovered((v) => v === id ? null : v)}><title>{country?.name ?? feature.properties?.name}</title></path>;
   });
 
+
+  const mapZoom=projectionMode==='globe'?globeZoom:flatZoom;
+  const countryLabels=geojson.features.map((feature)=>{
+    const id=String(feature.properties?.iso_a3??'');
+    const country=countries[id];
+    if(!country||MICROSTATE_POINTS[id as keyof typeof MICROSTATE_POINTS])return null;
+    const d=path(feature as any); if(!d)return null;
+    const centroid=geoCentroid(feature as any);
+    if(projectionMode==='globe'){
+      const center:[number,number]=[-rotation[0],-rotation[1]];
+      if(geoDistance(centroid,center)>Math.PI/2)return null;
+    }
+    const p=projection(centroid); if(!p)return null;
+    const bounds=path.bounds(feature as any);
+    const projectedArea=Math.abs((bounds[1][0]-bounds[0][0])*(bounds[1][1]-bounds[0][1]))*(projectionMode==='flat'?flatZoom*flatZoom:1);
+    const threshold=mapZoom>=2.6?80:mapZoom>=1.9?180:mapZoom>=1.35?430:1050;
+    if(id!==selectedCountryId&&projectedArea<threshold)return null;
+    return <text key={`country-label-${id}`} x={p[0]} y={p[1]} className={id===selectedCountryId?'country-map-label selected':'country-map-label'}>{country.name.toUpperCase()}</text>;
+  });
+
   return <div className="world-map political-map">
     <div className={`map-dock ${mapMenuOpen?'open':''}`}>
       {mapMenuOpen&&<section className="map-dock-popover" aria-label="Map settings">
@@ -255,6 +275,7 @@ export function WorldMap() {
       </>}
       <g key={viewportKey} className="map-viewport" transform={projectionMode === 'flat' ? flatTransform : undefined}>
         <g className="country-layer">{shapeLayer}</g>
+        <g className="country-label-layer">{countryLabels}</g>
         <g className="water-label-layer">{WATER_LABELS.map((label)=>{
           const zoom=projectionMode==='globe'?globeZoom:flatZoom;
           if(label.minZoom&&zoom<label.minZoom)return null;
