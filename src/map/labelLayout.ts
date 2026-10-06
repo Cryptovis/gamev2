@@ -47,14 +47,17 @@ export function layoutScreenLabels(
     const candidate=approximateLabelBox(raw);
     if(candidate.x-candidate.width/2<margin||candidate.x+candidate.width/2>viewport.width-margin)continue;
     if(candidate.y-candidate.height/2<margin||candidate.y+candidate.height/2>viewport.height-margin)continue;
-    const collision=placed.find(p=>overlaps(candidate,p,padding));
-    if(!collision){
+    const collisions=placed.filter(p=>overlaps(candidate,p,padding));
+    if(!collisions.length){
       placed.push(candidate);
       continue;
     }
-    if(raw.force&&!collision.force){
-      const index=placed.indexOf(collision);
-      placed.splice(index,1,candidate);
+    if(raw.force&&collisions.every(item=>!item.force)){
+      for(const item of collisions){
+        const index=placed.indexOf(item);
+        if(index>=0)placed.splice(index,1);
+      }
+      placed.push(candidate);
     }
   }
   return placed;
