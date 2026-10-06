@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.60.0-playtest.1
+- Added campaign onboarding: commander name, 20 leader portraits, language and country selection
+- Added English, Turkish, Spanish, Chinese and Russian core UI localization
+- Added player avatar editing from the top-left HUD
+- Added national flag identity and country-driven UI accent themes
+- Added political/geographic base-map presentation modes
+- Added geographic biome textures for plains, forest, desert, mountain, urban and coastal terrain
+- Expanded globe and flat-map zoom ranges, plus +/- and focus controls
+- Added preferred-speed memory so event/advisor pauses resume the player's last speed
+- Added adaptive resource advisor with friendly supplier recommendations
+- Added 1/3/5/10-year fixed-price monthly supply contracts
+- Bumped save schema to v9
+
 ## 0.50.1-playtest.2
 - Added geometry-based sovereign territory selection instead of marker-first selection
 - Reduced microstate debug labels; full names reveal only on hover/select/high zoom

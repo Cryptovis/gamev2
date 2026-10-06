@@ -4,6 +4,8 @@ import { findCountryAtGeoPoint } from './mapSelection';
 import { useGameStore } from '../store/gameStore';
 import { calculateMilitaryPower } from '../store/selectors';
 import { MICROSTATE_POINTS } from '../data/microstates';
+import { terrainForCountry } from '../engine/systems/warfare';
+import { tr } from '../i18n/gameI18n';
 
 const W = 1200;
 const H = 700;
@@ -42,6 +44,9 @@ export function WorldMap() {
   const countries = useGameStore((s) => s.countries);
   const selectedCountryId = useGameStore((s) => s.selectedCountryId);
   const mapMode = useGameStore((s) => s.mapMode);
+  const mapPresentation = useGameStore((s) => s.mapPresentation);
+  const setMapPresentation = useGameStore((s) => s.setMapPresentation);
+  const language = useGameStore((s) => s.playerProfile.language);
   const playerCountryId = useGameStore((s) => s.playerCountryId);
   const selectCountry = useGameStore((s) => s.selectCountry);
   const setMapNotice = useGameStore((s) => s.setMapNotice);
@@ -128,8 +133,8 @@ export function WorldMap() {
 
   const wheel = (e: React.WheelEvent<SVGSVGElement>) => {
     e.preventDefault();
-    if (projectionMode === 'globe') setGlobeZoom((z) => Math.max(.72, Math.min(1.75, z + (e.deltaY < 0 ? .08 : -.08))));
-    else setFlatZoom((z) => Math.max(1, Math.min(4.5, Number((z * (e.deltaY < 0 ? 1.12 : .89)).toFixed(3)))));
+    if (projectionMode === 'globe') setGlobeZoom((z) => Math.max(.68, Math.min(3.2, z + (e.deltaY < 0 ? .11 : -.11))));
+    else setFlatZoom((z) => Math.max(1, Math.min(8, Number((z * (e.deltaY < 0 ? 1.15 : .87)).toFixed(3)))));
   };
 
   const screenPoint = (e: React.MouseEvent<SVGSVGElement>) => {
@@ -167,6 +172,24 @@ export function WorldMap() {
     }
   };
 
+  const zoomBy=(factor:number)=>{
+    if(projectionMode==='globe')setGlobeZoom(z=>Math.max(.68,Math.min(3.2,Number((z*factor).toFixed(2)))));
+    else setFlatZoom(z=>Math.max(1,Math.min(8,Number((z*factor).toFixed(2)))));
+  };
+
+  const focusSelected=()=>{
+    if(!selectedCountry||!geojson)return;
+    const feature=geojson.features.find(f=>String(f.properties?.iso_a3??'')===selectedCountry.id);
+    if(!feature)return;
+    const [lon,lat]=geoCentroid(feature as any);
+    if(projectionMode==='globe'){setRotation([-lon,-lat,0]);setGlobeZoom(z=>Math.max(1.55,z));}
+    else{
+      const base=geoNaturalEarth1().fitExtent([[34,34],[W-34,H-34]],geojson as any).precision(.25);
+      const p=base([lon,lat]); if(!p)return;
+      const z=Math.max(2.4,flatZoom); setFlatZoom(z); setFlatPan({x:-z*(p[0]-W/2),y:-z*(p[1]-H/2)});
+    }
+  };
+
   if (!geojson || !projection || !path) return <div className="world-map political-map"><div className="map-loading">INITIALIZING WORLD GEOMETRY…</div></div>;
 
   const shapeLayer = geojson.features.map((feature) => {
@@ -176,20 +199,29 @@ export function WorldMap() {
     if (!d) return null;
     const isSelected = id === selectedCountryId;
     const isHovered = id === hovered;
-    return <path key={id || feature.properties?.name} d={d} className={`country-shape ${isSelected ? 'selected' : ''} ${isHovered ? 'hovered' : ''}`} fill={colorFor(id)} onPointerEnter={() => country && setHovered(id)} onPointerLeave={() => setHovered((v) => v === id ? null : v)}><title>{country?.name ?? feature.properties?.name}</title></path>;
+    const terrain=country?terrainForCountry(country):'plains';
+    const fill=mapPresentation==='geographic'&&mapMode==='political'?`url(#terrain-${terrain})`:colorFor(id);
+    return <path key={id || feature.properties?.name} d={d} className={`country-shape ${mapPresentation==='geographic'?'geographic':''} ${isSelected ? 'selected' : ''} ${isHovered ? 'hovered' : ''}`} fill={fill} onPointerEnter={() => country && setHovered(id)} onPointerLeave={() => setHovered((v) => v === id ? null : v)}><title>{country?.name ?? feature.properties?.name}</title></path>;
   });
 
   return <div className="world-map political-map">
-    <div className="projection-switch" aria-label="Map projection">
-      <button className={projectionMode === 'globe' ? 'active' : ''} onClick={() => setProjectionMode('globe')}>GLOBE</button>
-      <button className={projectionMode === 'flat' ? 'active' : ''} onClick={() => setProjectionMode('flat')}>FLAT</button>
-      <button onClick={resetView}>RESET</button>
+    <div className="map-view-console" aria-label="Map controls">
+      <div className="presentation-switch"><button className={mapPresentation==='political'?'active':''} onClick={()=>setMapPresentation('political')}>{tr(language,'political')}</button><button className={mapPresentation==='geographic'?'active':''} onClick={()=>setMapPresentation('geographic')}>{tr(language,'geographic')}</button></div>
+      <div className="projection-switch-inline"><button className={projectionMode==='globe'?'active':''} onClick={()=>setProjectionMode('globe')}>GLOBE</button><button className={projectionMode==='flat'?'active':''} onClick={()=>setProjectionMode('flat')}>FLAT</button><button onClick={()=>zoomBy(.8)}>−</button><button onClick={()=>zoomBy(1.25)}>+</button><button onClick={focusSelected}>FOCUS</button><button onClick={resetView}>RESET</button></div>
     </div>
     <div className="map-hover-readout">
       <strong>{hoveredCountry?.name ?? selectedCountry?.name ?? 'WORLD COMMAND'}</strong>
       <span>{hoveredCountry ? `${hoveredCountry.region || 'Global'} · ${hoveredCountry.military.assessment.capability.toFixed(0)} MIL` : projectionMode === 'globe' ? 'drag globe · wheel zoom · click sovereign territory' : 'drag to pan · wheel zoom · click sovereign territory'}</span>
     </div>
     <svg viewBox={`0 0 ${W} ${H}`} className={projectionMode === 'globe' ? 'strategy-svg globe-svg' : 'strategy-svg flat-svg'} onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerCancel={pointerUp} onWheel={wheel} onClick={selectFromSurface} shapeRendering="geometricPrecision">
+      <defs>
+        <pattern id="terrain-plains" width="18" height="18" patternUnits="userSpaceOnUse"><rect width="18" height="18" fill="#6d8061"/><path d="M0 14C5 11 10 16 18 12" fill="none" stroke="#9aab83" strokeOpacity=".22" strokeWidth="1"/></pattern>
+        <pattern id="terrain-forest" width="14" height="14" patternUnits="userSpaceOnUse"><rect width="14" height="14" fill="#3f6b52"/><circle cx="3" cy="4" r="1.5" fill="#234936" fillOpacity=".65"/><circle cx="10" cy="9" r="1.7" fill="#2a513c" fillOpacity=".7"/></pattern>
+        <pattern id="terrain-desert" width="20" height="16" patternUnits="userSpaceOnUse"><rect width="20" height="16" fill="#a88a5a"/><path d="M0 10Q5 6 10 10t10 0" fill="none" stroke="#d5bb7d" strokeOpacity=".35"/></pattern>
+        <pattern id="terrain-mountain" width="22" height="20" patternUnits="userSpaceOnUse"><rect width="22" height="20" fill="#657065"/><path d="M1 17 7 6l4 7 4-9 6 13" fill="none" stroke="#aab0a4" strokeOpacity=".42" strokeWidth="1.1"/></pattern>
+        <pattern id="terrain-urban" width="16" height="16" patternUnits="userSpaceOnUse"><rect width="16" height="16" fill="#687077"/><path d="M0 8h16M8 0v16" stroke="#9da3a8" strokeOpacity=".18"/></pattern>
+        <pattern id="terrain-coastal" width="18" height="18" patternUnits="userSpaceOnUse"><rect width="18" height="18" fill="#53796c"/><path d="M0 5c5 3 9-3 18 0M0 12c6 3 11-2 18 0" fill="none" stroke="#8fb6a8" strokeOpacity=".26"/></pattern>
+      </defs>
       {projectionMode === 'globe' && <>
         <path d={path({ type: 'Sphere' } as any) ?? ''} className="ocean-sphere"/>
         <path d={path(graticule as any) ?? ''} className="globe-graticule"/>
@@ -213,6 +245,6 @@ export function WorldMap() {
         })}
       </g>
     </svg>
-    <div className="map-legend"><span className="legend-dot player"></span>PLAYER <span className="legend-sep">·</span> {mapMode.toUpperCase()} MAP <span className="legend-sep">·</span> {projectionMode === 'flat' ? `${flatZoom.toFixed(1)}× MAP ZOOM` : `${globeZoom.toFixed(1)}× GLOBE`}</div>
+    <div className="map-legend"><span className="legend-dot player"></span>PLAYER <span className="legend-sep">·</span> {mapPresentation.toUpperCase()} · {mapMode.toUpperCase()} MAP <span className="legend-sep">·</span> {projectionMode === 'flat' ? `${flatZoom.toFixed(1)}× MAP ZOOM` : `${globeZoom.toFixed(1)}× GLOBE`}</div>
   </div>;
 }
