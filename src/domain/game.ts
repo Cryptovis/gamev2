@@ -1,6 +1,7 @@
-import type { MapMode } from './map';
+import type { MapMode, MapPresentation } from './map';
 
 export type GameSpeed = 0 | 1 | 2 | 3 | 5;
+export type GameLanguage = 'en' | 'tr' | 'es' | 'zh' | 'ru';
 export type RegimeType = 'republic' | 'democracy' | 'autocracy' | 'monarchy' | 'theocracy';
 export type ReligionType = 'christianity' | 'catholic_christianity' | 'orthodox_christianity' | 'protestant_christianity' | 'islam' | 'hinduism' | 'buddhism' | 'judaism' | 'unaffiliated' | 'folk_or_mixed';
 export type IdeologyType = 'pluralist' | 'state_centric' | 'state_socialist' | 'royalist' | 'religious_state';
@@ -35,6 +36,8 @@ export interface MinistryState { allocations: Record<MinistryKey, number>; effic
 export interface TechnologyState { researchPoints: number; unlocked: string[]; }
 export interface StrategicAIState { strategicGoal: StrategicGoal; goalProgress: number; threatFocus: string | null; lastGoalReviewDay: number; }
 export interface IntelOperation { id: string; type: IntelOperationType; sourceCountryId: string; targetCountryId: string; startedDay: number; completeDay: number; status: IntelOperationStatus; successChance: number; resultSummary: string; }
+export interface PlayerProfile { commanderName: string; avatarId: string; language: GameLanguage; setupComplete: boolean; }
+export interface AdvisorPrompt { id: string; resource: TradeResource; supplierId: string; stage: 'pact' | 'contract'; createdDay: number; message: string; }
 
 export interface CountryState {
   id: string;
@@ -62,7 +65,10 @@ export interface CountryState {
   ai: StrategicAIState;
 }
 
-export interface TradeDeal { id: string; sellerId: string; buyerId: string; resource: TradeResource; quantityPerDay: number; pricePerUnit: number; active: boolean; }
+export interface TradeDeal {
+  id: string; sellerId: string; buyerId: string; resource: TradeResource; quantityPerDay: number; pricePerUnit: number; active: boolean;
+  contractType?: 'spot' | 'long_term'; startDay?: number; expiresDay?: number; deliveryIntervalDays?: number; nextDeliveryDay?: number; contractYears?: 1 | 3 | 5 | 10;
+}
 export interface CasualtySnapshot { personnel: number; tanks: number; artillery: number; fighters: number; bombers: number; warships: number; }
 export interface WarState {
   id: string; attackerId: string; defenderId: string; startedDay: number; progress: number; rounds: number; autoAssault: boolean; status: WarStatus;
@@ -103,10 +109,13 @@ export interface GameState {
   simulationSeed: number;
   day: number;
   speed: GameSpeed;
+  preferredSpeed: Exclude<GameSpeed, 0>;
   campaignStatus: CampaignStatus;
+  playerProfile: PlayerProfile;
   playerCountryId: string;
   selectedCountryId: string | null;
   mapMode: MapMode;
+  mapPresentation: MapPresentation;
   mapNotice: string | null;
   countries: Record<string, CountryState>;
   tradeDeals: Record<string, TradeDeal>;
@@ -118,6 +127,8 @@ export interface GameState {
   culturalInfluence: Record<string, number>;
   activeEvent: ActiveGameEvent | null;
   eventCooldownUntil: number;
+  activeAdvisor: AdvisorPrompt | null;
+  advisorCooldownUntil: number;
   lastAiDay: number;
   lastStrategicReviewDay: number;
   sitrep: string[];
