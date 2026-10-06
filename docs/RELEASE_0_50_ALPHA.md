@@ -19,3 +19,9 @@ Relations, shared ideology, shared religion and bloc membership now feed a soft-
 
 ## Save compatibility
 This branch uses schema v8. Start a new campaign.
+
+## World Dynamics
+AI states now conduct bilateral diplomatic initiatives on 14-day review cycles. Shared region, ideology, religion and existing relations shape partner choice. Relations can mature into trade pacts, non-aggression treaties and alliances without player involvement.
+
+## World Pulse HUD
+The live HUD exposes active wars, trade flows, covert operations, alliance blocs and globally sanctioned states so playtesters can immediately see whether the simulation is moving.

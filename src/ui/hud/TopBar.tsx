@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import type { GameSpeed } from '../../domain/game';
 import { useGameStore } from '../../store/gameStore';
-import { ApprovalIcon, FoodIcon, IronIcon, OilIcon, TreasuryIcon } from '../icons/GameIcons';
+import { ApprovalIcon, FoodIcon, FuelIcon, OilIcon, TreasuryIcon } from '../icons/GameIcons';
 
 const speeds: Array<{ speed: GameSpeed; label: string; hint: string }> = [
   { speed: 0, label: 'Ⅱ', hint: 'Pause' },
@@ -38,7 +38,7 @@ export function TopBar() {
       <Metric icon={<TreasuryIcon size={16}/>} label="TREASURY" value={`$${player.economy.treasury.toFixed(1)}B`} />
       <Metric icon={<FoodIcon size={16}/>} label="FOOD" value={player.resources.food.toFixed(0)} tone={player.resources.food < 80 ? 'warning' : 'neutral'} />
       <Metric icon={<OilIcon size={16}/>} label="OIL" value={player.resources.oil.toFixed(0)} tone={player.resources.oil < 25 ? 'warning' : 'neutral'} />
-      <Metric icon={<IronIcon size={16}/>} label="IRON" value={player.resources.iron.toFixed(0)} />
+      <Metric icon={<FuelIcon size={16}/>} label="FUEL" value={player.processedResources.fuel.toFixed(0)} tone={player.processedResources.fuel < 20 ? 'warning' : 'neutral'} />
       <Metric icon={<ApprovalIcon size={16}/>} label="APPROVAL" value={`${player.politics.approval.toFixed(0)}%`} tone={player.politics.approval >= 60 ? 'good' : player.politics.approval < 40 ? 'warning' : 'neutral'} />
     </div>
 
