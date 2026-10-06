@@ -267,7 +267,7 @@ export function WorldMap() {
       +(id===playerCountryId?8500:0)
       +(id===hovered?7000:0)
       +(forced?20000:0)
-      +(country.population??0)/2_000_000;
+      +country.demographics.population/2_000_000;
     labelCandidates.push({
       id,
       text:country.name.toUpperCase(),
