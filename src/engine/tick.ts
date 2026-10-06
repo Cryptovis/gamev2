@@ -40,7 +40,7 @@ function processElection(state: GameState): GameState {
 }
 
 export function tickGame(state: GameState): GameState {
-  if (state.campaignStatus !== 'active' || state.activeEvent) return state;
+  if (state.campaignStatus !== 'active' || state.activeEvent || state.activeAdvisor) return state;
   const countries = Object.fromEntries(Object.entries(state.countries).map(([id, country]) => [id, tickCountry(country)]));
   const nextDay = state.day + 1;
   const player = countries[state.playerCountryId];
