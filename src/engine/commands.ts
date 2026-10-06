@@ -11,6 +11,7 @@ import { formBloc, inviteToBloc } from './systems/blocs';
 import { proposeCouncilResolution } from './systems/council';
 import { launchIntelOperation } from './systems/espionage';
 import { deployEquipment, setMilitaryFactoryShare, setProductionFactories } from './systems/production';
+import { investInfrastructure } from './systems/infrastructure';
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 const note = (state: GameState, message: string): GameState => ({ ...state, sitrep: [message, ...state.sitrep].slice(0, 12) });
@@ -42,6 +43,7 @@ export function applyGameCommand(state: GameState, command: GameCommand): GameSt
     case 'production/setMilitaryShare': return setMilitaryFactoryShare(state,state.playerCountryId,command.share);
     case 'production/setFactories': return setProductionFactories(state,state.playerCountryId,command.equipment,command.factories);
     case 'production/deploy': return deployEquipment(state,state.playerCountryId,command.equipment);
+    case 'infrastructure/invest': return investInfrastructure(state,state.playerCountryId,command.asset);
     case 'economy/setTaxRate': {
       const player = state.countries[state.playerCountryId];
       if (!player) return state;
