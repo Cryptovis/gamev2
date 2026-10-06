@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { makeInitialState } from '../data/initialState';
 import type { GameCommand } from '../domain/commands';
 import type { CouncilResolutionType, EquipmentType, GameLanguage, GameSpeed, GameState, InfrastructureAsset, IntelOperationType, MinistryKey, TradeResource } from '../domain/game';
+import type { StrategicActionKind } from '../domain/interaction';
 import type { MapMode, MapPresentation } from '../domain/map';
 import { applyGameCommand } from '../engine/commands';
 import { acceptAdvisorContract, acceptAdvisorTradePact, dismissAdvisor } from '../engine/systems/advisor';
@@ -25,6 +26,8 @@ interface GameActions {
   setMapProjection: (mode:'globe'|'flat')=>void;
   mapControlCommand: {action:'zoomIn'|'zoomOut'|'focus'|'reset';nonce:number}|null;
   issueMapControl: (action:'zoomIn'|'zoomOut'|'focus'|'reset')=>void;
+  confirmationSkips: Partial<Record<StrategicActionKind,boolean>>;
+  setConfirmationSkip: (kind:StrategicActionKind,skip:boolean)=>void;
   setMapNotice: (message: string | null) => void;
   advanceDay: () => void;
   setTaxRate: (rate: number) => void;
@@ -72,6 +75,7 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
   saveMessage: null,
   mapProjection: 'globe',
   mapControlCommand: null,
+  confirmationSkips: {},
   startCampaign: ({commanderName,countryId,avatarId,language}) => set(() => {
     const fresh=makeInitialState();
     const chosen=fresh.countries[countryId] ? countryId : 'TUR';
@@ -96,6 +100,7 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
   setMapPresentation: (mapPresentation) => set({ mapPresentation }),
   setMapProjection: (mapProjection) => set({ mapProjection }),
   issueMapControl: (action) => set((state)=>({mapControlCommand:{action,nonce:(state.mapControlCommand?.nonce??0)+1}})),
+  setConfirmationSkip: (kind,skip) => set((state)=>({confirmationSkips:{...state.confirmationSkips,[kind]:skip}})),
   setMapNotice: (mapNotice) => set({ mapNotice }),
   advanceDay: () => set((state) => applyGameCommand(state, { type: 'time/advanceDay' })),
   setTaxRate: (rate) => set((state) => applyGameCommand(state, { type: 'economy/setTaxRate', rate })),
@@ -149,5 +154,5 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
     set({ ...loaded, speed: 0, saveMessage: `Loaded Day ${loaded.day}` });
     return true;
   },
-  resetGame: () => set({ ...makeInitialState(), mapProjection:'globe', mapControlCommand:null, saveMessage: 'New campaign started' }),
+  resetGame: () => set({ ...makeInitialState(), mapProjection:'globe', mapControlCommand:null, confirmationSkips:{}, saveMessage: 'New campaign started' }),
 }));
