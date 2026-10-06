@@ -16,7 +16,7 @@ export const makeInitialState = (): GameState => {
   selectedCountryId: 'TUR',
   mapMode: 'political',
   mapPresentation: 'political',
-  mapNotice: 'Living Diplomacy 0.71 online — embassies, diplomatic offers and pressure-based domestic agenda enabled.',
+  mapNotice: 'Production & Industry 0.72 online — manufacturing lines, equipment stockpiles and industrial bottlenecks enabled.',
   countries,
   tradeDeals: {},
   wars: {},
