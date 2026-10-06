@@ -5,7 +5,8 @@ import { tr } from '../../i18n/gameI18n';
 import { useGameStore } from '../../store/gameStore';
 import { AvatarPortrait } from '../profile/AvatarPortrait';
 import { PlayerOptionsMenu } from '../panels/PlayerOptionsMenu';
-import { ApprovalIcon, FoodIcon, FuelIcon, OilIcon, TreasuryIcon } from '../icons/GameIcons';
+import { ApprovalIcon, EconomyIcon, SocietyIcon, TreasuryIcon } from '../icons/GameIcons';
+import { calculateEconomyForecast } from '../../store/selectors';
 
 const speeds:Array<{speed:GameSpeed;label:string;hint:string}>=[
  {speed:0,label:'Ⅱ',hint:'Pause'},
@@ -27,19 +28,37 @@ export function TopBar(){
  const player=useGameStore(s=>s.countries[s.playerCountryId]);
  const profile=useGameStore(s=>s.playerProfile);
  const lang=profile.language;
+ const forecast=calculateEconomyForecast(player);
 
  return <header className="topbar">
   <div className="leader-brand">
    <button className="leader-avatar-button" onClick={()=>setOptionsOpen(true)} title="Open commander options"><AvatarPortrait id={profile.avatarId} size={52}/><span>⋯</span></button>
-   <div className="brand-block"><div className="eyebrow">ALPYX // GLOBAL COMMAND · STRATEGIC UI 0.72.1 PLAYTEST</div><div className="brand-line"><strong>{profile.commanderName}</strong><span className="day-chip">{tr(lang,'day')} {day}</span></div><small className="leader-country">{player.name} · {player.politics.regime.toUpperCase()}</small></div>
+   <div className="brand-block"><div className="eyebrow">ALPYX // GLOBAL COMMAND · COMMAND & LOGISTICS 0.73 PLAYTEST</div><div className="brand-line"><strong>{profile.commanderName}</strong><span className="day-chip">{tr(lang,'day')} {day}</span></div><small className="leader-country">{player.name} · {player.politics.regime.toUpperCase()}</small></div>
   </div>
 
-  <div className="metrics" aria-label="National resources">
-   <Metric icon={<TreasuryIcon size={16}/>} label={tr(lang,'treasury')} value={`$${player.economy.treasury.toFixed(1)}B`}/>
-   <Metric icon={<FoodIcon size={16}/>} label={tr(lang,'food')} value={player.resources.food.toFixed(0)} tone={player.resources.food<80?'warning':'neutral'}/>
-   <Metric icon={<OilIcon size={16}/>} label={tr(lang,'oil')} value={player.resources.oil.toFixed(0)} tone={player.resources.oil<25?'warning':'neutral'}/>
-   <Metric icon={<FuelIcon size={16}/>} label={tr(lang,'fuel')} value={player.processedResources.fuel.toFixed(0)} tone={player.processedResources.fuel<20?'warning':'neutral'}/>
-   <Metric icon={<ApprovalIcon size={16}/>} label={tr(lang,'approval')} value={`${player.politics.approval.toFixed(0)}%`} tone={player.politics.approval>=60?'good':player.politics.approval<40?'warning':'neutral'}/>
+  <div className="metrics governance-metrics" aria-label="National command indicators">
+   <Metric icon={<TreasuryIcon size={16}/>} label={tr(lang,'treasury')} value={'
+
+  <div className="top-actions">
+   <div className="speed-segment" aria-label="Game speed controls">{speeds.map(item=><button key={item.speed} className={item.speed===speed?'active':''} onClick={()=>setSpeed(item.speed)} title={item.hint}><strong>{item.label}</strong><small>{item.speed===0?tr(lang,'pause'):item.hint}</small></button>)}</div>
+   <div className="national-flag-card" title={player.name}><b>{flagEmoji(player.iso2)}</b><span><small>{player.iso2}</small><strong>{player.name}</strong></span></div>
+  </div>
+  {optionsOpen&&<PlayerOptionsMenu onClose={()=>setOptionsOpen(false)}/>}
+ </header>;
+}
++player.economy.treasury.toFixed(1)+'B'}/>
+   <Metric icon={<EconomyIcon size={16}/>} label="BUDGET / DAY" value={(forecast.dailyBalance>=0?'+':'')+'
+
+  <div className="top-actions">
+   <div className="speed-segment" aria-label="Game speed controls">{speeds.map(item=><button key={item.speed} className={item.speed===speed?'active':''} onClick={()=>setSpeed(item.speed)} title={item.hint}><strong>{item.label}</strong><small>{item.speed===0?tr(lang,'pause'):item.hint}</small></button>)}</div>
+   <div className="national-flag-card" title={player.name}><b>{flagEmoji(player.iso2)}</b><span><small>{player.iso2}</small><strong>{player.name}</strong></span></div>
+  </div>
+  {optionsOpen&&<PlayerOptionsMenu onClose={()=>setOptionsOpen(false)}/>}
+ </header>;
+}
++forecast.dailyBalance.toFixed(3)+'B'} tone={forecast.dailyBalance>=0?'good':'warning'}/>
+   <Metric icon={<ApprovalIcon size={16}/>} label={tr(lang,'approval')} value={player.politics.approval.toFixed(0)+'%'} tone={player.politics.approval>=60?'good':player.politics.approval<40?'warning':'neutral'}/>
+   <Metric icon={<SocietyIcon size={16}/>} label="STABILITY" value={player.politics.stability.toFixed(0)+'%'} tone={player.politics.stability>=65?'good':player.politics.stability<40?'warning':'neutral'}/>
   </div>
 
   <div className="top-actions">
