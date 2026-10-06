@@ -1,7 +1,7 @@
 import { useGameStore } from '../../store/gameStore';
 import { EventArtwork } from '../events/EventArtwork';
 
-const EVENT_LABEL:Record<string,string>={food_crisis:'SUPPLY CRISIS',inflation_shock:'ECONOMIC SHOCK',war_weariness:'WAR HOME FRONT',corruption_scandal:'POLITICAL CRISIS',fuel_crisis:'ENERGY SECURITY',intelligence_breach:'COVERT CRISIS'};
+const EVENT_LABEL:Record<string,string>={food_crisis:'SUPPLY CRISIS',inflation_shock:'ECONOMIC SHOCK',war_weariness:'WAR HOME FRONT',corruption_scandal:'POLITICAL CRISIS',fuel_crisis:'ENERGY SECURITY',intelligence_breach:'COVERT CRISIS',earthquake:'NATURAL DISASTER',health_crisis:'PUBLIC HEALTH',tax_protest:'DOMESTIC PRESSURE',reform_demand:'REFORM AGENDA',foreign_policy_backlash:'FOREIGN POLICY'};
 
 export function EventModal(){
  const event=useGameStore(s=>s.activeEvent);
