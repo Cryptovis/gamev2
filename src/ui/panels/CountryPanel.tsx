@@ -57,7 +57,7 @@ export function CountryPanel(){
     <div className="panel-command-actions"><button onClick={()=>setCommandWindow('dossier')}>{tr(language,'dossier','STRATEGIC DOSSIER')}</button><button onClick={()=>setCommandWindow('supply')}>{tr(language,'supply','SUPPLY COMMAND')}</button></div>
 
     <div className="panel-tabs panel-tabs-10">
-      {(['overview','economy','production','diplomacy','military','intel','cabinet','technology','world','war'] as PanelTab[]).map((id)=><button key={id} className={tab===id?'active':''} onClick={()=>setTab(id)}><PanelTabIcon id={id}/><span>{tr(language,id==='technology'?'tech':id,id==='technology'?'TECH':id.toUpperCase())}</span></button>)}
+      {(['overview','economy','production','diplomacy','military','intel','cabinet','technology','world','war'] as PanelTab[]).map((id)=><button key={id} data-tab={id} className={tab===id?'active':''} onClick={()=>setTab(id)}><PanelTabIcon id={id}/><span>{tr(language,id==='technology'?'tech':id,id==='technology'?'TECH':id.toUpperCase())}</span></button>)}
     </div>
 
     {tab==='overview'&&<>
