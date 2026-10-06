@@ -1,7 +1,7 @@
 import type { GameCommand } from '../domain/commands';
 import type { GameState, TradeResource, WarState } from '../domain/game';
 import { tickGame } from './tick';
-import { addTreaty, changeRelations, relationFor, setWarRelation, updateBilateralRelation, endWarRelation } from './systems/diplomacy';
+import { addTreaty, applyThirdPartyTradeReaction, changeRelations, relationFor, sendResourceGift, sendTreasuryGift, setWarRelation, updateBilateralRelation, endWarRelation } from './systems/diplomacy';
 import { makeImportDeal } from './systems/trade';
 import { emptyLosses, getWarPreview, resolveCombatRound } from './systems/warfare';
 import { resolveEvent } from './systems/events';
@@ -51,6 +51,27 @@ export function applyGameCommand(state: GameState, command: GameCommand): GameSt
       next = changeRelations(next, player.id, target.id, 10);
       return note(next, `DIPLOMACY // Relations with ${target.name} improved (+10).`);
     }
+    case 'diplomacy/giftTreasury': {
+      const player = state.countries[state.playerCountryId];
+      const target = state.countries[command.targetCountryId];
+      if (!player || !target) return state;
+      if (player.economy.treasury < command.amountB) return note(state, `DIPLOMACY // Treasury gift requires ${command.amountB}B.`);
+      const before = relationFor(player,target.id).score;
+      const next = sendTreasuryGift(state,player.id,target.id,command.amountB);
+      const after = relationFor(next.countries[player.id],target.id).score;
+      if (after === before) return note(state,`DIPLOMACY // ${target.name} cannot receive the proposed financial gesture.`);
+      return note(next,`DIPLOMACY // ${command.amountB}B goodwill grant sent to ${target.name}. Bilateral relations improved.`);
+    }
+    case 'diplomacy/giftResource': {
+      const player = state.countries[state.playerCountryId];
+      const target = state.countries[command.targetCountryId];
+      if (!player || !target) return state;
+      const beforeStock = player.resources[command.resource];
+      const next = sendResourceGift(state,player.id,target.id,command.resource);
+      const sent = beforeStock - next.countries[player.id].resources[command.resource];
+      if (sent <= 0) return note(state,`DIPLOMACY // No ${command.resource.toUpperCase()} package is available for aid.`);
+      return note(next,`DIPLOMACY // Humanitarian ${command.resource.toUpperCase()} shipment sent to ${target.name} (${sent.toFixed(1)} units).`);
+    }
     case 'diplomacy/signTradePact': {
       const player = state.countries[state.playerCountryId];
       const target = state.countries[command.targetCountryId];
@@ -60,7 +81,9 @@ export function applyGameCommand(state: GameState, command: GameCommand): GameSt
       if (player.economy.treasury < 5) return note(state, 'DIPLOMACY // Trade mission requires $5B.');
       let next: GameState = { ...state, countries: { ...state.countries, [player.id]: { ...player, economy: { ...player.economy, treasury: player.economy.treasury - 5 } } } };
       next = addTreaty(next, player.id, target.id, 'trade');
-      return note(next, `DIPLOMACY // Trade pact signed with ${target.name}.`);
+      next = changeRelations(next, player.id, target.id, 4);
+      next = applyThirdPartyTradeReaction(next, player.id, target.id);
+      return note(next, `DIPLOMACY // Trade pact signed with ${target.name}. Partner relations improved; hostile rivals may react negatively.`);
     }
     case 'diplomacy/signNonAggression': {
       const player = state.countries[state.playerCountryId];

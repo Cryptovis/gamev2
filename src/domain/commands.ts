@@ -5,6 +5,8 @@ export type GameCommand =
   | { type: 'clock/setSpeed'; speed: GameSpeed }
   | { type: 'economy/setTaxRate'; rate: number }
   | { type: 'diplomacy/improveRelations'; targetCountryId: string }
+  | { type: 'diplomacy/giftTreasury'; targetCountryId: string; amountB: 1 | 5 | 10 }
+  | { type: 'diplomacy/giftResource'; targetCountryId: string; resource: TradeResource }
   | { type: 'diplomacy/signTradePact'; targetCountryId: string }
   | { type: 'diplomacy/signNonAggression'; targetCountryId: string }
   | { type: 'diplomacy/signAlliance'; targetCountryId: string }

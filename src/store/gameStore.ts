@@ -23,6 +23,8 @@ interface GameActions {
   advanceDay: () => void;
   setTaxRate: (rate: number) => void;
   improveRelations: (targetCountryId: string) => void;
+  giftTreasury: (targetCountryId:string,amountB:1|5|10)=>void;
+  giftResource: (targetCountryId:string,resource:TradeResource)=>void;
   signTradePact: (targetCountryId: string) => void;
   signNonAggression: (targetCountryId: string) => void;
   signAlliance: (targetCountryId: string) => void;
@@ -82,6 +84,8 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
   advanceDay: () => set((state) => applyGameCommand(state, { type: 'time/advanceDay' })),
   setTaxRate: (rate) => set((state) => applyGameCommand(state, { type: 'economy/setTaxRate', rate })),
   improveRelations: (targetCountryId) => set((state) => applyGameCommand(state, { type: 'diplomacy/improveRelations', targetCountryId })),
+  giftTreasury: (targetCountryId,amountB) => set((state)=>applyGameCommand(state,{type:'diplomacy/giftTreasury',targetCountryId,amountB})),
+  giftResource: (targetCountryId,resource) => set((state)=>applyGameCommand(state,{type:'diplomacy/giftResource',targetCountryId,resource})),
   signTradePact: (targetCountryId) => set((state) => applyGameCommand(state, { type: 'diplomacy/signTradePact', targetCountryId })),
   signNonAggression: (targetCountryId) => set((state) => applyGameCommand(state, { type: 'diplomacy/signNonAggression', targetCountryId })),
   signAlliance: (targetCountryId) => set((state) => applyGameCommand(state, { type: 'diplomacy/signAlliance', targetCountryId })),

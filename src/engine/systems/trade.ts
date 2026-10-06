@@ -1,5 +1,6 @@
 import type { CountryState, GameState, TradeDeal, TradeResource } from '../../domain/game';
 import { simulateResources } from './resources';
+import { changeRelations } from './diplomacy';
 
 export const TRADE_PRICES: Record<TradeResource, number> = { food: 0.025, oil: 0.06, iron: 0.04, uranium: 0.22 };
 
@@ -50,6 +51,7 @@ export function processTradeDeals(state: GameState): GameState {
   let countries = state.countries;
   let tradeDeals = state.tradeDeals;
   const notices: string[] = [];
+  const relationBonuses: Array<{a:string;b:string;delta:number}> = [];
 
   for (const deal of Object.values(state.tradeDeals)) {
     if (!deal.active) continue;
@@ -92,10 +94,13 @@ export function processTradeDeals(state: GameState): GameState {
     };
 
     tradeDeals = { ...tradeDeals, [deal.id]: { ...deal, nextDeliveryDay: state.day + interval } };
+    relationBonuses.push({a:buyer.id,b:seller.id,delta:interval>1?1:0.08});
     if (interval > 1) notices.push(`TRADE // Monthly ${deal.resource.toUpperCase()} delivery from ${seller.name}: ${quantity.toFixed(1)} units for $${cost.toFixed(2)}B.`);
   }
 
-  return { ...state, countries, tradeDeals, sitrep: [...notices, ...state.sitrep].slice(0, 12) };
+  let next: GameState = { ...state, countries, tradeDeals, sitrep: [...notices, ...state.sitrep].slice(0, 12) };
+  for (const bonus of relationBonuses) next = changeRelations(next,bonus.a,bonus.b,bonus.delta);
+  return next;
 }
 
 export function makeBilateralImportDeal(state: GameState, buyerId: string, sellerId: string, resource: TradeResource): TradeDeal | null {
