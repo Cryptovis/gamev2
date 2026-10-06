@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.71.1-playtest.1 — Commander UX
+- Moved SAVE / LOAD / NEW out of the permanent top HUD and into a commander campaign-options center
+- Clicking the top-left commander portrait now opens Commander & Campaign options instead of immediately showing avatar presets
+- Added commander identity card, nation flag, campaign day, speed, treasury and GDP summary to the options center
+- Added manual Save, Load Latest and New Campaign actions inside the options center
+- Added confirmation guard before starting a new campaign
+- Rebuilt avatar editing as a separate viewport-safe portal with portrait preview and explicit APPLY PORTRAIT action
+- Avatar selection no longer changes instantly on first click
+- Fixed profile/avatar modal clipping with viewport max-height, internal scrolling and responsive layouts
+- Simplified the permanent top HUD so speed controls and national identity have more breathing room
+- Kept 0.72 reserved for the upcoming Production / Industry & Equipment major build
+
 ## 0.71.0-playtest.1
 - Added Living Diplomacy foundation with persistent embassy missions and incoming diplomatic offers
 - Added player and AI embassy creation; embassies improve relationship growth and reduce bilateral trade friction
