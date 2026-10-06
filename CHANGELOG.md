@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.73.0-playtest.1 — Command Architecture & Logistics Foundation
+- Rebuilt the strategic HUD around a governance-first command hierarchy
+- Top HUD now prioritizes Treasury, strategic Budget/Day, Approval and Stability; raw resource clutter moved into a dedicated Resources command window
+- Budget/Day now includes infrastructure maintenance and production operating costs in addition to the base economy forecast
+- Added left-rail MAP and RESOURCES command tools; map controls no longer float permanently over the map
+- Removed the legacy bottom-right MAP trigger and consolidated Layers, Political/Geographic, Globe/Flat, Zoom, Focus and Reset inside the left MAP command
+- Added Strategic Resources command window with reserve days, self-sufficiency, best suppliers and direct Pact/Import actions
+- Added persistent national infrastructure state for every country: Roads, Rail, Ports and Supply Hubs
+- Added infrastructure maintenance, degradation when underfunded, player investments and monthly AI investment behavior
+- Connected infrastructure throughput directly to Supply Command and warfare supply calculations
+- Expanded Supply Command with an Infrastructure tab, national throughput, bottleneck, maintenance and investable network assets
+- Added colored visual language for Overview/Economy/Production/Diplomacy/Military/Intel/Cabinet/Tech/World/War icons and active states
+- Enlarged and upgraded campaign nation-selection rows for readable country name, flag, region/regime and capability data
+- Increased readability floors in dense Intel, Cabinet, Tech and World UI surfaces
+- World Command footer now reports player map layer, presentation and Globe/Flat projection state
+- Save schema bumped to v12 for infrastructure persistence
+- Added infrastructure tests covering initialization, treasury cost, maintenance, supply impact, warfare impact and silent AI investment
+- 0.73 is intentionally a broad foundation build; next step should be one focused hotfix/playtest pass before additional major systems
+
 ## 0.72.1-playtest.1 — Strategic UI / Map Readability
 - Increased sovereign country-label readability with zoom-aware 11–14px sizing and stronger map contrast
 - Increased selected-country label prominence while keeping dense regions controlled with revised reveal thresholds
