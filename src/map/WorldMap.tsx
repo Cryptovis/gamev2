@@ -138,16 +138,18 @@ export function WorldMap() {
   };
 
   const selectFromSurface = (e: React.MouseEvent<SVGSVGElement>) => {
-    if (justDraggedRef.current || !projection.invert) return;
+    const currentProjection=projection;
+    const currentGeojson=geojson;
+    if (justDraggedRef.current || !currentProjection || !currentGeojson || !currentProjection.invert) return;
     let [x,y]=screenPoint(e);
     if (projectionMode==='flat') {
       x=W/2+(x-flatPan.x-W/2)/flatZoom;
       y=H/2+(y-flatPan.y-H/2)/flatZoom;
     }
-    const geo=projection.invert([x,y]);
+    const geo=currentProjection.invert([x,y]);
     if (!geo) return;
     const selectable=new Set(Object.keys(countries));
-    const polygonId=findCountryAtGeoPoint(geojson.features as any,selectable,geo as [number,number]);
+    const polygonId=findCountryAtGeoPoint(currentGeojson.features as any,selectable,geo as [number,number]);
     if (polygonId) {
       const country=countries[polygonId];
       selectCountry(polygonId);
