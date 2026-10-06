@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.62.0-playtest.1
+- Replaced fragile event image URLs with bundled inline SVG event illustrations
+- Added unique visual scenes for food, inflation, war weariness, corruption, fuel and intelligence crises
+- Increased global HUD and national-command typography for readability
+- Replaced tiny bottom-left market, pulse and objectives ribbons with left/right command rails
+- Added badge-driven Objectives, Market, World Pulse, Resource Alerts and SITREP tools
+- Added persistent draggable command windows that remain open until dismissed
+- Added larger event decision cards and consequence text
+- Preserved 0.61 map dock, ocean labels and open-water deselection
+
 ## 0.61.0-playtest.1
 - Enlarged Strategic Objectives panel for practical playtest readability
 - Moved Political/Geographic, Globe/Flat, zoom, focus and reset controls into a MAP popover docked to SITREP
