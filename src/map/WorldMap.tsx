@@ -229,7 +229,7 @@ export function WorldMap() {
   const countryLabels=geojson.features.map((feature)=>{
     const id=String(feature.properties?.iso_a3??'');
     const country=countries[id];
-    if(!country||MICROSTATE_POINTS[id as keyof typeof MICROSTATE_POINTS])return null;
+    if(!country||id===selectedCountryId||MICROSTATE_POINTS[id as keyof typeof MICROSTATE_POINTS])return null;
     const d=path(feature as any); if(!d)return null;
     const centroid=geoCentroid(feature as any);
     if(projectionMode==='globe'){
