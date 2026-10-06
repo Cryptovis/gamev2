@@ -29,6 +29,7 @@ export function snapshotGame(state: GameState): GameState {
     embassies: state.embassies,
     diplomaticOffers: state.diplomaticOffers,
     production: state.production,
+    infrastructure: state.infrastructure,
     lastAiDay: state.lastAiDay,
     lastStrategicReviewDay: state.lastStrategicReviewDay,
     sitrep: state.sitrep,
