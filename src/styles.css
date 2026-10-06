@@ -674,3 +674,195 @@ button,input,select{font:inherit}
   .command-rail-right.country-open{display:none}
   .sitrep{padding-right:12px}.sitrep-command-meta{display:none}
 }
+
+
+/* 0.73 — Command Architecture & Logistics Foundation */
+
+/* Governance-first top HUD */
+.topbar{
+  grid-template-columns:minmax(330px,.95fr) minmax(520px,1.3fr) minmax(390px,.9fr);
+  min-height:78px;
+}
+.governance-metrics{grid-template-columns:repeat(4,minmax(112px,1fr));gap:7px}
+.governance-metrics .top-metric{min-height:48px;padding:7px 10px}
+.governance-metrics .top-metric:nth-child(1){--metric-tone:#d5b45b}
+.governance-metrics .top-metric:nth-child(2){--metric-tone:#68b9d6}
+.governance-metrics .top-metric:nth-child(3){--metric-tone:#61c895}
+.governance-metrics .top-metric:nth-child(4){--metric-tone:#8eb6dd}
+.governance-metrics .top-metric-icon{color:var(--metric-tone)}
+.governance-metrics .top-metric strong{font-size:13px!important}
+.governance-metrics .top-metric small{font-size:9px!important;letter-spacing:.1em}
+
+/* Left command rail is now the global navigation spine */
+.command-rail-left{left:8px}
+.command-rail-left .rail-button{width:64px;min-height:58px}
+.command-rail-left .rail-button small{font-size:9px!important}
+.left-command-dock{
+  position:absolute;
+  z-index:31;
+  left:82px;
+  top:50%;
+  transform:translateY(-50%);
+  pointer-events:auto;
+}
+.left-command-dock .map-mode-bar{
+  position:relative!important;
+  inset:auto!important;
+  width:360px!important;
+  bottom:auto!important;
+  left:auto!important;
+  top:auto!important;
+  transform:none!important;
+  margin:0;
+  box-shadow:0 22px 65px rgba(0,0,0,.46);
+}
+.map-command-dock{max-height:calc(100vh - 140px)}
+.map-command-sections{display:grid;gap:8px;padding-top:2px}
+.map-command-sections>div{display:grid;gap:5px}
+.map-command-sections>div>small{color:#6f8696;font-size:9px;font-weight:900;letter-spacing:.11em}
+.map-command-sections>div>span{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.map-command-sections button{
+  min-height:34px;
+  border:1px solid rgba(137,168,189,.16);
+  border-radius:7px;
+  background:#071925;
+  color:#7f94a4;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.055em;
+  cursor:pointer;
+}
+.map-command-sections button:hover{border-color:#638fa6;color:#e1ebef}
+.map-command-sections button.active{
+  color:#fff;
+  border-color:color-mix(in srgb,var(--accent) 55%,#6b8494);
+  background:color-mix(in srgb,var(--accent) 22%,#0b2635);
+}
+.map-command-sections button:disabled{opacity:.3;cursor:not-allowed}
+.map-camera-actions{grid-template-columns:42px 42px 1fr 1fr!important}
+.map-dock,.map-dock-trigger,.map-dock-popover{display:none!important}
+
+/* National Command category icon color language */
+.panel-tabs-10 button svg{transition:color .15s ease,filter .15s ease}
+.panel-tabs-10 button[data-tab="overview"] svg{color:#8fb3c5}
+.panel-tabs-10 button[data-tab="economy"] svg{color:#55c3d8}
+.panel-tabs-10 button[data-tab="production"] svg{color:#d5aa4f}
+.panel-tabs-10 button[data-tab="diplomacy"] svg{color:#9b83d7}
+.panel-tabs-10 button[data-tab="military"] svg{color:#e18b59}
+.panel-tabs-10 button[data-tab="intel"] svg{color:#6c9fe1}
+.panel-tabs-10 button[data-tab="cabinet"] svg{color:#d2b86b}
+.panel-tabs-10 button[data-tab="technology"] svg{color:#6bd6df}
+.panel-tabs-10 button[data-tab="world"] svg{color:#62c89c}
+.panel-tabs-10 button[data-tab="war"] svg{color:#ef6c75}
+.panel-tabs-10 button.active svg{filter:drop-shadow(0 0 7px currentColor)}
+.panel-tabs-10 button[data-tab="production"].active{border-color:rgba(213,170,79,.55);background:linear-gradient(180deg,rgba(91,67,19,.32),#0a1a24)}
+.panel-tabs-10 button[data-tab="diplomacy"].active{border-color:rgba(155,131,215,.5);background:linear-gradient(180deg,rgba(65,49,102,.34),#091925)}
+.panel-tabs-10 button[data-tab="military"].active,.panel-tabs-10 button[data-tab="war"].active{border-color:rgba(225,105,99,.48);background:linear-gradient(180deg,rgba(83,30,36,.35),#101820)}
+.panel-tabs-10 button[data-tab="intel"].active{border-color:rgba(108,159,225,.48);background:linear-gradient(180deg,rgba(29,57,93,.35),#071824)}
+.panel-tabs-10 button[data-tab="cabinet"].active{border-color:rgba(210,184,107,.48)}
+.panel-tabs-10 button[data-tab="technology"].active{border-color:rgba(107,214,223,.48)}
+.panel-tabs-10 button[data-tab="world"].active{border-color:rgba(98,200,156,.48)}
+
+/* Strategic Resources command */
+.resource-command-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:10px}
+.resource-command-summary span{padding:10px;border:1px solid rgba(137,168,189,.15);border-radius:8px;background:#061520}
+.resource-command-summary small{display:block;color:#6d8294;font-size:9px;letter-spacing:.08em}
+.resource-command-summary strong{display:block;margin-top:3px;color:#e9f1f4;font-size:15px}
+.resource-command-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.resource-command-card{display:grid;gap:8px;padding:12px;border:1px solid rgba(137,168,189,.15);border-radius:10px;background:linear-gradient(180deg,#071823,#05121c)}
+.resource-command-card.critical{border-color:rgba(210,77,89,.42);background:linear-gradient(180deg,rgba(76,21,29,.34),#071219)}
+.resource-command-card header{display:grid;grid-template-columns:30px 1fr auto;gap:8px;align-items:center;color:#79bad2}
+.resource-command-card header span{display:grid}
+.resource-command-card header small{color:#708697;font-size:9px;letter-spacing:.08em}
+.resource-command-card header strong{font-size:18px;color:#f0f5f7}
+.resource-command-card header em{font-style:normal;padding:4px 6px;border-radius:5px;background:#0c2431;color:#86a0b0;font-size:8px;font-weight:900;letter-spacing:.06em}
+.resource-command-card.critical header em{background:#4a2027;color:#f18c95}
+.resource-command-meta{display:flex;justify-content:space-between;gap:8px;color:#7890a0;font-size:9px}
+.supplier-command-list{display:grid;gap:5px;border-top:1px solid rgba(255,255,255,.06);padding-top:8px}
+.supplier-command-list>div{display:grid;grid-template-columns:1fr 64px;gap:7px;align-items:center;padding:7px;border:1px solid rgba(137,168,189,.1);border-radius:7px;background:#06141e}
+.supplier-command-list>div>span{min-width:0;display:grid}
+.supplier-command-list b{font-size:10px;color:#dce6eb}
+.supplier-command-list small{margin-top:2px;color:#718899;font-size:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.supplier-command-list button{min-height:30px;border:1px solid rgba(104,190,219,.24);border-radius:6px;background:#0b2634;color:#7dc6df;font-size:9px;font-weight:900;cursor:pointer}
+.supplier-command-list button:hover{border-color:#68b9d6;color:#fff}
+.supplier-command-list p{margin:3px 0;color:#718899;font-size:9px}
+.resource-command-note{margin:10px 0 0;padding:9px 10px;border-left:3px solid var(--accent);background:rgba(16,45,60,.2);color:#7d93a2;font-size:10px;line-height:1.45}
+
+/* Infrastructure / logistics */
+.infrastructure-command-view{display:grid;gap:12px}
+.infrastructure-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.infrastructure-summary span{padding:11px;border:1px solid rgba(137,168,189,.15);border-radius:8px;background:#061520}
+.infrastructure-summary small{display:block;color:#6d8294;font-size:9px}
+.infrastructure-summary strong{display:block;margin-top:3px;font-size:15px}
+.infrastructure-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.infrastructure-grid article{display:grid;gap:8px;padding:12px;border:1px solid rgba(137,168,189,.15);border-radius:10px;background:linear-gradient(180deg,#071823,#05121c)}
+.infrastructure-grid header{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.infrastructure-grid header span{display:grid}
+.infrastructure-grid header small{color:#6f8595;font-size:9px;letter-spacing:.08em}
+.infrastructure-grid header strong{margin-top:2px;font-size:18px}
+.infrastructure-grid header em{font-style:normal;color:#6fbf9b;font-size:8px;font-weight:900}
+.infrastructure-grid article>i{height:7px;border-radius:99px;background:#102734;overflow:hidden}
+.infrastructure-grid article>i b{display:block;height:100%;background:linear-gradient(90deg,#4e8ca7,#6ac6d8,#d0ae55)}
+.infrastructure-grid p{min-height:42px;margin:0;color:#8195a3;font-size:10px;line-height:1.4}
+.infrastructure-grid button{min-height:34px;border:1px solid rgba(208,174,82,.25);border-radius:7px;background:rgba(87,65,20,.18);color:#ddb95f;font-size:10px;font-weight:900;cursor:pointer}
+.infrastructure-grid button small{color:#9b8758;font-size:8px}
+.infrastructure-grid button:hover:not(:disabled){border-color:#d4b158;background:rgba(111,82,23,.28)}
+.infrastructure-grid button:disabled{opacity:.3;cursor:not-allowed}
+.supply-investment-note{margin:0;padding:10px;border-left:3px solid #63abc4;background:rgba(19,52,66,.18);color:#7f95a3;font-size:10px;line-height:1.45}
+.command-subtabs{grid-template-columns:repeat(4,1fr)!important}
+
+/* Campaign nation picker v2 */
+.country-search{height:48px!important;padding:0 13px!important;font-size:14px!important;border-radius:9px!important}
+.wizard-country-scroll{height:490px!important;display:grid;align-content:start;gap:7px;padding-right:5px}
+.country-choice-list button{
+  min-height:62px!important;
+  grid-template-columns:42px minmax(0,1fr) 54px!important;
+  gap:10px!important;
+  padding:10px 12px!important;
+  border-radius:9px!important;
+}
+.country-choice-list button>b{font-size:24px!important}
+.country-choice-list button span strong{font-size:14px!important;letter-spacing:.01em!important}
+.country-choice-list button span small{margin-top:3px;font-size:10px!important;line-height:1.3!important;text-transform:capitalize}
+.country-choice-list button>em{font-size:13px!important;font-weight:900;color:#a6bac7}
+.country-choice-list button.active{box-shadow:inset 3px 0 0 var(--setup-accent),0 8px 22px rgba(0,0,0,.14)}
+.wizard-country-list .wizard-intro h2{font-size:36px}
+.wizard-country-list .wizard-kicker{font-size:11px}
+
+/* Footer cleanup now that legacy map trigger is removed */
+.sitrep{padding-right:225px}
+.sitrep-command-meta small{font-size:9px}
+.sitrep-command-meta b{font-size:9px}
+
+/* Dense UI readability floor */
+.command-panel .subhead{font-size:10px!important}
+.command-panel .muted{font-size:11px!important}
+.command-panel button{letter-spacing:.035em}
+.command-panel .architecture-note,.command-panel .data-note{font-size:10px!important}
+.intel-actions button{font-size:10px!important}
+.intel-actions small{font-size:9px!important}
+.ministry-copy b{font-size:10px!important}
+.ministry-copy small{font-size:9px!important}
+.tech-node strong{font-size:10px!important}
+.tech-node small{font-size:9px!important}
+.world-card strong{font-size:11px!important}
+.world-card small{font-size:9px!important}
+
+/* Responsive */
+@media(max-width:1380px){
+  .topbar{grid-template-columns:minmax(300px,1fr) minmax(460px,1.2fr) auto}
+  .governance-metrics{grid-template-columns:repeat(2,minmax(120px,1fr))}
+  .left-command-dock{left:78px}
+}
+@media(max-width:1180px){
+  .governance-metrics{display:none}
+  .topbar{grid-template-columns:minmax(280px,1fr) auto}
+  .left-command-dock{left:76px}
+  .left-command-dock .map-mode-bar{width:330px!important}
+}
+@media(max-width:900px){
+  .left-command-dock{left:10px;top:auto;bottom:58px;transform:none}
+  .left-command-dock .map-mode-bar{width:min(360px,calc(100vw - 20px))!important}
+  .resource-command-grid,.infrastructure-grid{grid-template-columns:1fr}
+  .resource-command-summary,.infrastructure-summary{grid-template-columns:1fr 1fr}
+}
