@@ -7,7 +7,7 @@ describe('resource advisor',()=>{
   const base=makeInitialState();
   const player={...base.countries.TUR,resources:{...base.countries.TUR.resources,food:1}};
   const aze={...base.countries.AZE,resourceProduction:{...base.countries.AZE.resourceProduction,food:20}};
-  const state={...base,day:10,speed:3,preferredSpeed:3 as const,countries:{...base.countries,TUR:player,AZE:aze}};
+  const state={...base,day:10,speed:3 as const,preferredSpeed:3 as const,countries:{...base.countries,TUR:player,AZE:aze}};
   const next=maybeCreateResourceAdvisor(state);
   if(next.activeAdvisor){
    expect(next.speed).toBe(0);
