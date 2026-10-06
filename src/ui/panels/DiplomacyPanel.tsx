@@ -3,7 +3,7 @@ import { embassyFor, relationFor, relationshipIndex, relationshipStance } from '
 import type { TradeResource } from '../../domain/game';
 import { flagEmoji } from '../../data/countryThemes';
 import { useGameStore } from '../../store/gameStore';
-import { DiplomacyIcon, EmbassyIcon, ResourceIcon } from '../icons/GameIcons';
+import { BlocIcon, DiplomacyIcon, EmbassyIcon, ResourceIcon, WarIcon } from '../icons/GameIcons';
 
 const resources:TradeResource[]=['food','oil','iron','uranium'];
 const humanize=(value:string)=>value.replaceAll('_',' ').replace(/\b\w/g,(m)=>m.toUpperCase());
@@ -40,11 +40,11 @@ export function DiplomacyPanel({selectedId}:{selectedId:string}){
   <div className="action-grid diplomacy-actions">
    <button onClick={()=>state.improveRelations(selected.id)}><DiplomacyIcon size={15}/><span>Diplomatic Mission <small>-$2B · gradual goodwill</small></span></button>
    <button disabled={Boolean(embassy)} onClick={()=>state.openEmbassyWith(selected.id)}><EmbassyIcon size={15}/><span>{embassy?'Embassy Established':'Open Embassy'} <small>{embassy?'relations & trade boosted':'-$3B · diplomatic booster'}</small></span></button>
-   <button onClick={()=>state.signTradePact(selected.id)}>Trade Pact <small>-$5B · improves commerce</small></button>
-   <button onClick={()=>state.signNonAggression(selected.id)}>Non-Aggression <small>-$4B</small></button>
-   <button onClick={()=>state.signAlliance(selected.id)}>Alliance <small>-$10B · high trust</small></button>
-   <button className={relation.sanctions?'danger active':'danger'} onClick={()=>state.toggleEmbargo(selected.id)}>{relation.sanctions?'Lift Embargo':'Impose Embargo'}</button>
-   <button onClick={()=>playerBloc?state.inviteToBloc(selected.id):state.formBloc(selected.id)}>{playerBloc?'Invite to Bloc':'Form Strategic Bloc'}</button>
+   <button onClick={()=>state.signTradePact(selected.id)}><DiplomacyIcon size={15}/><span>Trade Pact <small>-$5B · improves commerce</small></span></button>
+   <button onClick={()=>state.signNonAggression(selected.id)}><DiplomacyIcon size={15}/><span>Non-Aggression <small>-$4B · mutual restraint</small></span></button>
+   <button onClick={()=>state.signAlliance(selected.id)}><BlocIcon size={15}/><span>Alliance <small>-$10B · high trust</small></span></button>
+   <button className={relation.sanctions?'danger active':'danger'} onClick={()=>state.toggleEmbargo(selected.id)}><WarIcon size={15}/><span>{relation.sanctions?'Lift Embargo':'Impose Embargo'}</span></button>
+   <button onClick={()=>playerBloc?state.inviteToBloc(selected.id):state.formBloc(selected.id)}><BlocIcon size={15}/><span>{playerBloc?'Invite to Bloc':'Form Strategic Bloc'}</span></button>
   </div>
 
   <div className="subhead">GOODWILL & AID</div>
