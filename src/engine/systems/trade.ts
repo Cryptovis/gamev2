@@ -48,20 +48,35 @@ export function getTradeQuote(state: GameState, sellerId: string, resource: Trad
 
 export function processTradeDeals(state: GameState): GameState {
   let countries = state.countries;
+  let tradeDeals = state.tradeDeals;
   const notices: string[] = [];
 
   for (const deal of Object.values(state.tradeDeals)) {
     if (!deal.active) continue;
+    if (deal.expiresDay && state.day > deal.expiresDay) {
+      tradeDeals = { ...tradeDeals, [deal.id]: { ...deal, active: false } };
+      notices.push(`TRADE // Long-term ${deal.resource.toUpperCase()} contract expired.`);
+      continue;
+    }
+
+    const interval = Math.max(1, deal.deliveryIntervalDays ?? 1);
+    const dueDay = deal.nextDeliveryDay ?? state.day;
+    if (state.day < dueDay) continue;
+
     const seller = countries[deal.sellerId];
     const buyer = countries[deal.buyerId];
     if (!seller || !buyer || seller.globalSanctions || buyer.globalSanctions) continue;
+
     const exportCap = getExportCapacity(seller, deal.resource);
-    const quantity = Math.min(deal.quantityPerDay, seller.resources[deal.resource], exportCap);
+    const quantity = Math.min(deal.quantityPerDay * interval, seller.resources[deal.resource], exportCap * interval);
     const cost = quantity * deal.pricePerUnit;
+
     if (quantity <= 0.0001 || buyer.economy.treasury < cost) {
-      notices.push(`TRADE // ${buyer.name} ↔ ${seller.name} ${deal.resource.toUpperCase()} flow paused — supply or liquidity unavailable.`);
+      notices.push(`TRADE // ${buyer.name} ↔ ${seller.name} ${deal.resource.toUpperCase()} delivery delayed — supply or liquidity unavailable.`);
+      tradeDeals = { ...tradeDeals, [deal.id]: { ...deal, nextDeliveryDay: state.day + interval } };
       continue;
     }
+
     countries = {
       ...countries,
       [seller.id]: {
@@ -75,9 +90,12 @@ export function processTradeDeals(state: GameState): GameState {
         resources: { ...buyer.resources, [deal.resource]: buyer.resources[deal.resource] + quantity },
       },
     };
+
+    tradeDeals = { ...tradeDeals, [deal.id]: { ...deal, nextDeliveryDay: state.day + interval } };
+    if (interval > 1) notices.push(`TRADE // Monthly ${deal.resource.toUpperCase()} delivery from ${seller.name}: ${quantity.toFixed(1)} units for $${cost.toFixed(2)}B.`);
   }
 
-  return { ...state, countries, sitrep: [...notices, ...state.sitrep].slice(0, 12) };
+  return { ...state, countries, tradeDeals, sitrep: [...notices, ...state.sitrep].slice(0, 12) };
 }
 
 export function makeBilateralImportDeal(state: GameState, buyerId: string, sellerId: string, resource: TradeResource): TradeDeal | null {
@@ -88,4 +106,23 @@ export function makeBilateralImportDeal(state: GameState, buyerId: string, selle
 
 export function makeImportDeal(state: GameState, targetCountryId: string, resource: TradeResource): TradeDeal | null {
   return makeBilateralImportDeal(state, state.playerCountryId, targetCountryId, resource);
+}
+
+export function makeLongTermImportContract(state: GameState, buyerId: string, sellerId: string, resource: TradeResource, years: 1|3|5|10): TradeDeal | null {
+  const quote = getTradeQuote(state, sellerId, resource);
+  if (!quote.quantity || quote.quantity <= 0) return null;
+  const interval = 30;
+  return {
+    id: `LTC-${sellerId}-${buyerId}-${resource}-${state.day}`,
+    sellerId, buyerId, resource,
+    quantityPerDay: quote.quantity,
+    pricePerUnit: quote.price,
+    active: true,
+    contractType: 'long_term',
+    startDay: state.day,
+    expiresDay: state.day + years * 365,
+    deliveryIntervalDays: interval,
+    nextDeliveryDay: state.day + interval,
+    contractYears: years,
+  };
 }

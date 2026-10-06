@@ -85,5 +85,5 @@ export function resolveEvent(state: GameState, optionId: string): GameState {
     }
   }
 
-  return { ...state, countries:{...state.countries,[player.id]:nextPlayer}, activeEvent:null, eventCooldownUntil:state.day+18, sitrep:[`EVENT RESOLVED // ${summary}`,...state.sitrep].slice(0,12) };
+  return { ...state, countries:{...state.countries,[player.id]:nextPlayer}, activeEvent:null, speed:state.preferredSpeed, eventCooldownUntil:state.day+18, sitrep:[`EVENT RESOLVED // ${summary}`,...state.sitrep].slice(0,12) };
 }
