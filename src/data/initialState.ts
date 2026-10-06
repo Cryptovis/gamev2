@@ -13,7 +13,7 @@ export const makeInitialState = (): GameState => ({
   selectedCountryId: 'TUR',
   mapMode: 'political',
   mapPresentation: 'political',
-  mapNotice: 'Living World 0.5 online — strategic AI, intelligence operations and influence networks enabled.',
+  mapNotice: 'Living Diplomacy 0.71 online — embassies, diplomatic offers and pressure-based domestic agenda enabled.',
   countries: structuredClone(initialCountries),
   tradeDeals: {},
   wars: {},
@@ -31,7 +31,7 @@ export const makeInitialState = (): GameState => ({
   lastAiDay: 1,
   lastStrategicReviewDay: 1,
   sitrep: [
-    'AlpyX Living World 0.50 online.',
+    'AlpyX Living Diplomacy 0.71 online.',
     'Strategic AI, covert operations and influence networks loaded alongside Strategic Command systems.',
   ],
 });
