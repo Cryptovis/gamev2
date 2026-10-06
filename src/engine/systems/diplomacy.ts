@@ -1,4 +1,4 @@
-import type { CountryState, DiplomaticRelation, GameState, TradeResource, TreatyType } from '../../domain/game';
+import type { CountryState, DiplomaticRelation, EmbassyLevel, EmbassyMission, GameState, TradeResource, TreatyType } from '../../domain/game';
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 
@@ -130,4 +130,35 @@ export function applyThirdPartyTradeReaction(state: GameState, actorId: string, 
     }
   }
   return next;
+}
+
+
+const embassyKey=(aId:string,bId:string)=>[aId,bId].sort().join('::');
+
+export function embassyFor(state:GameState,aId:string,bId:string):EmbassyMission|null{
+  return state.embassies[embassyKey(aId,bId)] ?? null;
+}
+
+export function embassyRelationBonus(state:GameState,aId:string,bId:string):number{
+  const embassy=embassyFor(state,aId,bId);
+  return embassy ? 1 + embassy.level * 0.35 : 1;
+}
+
+export function openEmbassy(state:GameState,aId:string,bId:string,level:EmbassyLevel=1):GameState{
+  const a=state.countries[aId], b=state.countries[bId];
+  if(!a||!b||aId===bId||relationFor(a,bId).status==='war') return state;
+  const key=embassyKey(aId,bId);
+  const existing=state.embassies[key];
+  const nextLevel:EmbassyLevel=existing ? Math.min(4,Math.max(existing.level,level)) as EmbassyLevel : level;
+  const mission:EmbassyMission={id:key,countryA:key.split('::')[0],countryB:key.split('::')[1],openedDay:existing?.openedDay??state.day,level:nextLevel};
+  let next={...state,embassies:{...state.embassies,[key]:mission}};
+  if(!existing) next=changeRelations(next,aId,bId,6);
+  return next;
+}
+
+export function closeEmbassy(state:GameState,aId:string,bId:string):GameState{
+  const key=embassyKey(aId,bId);
+  if(!state.embassies[key]) return state;
+  const embassies={...state.embassies}; delete embassies[key];
+  return {...state,embassies};
 }
