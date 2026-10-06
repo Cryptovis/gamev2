@@ -14,6 +14,7 @@ import { processStrategicGoals } from './systems/strategicGoals';
 import { processLivingEconomyAI } from './systems/livingEconomyAI';
 import { processWorldDiplomacy } from './systems/worldDynamics';
 import { maybeCreateResourceAdvisor } from './systems/advisor';
+import { processIncomingDiplomaticOffers } from './systems/diplomaticOffers';
 
 export function tickCountry(country: CountryState): CountryState {
   const administered = processMinistries(country);
@@ -67,6 +68,7 @@ export function tickGame(state: GameState): GameState {
   next = processStrategicGoals(next);
   next = processLivingEconomyAI(next);
   next = processWorldDiplomacy(next);
+  next = processIncomingDiplomaticOffers(next);
   next = processCountryAI(next);
   next = maybeTriggerEvent(next);
   next = maybeCreateResourceAdvisor(next);
