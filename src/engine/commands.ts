@@ -139,7 +139,7 @@ export function applyGameCommand(state: GameState, command: GameCommand): GameSt
       const existing = Object.values(state.wars).find((war) => war.status === 'active' && ((war.attackerId === attacker.id && war.defenderId === defender.id) || (war.attackerId === defender.id && war.defenderId === attacker.id)));
       if (existing) return note(state, `WAR // Conflict with ${defender.name} is already active.`);
       const warId = `${attacker.id}-${defender.id}-${state.day}`;
-      const preview = getWarPreview(attacker, defender);
+      const preview = getWarPreview(attacker, defender, state.infrastructure[attacker.id], state.infrastructure[defender.id]);
       const war: WarState = { id: warId, attackerId: attacker.id, defenderId: defender.id, startedDay: state.day, progress: 0, rounds: 0, autoAssault: false, status: 'active', terrain: preview.terrain, attackerSupply: preview.attackerSupply, defenderSupply: preview.defenderSupply, airSuperiority: preview.airSuperiority, attackerExhaustion: 0, defenderExhaustion: 0, lastCombatDay: state.day - 1, attackerLosses: emptyLosses(), defenderLosses: emptyLosses(), lastReport: `Mobilization ordered · ${preview.terrain.toUpperCase()} theatre · supply ${preview.attackerSupply.toFixed(0)}%.` };
       let next = cancelPairTrades(state, attacker.id, defender.id);
       next = setWarRelation(next, attacker.id, defender.id);
