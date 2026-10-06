@@ -16,6 +16,7 @@ import { processWorldDiplomacy } from './systems/worldDynamics';
 import { maybeCreateResourceAdvisor } from './systems/advisor';
 import { processIncomingDiplomaticOffers } from './systems/diplomaticOffers';
 import { processProduction, processProductionAI } from './systems/production';
+import { processInfrastructure, processInfrastructureAI } from './systems/infrastructure';
 
 export function tickCountry(country: CountryState): CountryState {
   const administered = processMinistries(country);
@@ -62,6 +63,7 @@ export function tickGame(state: GameState): GameState {
   }
   let next: GameState = { ...state, day: nextDay, countries, council: { ...state.council, influenceByCountry }, sitrep: [...notices, ...state.sitrep].slice(0, 12) };
   next = processTradeDeals(next);
+  next = processInfrastructure(next);
   next = processProduction(next);
   next = processAutoWars(next);
   next = processElection(next);
@@ -69,6 +71,7 @@ export function tickGame(state: GameState): GameState {
   next = processInfluence(next);
   next = processStrategicGoals(next);
   next = processProductionAI(next);
+  next = processInfrastructureAI(next);
   next = processLivingEconomyAI(next);
   next = processWorldDiplomacy(next);
   next = processIncomingDiplomaticOffers(next);
