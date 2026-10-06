@@ -19,6 +19,7 @@ export type StrategicGoal = 'stabilize' | 'grow_economy' | 'rearm' | 'secure_res
 export type IntelOperationType = 'gather_intelligence' | 'influence_campaign' | 'sabotage_industry' | 'counter_network';
 export type IntelOperationStatus = 'active' | 'success' | 'failed' | 'compromised';
 export type EquipmentType = 'infantry_equipment' | 'artillery' | 'armor' | 'fighters' | 'logistics' | 'naval';
+export type InfrastructureAsset = 'roads' | 'rail' | 'ports' | 'hubs';
 
 export interface DemographicsState { population: number; workforce: number; growthRate: number; }
 export interface ResourceStockpile { food: number; oil: number; iron: number; uranium: number; }
@@ -46,6 +47,16 @@ export interface DiplomaticOffer { id:string; type:DiplomaticOfferType; senderId
 export type EquipmentStockpile = Record<EquipmentType, number>;
 export interface ProductionLine { id:string; equipment:EquipmentType; factories:number; efficiency:number; lastOutput:number; }
 export interface ProductionInputUse { steel:number; fuel:number; electricity:number; treasury:number; }
+export interface NationalInfrastructureState {
+  roads:number;
+  rail:number;
+  ports:number;
+  hubs:number;
+  maintenance:number;
+  throughput:number;
+  bottleneck:'none'|'roads'|'rail'|'ports'|'hubs'|'power'|'fuel';
+  lastInvestmentDay:number;
+}
 export interface NationalProductionState {
   militaryFactoryShare:number;
   lines:Record<EquipmentType,ProductionLine>;
@@ -149,6 +160,7 @@ export interface GameState {
   embassies: Record<string, EmbassyMission>;
   diplomaticOffers: DiplomaticOffer[];
   production: Record<string, NationalProductionState>;
+  infrastructure: Record<string, NationalInfrastructureState>;
   lastAiDay: number;
   lastStrategicReviewDay: number;
   sitrep: string[];
