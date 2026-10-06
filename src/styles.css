@@ -538,3 +538,139 @@ button,input,select{font:inherit}
 .production-doctrine-note{margin:0;padding:10px 11px;border-left:3px solid #d2ad55;background:rgba(92,68,24,.08);color:#7f94a4;font-size:10px;line-height:1.5}
 @media(max-width:1250px){.command-panel{width:min(420px,calc(100vw - 36px))}.production-kpis{grid-template-columns:1fr 1fr}.production-input-strip{grid-template-columns:1fr 1fr}.production-line-card{grid-template-columns:1fr 1fr;grid-template-areas:'identity identity' 'eff output' 'factories inputs'}}
 @media(max-width:760px){.equipment-stock-grid{grid-template-columns:1fr}.panel-tabs-10{grid-template-columns:repeat(2,1fr)}}
+
+
+/* 0.72.1 — Strategic UI / Map Readability */
+.country-map-label{
+  fill:rgba(241,246,249,.94);
+  font-weight:850;
+  letter-spacing:.035em;
+  paint-order:stroke;
+  stroke:#06131d;
+  stroke-width:3.4px;
+  stroke-linejoin:round;
+  text-shadow:none;
+}
+.selected-map-label text{
+  fill:#fff3c7;
+  font-weight:950;
+  paint-order:stroke;
+  stroke:#07131d;
+  stroke-width:3.8px;
+}
+.microstate-point text{font-size:10.5px!important;stroke-width:3px}
+
+.command-panel{
+  top:100px;
+  right:18px;
+  width:min(470px,calc(100vw - 36px));
+  max-height:calc(100vh - 126px);
+  overflow-y:auto;
+  overflow-x:hidden;
+  scrollbar-gutter:stable;
+  overscroll-behavior:contain;
+  padding:18px;
+}
+.command-panel::-webkit-scrollbar{width:7px}.command-panel::-webkit-scrollbar-track{background:rgba(255,255,255,.025)}.command-panel::-webkit-scrollbar-thumb{background:rgba(127,159,181,.26);border-radius:99px}.command-panel::-webkit-scrollbar-thumb:hover{background:rgba(127,159,181,.42)}
+.command-panel h1{font-size:28px}
+.country-select{font-size:12px;min-height:40px}
+.identity-strip small{font-size:9px}.identity-strip strong{font-size:11px}
+.panel-command-actions button{min-height:38px;font-size:11px}
+
+.panel-tabs-10{
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:6px;
+  margin:14px 0 16px;
+}
+.panel-tabs-10 button{
+  min-width:0;
+  min-height:42px;
+  padding:8px 5px;
+  font-size:10px!important;
+}
+.panel-tabs-10 button:nth-child(9){grid-column:2}
+.panel-tabs-10 button:nth-child(10){grid-column:3}
+.panel-tabs-10 button span{font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.panel-tabs-10 button svg{width:14px;height:14px;flex:0 0 auto}
+.war-command,.operation-brief,.war-theatre,.brief-grid,.front-metrics,.casualty-grid{min-width:0}
+.operation-brief{overflow:hidden}
+.operation-brief p{font-size:11px!important;line-height:1.5;overflow-wrap:anywhere}
+.brief-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+.brief-grid span{min-width:0}
+.brief-grid strong{font-size:13px}
+.declare-war{
+  min-height:48px;
+  padding:13px 12px;
+  font-size:13px;
+  letter-spacing:.055em;
+  white-space:normal;
+  overflow-wrap:anywhere;
+}
+.architecture-note{padding-bottom:4px}
+.command-rail-right.country-open{right:500px!important}
+
+.map-mode-bar{
+  top:auto;
+  left:90px;
+  bottom:58px;
+  width:360px;
+  display:grid;
+  gap:9px;
+  padding:12px;
+  border:1px solid rgba(133,164,185,.24);
+  border-radius:11px;
+  background:linear-gradient(180deg,rgba(7,22,33,.95),rgba(4,14,23,.96));
+  box-shadow:0 16px 45px rgba(0,0,0,.36);
+  backdrop-filter:blur(12px);
+}
+.map-mode-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.07)}
+.map-mode-heading>span{display:grid;gap:1px}.map-mode-heading small{color:#6f8595;font-size:9px;letter-spacing:.11em;font-weight:800}.map-mode-heading strong{font-size:12px;letter-spacing:.08em}.map-mode-heading em{font-style:normal;padding:5px 7px;border:1px solid color-mix(in srgb,var(--accent) 28%,#39505f);border-radius:6px;background:color-mix(in srgb,var(--accent) 12%,#071925);color:var(--accent);font-size:9px;font-weight:900;letter-spacing:.08em}
+.map-mode-buttons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.map-mode-buttons button{
+  justify-content:flex-start;
+  min-height:38px;
+  padding:8px 10px;
+  font-size:11px;
+  letter-spacing:.045em;
+}
+.map-mode-buttons button span{width:18px;font-size:11px}
+.map-notice{width:100%;box-sizing:border-box;font-size:11px!important;line-height:1.35}
+
+.sitrep{
+  min-height:42px;
+  padding:8px 168px 8px 13px;
+}
+.sitrep-command-meta{
+  position:absolute;
+  right:12px;
+  top:50%;
+  transform:translateY(-50%);
+  display:grid;
+  justify-items:end;
+  gap:2px;
+  white-space:nowrap;
+}
+.sitrep-command-meta b{color:#60798a;font-size:9px;letter-spacing:.11em}
+.sitrep-command-meta small{color:#8498a6;font-size:9px;letter-spacing:.055em}
+.sitrep-hint{display:none!important}
+.map-legend{display:none!important}
+
+@media(max-width:1320px){
+  .command-panel{width:min(445px,calc(100vw - 32px));right:16px}
+  .command-rail-right.country-open{right:472px!important}
+  .map-mode-bar{left:82px;width:330px}
+}
+@media(max-width:1050px){
+  .command-panel{top:88px;max-height:calc(100vh - 112px);width:min(420px,calc(100vw - 24px));right:12px}
+  .command-rail-right.country-open{right:446px!important}
+  .map-mode-bar{left:78px;width:300px}
+  .map-mode-buttons button{font-size:10px}
+}
+@media(max-width:800px){
+  .map-mode-bar{left:10px;bottom:58px;width:min(330px,calc(100vw - 20px))}
+  .command-panel{left:10px;right:10px;width:auto;top:82px;max-height:calc(100vh - 108px)}
+  .panel-tabs-10{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .panel-tabs-10 button:nth-child(9),.panel-tabs-10 button:nth-child(10){grid-column:auto}
+  .command-rail-right.country-open{display:none}
+  .sitrep{padding-right:12px}.sitrep-command-meta{display:none}
+}
