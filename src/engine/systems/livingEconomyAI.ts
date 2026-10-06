@@ -1,0 +1,13 @@
+import type { GameState, TradeResource } from '../../domain/game';
+import { addTreaty, changeRelations, relationFor } from './diplomacy';
+import { getExportCapacity, getGlobalMarketPrice, makeBilateralImportDeal } from './trade';
+import { simulateResources } from './resources';
+const resources:TradeResource[]=['food','oil','iron','uranium'];
+function reserveDays(state:GameState,id:string,r:TradeResource){const c=state.countries[id],f=simulateResources(c);return f.consumption[r]<=.0001?9999:c.resources[r]/f.consumption[r];}
+function needScore(state:GameState,id:string,r:TradeResource){const c=state.countries[id],f=simulateResources(c),days=reserveDays(state,id,r);return(f.net[r]<0?35:0)+(days<30?50:days<75?25:0)+(c.ai.strategicGoal==='secure_resources'?18:0)+(r==='oil'&&c.processedResources.fuel<25?22:0);}
+function supplierScore(state:GameState,buyerId:string,sellerId:string,r:TradeResource){const buyer=state.countries[buyerId],seller=state.countries[sellerId],rel=relationFor(buyer,sellerId),cap=getExportCapacity(seller,r),market=getGlobalMarketPrice(state,r);return cap*24+rel.score*.3-(seller.globalSanctions?999:0)-(rel.status==='war'?999:0)-market*4;}
+export function processLivingEconomyAI(state:GameState):GameState{
+ if(state.day%7!==0)return state;let next=state;const notes:string[]=[];
+ for(const buyer of Object.values(next.countries)){if(buyer.id===next.playerCountryId||buyer.controllerCountryId||buyer.globalSanctions)continue;const activeImports=Object.values(next.tradeDeals).filter(d=>d.active&&d.buyerId===buyer.id).length;if(activeImports>=4)continue;const ranked=resources.map(r=>({r,score:needScore(next,buyer.id,r)})).sort((a,b)=>b.score-a.score),need=ranked[0];if(!need||need.score<45)continue;if(Object.values(next.tradeDeals).some(d=>d.active&&d.buyerId===buyer.id&&d.resource===need.r))continue;const suppliers=Object.values(next.countries).filter(s=>s.id!==buyer.id&&getExportCapacity(s,need.r)>.05).map(s=>({s,score:supplierScore(next,buyer.id,s.id,need.r)})).sort((a,b)=>b.score-a.score),pick=suppliers[0];if(!pick||pick.score<-10)continue;const rel=relationFor(next.countries[buyer.id],pick.s.id);if(rel.score<-25||rel.status==='war'||rel.sanctions)continue;if(!rel.treaties.includes('trade')){if(rel.score<5){next=changeRelations(next,buyer.id,pick.s.id,2);continue;}next=addTreaty(next,buyer.id,pick.s.id,'trade');}const deal=makeBilateralImportDeal(next,buyer.id,pick.s.id,need.r);if(!deal)continue;next={...next,tradeDeals:{...next.tradeDeals,[deal.id]:deal}};notes.push(`AI TRADE // ${buyer.name} secured ${need.r.toUpperCase()} imports from ${pick.s.name}.`);}
+ return {...next,sitrep:[...notes,...next.sitrep].slice(0,12)};
+}

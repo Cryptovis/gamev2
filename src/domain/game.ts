@@ -8,6 +8,7 @@ export type RelationStatus = 'war' | 'hostile' | 'neutral' | 'friendly' | 'ally'
 export type TreatyType = 'trade' | 'nonAggression' | 'alliance';
 export type TradeResource = 'food' | 'oil' | 'iron' | 'uranium';
 export type WarStatus = 'active' | 'victory' | 'defeat' | 'withdrawn';
+export type BattlefieldTerrain = 'plains' | 'urban' | 'mountain' | 'forest' | 'desert' | 'coastal';
 export type CampaignStatus = 'active' | 'lost';
 export type EventKind = 'food_crisis' | 'inflation_shock' | 'war_weariness' | 'corruption_scandal';
 export type MinistryKey = 'economy' | 'defense' | 'science' | 'intelligence' | 'interior' | 'society';
@@ -63,7 +64,11 @@ export interface CountryState {
 
 export interface TradeDeal { id: string; sellerId: string; buyerId: string; resource: TradeResource; quantityPerDay: number; pricePerUnit: number; active: boolean; }
 export interface CasualtySnapshot { personnel: number; tanks: number; artillery: number; fighters: number; bombers: number; warships: number; }
-export interface WarState { id: string; attackerId: string; defenderId: string; startedDay: number; progress: number; rounds: number; autoAssault: boolean; status: WarStatus; attackerLosses: CasualtySnapshot; defenderLosses: CasualtySnapshot; lastReport: string; }
+export interface WarState {
+  id: string; attackerId: string; defenderId: string; startedDay: number; progress: number; rounds: number; autoAssault: boolean; status: WarStatus;
+  terrain: BattlefieldTerrain; attackerSupply: number; defenderSupply: number; airSuperiority: number; attackerExhaustion: number; defenderExhaustion: number; lastCombatDay: number;
+  attackerLosses: CasualtySnapshot; defenderLosses: CasualtySnapshot; lastReport: string;
+}
 
 export interface EventOption { id: string; label: string; consequenceHint: string; }
 export interface ActiveGameEvent { id: string; kind: EventKind; title: string; description: string; triggeredDay: number; options: EventOption[]; }

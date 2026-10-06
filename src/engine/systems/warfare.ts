@@ -1,142 +1,29 @@
-import type { CasualtySnapshot, CountryState, GameState, MilitaryState, WarState } from '../../domain/game';
+import type { BattlefieldTerrain, CasualtySnapshot, CountryState, GameState, MilitaryState, WarState } from '../../domain/game';
 import { nextRandom } from '../rng';
 import { endWarRelation } from './diplomacy';
-
-const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
-const zeroLosses = (): CasualtySnapshot => ({ personnel: 0, tanks: 0, artillery: 0, fighters: 0, bombers: 0, warships: 0 });
-
-export const emptyLosses = zeroLosses;
-
-function militaryPower(country: CountryState) {
-  const m = country.military;
-  const units = m.personnel * 0.002 + m.tanks * 1.6 + m.artillery * 1.1 + m.fighters * 8 + m.bombers * 11 + m.warships * 5;
-  const quality = (m.readiness + m.morale + m.logistics + m.technology) / 400;
-  return Math.max(1, units * (0.55 + quality * 0.9));
+const clamp=(v:number,min:number,max:number)=>Math.min(max,Math.max(min,v));
+const zeroLosses=():CasualtySnapshot=>({personnel:0,tanks:0,artillery:0,fighters:0,bombers:0,warships:0});
+export const emptyLosses=zeroLosses;
+const MOUNTAIN=new Set(['TUR','GRC','GEO','ARM','AFG','NPL','BTN','CHE','AUT','KGZ','TJK','CHL','PER']);
+const DESERT=new Set(['SAU','ARE','QAT','KWT','OMN','YEM','LBY','DZA','EGY','NER','MLI','MRT','TCD','JOR']);
+const FOREST=new Set(['FIN','SWE','NOR','CAN','BRA','COD','GAB','CMR','IDN','MYS','PNG']);
+const URBAN=new Set(['SGP','BEL','NLD','DEU','GBR','JPN','KOR']);
+const COASTAL=new Set(['ISL','NZL','PHL','CUB','CYP','MLT','LKA','MDG']);
+export function terrainForCountry(c:CountryState):BattlefieldTerrain{if(MOUNTAIN.has(c.id))return'mountain';if(DESERT.has(c.id))return'desert';if(FOREST.has(c.id))return'forest';if(URBAN.has(c.id))return'urban';if(COASTAL.has(c.id))return'coastal';if(c.subregion.toLowerCase().includes('northern africa'))return'desert';return'plains';}
+const atk:Record<BattlefieldTerrain,number>={plains:1,urban:.76,mountain:.68,forest:.82,desert:.9,coastal:.86};
+const def:Record<BattlefieldTerrain,number>={plains:1,urban:1.18,mountain:1.28,forest:1.16,desert:1.05,coastal:1.1};
+function militaryPower(c:CountryState){const m=c.military,u=m.personnel*.002+m.tanks*1.6+m.artillery*1.1+m.fighters*8+m.bombers*11+m.warships*5,q=(m.readiness+m.morale+m.logistics+m.technology)/400;return Math.max(1,u*(.55+q*.9));}
+function airPower(c:CountryState){return(c.military.fighters+c.military.bombers*.45)*(.35+c.military.technology/100*.4+c.military.readiness/100*.25);}
+function supplyScore(c:CountryState,e:CountryState,isAttacker:boolean,t:BattlefieldTerrain){const fuel=clamp(c.processedResources.fuel/80,0,1),steel=clamp(c.processedResources.steel/60,0,1),log=c.military.logistics/100,ind=clamp(c.industry.utilization/100,0,1),reach=c.region===e.region?1:c.subregion===e.subregion?.85:.7,terrain=isAttacker?atk[t]:def[t];return clamp((log*.42+fuel*.28+steel*.12+ind*.18)*reach*terrain*100,8,100);}
+export function getWarPreview(a:CountryState,d:CountryState){const terrain=terrainForCountry(d),attackerSupply=supplyScore(a,d,true,terrain),defenderSupply=supplyScore(d,a,false,terrain),ap=airPower(a),dp=airPower(d),airSuperiority=clamp((ap-dp)/Math.max(1,ap+dp)*100,-100,100),powerRatio=(militaryPower(a)*(attackerSupply/100)*(1+Math.max(0,airSuperiority)/350))/(militaryPower(d)*(defenderSupply/100)*(1+Math.max(0,-airSuperiority)/350));return{terrain,attackerSupply,defenderSupply,airSuperiority,powerRatio};}
+function applyLosses(m:MilitaryState,l:CasualtySnapshot,supply:number):MilitaryState{const stress=supply<35;return{...m,personnel:Math.max(0,m.personnel-l.personnel),tanks:Math.max(0,m.tanks-l.tanks),artillery:Math.max(0,m.artillery-l.artillery),fighters:Math.max(0,m.fighters-l.fighters),bombers:Math.max(0,m.bombers-l.bombers),warships:Math.max(0,m.warships-l.warships),readiness:clamp(m.readiness-(stress?2.2:.35),0,100),morale:clamp(m.morale-Math.min(1.5,l.personnel/7500)-(stress?.55:0),0,100),logistics:clamp(m.logistics-(stress?1.4:.18),0,100)};}
+function addLosses(a:CasualtySnapshot,b:CasualtySnapshot):CasualtySnapshot{return{personnel:a.personnel+b.personnel,tanks:a.tanks+b.tanks,artillery:a.artillery+b.artillery,fighters:a.fighters+b.fighters,bombers:a.bombers+b.bombers,warships:a.warships+b.warships};}
+function makeLosses(c:CountryState,rate:number,r:number):CasualtySnapshot{const m=c.military,scale=rate*(.72+r*.56);return{personnel:Math.min(m.personnel,Math.max(20,Math.round(m.personnel*scale))),tanks:Math.min(m.tanks,Math.max(0,Math.round(m.tanks*scale*.85))),artillery:Math.min(m.artillery,Math.max(0,Math.round(m.artillery*scale*.75))),fighters:Math.min(m.fighters,Math.max(0,Math.round(m.fighters*scale*.45))),bombers:Math.min(m.bombers,Math.max(0,Math.round(m.bombers*scale*.32))),warships:Math.min(m.warships,Math.max(0,Math.round(m.warships*scale*.18)))};}
+export function resolveCombatRound(state:GameState,warId:string):GameState{
+ const w=state.wars[warId];if(!w||w.status!=='active'||w.lastCombatDay===state.day)return state;const a=state.countries[w.attackerId],d=state.countries[w.defenderId];if(!a||!d)return state;const p=getWarPreview(a,d),fuelCost=Math.max(3,2.5+a.military.tanks*.0016+a.military.fighters*.02+a.military.bombers*.032),hasFuel=a.processedResources.fuel>=fuelCost,r1=nextRandom(state.simulationSeed),r2=nextRandom(r1.seed),r3=nextRandom(r2.seed),ae=1-w.attackerExhaustion/180,de=1-w.defenderExhaustion/190,airA=1+p.airSuperiority/450,airD=1-p.airSuperiority/520;
+ const aPower=militaryPower(a)*(hasFuel?1:.38)*(p.attackerSupply/100)*atk[w.terrain]*clamp(ae,.42,1)*clamp(airA,.72,1.25),dPower=militaryPower(d)*(p.defenderSupply/100)*def[w.terrain]*clamp(de,.44,1)*clamp(airD,.75,1.24)*(.96+r1.value*.08),ratio=aPower/Math.max(1,dPower),al=makeLosses(a,clamp(.0017+(1/Math.max(.4,ratio))*.0028+(p.attackerSupply<35?.002:0),.0015,.016),r2.value),dl=makeLosses(d,clamp(.0018+ratio*.0032+(p.airSuperiority>35?.0008:0),.0015,.019),r3.value),aep=al.personnel/Math.max(1,a.military.personnel),dep=dl.personnel/Math.max(1,d.military.personnel),aEx=clamp(w.attackerExhaustion+1.2+aep*460+(p.attackerSupply<40?2.2:0),0,100),dEx=clamp(w.defenderExhaustion+1+dep*500+(p.defenderSupply<40?1.8:0),0,100),delta=clamp((ratio-1)*13+(r3.value-.5)*5+(hasFuel?1.2:-7)+(p.airSuperiority/100)*3.5-(aEx-dEx)*.035,-20,20),progress=clamp(w.progress+delta,-100,100);
+ const na:CountryState={...a,processedResources:{...a.processedResources,fuel:Math.max(0,a.processedResources.fuel-Math.min(a.processedResources.fuel,fuelCost))},military:applyLosses(a.military,al,p.attackerSupply),politics:{...a.politics,approval:clamp(a.politics.approval-al.personnel/260000-aEx*.002,0,100)}},nd:CountryState={...d,military:applyLosses(d.military,dl,p.defenderSupply),politics:{...d.politics,stability:clamp(d.politics.stability-dl.personnel/170000-dEx*.0015,0,100)}};let status:WarState['status']='active';if(progress>=100||nd.military.personnel<Math.max(5000,d.military.personnel*.08)||dEx>=100)status='victory';else if(progress<=-100||na.military.personnel<Math.max(5000,a.military.personnel*.08)||aEx>=100)status='defeat';
+ const report=`${a.name} ${w.terrain} assault: ${delta>=0?'+':''}${delta.toFixed(1)} front | supply ${p.attackerSupply.toFixed(0)}%/${p.defenderSupply.toFixed(0)}% | air ${p.airSuperiority>=0?'+':''}${p.airSuperiority.toFixed(0)} | losses ${al.personnel.toLocaleString()} / ${dl.personnel.toLocaleString()}${hasFuel?'':' | FUEL CRISIS'}`,nw:WarState={...w,progress,rounds:w.rounds+1,status,autoAssault:status==='active'?w.autoAssault:false,terrain:p.terrain,attackerSupply:p.attackerSupply,defenderSupply:p.defenderSupply,airSuperiority:p.airSuperiority,attackerExhaustion:aEx,defenderExhaustion:dEx,lastCombatDay:state.day,attackerLosses:addLosses(w.attackerLosses,al),defenderLosses:addLosses(w.defenderLosses,dl),lastReport:report};
+ let next:GameState={...state,simulationSeed:r3.seed,countries:{...state.countries,[a.id]:na,[d.id]:nd},wars:{...state.wars,[warId]:nw},sitrep:[`WAR // ${report}`,...state.sitrep].slice(0,12)};if(status==='victory'){next={...next,countries:{...next.countries,[a.id]:{...next.countries[a.id],politics:{...next.countries[a.id].politics,approval:clamp(next.countries[a.id].politics.approval+4,0,100)}},[d.id]:{...next.countries[d.id],controllerCountryId:a.id,politics:{...next.countries[d.id].politics,stability:clamp(next.countries[d.id].politics.stability-15,0,100)}}},sitrep:[`VICTORY // ${d.name} is now under ${a.name} control.`,...next.sitrep].slice(0,12)};next=endWarRelation(next,a.id,d.id);}else if(status==='defeat')next={...endWarRelation(next,a.id,d.id),sitrep:[`DEFEAT // ${a.name} offensive collapsed under battlefield exhaustion.`,...next.sitrep].slice(0,12)};return next;
 }
-
-function applyLosses(military: MilitaryState, losses: CasualtySnapshot, oilAvailable: boolean): MilitaryState {
-  return {
-    ...military,
-    personnel: Math.max(0, military.personnel - losses.personnel),
-    tanks: Math.max(0, military.tanks - losses.tanks),
-    artillery: Math.max(0, military.artillery - losses.artillery),
-    fighters: Math.max(0, military.fighters - losses.fighters),
-    bombers: Math.max(0, military.bombers - losses.bombers),
-    warships: Math.max(0, military.warships - losses.warships),
-    readiness: clamp(military.readiness - (oilAvailable ? 0.3 : 2.5), 0, 100),
-    morale: clamp(military.morale - Math.min(1.2, losses.personnel / 8000), 0, 100),
-    logistics: clamp(military.logistics - (oilAvailable ? 0.15 : 1.5), 0, 100),
-  };
-}
-
-function addLosses(total: CasualtySnapshot, next: CasualtySnapshot): CasualtySnapshot {
-  return {
-    personnel: total.personnel + next.personnel,
-    tanks: total.tanks + next.tanks,
-    artillery: total.artillery + next.artillery,
-    fighters: total.fighters + next.fighters,
-    bombers: total.bombers + next.bombers,
-    warships: total.warships + next.warships,
-  };
-}
-
-function makeLosses(country: CountryState, rate: number, random: number): CasualtySnapshot {
-  const m = country.military;
-  const scale = rate * (0.72 + random * 0.56);
-  return {
-    personnel: Math.min(m.personnel, Math.max(20, Math.round(m.personnel * scale))),
-    tanks: Math.min(m.tanks, Math.max(0, Math.round(m.tanks * scale * 0.85))),
-    artillery: Math.min(m.artillery, Math.max(0, Math.round(m.artillery * scale * 0.75))),
-    fighters: Math.min(m.fighters, Math.max(0, Math.round(m.fighters * scale * 0.45))),
-    bombers: Math.min(m.bombers, Math.max(0, Math.round(m.bombers * scale * 0.32))),
-    warships: Math.min(m.warships, Math.max(0, Math.round(m.warships * scale * 0.18))),
-  };
-}
-
-export function resolveCombatRound(state: GameState, warId: string): GameState {
-  const war = state.wars[warId];
-  if (!war || war.status !== 'active') return state;
-  const attacker = state.countries[war.attackerId];
-  const defender = state.countries[war.defenderId];
-  if (!attacker || !defender) return state;
-
-  const fuelCost = Math.max(3, 2.5 + attacker.military.tanks * 0.0016 + attacker.military.fighters * 0.02 + attacker.military.bombers * 0.032);
-  const hasFuel = attacker.processedResources.fuel >= fuelCost;
-
-  const r1 = nextRandom(state.simulationSeed);
-  const r2 = nextRandom(r1.seed);
-  const r3 = nextRandom(r2.seed);
-
-  const attackerPower = militaryPower(attacker) * (hasFuel ? 1 : 0.42);
-  const defenderPower = militaryPower(defender) * (0.96 + r1.value * 0.08);
-  const ratio = attackerPower / Math.max(1, defenderPower);
-
-  const attackerLossRate = clamp(0.0018 + (1 / Math.max(0.45, ratio)) * 0.0027, 0.0015, 0.012);
-  const defenderLossRate = clamp(0.0019 + ratio * 0.0031, 0.0015, 0.016);
-  const attackerLosses = makeLosses(attacker, attackerLossRate, r2.value);
-  const defenderLosses = makeLosses(defender, defenderLossRate, r3.value);
-
-  const progressDelta = clamp((ratio - 1) * 12 + (r3.value - 0.5) * 6 + (hasFuel ? 1.5 : -7), -18, 18);
-  const progress = clamp(war.progress + progressDelta, -100, 100);
-
-  const nextAttacker: CountryState = {
-    ...attacker,
-    processedResources: { ...attacker.processedResources, fuel: Math.max(0, attacker.processedResources.fuel - Math.min(attacker.processedResources.fuel, fuelCost)) },
-    military: applyLosses(attacker.military, attackerLosses, hasFuel),
-    politics: { ...attacker.politics, approval: clamp(attacker.politics.approval - attackerLosses.personnel / 300000, 0, 100) },
-  };
-  const nextDefender: CountryState = {
-    ...defender,
-    military: applyLosses(defender.military, defenderLosses, true),
-    politics: { ...defender.politics, stability: clamp(defender.politics.stability - defenderLosses.personnel / 180000, 0, 100) },
-  };
-
-  let status: WarState['status'] = 'active';
-  if (progress >= 100 || nextDefender.military.personnel < Math.max(5000, defender.military.personnel * 0.08)) status = 'victory';
-  else if (progress <= -100 || nextAttacker.military.personnel < Math.max(5000, attacker.military.personnel * 0.08)) status = 'defeat';
-
-  const report = `${attacker.name} assault: ${progressDelta >= 0 ? '+' : ''}${progressDelta.toFixed(1)} front | losses ${attackerLosses.personnel.toLocaleString()} / enemy ${defenderLosses.personnel.toLocaleString()}${hasFuel ? '' : ' | FUEL CRISIS'}`;
-  const nextWar: WarState = {
-    ...war,
-    progress,
-    rounds: war.rounds + 1,
-    status,
-    autoAssault: status === 'active' ? war.autoAssault : false,
-    attackerLosses: addLosses(war.attackerLosses, attackerLosses),
-    defenderLosses: addLosses(war.defenderLosses, defenderLosses),
-    lastReport: report,
-  };
-
-  let nextState: GameState = {
-    ...state,
-    simulationSeed: r3.seed,
-    countries: { ...state.countries, [attacker.id]: nextAttacker, [defender.id]: nextDefender },
-    wars: { ...state.wars, [warId]: nextWar },
-    sitrep: [`WAR // ${report}`, ...state.sitrep].slice(0, 12),
-  };
-
-  if (status === 'victory') {
-    nextState = {
-      ...nextState,
-      countries: {
-        ...nextState.countries,
-        [attacker.id]: { ...nextState.countries[attacker.id], politics: { ...nextState.countries[attacker.id].politics, approval: clamp(nextState.countries[attacker.id].politics.approval + 4, 0, 100) } },
-        [defender.id]: { ...nextState.countries[defender.id], controllerCountryId: attacker.id, politics: { ...nextState.countries[defender.id].politics, stability: clamp(nextState.countries[defender.id].politics.stability - 15, 0, 100) } },
-      },
-      sitrep: [`VICTORY // ${defender.name} is now under ${attacker.name} control.`, ...nextState.sitrep].slice(0, 12),
-    };
-    nextState = endWarRelation(nextState, attacker.id, defender.id);
-  } else if (status === 'defeat') {
-    nextState = { ...endWarRelation(nextState, attacker.id, defender.id), sitrep: [`DEFEAT // ${attacker.name} offensive collapsed.`, ...nextState.sitrep].slice(0, 12) };
-  }
-
-  return nextState;
-}
-
-export function processAutoWars(state: GameState): GameState {
-  let next = state;
-  for (const war of Object.values(state.wars)) {
-    if (war.status === 'active' && war.autoAssault) next = resolveCombatRound(next, war.id);
-  }
-  return next;
-}
+export function processAutoWars(state:GameState):GameState{let next=state;for(const w of Object.values(state.wars))if(w.status==='active'&&w.autoAssault)next=resolveCombatRound(next,w.id);return next;}

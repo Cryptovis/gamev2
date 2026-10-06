@@ -80,17 +80,12 @@ export function processTradeDeals(state: GameState): GameState {
   return { ...state, countries, sitrep: [...notices, ...state.sitrep].slice(0, 12) };
 }
 
-export function makeImportDeal(state: GameState, targetCountryId: string, resource: TradeResource): TradeDeal | null {
-  const playerId = state.playerCountryId;
-  const quote = getTradeQuote(state, targetCountryId, resource);
+export function makeBilateralImportDeal(state: GameState, buyerId: string, sellerId: string, resource: TradeResource): TradeDeal | null {
+  const quote = getTradeQuote(state, sellerId, resource);
   if (!quote.quantity || quote.quantity <= 0) return null;
-  return {
-    id: `IMP-${targetCountryId}-${playerId}-${resource}`,
-    sellerId: targetCountryId,
-    buyerId: playerId,
-    resource,
-    quantityPerDay: quote.quantity,
-    pricePerUnit: quote.price,
-    active: true,
-  };
+  return { id: `IMP-${sellerId}-${buyerId}-${resource}`, sellerId, buyerId, resource, quantityPerDay: quote.quantity, pricePerUnit: quote.price, active: true };
+}
+
+export function makeImportDeal(state: GameState, targetCountryId: string, resource: TradeResource): TradeDeal | null {
+  return makeBilateralImportDeal(state, state.playerCountryId, targetCountryId, resource);
 }
