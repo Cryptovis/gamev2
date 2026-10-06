@@ -29,6 +29,9 @@ export function TopBar(){
  const profile=useGameStore(s=>s.playerProfile);
  const lang=profile.language;
  const forecast=calculateEconomyForecast(player);
+ const production=useGameStore(s=>s.production[s.playerCountryId]);
+ const infrastructure=useGameStore(s=>s.infrastructure[s.playerCountryId]);
+ const strategicDailyBalance=forecast.dailyBalance-(production?.lastInputUse.treasury??0)-(infrastructure?.maintenance??0);
 
  return <header className="topbar">
   <div className="leader-brand">
