@@ -2,7 +2,7 @@ import { initialCountries } from './countries';
 import type { GameState } from '../domain/game';
 
 export const makeInitialState = (): GameState => ({
-  schemaVersion: 9,
+  schemaVersion: 10,
   simulationSeed: 0xA17E5EED,
   day: 1,
   speed: 0,
@@ -26,6 +26,8 @@ export const makeInitialState = (): GameState => ({
   eventCooldownUntil: 12,
   activeAdvisor: null,
   advisorCooldownUntil: 7,
+  embassies: {},
+  diplomaticOffers: [],
   lastAiDay: 1,
   lastStrategicReviewDay: 1,
   sitrep: [
