@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.50.0-playtest.1
+- Promoted Living World branch to the first integrated playtest build
+- Added in-game playtest objectives with live completion tracking
+- Added World Pulse HUD and autonomous AI-to-AI diplomacy
+- CI release gate green after gameplay, performance and build checks
+
 ## 0.40.0
 - Added Cabinet ministries and daily ministry effects
 - Added Technology Tree v1 and research-point economy
