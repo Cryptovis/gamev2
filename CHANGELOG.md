@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.71.0-playtest.1
+- Added Living Diplomacy foundation with persistent embassy missions and incoming diplomatic offers
+- Added player and AI embassy creation; embassies improve relationship growth and reduce bilateral trade friction
+- Added Diplomatic Inbox rail with embassy/trade proposals and accept/decline actions
+- Reworked domestic events into pressure-based weekly agenda checks instead of frequent random popup rolls
+- Added earthquake, public-health, tax-protest, reform-demand and foreign-policy backlash event categories
+- Added variable post-event cooldowns so campaigns can have quiet periods or clustered political pressure
+- Added zoom-aware country labels for sovereign states; smaller countries reveal progressively with zoom
+- Added national flags to observed-country command cards
+- Added unified line icons to country-panel tabs and diplomatic actions
+- Completed another readability sweep across advisor, alert, event, map and floating-window microcopy
+- Save schema bumped to v10 for embassies and diplomatic-offer persistence
+
 ## 0.70.0-playtest.1
 - Standardized UI typography with reusable readable font scales
 - Portaled Strategic Dossier and Supply Command above panel clipping and stacking contexts
