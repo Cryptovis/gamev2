@@ -21,6 +21,10 @@ interface GameActions {
   selectCountryByMapFeatureId: (featureId: string | number | null) => void;
   setMapMode: (mode: MapMode) => void;
   setMapPresentation: (mode: MapPresentation) => void;
+  mapProjection: 'globe'|'flat';
+  setMapProjection: (mode:'globe'|'flat')=>void;
+  mapControlCommand: {action:'zoomIn'|'zoomOut'|'focus'|'reset';nonce:number}|null;
+  issueMapControl: (action:'zoomIn'|'zoomOut'|'focus'|'reset')=>void;
   setMapNotice: (message: string | null) => void;
   advanceDay: () => void;
   setTaxRate: (rate: number) => void;
@@ -66,6 +70,8 @@ interface GameActions {
 export const useGameStore = create<GameState & GameActions>((set, get) => ({
   ...makeInitialState(),
   saveMessage: null,
+  mapProjection: 'globe',
+  mapControlCommand: null,
   startCampaign: ({commanderName,countryId,avatarId,language}) => set(() => {
     const fresh=makeInitialState();
     const chosen=fresh.countries[countryId] ? countryId : 'TUR';
@@ -88,6 +94,8 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
   }),
   setMapMode: (mapMode) => set({ mapMode }),
   setMapPresentation: (mapPresentation) => set({ mapPresentation }),
+  setMapProjection: (mapProjection) => set({ mapProjection }),
+  issueMapControl: (action) => set((state)=>({mapControlCommand:{action,nonce:(state.mapControlCommand?.nonce??0)+1}})),
   setMapNotice: (mapNotice) => set({ mapNotice }),
   advanceDay: () => set((state) => applyGameCommand(state, { type: 'time/advanceDay' })),
   setTaxRate: (rate) => set((state) => applyGameCommand(state, { type: 'economy/setTaxRate', rate })),
