@@ -239,9 +239,10 @@ export function WorldMap() {
     const p=projection(centroid); if(!p)return null;
     const bounds=path.bounds(feature as any);
     const projectedArea=Math.abs((bounds[1][0]-bounds[0][0])*(bounds[1][1]-bounds[0][1]))*(projectionMode==='flat'?flatZoom*flatZoom:1);
-    const threshold=mapZoom>=2.6?80:mapZoom>=1.9?180:mapZoom>=1.35?430:1050;
-    if(id!==selectedCountryId&&projectedArea<threshold)return null;
-    return <text key={`country-label-${id}`} x={p[0]} y={p[1]} className={id===selectedCountryId?'country-map-label selected':'country-map-label'}>{country.name.toUpperCase()}</text>;
+    const threshold=mapZoom>=4?52:mapZoom>=2.8?85:mapZoom>=2?190:mapZoom>=1.4?480:1180;
+    if(projectedArea<threshold)return null;
+    const labelSize=mapZoom>=4?14:mapZoom>=2.8?13:mapZoom>=2?12:11;
+    return <text key={`country-label-${id}`} x={p[0]} y={p[1]} className="country-map-label" style={{fontSize:labelSize}}>{country.name.toUpperCase()}</text>;
   });
 
   return <div className="world-map political-map">
@@ -299,10 +300,10 @@ export function WorldMap() {
             const center: [number,number] = [-rotation[0],-rotation[1]];
             if (geoDistance(centroid, center) > Math.PI/2) return null;
           }
-          return <g key="selected-label" transform={`translate(${p[0]},${p[1]})`} className="selected-map-label"><circle r="4"/><text y="-11">{selectedCountry.name.toUpperCase()}</text></g>;
+          const selectedSize=mapZoom>=2.8?16:14;
+          return <g key="selected-label" transform={`translate(${p[0]},${p[1]})`} className="selected-map-label"><circle r="4.5"/><text y="-12" style={{fontSize:selectedSize}}>{selectedCountry.name.toUpperCase()}</text></g>;
         })}
       </g>
     </svg>
-    <div className="map-legend"><span className="legend-dot player"></span>PLAYER <span className="legend-sep">·</span> {mapPresentation.toUpperCase()} · {mapMode.toUpperCase()} MAP <span className="legend-sep">·</span> {projectionMode === 'flat' ? `${flatZoom.toFixed(1)}× MAP ZOOM` : `${globeZoom.toFixed(1)}× GLOBE`}</div>
   </div>;
 }
