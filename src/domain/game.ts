@@ -11,7 +11,7 @@ export type TradeResource = 'food' | 'oil' | 'iron' | 'uranium';
 export type WarStatus = 'active' | 'victory' | 'defeat' | 'withdrawn';
 export type BattlefieldTerrain = 'plains' | 'urban' | 'mountain' | 'forest' | 'desert' | 'coastal';
 export type CampaignStatus = 'active' | 'lost';
-export type EventKind = 'food_crisis' | 'inflation_shock' | 'war_weariness' | 'corruption_scandal' | 'fuel_crisis' | 'intelligence_breach';
+export type EventKind = 'food_crisis' | 'inflation_shock' | 'war_weariness' | 'corruption_scandal' | 'fuel_crisis' | 'intelligence_breach' | 'earthquake' | 'health_crisis' | 'tax_protest' | 'reform_demand' | 'foreign_policy_backlash';
 export type MinistryKey = 'economy' | 'defense' | 'science' | 'intelligence' | 'interior' | 'society';
 export type TechnologyCategory = 'economy' | 'industry' | 'military' | 'intelligence' | 'energy' | 'society';
 export type CouncilResolutionType = 'sanctions' | 'ceasefire' | 'humanitarian_aid';
@@ -38,6 +38,10 @@ export interface StrategicAIState { strategicGoal: StrategicGoal; goalProgress: 
 export interface IntelOperation { id: string; type: IntelOperationType; sourceCountryId: string; targetCountryId: string; startedDay: number; completeDay: number; status: IntelOperationStatus; successChance: number; resultSummary: string; }
 export interface PlayerProfile { commanderName: string; avatarId: string; language: GameLanguage; setupComplete: boolean; }
 export interface AdvisorPrompt { id: string; resource: TradeResource; supplierId: string; stage: 'pact' | 'contract'; createdDay: number; message: string; }
+export type EmbassyLevel = 1 | 2 | 3 | 4;
+export interface EmbassyMission { id:string; countryA:string; countryB:string; openedDay:number; level:EmbassyLevel; }
+export type DiplomaticOfferType = 'embassy' | 'trade_pact';
+export interface DiplomaticOffer { id:string; type:DiplomaticOfferType; senderId:string; receiverId:string; createdDay:number; expiresDay:number; message:string; }
 
 export interface CountryState {
   id: string;
@@ -129,6 +133,8 @@ export interface GameState {
   eventCooldownUntil: number;
   activeAdvisor: AdvisorPrompt | null;
   advisorCooldownUntil: number;
+  embassies: Record<string, EmbassyMission>;
+  diplomaticOffers: DiplomaticOffer[];
   lastAiDay: number;
   lastStrategicReviewDay: number;
   sitrep: string[];
