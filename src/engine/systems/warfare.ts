@@ -1,6 +1,7 @@
 import type { BattlefieldTerrain, CasualtySnapshot, CountryState, GameState, MilitaryState, WarState } from '../../domain/game';
 import { nextRandom } from '../rng';
 import { endWarRelation } from './diplomacy';
+import { calculateSupplyNetwork } from './supplyNetwork';
 const clamp=(v:number,min:number,max:number)=>Math.min(max,Math.max(min,v));
 const zeroLosses=():CasualtySnapshot=>({personnel:0,tanks:0,artillery:0,fighters:0,bombers:0,warships:0});
 export const emptyLosses=zeroLosses;
@@ -14,7 +15,7 @@ const atk:Record<BattlefieldTerrain,number>={plains:1,urban:.76,mountain:.68,for
 const def:Record<BattlefieldTerrain,number>={plains:1,urban:1.18,mountain:1.28,forest:1.16,desert:1.05,coastal:1.1};
 function militaryPower(c:CountryState){const m=c.military,u=m.personnel*.002+m.tanks*1.6+m.artillery*1.1+m.fighters*8+m.bombers*11+m.warships*5,q=(m.readiness+m.morale+m.logistics+m.technology)/400;return Math.max(1,u*(.55+q*.9));}
 function airPower(c:CountryState){return(c.military.fighters+c.military.bombers*.45)*(.35+c.military.technology/100*.4+c.military.readiness/100*.25);}
-function supplyScore(c:CountryState,e:CountryState,isAttacker:boolean,t:BattlefieldTerrain){const fuel=clamp(c.processedResources.fuel/80,0,1),steel=clamp(c.processedResources.steel/60,0,1),log=c.military.logistics/100,ind=clamp(c.industry.utilization/100,0,1),reach=c.region===e.region?1:c.subregion===e.subregion?.85:.7,terrain=isAttacker?atk[t]:def[t];return clamp((log*.42+fuel*.28+steel*.12+ind*.18)*reach*terrain*100,8,100);}
+function supplyScore(c:CountryState,e:CountryState,isAttacker:boolean,t:BattlefieldTerrain){const national=calculateSupplyNetwork(c,t,isAttacker?'attacker':'defender');const reach=c.region===e.region?1:c.subregion===e.subregion?.88:.72;return clamp(national.supplyScore*reach,8,100);}
 export function getWarPreview(a:CountryState,d:CountryState){const terrain=terrainForCountry(d),attackerSupply=supplyScore(a,d,true,terrain),defenderSupply=supplyScore(d,a,false,terrain),ap=airPower(a),dp=airPower(d),airSuperiority=clamp((ap-dp)/Math.max(1,ap+dp)*100,-100,100),powerRatio=(militaryPower(a)*(attackerSupply/100)*(1+Math.max(0,airSuperiority)/350))/(militaryPower(d)*(defenderSupply/100)*(1+Math.max(0,-airSuperiority)/350));return{terrain,attackerSupply,defenderSupply,airSuperiority,powerRatio};}
 function applyLosses(m:MilitaryState,l:CasualtySnapshot,supply:number):MilitaryState{const stress=supply<35;return{...m,personnel:Math.max(0,m.personnel-l.personnel),tanks:Math.max(0,m.tanks-l.tanks),artillery:Math.max(0,m.artillery-l.artillery),fighters:Math.max(0,m.fighters-l.fighters),bombers:Math.max(0,m.bombers-l.bombers),warships:Math.max(0,m.warships-l.warships),readiness:clamp(m.readiness-(stress?2.2:.35),0,100),morale:clamp(m.morale-Math.min(1.5,l.personnel/7500)-(stress?.55:0),0,100),logistics:clamp(m.logistics-(stress?1.4:.18),0,100)};}
 function addLosses(a:CasualtySnapshot,b:CasualtySnapshot):CasualtySnapshot{return{personnel:a.personnel+b.personnel,tanks:a.tanks+b.tanks,artillery:a.artillery+b.artillery,fighters:a.fighters+b.fighters,bombers:a.bombers+b.bombers,warships:a.warships+b.warships};}

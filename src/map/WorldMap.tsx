@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { geoCentroid, geoDistance, geoGraticule10, geoNaturalEarth1, geoOrthographic, geoPath } from 'd3-geo';
+import { findCountryAtGeoPoint } from './mapSelection';
 import { useGameStore } from '../store/gameStore';
 import { calculateMilitaryPower } from '../store/selectors';
 import { MICROSTATE_POINTS } from '../data/microstates';
@@ -131,6 +132,39 @@ export function WorldMap() {
     else setFlatZoom((z) => Math.max(1, Math.min(4.5, Number((z * (e.deltaY < 0 ? 1.12 : .89)).toFixed(3)))));
   };
 
+  const screenPoint = (e: React.MouseEvent<SVGSVGElement>) => {
+    const rect=e.currentTarget.getBoundingClientRect();
+    return [(e.clientX-rect.left)*W/rect.width,(e.clientY-rect.top)*H/rect.height] as [number,number];
+  };
+
+  const selectFromSurface = (e: React.MouseEvent<SVGSVGElement>) => {
+    if (justDraggedRef.current || !projection.invert) return;
+    let [x,y]=screenPoint(e);
+    if (projectionMode==='flat') {
+      x=W/2+(x-flatPan.x-W/2)/flatZoom;
+      y=H/2+(y-flatPan.y-H/2)/flatZoom;
+    }
+    const geo=projection.invert([x,y]);
+    if (!geo) return;
+    const selectable=new Set(Object.keys(countries));
+    const polygonId=findCountryAtGeoPoint(geojson.features as any,selectable,geo as [number,number]);
+    if (polygonId) {
+      const country=countries[polygonId];
+      selectCountry(polygonId);
+      setMapNotice(`${country.name} selected — sovereign territory acquired.`);
+      return;
+    }
+    const micro=Object.entries(MICROSTATE_POINTS)
+      .map(([id,pos])=>({id,distance:geoDistance(pos as [number,number],geo as [number,number])}))
+      .filter((item)=>countries[item.id])
+      .sort((a,b)=>a.distance-b.distance)[0];
+    const hitRadius=(projectionMode==='flat'?1.2/Math.max(1,flatZoom):1.0/Math.max(.8,globeZoom))*Math.PI/180;
+    if (micro && micro.distance<=hitRadius) {
+      selectCountry(micro.id);
+      setMapNotice(`${countries[micro.id].name} selected — microstate command profile loaded.`);
+    }
+  };
+
   if (!geojson || !projection || !path) return <div className="world-map political-map"><div className="map-loading">INITIALIZING WORLD GEOMETRY…</div></div>;
 
   const shapeLayer = geojson.features.map((feature) => {
@@ -140,11 +174,7 @@ export function WorldMap() {
     if (!d) return null;
     const isSelected = id === selectedCountryId;
     const isHovered = id === hovered;
-    return <path key={id || feature.properties?.name} d={d} className={`country-shape ${isSelected ? 'selected' : ''} ${isHovered ? 'hovered' : ''}`} fill={colorFor(id)} onPointerEnter={() => country && setHovered(id)} onPointerLeave={() => setHovered((v) => v === id ? null : v)} onClick={(e) => {
-      e.stopPropagation();
-      if (justDraggedRef.current) return;
-      if (country) { selectCountry(id); setMapNotice(`${country.name} selected — sovereign profile loaded.`); }
-    }}><title>{country?.name ?? feature.properties?.name}</title></path>;
+    return <path key={id || feature.properties?.name} d={d} className={`country-shape ${isSelected ? 'selected' : ''} ${isHovered ? 'hovered' : ''}`} fill={colorFor(id)} onPointerEnter={() => country && setHovered(id)} onPointerLeave={() => setHovered((v) => v === id ? null : v)}><title>{country?.name ?? feature.properties?.name}</title></path>;
   });
 
   return <div className="world-map political-map">
@@ -157,7 +187,7 @@ export function WorldMap() {
       <strong>{hoveredCountry?.name ?? selectedCountry?.name ?? 'WORLD COMMAND'}</strong>
       <span>{hoveredCountry ? `${hoveredCountry.region || 'Global'} · ${hoveredCountry.military.assessment.capability.toFixed(0)} MIL` : projectionMode === 'globe' ? 'drag globe · wheel zoom · click sovereign territory' : 'drag to pan · wheel zoom · click sovereign territory'}</span>
     </div>
-    <svg viewBox={`0 0 ${W} ${H}`} className={projectionMode === 'globe' ? 'strategy-svg globe-svg' : 'strategy-svg flat-svg'} onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerCancel={pointerUp} onWheel={wheel} shapeRendering="geometricPrecision">
+    <svg viewBox={`0 0 ${W} ${H}`} className={projectionMode === 'globe' ? 'strategy-svg globe-svg' : 'strategy-svg flat-svg'} onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerCancel={pointerUp} onWheel={wheel} onClick={selectFromSurface} shapeRendering="geometricPrecision">
       {projectionMode === 'globe' && <>
         <path d={path({ type: 'Sphere' } as any) ?? ''} className="ocean-sphere"/>
         <path d={path(graticule as any) ?? ''} className="globe-graticule"/>
@@ -165,13 +195,11 @@ export function WorldMap() {
       <g key={viewportKey} className="map-viewport" transform={projectionMode === 'flat' ? flatTransform : undefined}>
         <g className="country-layer">{shapeLayer}</g>
         {Object.entries(MICROSTATE_POINTS).map(([id,pos]) => {
-          const c = countries[id]; if (!c) return null;
-          if (projectionMode === 'globe') {
-            const center: [number,number] = [-rotation[0],-rotation[1]];
-            if (geoDistance(pos as [number,number], center) > Math.PI/2) return null;
-          }
-          const p = projection(pos as [number,number]); if (!p) return null;
-          return <g key={id} className="microstate-point" transform={`translate(${p[0]},${p[1]})`} onClick={(e) => { e.stopPropagation(); if (!justDraggedRef.current) selectCountry(id); }}><circle r="5"/><text y="-9">{c.iso2}</text></g>;
+          const c=countries[id]; if(!c) return null;
+          if (projectionMode==='globe') { const center:[number,number]=[-rotation[0],-rotation[1]]; if(geoDistance(pos as [number,number],center)>Math.PI/2) return null; }
+          const p=projection(pos as [number,number]); if(!p) return null;
+          const reveal=id===selectedCountryId||id===hovered||(projectionMode==='flat'?flatZoom>=2.2:globeZoom>=1.45);
+          return <g key={id} className={`microstate-point ${reveal?'revealed':''} ${id===selectedCountryId?'selected':''}`} transform={`translate(${p[0]},${p[1]})`} onPointerEnter={()=>setHovered(id)} onPointerLeave={()=>setHovered((v)=>v===id?null:v)}><circle r={id===selectedCountryId?5:3.2}/>{(id===selectedCountryId||id===hovered)&&<text y="-10">{c.name}</text>}</g>;
         })}
         {selectedCountry && geojson.features.map((f) => String(f.properties?.iso_a3 ?? '') === selectedCountry.id ? f : null).filter(Boolean).map((f: any) => {
           const centroid = geoCentroid(f); const p = projection(centroid); if (!p) return null;
