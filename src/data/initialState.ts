@@ -2,7 +2,7 @@ import { initialCountries } from './countries';
 import type { GameState } from '../domain/game';
 
 export const makeInitialState = (): GameState => ({
-  schemaVersion: 7,
+  schemaVersion: 8,
   simulationSeed: 0xA17E5EED,
   day: 1,
   speed: 0,
@@ -10,17 +10,21 @@ export const makeInitialState = (): GameState => ({
   playerCountryId: 'TUR',
   selectedCountryId: 'TUR',
   mapMode: 'political',
-  mapNotice: 'Strategic Command 0.4 online — ministries, technology, processed industry, blocs and global council enabled.',
+  mapNotice: 'Living World 0.5 online — strategic AI, intelligence operations and influence networks enabled.',
   countries: structuredClone(initialCountries),
   tradeDeals: {},
   wars: {},
   blocs: {},
   council: { influenceByCountry: { TUR: 28 }, history: [] },
+  intelOperations: {},
+  intelligenceLedger: { TUR: 100 },
+  culturalInfluence: {},
   activeEvent: null,
   eventCooldownUntil: 12,
   lastAiDay: 1,
+  lastStrategicReviewDay: 1,
   sitrep: [
-    'AlpyX Strategic Command 0.40 online.',
-    'Cabinet, technology tree, resource processing, alliance blocs and Global Council v1 loaded.',
+    'AlpyX Living World 0.50 online.',
+    'Strategic AI, covert operations and influence networks loaded alongside Strategic Command systems.',
   ],
 });

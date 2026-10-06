@@ -8,6 +8,9 @@ import { processTradeDeals } from './systems/trade';
 import { processMinistries } from './systems/ministries';
 import { processIndustry } from './systems/industry';
 import { processAutoWars } from './systems/warfare';
+import { processIntelOperations } from './systems/espionage';
+import { processInfluence } from './systems/influence';
+import { processStrategicGoals } from './systems/strategicGoals';
 
 export function tickCountry(country: CountryState): CountryState {
   const administered = processMinistries(country);
@@ -56,6 +59,9 @@ export function tickGame(state: GameState): GameState {
   next = processTradeDeals(next);
   next = processAutoWars(next);
   next = processElection(next);
+  next = processIntelOperations(next);
+  next = processInfluence(next);
+  next = processStrategicGoals(next);
   next = processCountryAI(next);
   next = maybeTriggerEvent(next);
   return next;

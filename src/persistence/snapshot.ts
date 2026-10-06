@@ -16,9 +16,13 @@ export function snapshotGame(state: GameState): GameState {
     wars: state.wars,
     blocs: state.blocs,
     council: state.council,
+    intelOperations: state.intelOperations,
+    intelligenceLedger: state.intelligenceLedger,
+    culturalInfluence: state.culturalInfluence,
     activeEvent: state.activeEvent,
     eventCooldownUntil: state.eventCooldownUntil,
     lastAiDay: state.lastAiDay,
+    lastStrategicReviewDay: state.lastStrategicReviewDay,
     sitrep: state.sitrep,
   });
 }

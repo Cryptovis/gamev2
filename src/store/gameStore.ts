@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { makeInitialState } from '../data/initialState';
 import type { GameCommand } from '../domain/commands';
-import type { CouncilResolutionType, GameSpeed, GameState, MinistryKey, TradeResource } from '../domain/game';
+import type { CouncilResolutionType, GameSpeed, GameState, IntelOperationType, MinistryKey, TradeResource } from '../domain/game';
 import type { MapMode } from '../domain/map';
 import { applyGameCommand } from '../engine/commands';
 
@@ -35,6 +35,7 @@ interface GameActions {
   setMinistryAllocation: (ministry: MinistryKey, value: number) => void;
   unlockTechnology: (technologyId: string) => void;
   proposeCouncilResolution: (resolutionType: CouncilResolutionType, targetCountryId: string) => void;
+  launchIntelOperation: (operationType: IntelOperationType, targetCountryId: string) => void;
   resolveEvent: (optionId: string) => void;
   pushSitrep: (message: string) => void;
   saveMessage: string | null;
@@ -82,6 +83,7 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
   setMinistryAllocation: (ministry, value) => set((state) => applyGameCommand(state, { type: 'ministry/setAllocation', ministry, value })),
   unlockTechnology: (technologyId) => set((state) => applyGameCommand(state, { type: 'technology/unlock', technologyId })),
   proposeCouncilResolution: (resolutionType, targetCountryId) => set((state) => applyGameCommand(state, { type: 'council/propose', resolutionType, targetCountryId })),
+  launchIntelOperation: (operationType, targetCountryId) => set((state) => applyGameCommand(state, { type: 'intelligence/launch', operationType, targetCountryId })),
   resolveEvent: (optionId) => set((state) => applyGameCommand(state, { type: 'event/resolve', optionId })),
   pushSitrep: (message) => set((state) => ({ sitrep: [message, ...state.sitrep].slice(0, 12) })),
   setSaveMessage: (saveMessage) => set({ saveMessage }),

@@ -1,4 +1,4 @@
-import type { CouncilResolutionType, GameSpeed, MinistryKey, TradeResource } from './game';
+import type { CouncilResolutionType, GameSpeed, IntelOperationType, MinistryKey, TradeResource } from './game';
 
 export type GameCommand =
   | { type: 'time/advanceDay' }
@@ -25,4 +25,5 @@ export type GameCommand =
   | { type: 'ministry/setAllocation'; ministry: MinistryKey; value: number }
   | { type: 'technology/unlock'; technologyId: string }
   | { type: 'council/propose'; resolutionType: CouncilResolutionType; targetCountryId: string }
+  | { type: 'intelligence/launch'; operationType: IntelOperationType; targetCountryId: string }
   | { type: 'event/resolve'; optionId: string };

@@ -30,7 +30,7 @@ export function TopBar() {
 
   return <header className="topbar">
     <div className="brand-block">
-      <div className="eyebrow">ALPYX // GLOBAL COMMAND · STRATEGIC COMMAND 0.40</div>
+      <div className="eyebrow">ALPYX // GLOBAL COMMAND · LIVING WORLD 0.50 ALPHA</div>
       <div className="brand-line"><strong>{player.name}</strong><span className="day-chip">DAY {day}</span></div>
     </div>
 

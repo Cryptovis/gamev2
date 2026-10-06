@@ -9,6 +9,7 @@ import { setMinistryAllocation } from './systems/ministries';
 import { unlockTechnology } from './systems/technology';
 import { formBloc, inviteToBloc } from './systems/blocs';
 import { proposeCouncilResolution } from './systems/council';
+import { launchIntelOperation } from './systems/espionage';
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 const note = (state: GameState, message: string): GameState => ({ ...state, sitrep: [message, ...state.sitrep].slice(0, 12) });
@@ -155,6 +156,7 @@ export function applyGameCommand(state: GameState, command: GameCommand): GameSt
     }
     case 'technology/unlock': return unlockTechnology(state, state.playerCountryId, command.technologyId);
     case 'council/propose': return proposeCouncilResolution(state, command.resolutionType, command.targetCountryId);
+    case 'intelligence/launch': return launchIntelOperation(state, command.operationType, command.targetCountryId);
     case 'event/resolve': return resolveEvent(state, command.optionId);
     case 'military/withdraw': {
       const war = state.wars[command.warId];
