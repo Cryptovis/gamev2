@@ -16,5 +16,5 @@ export function MapModeBar(){
  const setMapMode=useGameStore(s=>s.setMapMode);
  const mapNotice=useGameStore(s=>s.mapNotice);
  const lang=useGameStore(s=>s.playerProfile.language);
- return <section className="map-mode-bar" aria-label="Map modes"><div className="map-mode-buttons">{modes.map(({mode,key,glyph})=><button key={mode} className={mode===mapMode?'active':''} onClick={()=>setMapMode(mode)}><span>{glyph}</span>{tr(lang,key)}</button>)}</div><div className="map-notice">{mapNotice}</div></section>;
+ return <section className="map-mode-bar" aria-label="Map modes"><header className="map-mode-heading"><span><small>STRATEGIC VIEW</small><strong>MAP LAYERS</strong></span><em>{mapMode.toUpperCase()}</em></header><div className="map-mode-buttons">{modes.map(({mode,key,glyph})=><button key={mode} className={mode===mapMode?'active':''} onClick={()=>setMapMode(mode)}><span>{glyph}</span>{tr(lang,key)}</button>)}</div><div className="map-notice">{mapNotice}</div></section>;
 }
