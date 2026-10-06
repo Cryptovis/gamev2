@@ -1,6 +1,6 @@
 import type { CountryState, GameState, TradeDeal, TradeResource } from '../../domain/game';
 import { simulateResources } from './resources';
-import { changeRelations, embassyFor } from './diplomacy';
+import { changeRelations, embassyFor, embassyRelationBonus } from './diplomacy';
 
 export const TRADE_PRICES: Record<TradeResource, number> = { food: 0.025, oil: 0.06, iron: 0.04, uranium: 0.22 };
 
@@ -96,7 +96,7 @@ export function processTradeDeals(state: GameState): GameState {
     };
 
     tradeDeals = { ...tradeDeals, [deal.id]: { ...deal, nextDeliveryDay: state.day + interval } };
-    relationBonuses.push({a:buyer.id,b:seller.id,delta:interval>1?1:0.08});
+    relationBonuses.push({a:buyer.id,b:seller.id,delta:(interval>1?1:0.08)*embassyRelationBonus(state,buyer.id,seller.id)});
     if (interval > 1) notices.push(`TRADE // Monthly ${deal.resource.toUpperCase()} delivery from ${seller.name}: ${quantity.toFixed(1)} units for $${cost.toFixed(2)}B.`);
   }
 
@@ -116,7 +116,7 @@ export function makeImportDeal(state: GameState, targetCountryId: string, resour
 }
 
 export function makeLongTermImportContract(state: GameState, buyerId: string, sellerId: string, resource: TradeResource, years: 1|3|5|10): TradeDeal | null {
-  const quote = getTradeQuote(state, sellerId, resource);
+  const quote = getTradeQuote(state, sellerId, resource, undefined, buyerId);
   if (!quote.quantity || quote.quantity <= 0) return null;
   const interval = 30;
   return {
