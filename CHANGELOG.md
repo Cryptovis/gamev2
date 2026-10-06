@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.50.1-playtest.2
+- Added geometry-based sovereign territory selection instead of marker-first selection
+- Reduced microstate debug labels; full names reveal only on hover/select/high zoom
+- Added Strategic Dossier command window with radar visualization
+- Added Supply Command window with flow network, reserves and front logistics views
+- Unified warfare supply calculation with the national supply network model
+- Increased national command panel typography and information density
+
 ## 0.50.0-playtest.1
 - Promoted Living World branch to the first integrated playtest build
 - Added in-game playtest objectives with live completion tracking
