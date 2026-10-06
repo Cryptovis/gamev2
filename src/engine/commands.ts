@@ -1,7 +1,7 @@
 import type { GameCommand } from '../domain/commands';
 import type { GameState, TradeResource, WarState } from '../domain/game';
 import { tickGame } from './tick';
-import { addTreaty, applyThirdPartyTradeReaction, changeRelations, relationFor, sendResourceGift, sendTreasuryGift, setWarRelation, updateBilateralRelation, endWarRelation } from './systems/diplomacy';
+import { addTreaty, applyThirdPartyTradeReaction, changeRelations, embassyRelationBonus, relationFor, sendResourceGift, sendTreasuryGift, setWarRelation, updateBilateralRelation, endWarRelation } from './systems/diplomacy';
 import { makeImportDeal } from './systems/trade';
 import { emptyLosses, getWarPreview, resolveCombatRound } from './systems/warfare';
 import { resolveEvent } from './systems/events';
@@ -48,8 +48,9 @@ export function applyGameCommand(state: GameState, command: GameCommand): GameSt
       const target = state.countries[command.targetCountryId];
       if (!player || !target || player.economy.treasury < 2) return note(state, 'DIPLOMACY // Insufficient treasury for diplomatic mission.');
       let next = { ...state, countries: { ...state.countries, [player.id]: { ...player, economy: { ...player.economy, treasury: player.economy.treasury - 2 } } } };
-      next = changeRelations(next, player.id, target.id, 10);
-      return note(next, `DIPLOMACY // Relations with ${target.name} improved (+10).`);
+      const gain=Math.round(10*embassyRelationBonus(next,player.id,target.id));
+      next = changeRelations(next, player.id, target.id, gain);
+      return note(next, `DIPLOMACY // Relations with ${target.name} improved (+${gain}).`);
     }
     case 'diplomacy/giftTreasury': {
       const player = state.countries[state.playerCountryId];
