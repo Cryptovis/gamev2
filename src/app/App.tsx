@@ -19,6 +19,7 @@ export function App(){
   useGameClock(); useAutosave();
   const sitrep=useGameStore((s)=>s.sitrep);
   const player=useGameStore((s)=>s.countries[s.playerCountryId]);
+  const selectedCountryId=useGameStore((s)=>s.selectedCountryId);
   const theme=countryThemeFor(player.iso2);
-  return <main className="game-shell" style={{'--accent':theme.primary,'--accent-2':theme.accent,'--nation-secondary':theme.secondary} as CSSProperties}><WorldMap/><TopBar/><MapModeBar/><CountryPanel/><MarketTicker/><WorldPulse/><PlaytestObjectives/><div className="sitrep">SITREP // {sitrep[0]}</div><EventModal/><AdvisorModal/><CampaignSetup/><CampaignOverlay/></main>;
+  return <main className="game-shell" style={{'--accent':theme.primary,'--accent-2':theme.accent,'--nation-secondary':theme.secondary} as CSSProperties}><WorldMap/><TopBar/><MapModeBar/>{selectedCountryId&&<CountryPanel/>}<MarketTicker/><WorldPulse/><PlaytestObjectives/><div className="sitrep"><span>SITREP // {sitrep[0]}</span><span className="sitrep-hint">WORLD COMMAND CHANNEL</span></div><EventModal/><AdvisorModal/><CampaignSetup/><CampaignOverlay/></main>;
 }

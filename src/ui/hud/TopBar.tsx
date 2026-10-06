@@ -35,7 +35,7 @@ export function TopBar(){
  return <header className="topbar">
   <div className="leader-brand">
    <button className="leader-avatar-button" onClick={()=>setAvatarOpen(true)} title={tr(lang,'choose_avatar')}><AvatarPortrait id={profile.avatarId} size={52}/><span>✎</span></button>
-   <div className="brand-block"><div className="eyebrow">ALPYX // GLOBAL COMMAND · NATION IDENTITY 0.60 PLAYTEST</div><div className="brand-line"><strong>{profile.commanderName}</strong><span className="day-chip">{tr(lang,'day')} {day}</span></div><small className="leader-country">{player.name} · {player.politics.regime.toUpperCase()}</small></div>
+   <div className="brand-block"><div className="eyebrow">ALPYX // GLOBAL COMMAND · WORLD READABILITY 0.61 PLAYTEST</div><div className="brand-line"><strong>{profile.commanderName}</strong><span className="day-chip">{tr(lang,'day')} {day}</span></div><small className="leader-country">{player.name} · {player.politics.regime.toUpperCase()}</small></div>
   </div>
 
   <div className="metrics" aria-label="National resources">

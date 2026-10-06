@@ -16,6 +16,21 @@ type FeatureCollection = { type: 'FeatureCollection'; features: Feature[] };
 type DragState = { x: number; y: number; rotation: [number, number, number]; pan: { x: number; y: number }; moved: boolean };
 
 const politicalPalette = ['#355f72','#466c63','#6d5f4d','#5d5575','#7b5660','#4d6675','#4e7361','#7a653f','#4f6072','#65704a','#70554f','#467077'];
+const WATER_LABELS:Array<{name:string;position:[number,number];major?:boolean;minZoom?:number}> = [
+  {name:'NORTH ATLANTIC OCEAN',position:[-36,34],major:true},
+  {name:'SOUTH ATLANTIC OCEAN',position:[-18,-27],major:true},
+  {name:'INDIAN OCEAN',position:[76,-23],major:true},
+  {name:'PACIFIC OCEAN',position:[-150,8],major:true},
+  {name:'ARCTIC OCEAN',position:[8,76],major:true},
+  {name:'MEDITERRANEAN SEA',position:[17.5,35.4],minZoom:1.15},
+  {name:'BLACK SEA',position:[34.5,43.3],minZoom:1.25},
+  {name:'AEGEAN SEA',position:[25.1,38.4],minZoom:1.8},
+  {name:'RED SEA',position:[38.2,20.2],minZoom:1.25},
+  {name:'ARABIAN SEA',position:[65,16],minZoom:1.15},
+  {name:'BALTIC SEA',position:[19.5,57.4],minZoom:1.55},
+  {name:'CARIBBEAN SEA',position:[-75,15],minZoom:1.3},
+  {name:'CASPIAN SEA',position:[51,41.3],minZoom:1.4},
+];
 const religionColors: Record<string,string> = {
   christianity:'#416985', catholic_christianity:'#4965a0', orthodox_christianity:'#66558d', protestant_christianity:'#397e8c',
   islam:'#3f7557', hinduism:'#9e7038', buddhism:'#a48538', judaism:'#4b72a6', unaffiliated:'#606b76', folk_or_mixed:'#79576a',
@@ -36,6 +51,7 @@ export function WorldMap() {
   const [flatZoom, setFlatZoom] = useState(1);
   const [flatPan, setFlatPan] = useState({ x: 0, y: 0 });
   const [hovered, setHovered] = useState<string | null>(null);
+  const [mapMenuOpen,setMapMenuOpen]=useState(false);
   const dragRef = useRef<DragState | null>(null);
   const justDraggedRef = useRef(false);
   const rafRef = useRef<number | null>(null);
@@ -169,7 +185,11 @@ export function WorldMap() {
     if (micro && micro.distance<=hitRadius) {
       selectCountry(micro.id);
       setMapNotice(`${countries[micro.id].name} selected — microstate command profile loaded.`);
+      return;
     }
+    selectCountry(null);
+    setHovered(null);
+    setMapNotice('Open waters — no sovereign state selected.');
   };
 
   const zoomBy=(factor:number)=>{
@@ -205,9 +225,15 @@ export function WorldMap() {
   });
 
   return <div className="world-map political-map">
-    <div className="map-view-console" aria-label="Map controls">
-      <div className="presentation-switch"><button className={mapPresentation==='political'?'active':''} onClick={()=>setMapPresentation('political')}>{tr(language,'political')}</button><button className={mapPresentation==='geographic'?'active':''} onClick={()=>setMapPresentation('geographic')}>{tr(language,'geographic')}</button></div>
-      <div className="projection-switch-inline"><button className={projectionMode==='globe'?'active':''} onClick={()=>setProjectionMode('globe')}>GLOBE</button><button className={projectionMode==='flat'?'active':''} onClick={()=>setProjectionMode('flat')}>FLAT</button><button onClick={()=>zoomBy(.8)}>−</button><button onClick={()=>zoomBy(1.25)}>+</button><button onClick={focusSelected}>FOCUS</button><button onClick={resetView}>RESET</button></div>
+    <div className={`map-dock ${mapMenuOpen?'open':''}`}>
+      {mapMenuOpen&&<section className="map-dock-popover" aria-label="Map settings">
+        <header><span><small>WORLD VIEW</small><strong>MAP SETTINGS</strong></span><button onClick={()=>setMapMenuOpen(false)} aria-label="Close map settings">×</button></header>
+        <div className="map-setting-group"><small>BASE MAP</small><div><button className={mapPresentation==='political'?'active':''} onClick={()=>setMapPresentation('political')}>{tr(language,'political')}</button><button className={mapPresentation==='geographic'?'active':''} onClick={()=>setMapPresentation('geographic')}>{tr(language,'geographic')}</button></div></div>
+        <div className="map-setting-group"><small>PROJECTION</small><div><button className={projectionMode==='globe'?'active':''} onClick={()=>setProjectionMode('globe')}>GLOBE</button><button className={projectionMode==='flat'?'active':''} onClick={()=>setProjectionMode('flat')}>FLAT</button></div></div>
+        <div className="map-setting-group"><small>CAMERA</small><div className="map-camera-grid"><button onClick={()=>zoomBy(.8)}>− ZOOM</button><button onClick={()=>zoomBy(1.25)}>+ ZOOM</button><button disabled={!selectedCountry} onClick={focusSelected}>FOCUS</button><button onClick={resetView}>RESET</button></div></div>
+        <footer>{projectionMode==='flat'?flatZoom.toFixed(1):globeZoom.toFixed(1)}× · {mapPresentation.toUpperCase()} · {projectionMode.toUpperCase()}</footer>
+      </section>}
+      <button className="map-dock-trigger" onClick={()=>setMapMenuOpen(v=>!v)}><span>⌖</span><strong>MAP</strong><small>{projectionMode==='globe'?'GLOBE':'FLAT'} · {mapPresentation==='political'?'POL':'GEO'}</small></button>
     </div>
     <div className="map-hover-readout">
       <strong>{hoveredCountry?.name ?? selectedCountry?.name ?? 'WORLD COMMAND'}</strong>
@@ -222,12 +248,23 @@ export function WorldMap() {
         <pattern id="terrain-urban" width="16" height="16" patternUnits="userSpaceOnUse"><rect width="16" height="16" fill="#687077"/><path d="M0 8h16M8 0v16" stroke="#9da3a8" strokeOpacity=".18"/></pattern>
         <pattern id="terrain-coastal" width="18" height="18" patternUnits="userSpaceOnUse"><rect width="18" height="18" fill="#53796c"/><path d="M0 5c5 3 9-3 18 0M0 12c6 3 11-2 18 0" fill="none" stroke="#8fb6a8" strokeOpacity=".26"/></pattern>
       </defs>
+      {projectionMode === 'flat' && <rect x="0" y="0" width={W} height={H} className="flat-ocean"/>}
       {projectionMode === 'globe' && <>
         <path d={path({ type: 'Sphere' } as any) ?? ''} className="ocean-sphere"/>
         <path d={path(graticule as any) ?? ''} className="globe-graticule"/>
       </>}
       <g key={viewportKey} className="map-viewport" transform={projectionMode === 'flat' ? flatTransform : undefined}>
         <g className="country-layer">{shapeLayer}</g>
+        <g className="water-label-layer">{WATER_LABELS.map((label)=>{
+          const zoom=projectionMode==='globe'?globeZoom:flatZoom;
+          if(label.minZoom&&zoom<label.minZoom)return null;
+          if(projectionMode==='globe'){
+            const center:[number,number]=[-rotation[0],-rotation[1]];
+            if(geoDistance(label.position,center)>Math.PI/2)return null;
+          }
+          const p=projection(label.position); if(!p)return null;
+          return <text key={label.name} x={p[0]} y={p[1]} className={label.major?'water-label major':'water-label'}>{label.name}</text>;
+        })}</g>
         {Object.entries(MICROSTATE_POINTS).map(([id,pos]) => {
           const c=countries[id]; if(!c) return null;
           if (projectionMode==='globe') { const center:[number,number]=[-rotation[0],-rotation[1]]; if(geoDistance(pos as [number,number],center)>Math.PI/2) return null; }

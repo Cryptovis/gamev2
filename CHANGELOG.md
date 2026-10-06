@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.61.0-playtest.1
+- Enlarged Strategic Objectives panel for practical playtest readability
+- Moved Political/Geographic, Globe/Flat, zoom, focus and reset controls into a MAP popover docked to SITREP
+- Clicking open water now clears country selection
+- National Command panel disappears when no sovereign state is selected
+- Added dark navy ocean treatment with softer globe graticule
+- Added contextual labels for oceans and regional seas
+- Preserved sovereign surface selection and expanded map zoom controls
+
 ## 0.60.0-playtest.1
 - Added campaign onboarding: commander name, 20 leader portraits, language and country selection
 - Added English, Turkish, Spanish, Chinese and Russian core UI localization
