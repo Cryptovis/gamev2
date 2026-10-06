@@ -18,6 +18,8 @@ export function App(){
   const sitrep=useGameStore((s)=>s.sitrep);
   const player=useGameStore((s)=>s.countries[s.playerCountryId]);
   const selectedCountryId=useGameStore((s)=>s.selectedCountryId);
+  const mapMode=useGameStore((s)=>s.mapMode);
+  const mapPresentation=useGameStore((s)=>s.mapPresentation);
   const theme=countryThemeFor(player.iso2);
-  return <main className="game-shell" style={{'--accent':theme.primary,'--accent-2':theme.accent,'--nation-secondary':theme.secondary} as CSSProperties}><WorldMap/><TopBar/><MapModeBar/>{selectedCountryId&&<CountryPanel/>}<CommandRails/><div className="sitrep"><span>SITREP // {sitrep[0]}</span><span className="sitrep-hint">WORLD COMMAND CHANNEL</span></div><EventModal/><AdvisorModal/><CampaignSetup/><CampaignOverlay/></main>;
+  return <main className="game-shell" style={{'--accent':theme.primary,'--accent-2':theme.accent,'--nation-secondary':theme.secondary} as CSSProperties}><WorldMap/><TopBar/><MapModeBar/>{selectedCountryId&&<CountryPanel/>}<CommandRails/><div className="sitrep"><span>SITREP // {sitrep[0]}</span><span className="sitrep-command-meta"><b>WORLD COMMAND CHANNEL</b><small>PLAYER · {mapPresentation.toUpperCase()} · {mapMode.toUpperCase()} MAP</small></span></div><EventModal/><AdvisorModal/><CampaignSetup/><CampaignOverlay/></main>;
 }
