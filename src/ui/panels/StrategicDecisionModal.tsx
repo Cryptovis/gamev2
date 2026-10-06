@@ -1,5 +1,5 @@
 import { createPortal } from 'react-dom';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { StrategicDecisionSpec, StrategicActionKind } from '../../domain/interaction';
 import { flagEmoji } from '../../data/countryThemes';
 import { useGameStore } from '../../store/gameStore';
@@ -20,9 +20,15 @@ export function StrategicDecisionModal({
  onCancel,
 }:{spec:StrategicDecisionSpec;onConfirm:()=>void;onCancel:()=>void}){
  const state=useGameStore();
+ const speedAtOpen=useRef(state.speed);
  const player=state.countries[state.playerCountryId];
  const target=state.countries[spec.targetCountryId];
  const [autoApprove,setAutoApprove]=useState(false);
+ useEffect(()=>{
+  const resume=speedAtOpen.current;
+  if(resume!==0)state.setSpeed(0);
+  return ()=>{if(resume!==0)state.setSpeed(resume);};
+ },[]);
  if(!player||!target)return null;
 
  const tone=spec.tone??'neutral';
