@@ -33,7 +33,11 @@ function createImport(state: GameState, targetCountryId: string, resource: Trade
 export function applyGameCommand(state: GameState, command: GameCommand): GameState {
   switch (command.type) {
     case 'time/advanceDay': return tickGame(state);
-    case 'clock/setSpeed': return state.activeEvent || state.campaignStatus !== 'active' ? { ...state, speed: 0 } : { ...state, speed: command.speed };
+    case 'clock/setSpeed': {
+      const preferredSpeed = command.speed === 0 ? state.preferredSpeed : command.speed;
+      if (state.activeEvent || state.activeAdvisor || state.campaignStatus !== 'active') return { ...state, preferredSpeed, speed: 0 };
+      return { ...state, speed: command.speed, preferredSpeed };
+    }
     case 'economy/setTaxRate': {
       const player = state.countries[state.playerCountryId];
       if (!player) return state;
