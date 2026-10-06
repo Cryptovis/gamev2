@@ -6,6 +6,8 @@ import type { MapMode, MapPresentation } from '../domain/map';
 import { applyGameCommand } from '../engine/commands';
 import { acceptAdvisorContract, acceptAdvisorTradePact, dismissAdvisor } from '../engine/systems/advisor';
 import { makeLongTermImportContract } from '../engine/systems/trade';
+import { embassyFor, openEmbassy } from '../engine/systems/diplomacy';
+import { resolveDiplomaticOffer } from '../engine/systems/diplomaticOffers';
 
 interface GameActions {
   startCampaign: (config:{commanderName:string;countryId:string;avatarId:string;language:GameLanguage})=>void;
@@ -25,6 +27,8 @@ interface GameActions {
   improveRelations: (targetCountryId: string) => void;
   giftTreasury: (targetCountryId:string,amountB:1|5|10)=>void;
   giftResource: (targetCountryId:string,resource:TradeResource)=>void;
+  openEmbassyWith: (targetCountryId:string)=>void;
+  resolveDiplomaticOffer: (offerId:string,accept:boolean)=>void;
   signTradePact: (targetCountryId: string) => void;
   signNonAggression: (targetCountryId: string) => void;
   signAlliance: (targetCountryId: string) => void;
@@ -86,6 +90,13 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
   improveRelations: (targetCountryId) => set((state) => applyGameCommand(state, { type: 'diplomacy/improveRelations', targetCountryId })),
   giftTreasury: (targetCountryId,amountB) => set((state)=>applyGameCommand(state,{type:'diplomacy/giftTreasury',targetCountryId,amountB})),
   giftResource: (targetCountryId,resource) => set((state)=>applyGameCommand(state,{type:'diplomacy/giftResource',targetCountryId,resource})),
+  openEmbassyWith: (targetCountryId) => set((state)=>{
+    const player=state.countries[state.playerCountryId],target=state.countries[targetCountryId];
+    if(!player||!target||embassyFor(state,player.id,target.id)||player.economy.treasury<3)return {};
+    const opened=openEmbassy(state,player.id,target.id,1);
+    return {...opened,countries:{...opened.countries,[player.id]:{...opened.countries[player.id],economy:{...opened.countries[player.id].economy,treasury:opened.countries[player.id].economy.treasury-3}}},sitrep:[`EMBASSY // Diplomatic mission opened with ${target.name}. Establishment cost $3B.`,...opened.sitrep].slice(0,12)};
+  }),
+  resolveDiplomaticOffer: (offerId,accept) => set((state)=>resolveDiplomaticOffer(state,offerId,accept)),
   signTradePact: (targetCountryId) => set((state) => applyGameCommand(state, { type: 'diplomacy/signTradePact', targetCountryId })),
   signNonAggression: (targetCountryId) => set((state) => applyGameCommand(state, { type: 'diplomacy/signNonAggression', targetCountryId })),
   signAlliance: (targetCountryId) => set((state) => applyGameCommand(state, { type: 'diplomacy/signAlliance', targetCountryId })),
