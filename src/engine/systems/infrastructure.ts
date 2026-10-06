@@ -93,7 +93,7 @@ export function processInfrastructureAI(state:GameState):GameState{
     if(!infra||!current||current.economy.treasury<10)continue;
     const options:(InfrastructureAsset)[]=['roads','rail','hubs',...(infra.ports>0?['ports' as const]:[])];
     const target=options.sort((a,b)=>infra[a]-infra[b])[0];
-    if(infra[target]<72)next=investInfrastructure(next,country.id,target);
+    if(infra[target]<72){const before=next.sitrep;const invested=investInfrastructure(next,country.id,target);next={...invested,sitrep:before};}
   }
   return next;
 }
