@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.72.0-playtest.1 — Production / Industry & Equipment
+- Added persistent national production state for every sovereign country
+- Added six equipment classes: infantry equipment, artillery, armor, fighters, logistics equipment and naval equipment
+- Added deterministic daily production lines with factory allocation, efficiency growth/decay and daily output
+- Manufacturing consumes real steel, fuel, electricity and treasury inputs
+- Added throughput and bottleneck detection for steel, fuel, electricity, treasury and factory capacity
+- Added military-factory share policy (25–80% of usable factories)
+- Added strategic equipment stockpiles and deployment actions that reinforce active military forces
+- Added Production tab to National Command with stockpiles, production lines, inputs, efficiency and factory controls
+- Added AI production allocation; AI countries rebalance factories every 14 days according to strategic goals
+- Connected strategic equipment reserves to warfare combat sustainment
+- Added production reserve score to reflect the depth of national replacement capacity
+- Save schema bumped to v11 for persistent production state
+- Added dedicated production tests covering throughput, shortages, factory caps, deployment, reserve effects and AI allocation
+
 ## 0.71.1-playtest.1 — Commander UX
 - Moved SAVE / LOAD / NEW out of the permanent top HUD and into a commander campaign-options center
 - Clicking the top-left commander portrait now opens Commander & Campaign options instead of immediately showing avatar presets
