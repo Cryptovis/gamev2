@@ -13,6 +13,7 @@ import { processInfluence } from './systems/influence';
 import { processStrategicGoals } from './systems/strategicGoals';
 import { processLivingEconomyAI } from './systems/livingEconomyAI';
 import { processWorldDiplomacy } from './systems/worldDynamics';
+import { maybeCreateResourceAdvisor } from './systems/advisor';
 
 export function tickCountry(country: CountryState): CountryState {
   const administered = processMinistries(country);
@@ -68,5 +69,6 @@ export function tickGame(state: GameState): GameState {
   next = processWorldDiplomacy(next);
   next = processCountryAI(next);
   next = maybeTriggerEvent(next);
+  next = maybeCreateResourceAdvisor(next);
   return next;
 }

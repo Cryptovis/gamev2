@@ -1,16 +1,24 @@
 import { create } from 'zustand';
 import { makeInitialState } from '../data/initialState';
 import type { GameCommand } from '../domain/commands';
-import type { CouncilResolutionType, GameSpeed, GameState, IntelOperationType, MinistryKey, TradeResource } from '../domain/game';
-import type { MapMode } from '../domain/map';
+import type { CouncilResolutionType, GameLanguage, GameSpeed, GameState, IntelOperationType, MinistryKey, TradeResource } from '../domain/game';
+import type { MapMode, MapPresentation } from '../domain/map';
 import { applyGameCommand } from '../engine/commands';
+import { acceptAdvisorContract, acceptAdvisorTradePact, dismissAdvisor } from '../engine/systems/advisor';
+import { makeLongTermImportContract } from '../engine/systems/trade';
 
 interface GameActions {
+  startCampaign: (config:{commanderName:string;countryId:string;avatarId:string;language:GameLanguage})=>void;
+  setPlayerAvatar: (avatarId:string)=>void;
+  setLanguage: (language:GameLanguage)=>void;
+  resolveAdvisor: (decision:'dismiss'|'pact'|1|3|5|10)=>void;
+  createLongTermContract: (targetCountryId:string,resource:TradeResource,years:1|3|5|10)=>void;
   dispatch: (command: GameCommand) => void;
   setSpeed: (speed: GameSpeed) => void;
   selectCountry: (countryId: string | null) => void;
   selectCountryByMapFeatureId: (featureId: string | number | null) => void;
   setMapMode: (mode: MapMode) => void;
+  setMapPresentation: (mode: MapPresentation) => void;
   setMapNotice: (message: string | null) => void;
   advanceDay: () => void;
   setTaxRate: (rate: number) => void;
@@ -48,6 +56,16 @@ interface GameActions {
 export const useGameStore = create<GameState & GameActions>((set, get) => ({
   ...makeInitialState(),
   saveMessage: null,
+  startCampaign: ({commanderName,countryId,avatarId,language}) => set(() => {
+    const fresh=makeInitialState();
+    const chosen=fresh.countries[countryId] ? countryId : 'TUR';
+    const country=fresh.countries[chosen];
+    return {...fresh,playerCountryId:chosen,selectedCountryId:chosen,playerProfile:{commanderName:commanderName.trim()||'Commander',avatarId,language,setupComplete:true},council:{influenceByCountry:{[chosen]:28},history:[]},intelligenceLedger:{[chosen]:100},mapNotice:`${country.name} command established.`,sitrep:[`${commanderName.trim()||'Commander'} assumed national command of ${country.name}.`,...fresh.sitrep],saveMessage:'Campaign initialized'};
+  }),
+  setPlayerAvatar: (avatarId) => set((state)=>({playerProfile:{...state.playerProfile,avatarId}})),
+  setLanguage: (language) => set((state)=>({playerProfile:{...state.playerProfile,language}})),
+  resolveAdvisor: (decision) => set((state)=>decision==='dismiss'?dismissAdvisor(state):decision==='pact'?acceptAdvisorTradePact(state):acceptAdvisorContract(state,decision)),
+  createLongTermContract: (targetCountryId,resource,years) => set((state)=>{const contract=makeLongTermImportContract(state,state.playerCountryId,targetCountryId,resource,years);return contract?{tradeDeals:{...state.tradeDeals,[contract.id]:contract},sitrep:[`TRADE // ${years}-year ${resource.toUpperCase()} contract opened with ${state.countries[targetCountryId].name}.`,...state.sitrep].slice(0,12)}:{};}),
   dispatch: (command) => set((state) => applyGameCommand(state, command)),
   setSpeed: (speed) => set((state) => applyGameCommand(state, { type: 'clock/setSpeed', speed })),
   selectCountry: (selectedCountryId) => set({ selectedCountryId }),
@@ -59,6 +77,7 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
       : { mapNotice: `Map feature selected. No sovereign-state profile is attached to this geometry.` };
   }),
   setMapMode: (mapMode) => set({ mapMode }),
+  setMapPresentation: (mapPresentation) => set({ mapPresentation }),
   setMapNotice: (mapNotice) => set({ mapNotice }),
   advanceDay: () => set((state) => applyGameCommand(state, { type: 'time/advanceDay' })),
   setTaxRate: (rate) => set((state) => applyGameCommand(state, { type: 'economy/setTaxRate', rate })),
