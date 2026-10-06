@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.70.0-playtest.1
+- Standardized UI typography with reusable readable font scales
+- Portaled Strategic Dossier and Supply Command above panel clipping and stacking contexts
+- Rebuilt campaign setup as a four-step wizard: name/language, portrait, nation, final confirmation
+- Added animated command-transfer / first-day-in-office transition before campaign start
+- Added MA3-style 0–100 Relationship Index and stance bands
+- Added treasury grants and strategic resource aid as bilateral goodwill actions
+- Trade pacts and successful trade deliveries now improve bilateral relations
+- Cooperation with a country’s hostile rival can damage third-party relations
+- Added dedicated diplomacy panel with relation meter, treaty context, aid tools and trade flows
+- Expanded typography/readability across dense HUD, panel, rail and modal surfaces
+
 ## 0.62.0-playtest.1
 - Replaced fragile event image URLs with bundled inline SVG event illustrations
 - Added unique visual scenes for food, inflation, war weariness, corruption, fuel and intelligence crises
