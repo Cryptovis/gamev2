@@ -6,7 +6,7 @@ import type { CountryState, MinistryKey, TradeResource } from '../../domain/game
 import { useGameStore } from '../../store/gameStore';
 import { calculateDailyResourceFlow, calculateEconomicHealth, calculateEconomyForecast, calculateIndustrialOutput, calculateMilitaryPower, calculateResourcePressure } from '../../store/selectors';
 import { findBestSuppliers, MARKET_RESOURCES, resourceReserveDays, resourceSelfSufficiency, resourceStrategicStatus } from '../../store/marketSelectors';
-import { ArtilleryIcon, BlocIcon, CabinetIcon, CouncilIcon, FuelIcon, IndustryIcon, IntelligenceIcon, InteriorIcon, JetIcon, PersonnelIcon, PowerIcon, ReligionGlyph, ResearchIcon, ResourceIcon, ShipIcon, SocietyIcon, SteelIcon, TankIcon } from '../icons/GameIcons';
+import { ArtilleryIcon, BlocIcon, CabinetIcon, CouncilIcon, DiplomacyIcon, EconomyIcon, FuelIcon, IndustryIcon, IntelligenceIcon, InteriorIcon, JetIcon, OverviewIcon, PersonnelIcon, PowerIcon, ReligionGlyph, ResearchIcon, ResourceIcon, ShipIcon, SocietyIcon, SteelIcon, TankIcon, WarIcon, WorldIcon } from '../icons/GameIcons';
 import { getTradeQuote } from '../../engine/systems/trade';
 import { MINISTRY_DEFINITIONS } from '../../data/ministries';
 import { TECHNOLOGY_TREE } from '../../data/technologyTree';
@@ -15,6 +15,7 @@ import { blocForCountry } from '../../engine/systems/blocs';
 import { strategicGoalLabel } from '../../engine/systems/strategicGoals';
 import { getWarPreview } from '../../engine/systems/warfare';
 import { tr } from '../../i18n/gameI18n';
+import { flagEmoji } from '../../data/countryThemes';
 
 const signed=(value:number,digits=2)=>`${value>=0?'+':''}${value.toFixed(digits)}`;
 const resources:TradeResource[]=['food','oil','iron','uranium'];
@@ -27,6 +28,7 @@ function ResourceCard({ country, resource }: { country: CountryState; resource: 
 }
 function UnitStat({ icon, label, value }: { icon: ReactNode; label:string; value:number }) { return <div className="unit-stat"><span className="unit-icon">{icon}</span><span><small>{label}</small><strong>{value.toLocaleString()}</strong></span></div>; }
 function MinistryIcon({id}:{id:MinistryKey}){ if(id==='economy')return <IndustryIcon/>; if(id==='defense')return <TankIcon/>; if(id==='science')return <ResearchIcon/>; if(id==='intelligence')return <IntelligenceIcon/>; if(id==='interior')return <InteriorIcon/>; return <SocietyIcon/>; }
+function PanelTabIcon({id}:{id:PanelTab}){ if(id==='overview')return <OverviewIcon size={14}/>; if(id==='economy')return <EconomyIcon size={14}/>; if(id==='diplomacy')return <DiplomacyIcon size={14}/>; if(id==='military')return <TankIcon size={14}/>; if(id==='intel')return <IntelligenceIcon size={14}/>; if(id==='cabinet')return <CabinetIcon size={14}/>; if(id==='technology')return <ResearchIcon size={14}/>; if(id==='world')return <WorldIcon size={14}/>; return <WarIcon size={14}/>; }
 
 export function CountryPanel(){
   const [tab,setTab]=useState<PanelTab>('overview');
@@ -49,12 +51,12 @@ export function CountryPanel(){
   return <aside className="command-panel">
     <div className="panel-kicker">{tr(language,'state_command','STATE / NATIONAL COMMAND')}</div>
     <select className="country-select" value={selected.id} onChange={(e)=>state.selectCountry(e.target.value)} aria-label="Select country">{countryList.map((country)=><option key={country.id} value={country.id}>{country.name} ({country.iso2})</option>)}</select>
-    <div className="panel-title-row"><div><h1>{selected.name}</h1><p className="muted">{isPlayer?'Player nation':'Observed nation'} · {humanize(selected.politics.regime)} · {selected.region || 'Global'}</p></div>{selected.controllerCountryId&&<span className="occupation-badge">CONTROLLED</span>}</div>
+    <div className="panel-title-row"><div className="country-title-identity"><span className="country-panel-flag">{flagEmoji(selected.iso2)}</span><div><h1>{selected.name}</h1><p className="muted">{isPlayer?'Player nation':'Observed nation'} · {humanize(selected.politics.regime)} · {selected.region || 'Global'}</p></div></div>{selected.controllerCountryId&&<span className="occupation-badge">CONTROLLED</span>}</div>
     <div className="identity-strip"><span className="identity-with-icon"><ReligionGlyph religion={selected.society.dominantReligion}/><i><small>RELIGION</small><strong>{humanize(selected.society.dominantReligion)}</strong></i></span><span><small>IDEOLOGY</small><strong>{humanize(selected.society.ideology)}</strong></span><span><small>MILITARY</small><strong>{selected.military.assessment.gfpRank ? `GFP #${selected.military.assessment.gfpRank}` : 'ESTIMATE'}</strong></span></div>
     <div className="panel-command-actions"><button onClick={()=>setCommandWindow('dossier')}>{tr(language,'dossier','STRATEGIC DOSSIER')}</button><button onClick={()=>setCommandWindow('supply')}>{tr(language,'supply','SUPPLY COMMAND')}</button></div>
 
     <div className="panel-tabs panel-tabs-9">
-      {(['overview','economy','diplomacy','military','intel','cabinet','technology','world','war'] as PanelTab[]).map((id)=><button key={id} className={tab===id?'active':''} onClick={()=>setTab(id)}>{tr(language,id==='technology'?'tech':id,id==='technology'?'TECH':id.toUpperCase())}</button>)}
+      {(['overview','economy','diplomacy','military','intel','cabinet','technology','world','war'] as PanelTab[]).map((id)=><button key={id} className={tab===id?'active':''} onClick={()=>setTab(id)}><PanelTabIcon id={id}/><span>{tr(language,id==='technology'?'tech':id,id==='technology'?'TECH':id.toUpperCase())}</span></button>)}
     </div>
 
     {tab==='overview'&&<>
