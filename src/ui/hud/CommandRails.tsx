@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 import { MARKET_RESOURCES, getMarketBoard, resourceReserveDays, resourceStrategicStatus } from '../../store/marketSelectors';
 import { useGameStore } from '../../store/gameStore';
 import { BlocIcon, CouncilIcon, IntelligenceIcon, ResourceIcon, TreasuryIcon } from '../icons/GameIcons';
@@ -6,7 +6,7 @@ import { DraggableWindow } from '../windows/DraggableWindow';
 
 type ToolId='objectives'|'market'|'pulse'|'sitrep'|'alerts';
 
-function RailButton({active,badge,label,children,onClick}:{active:boolean;badge?:number|string;label:string;children:React.ReactNode;onClick:()=>void}){
+function RailButton({active,badge,label,children,onClick}:{active:boolean;badge?:number|string;label:string;children:ReactNode;onClick:()=>void}){
  return <button className={active?'rail-button active':'rail-button'} onClick={onClick} title={label}><span>{children}</span>{badge!==undefined&&badge!==0&&<b>{badge}</b>}<small>{label}</small></button>;
 }
 
@@ -38,7 +38,7 @@ export function CommandRails(){
    <RailButton active={open.has('market')} badge={activeTrades.length} label="MARKET" onClick={()=>toggle('market')}><TreasuryIcon size={20}/></RailButton>
    <RailButton active={open.has('pulse')} badge={activeWars.length} label="WORLD" onClick={()=>toggle('pulse')}><BlocIcon size={20}/></RailButton>
   </nav>
-  <nav className="command-rail command-rail-right" aria-label="Information tools">
+  <nav className={`command-rail command-rail-right ${state.selectedCountryId?'country-open':'country-closed'}`} aria-label="Information tools">
    <RailButton active={open.has('alerts')} badge={critical.length} label="ALERTS" onClick={()=>toggle('alerts')}><ResourceIcon resource={critical[0]?.resource??'oil'} size={20}/></RailButton>
    <RailButton active={open.has('sitrep')} badge={state.sitrep.length} label="LOG" onClick={()=>toggle('sitrep')}><IntelligenceIcon size={20}/></RailButton>
   </nav>
@@ -49,7 +49,7 @@ export function CommandRails(){
   </DraggableWindow>}
 
   {open.has('market')&&<DraggableWindow id="market-window" kicker="GLOBAL ECONOMY" title="Commodity Market" initialX={120} initialY={205} width={520} onClose={()=>close('market')}>
-   <div className="floating-market">{board.map(item=><div key={item.resource}><ResourceIcon resource={item.resource} size={24}/><span><small>{item.resource.toUpperCase()}</small><strong>${item.price.toFixed(3)}</strong></span><em>{item.totalSupply.toFixed(1)} SUPPLY</em></div>)}</div>
+   <div className="floating-market">{board.map(item=><div key={item.resource}><ResourceIcon resource={item.resource} size={24}/><span><small>{item.resource.toUpperCase()}</small><strong>${item.price.toFixed(3)}</strong></span><em>WORLD PRICE</em></div>)}</div>
    <div className="floating-note">{activeTrades.length} active global trade flows · prices react to world production and strategic scarcity.</div>
   </DraggableWindow>}
 
