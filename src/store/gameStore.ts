@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { makeInitialState } from '../data/initialState';
 import type { GameCommand } from '../domain/commands';
-import type { CouncilResolutionType, GameLanguage, GameSpeed, GameState, IntelOperationType, MinistryKey, TradeResource } from '../domain/game';
+import type { CouncilResolutionType, EquipmentType, GameLanguage, GameSpeed, GameState, IntelOperationType, MinistryKey, TradeResource } from '../domain/game';
 import type { MapMode, MapPresentation } from '../domain/map';
 import { applyGameCommand } from '../engine/commands';
 import { acceptAdvisorContract, acceptAdvisorTradePact, dismissAdvisor } from '../engine/systems/advisor';
@@ -24,6 +24,9 @@ interface GameActions {
   setMapNotice: (message: string | null) => void;
   advanceDay: () => void;
   setTaxRate: (rate: number) => void;
+  setMilitaryFactoryShare: (share:number)=>void;
+  setProductionFactories: (equipment:EquipmentType,factories:number)=>void;
+  deployEquipment: (equipment:EquipmentType)=>void;
   improveRelations: (targetCountryId: string) => void;
   giftTreasury: (targetCountryId:string,amountB:1|5|10)=>void;
   giftResource: (targetCountryId:string,resource:TradeResource)=>void;
@@ -87,6 +90,9 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
   setMapNotice: (mapNotice) => set({ mapNotice }),
   advanceDay: () => set((state) => applyGameCommand(state, { type: 'time/advanceDay' })),
   setTaxRate: (rate) => set((state) => applyGameCommand(state, { type: 'economy/setTaxRate', rate })),
+  setMilitaryFactoryShare: (share) => set((state)=>applyGameCommand(state,{type:'production/setMilitaryShare',share})),
+  setProductionFactories: (equipment,factories) => set((state)=>applyGameCommand(state,{type:'production/setFactories',equipment,factories})),
+  deployEquipment: (equipment) => set((state)=>applyGameCommand(state,{type:'production/deploy',equipment})),
   improveRelations: (targetCountryId) => set((state) => applyGameCommand(state, { type: 'diplomacy/improveRelations', targetCountryId })),
   giftTreasury: (targetCountryId,amountB) => set((state)=>applyGameCommand(state,{type:'diplomacy/giftTreasury',targetCountryId,amountB})),
   giftResource: (targetCountryId,resource) => set((state)=>applyGameCommand(state,{type:'diplomacy/giftResource',targetCountryId,resource})),
