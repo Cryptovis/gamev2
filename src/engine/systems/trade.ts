@@ -1,0 +1,96 @@
+import type { CountryState, GameState, TradeDeal, TradeResource } from '../../domain/game';
+import { simulateResources } from './resources';
+
+export const TRADE_PRICES: Record<TradeResource, number> = { food: 0.025, oil: 0.06, iron: 0.04, uranium: 0.22 };
+
+const clamp = (v:number,min:number,max:number)=>Math.min(max,Math.max(min,v));
+
+function reserveFloor(country: CountryState, resource: TradeResource) {
+  const popM = country.demographics.population / 1_000_000;
+  if (resource === 'food') return Math.max(20, popM * 1.2);
+  if (resource === 'oil') return Math.max(18, country.military.readiness * 0.22);
+  if (resource === 'iron') return Math.max(20, country.industry.factories * 2.2);
+  return country.industry.powerCapacity > 70 ? 2 : 0.5;
+}
+
+export function getGlobalMarketPrice(state: GameState, resource: TradeResource): number {
+  let production = 0;
+  let consumption = 0;
+  for (const country of Object.values(state.countries)) {
+    const flow = simulateResources(country);
+    production += flow.production[resource];
+    consumption += flow.consumption[resource];
+  }
+  const scarcity = clamp(consumption / Math.max(0.001, production), 0.65, 2.35);
+  return Number((TRADE_PRICES[resource] * scarcity).toFixed(4));
+}
+
+export function getExportCapacity(country: CountryState, resource: TradeResource): number {
+  const flow = simulateResources(country);
+  const floor = reserveFloor(country, resource);
+  const stockExcess = Math.max(0, country.resources[resource] - floor);
+  const structuralSurplus = Math.max(0, flow.net[resource]);
+  const cap = structuralSurplus * 0.55 + stockExcess * 0.025;
+  const max = resource === 'uranium' ? 0.35 : resource === 'oil' ? 3.2 : 5.5;
+  return Number(clamp(cap, 0, max).toFixed(3));
+}
+
+export function getTradeQuote(state: GameState, sellerId: string, resource: TradeResource, marketPrice?: number) {
+  const seller = state.countries[sellerId];
+  const global = marketPrice ?? getGlobalMarketPrice(state, resource);
+  if (!seller || seller.globalSanctions) return { available: 0, price: global, dailyCost: 0, quantity: 0 };
+  const available = getExportCapacity(seller, resource);
+  const abundanceDiscount = clamp(1 - available / (resource === 'uranium' ? 2.5 : 22), 0.78, 1.08);
+  const price = Number((global * abundanceDiscount).toFixed(4));
+  const quantity = resource === 'uranium' ? Math.min(0.2, available) : Math.min(resource === 'oil' ? 1.5 : 2, available);
+  return { available, price, dailyCost: Number((quantity * price).toFixed(4)), quantity };
+}
+
+export function processTradeDeals(state: GameState): GameState {
+  let countries = state.countries;
+  const notices: string[] = [];
+
+  for (const deal of Object.values(state.tradeDeals)) {
+    if (!deal.active) continue;
+    const seller = countries[deal.sellerId];
+    const buyer = countries[deal.buyerId];
+    if (!seller || !buyer || seller.globalSanctions || buyer.globalSanctions) continue;
+    const exportCap = getExportCapacity(seller, deal.resource);
+    const quantity = Math.min(deal.quantityPerDay, seller.resources[deal.resource], exportCap);
+    const cost = quantity * deal.pricePerUnit;
+    if (quantity <= 0.0001 || buyer.economy.treasury < cost) {
+      notices.push(`TRADE // ${buyer.name} ↔ ${seller.name} ${deal.resource.toUpperCase()} flow paused — supply or liquidity unavailable.`);
+      continue;
+    }
+    countries = {
+      ...countries,
+      [seller.id]: {
+        ...seller,
+        economy: { ...seller.economy, treasury: seller.economy.treasury + cost },
+        resources: { ...seller.resources, [deal.resource]: seller.resources[deal.resource] - quantity },
+      },
+      [buyer.id]: {
+        ...buyer,
+        economy: { ...buyer.economy, treasury: buyer.economy.treasury - cost },
+        resources: { ...buyer.resources, [deal.resource]: buyer.resources[deal.resource] + quantity },
+      },
+    };
+  }
+
+  return { ...state, countries, sitrep: [...notices, ...state.sitrep].slice(0, 12) };
+}
+
+export function makeImportDeal(state: GameState, targetCountryId: string, resource: TradeResource): TradeDeal | null {
+  const playerId = state.playerCountryId;
+  const quote = getTradeQuote(state, targetCountryId, resource);
+  if (!quote.quantity || quote.quantity <= 0) return null;
+  return {
+    id: `IMP-${targetCountryId}-${playerId}-${resource}`,
+    sellerId: targetCountryId,
+    buyerId: playerId,
+    resource,
+    quantityPerDay: quote.quantity,
+    pricePerUnit: quote.price,
+    active: true,
+  };
+}

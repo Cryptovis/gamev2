@@ -1,0 +1,14 @@
+{
+  "pack": "visual-pack-1",
+  "version": "0.40.0",
+  "style": "dark strategic command / original vector",
+  "assets": [
+    "ministry-economy.svg",
+    "ministry-defense.svg",
+    "ministry-science.svg",
+    "ministry-intelligence.svg",
+    "ministry-interior.svg",
+    "ministry-society.svg"
+  ],
+  "runtimeIcons": "src/ui/icons/GameIcons.tsx"
+}
