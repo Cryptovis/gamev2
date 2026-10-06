@@ -4,7 +4,7 @@ import { flagEmoji } from '../../data/countryThemes';
 import { tr } from '../../i18n/gameI18n';
 import { useGameStore } from '../../store/gameStore';
 import { AvatarPortrait } from '../profile/AvatarPortrait';
-import { AvatarPicker } from '../panels/AvatarPicker';
+import { PlayerOptionsMenu } from '../panels/PlayerOptionsMenu';
 import { ApprovalIcon, FoodIcon, FuelIcon, OilIcon, TreasuryIcon } from '../icons/GameIcons';
 
 const speeds:Array<{speed:GameSpeed;label:string;hint:string}>=[
@@ -20,22 +20,18 @@ function Metric({icon,label,value,tone='neutral'}:{icon:ReactNode;label:string;v
 }
 
 export function TopBar(){
- const [avatarOpen,setAvatarOpen]=useState(false);
+ const [optionsOpen,setOptionsOpen]=useState(false);
  const day=useGameStore(s=>s.day);
  const speed=useGameStore(s=>s.speed);
  const setSpeed=useGameStore(s=>s.setSpeed);
  const player=useGameStore(s=>s.countries[s.playerCountryId]);
  const profile=useGameStore(s=>s.playerProfile);
- const saveNow=useGameStore(s=>s.saveNow);
- const loadLatest=useGameStore(s=>s.loadLatest);
- const reset=useGameStore(s=>s.resetGame);
- const msg=useGameStore(s=>s.saveMessage);
  const lang=profile.language;
 
  return <header className="topbar">
   <div className="leader-brand">
-   <button className="leader-avatar-button" onClick={()=>setAvatarOpen(true)} title={tr(lang,'choose_avatar')}><AvatarPortrait id={profile.avatarId} size={52}/><span>✎</span></button>
-   <div className="brand-block"><div className="eyebrow">ALPYX // GLOBAL COMMAND · LIVING DIPLOMACY 0.71 PLAYTEST</div><div className="brand-line"><strong>{profile.commanderName}</strong><span className="day-chip">{tr(lang,'day')} {day}</span></div><small className="leader-country">{player.name} · {player.politics.regime.toUpperCase()}</small></div>
+   <button className="leader-avatar-button" onClick={()=>setOptionsOpen(true)} title="Open commander options"><AvatarPortrait id={profile.avatarId} size={52}/><span>⋯</span></button>
+   <div className="brand-block"><div className="eyebrow">ALPYX // GLOBAL COMMAND · COMMANDER UX 0.71.1 PLAYTEST</div><div className="brand-line"><strong>{profile.commanderName}</strong><span className="day-chip">{tr(lang,'day')} {day}</span></div><small className="leader-country">{player.name} · {player.politics.regime.toUpperCase()}</small></div>
   </div>
 
   <div className="metrics" aria-label="National resources">
@@ -47,10 +43,9 @@ export function TopBar(){
   </div>
 
   <div className="top-actions">
-   <div className="save-control"><button onClick={()=>void saveNow()}>{tr(lang,'save')}</button><button onClick={()=>void loadLatest()}>{tr(lang,'load')}</button><button onClick={reset}>{tr(lang,'new')}</button>{msg&&<small>{msg}</small>}</div>
    <div className="speed-segment" aria-label="Game speed controls">{speeds.map(item=><button key={item.speed} className={item.speed===speed?'active':''} onClick={()=>setSpeed(item.speed)} title={item.hint}><strong>{item.label}</strong><small>{item.speed===0?tr(lang,'pause'):item.hint}</small></button>)}</div>
    <div className="national-flag-card" title={player.name}><b>{flagEmoji(player.iso2)}</b><span><small>{player.iso2}</small><strong>{player.name}</strong></span></div>
   </div>
-  {avatarOpen&&<AvatarPicker onClose={()=>setAvatarOpen(false)}/>}
+  {optionsOpen&&<PlayerOptionsMenu onClose={()=>setOptionsOpen(false)}/>}
  </header>;
 }
