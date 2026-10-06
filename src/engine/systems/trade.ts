@@ -1,6 +1,6 @@
 import type { CountryState, GameState, TradeDeal, TradeResource } from '../../domain/game';
 import { simulateResources } from './resources';
-import { changeRelations } from './diplomacy';
+import { changeRelations, embassyFor } from './diplomacy';
 
 export const TRADE_PRICES: Record<TradeResource, number> = { food: 0.025, oil: 0.06, iron: 0.04, uranium: 0.22 };
 
@@ -36,13 +36,15 @@ export function getExportCapacity(country: CountryState, resource: TradeResource
   return Number(clamp(cap, 0, max).toFixed(3));
 }
 
-export function getTradeQuote(state: GameState, sellerId: string, resource: TradeResource, marketPrice?: number) {
+export function getTradeQuote(state: GameState, sellerId: string, resource: TradeResource, marketPrice?: number, buyerId = state.playerCountryId) {
   const seller = state.countries[sellerId];
   const global = marketPrice ?? getGlobalMarketPrice(state, resource);
   if (!seller || seller.globalSanctions) return { available: 0, price: global, dailyCost: 0, quantity: 0 };
   const available = getExportCapacity(seller, resource);
   const abundanceDiscount = clamp(1 - available / (resource === 'uranium' ? 2.5 : 22), 0.78, 1.08);
-  const price = Number((global * abundanceDiscount).toFixed(4));
+  const embassy=embassyFor(state,buyerId,sellerId);
+  const embassyDiscount=embassy?Math.max(.91,1-embassy.level*.02):1;
+  const price = Number((global * abundanceDiscount * embassyDiscount).toFixed(4));
   const quantity = resource === 'uranium' ? Math.min(0.2, available) : Math.min(resource === 'oil' ? 1.5 : 2, available);
   return { available, price, dailyCost: Number((quantity * price).toFixed(4)), quantity };
 }
@@ -104,7 +106,7 @@ export function processTradeDeals(state: GameState): GameState {
 }
 
 export function makeBilateralImportDeal(state: GameState, buyerId: string, sellerId: string, resource: TradeResource): TradeDeal | null {
-  const quote = getTradeQuote(state, sellerId, resource);
+  const quote = getTradeQuote(state, sellerId, resource, undefined, buyerId);
   if (!quote.quantity || quote.quantity <= 0) return null;
   return { id: `IMP-${sellerId}-${buyerId}-${resource}`, sellerId, buyerId, resource, quantityPerDay: quote.quantity, pricePerUnit: quote.price, active: true };
 }
