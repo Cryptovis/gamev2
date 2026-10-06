@@ -18,6 +18,7 @@ export type CouncilResolutionType = 'sanctions' | 'ceasefire' | 'humanitarian_ai
 export type StrategicGoal = 'stabilize' | 'grow_economy' | 'rearm' | 'secure_resources' | 'expand_influence';
 export type IntelOperationType = 'gather_intelligence' | 'influence_campaign' | 'sabotage_industry' | 'counter_network';
 export type IntelOperationStatus = 'active' | 'success' | 'failed' | 'compromised';
+export type EquipmentType = 'infantry_equipment' | 'artillery' | 'armor' | 'fighters' | 'logistics' | 'naval';
 
 export interface DemographicsState { population: number; workforce: number; growthRate: number; }
 export interface ResourceStockpile { food: number; oil: number; iron: number; uranium: number; }
@@ -42,6 +43,18 @@ export type EmbassyLevel = 1 | 2 | 3 | 4;
 export interface EmbassyMission { id:string; countryA:string; countryB:string; openedDay:number; level:EmbassyLevel; }
 export type DiplomaticOfferType = 'embassy' | 'trade_pact';
 export interface DiplomaticOffer { id:string; type:DiplomaticOfferType; senderId:string; receiverId:string; createdDay:number; expiresDay:number; message:string; }
+export type EquipmentStockpile = Record<EquipmentType, number>;
+export interface ProductionLine { id:string; equipment:EquipmentType; factories:number; efficiency:number; lastOutput:number; }
+export interface ProductionInputUse { steel:number; fuel:number; electricity:number; treasury:number; }
+export interface NationalProductionState {
+  militaryFactoryShare:number;
+  lines:Record<EquipmentType,ProductionLine>;
+  stockpile:EquipmentStockpile;
+  lastDailyOutput:EquipmentStockpile;
+  lastInputUse:ProductionInputUse;
+  throughput:number;
+  bottleneck:'none'|'steel'|'fuel'|'electricity'|'treasury'|'capacity';
+}
 
 export interface CountryState {
   id: string;
@@ -135,6 +148,7 @@ export interface GameState {
   advisorCooldownUntil: number;
   embassies: Record<string, EmbassyMission>;
   diplomaticOffers: DiplomaticOffer[];
+  production: Record<string, NationalProductionState>;
   lastAiDay: number;
   lastStrategicReviewDay: number;
   sitrep: string[];
