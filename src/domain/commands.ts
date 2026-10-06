@@ -1,4 +1,4 @@
-import type { CouncilResolutionType, EquipmentType, GameSpeed, IntelOperationType, MinistryKey, TradeResource } from './game';
+import type { CouncilResolutionType, EquipmentType, GameSpeed, InfrastructureAsset, IntelOperationType, MinistryKey, TradeResource } from './game';
 
 export type GameCommand =
   | { type: 'time/advanceDay' }
@@ -7,6 +7,7 @@ export type GameCommand =
   | { type: 'production/setMilitaryShare'; share: number }
   | { type: 'production/setFactories'; equipment: EquipmentType; factories: number }
   | { type: 'production/deploy'; equipment: EquipmentType }
+  | { type: 'infrastructure/invest'; asset: InfrastructureAsset }
   | { type: 'diplomacy/improveRelations'; targetCountryId: string }
   | { type: 'diplomacy/giftTreasury'; targetCountryId: string; amountB: 1 | 5 | 10 }
   | { type: 'diplomacy/giftResource'; targetCountryId: string; resource: TradeResource }
