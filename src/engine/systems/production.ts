@@ -25,7 +25,7 @@ function allocate(capacity:number,weights:Record<EquipmentType,number>,efficienc
 
 export function createInitialProduction(country:CountryState):NationalProductionState{
   const share=country.military.assessment.capability>=70?60:country.military.assessment.capability>=40?52:44;
-  const capacity=Math.max(1,Math.floor(country.industry.factories*(country.industry.utilization/100)*(share/100)));
+  const capacity=Math.max(0,Math.floor(country.industry.factories*(country.industry.utilization/100)*(share/100)));
   const weights:Record<EquipmentType,number>={
     infantry_equipment:.27,
     artillery:.14,
