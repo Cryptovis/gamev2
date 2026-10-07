@@ -1,20 +1,20 @@
-import { flagEmoji } from '../../data/countryThemes';
-import { tr } from '../../i18n/gameI18n';
-import { useGameStore } from '../../store/gameStore';
-import { ResourceIcon } from '../icons/GameIcons';
-import { relationFor, relationshipIndex } from '../../engine/systems/diplomacy';
-
+import {useState} from 'react';
+import {flagEmoji} from '../../data/countryThemes';
+import {tr} from '../../i18n/gameI18n';
+import {useGameStore} from '../../store/gameStore';
+import {ResourceIcon} from '../icons/GameIcons';
+import {relationFor,relationshipIndex} from '../../engine/systems/diplomacy';
+import {makeLongTermImportContract} from '../../engine/systems/trade';
+import {ReviewDialog} from './ReviewDialog';
 export function AdvisorModal(){
- const prompt=useGameStore(s=>s.activeAdvisor);
- const resolve=useGameStore(s=>s.resolveAdvisor);
- const language=useGameStore(s=>s.playerProfile.language);
- const countries=useGameStore(s=>s.countries);
- const playerId=useGameStore(s=>s.playerCountryId);
- if(!prompt)return null;
- const supplier=countries[prompt.supplierId];
- return <div className="advisor-backdrop"><section className="advisor-modal">
-  <header><div className="advisor-seal"><ResourceIcon resource={prompt.resource} size={30}/></div><div><small>{tr(language,'advisor')}</small><h2>{prompt.resource.toUpperCase()} SECURITY</h2><p>{prompt.message}</p></div><b>{flagEmoji(supplier.iso2)}</b></header>
-  <div className="advisor-supplier"><span><small>RECOMMENDED SUPPLIER</small><strong>{supplier.name}</strong></span><span><small>RELATION</small><strong>{relationshipIndex(relationFor(countries[playerId],supplier.id))}/100</strong></span><span><small>CAPABILITY</small><strong>{supplier.military.assessment.capability.toFixed(0)}</strong></span></div>
-  {prompt.stage==='pact'?<div className="advisor-actions"><button onClick={()=>resolve('dismiss')}>{tr(language,'dismiss')}</button><button className="primary" onClick={()=>resolve('pact')}>{tr(language,'trade_pact')}</button></div>:<><div className="advisor-contract-title"><strong>{tr(language,'contract')}</strong><span>{tr(language,'choose_duration')}</span></div><div className="contract-years">{([1,3,5,10] as const).map(y=><button key={y} onClick={()=>resolve(y)}><strong>{y}</strong><span>YEAR{y>1?'S':''}</span><small>monthly delivery</small></button>)}</div><button className="advisor-dismiss" onClick={()=>resolve('dismiss')}>{tr(language,'dismiss')}</button></>}
+ const state=useGameStore(),prompt=state.activeAdvisor,[review,setReview]=useState<'pact'|1|3|5|10|null>(null);
+ if(!prompt)return null;const supplier=state.countries[prompt.supplierId],player=state.countries[state.playerCountryId],language=state.playerProfile.language,rel=relationFor(player,supplier.id);
+ const contract=typeof review==='number'?makeLongTermImportContract(state,player.id,supplier.id,prompt.resource,review):null;
+ const duplicate=Object.values(state.tradeDeals).some(d=>d.active&&d.buyerId===player.id&&d.sellerId===supplier.id&&d.resource===prompt.resource&&d.contractType==='long_term');
+ return <div className="advisor-backdrop"><section className="advisor-modal" role="dialog" aria-modal="true" aria-label="Resource advisor">
+ <header><div className="advisor-seal"><ResourceIcon resource={prompt.resource} size={54}/></div><div><small>{tr(language,'advisor')}</small><h2>{prompt.resource.toUpperCase()} SECURITY</h2><p>{prompt.message}</p></div><b>{flagEmoji(supplier.iso2)}</b></header>
+ <div className="advisor-supplier"><span><small>RECOMMENDED SUPPLIER</small><strong>{supplier.name}</strong></span><span><small>RELATION</small><strong>{relationshipIndex(rel)}/100</strong></span><span><small>TREASURY</small><strong>${player.economy.treasury.toFixed(2)}B</strong></span></div>
+ {prompt.stage==='pact'?<div className="advisor-actions"><button onClick={()=>state.resolveAdvisor('dismiss')}>{tr(language,'dismiss')}</button><button className="primary" onClick={()=>setReview('pact')}>REVIEW TRADE PACT</button></div>:<><div className="advisor-contract-title"><strong>{tr(language,'contract')}</strong><span>{tr(language,'choose_duration')}</span></div><div className="contract-years">{([1,3,5,10] as const).map(y=><button key={y} onClick={()=>setReview(y)}><strong>{y}</strong><span>YEAR{y>1?'S':''}</span><small>review monthly delivery</small></button>)}</div><button className="advisor-dismiss" onClick={()=>state.resolveAdvisor('dismiss')}>{tr(language,'dismiss')}</button></>}
+ {review!==null&&<ReviewDialog title={review==='pact'?'Trade pact with '+supplier.name:`${review}-year ${prompt.resource} contract`} summary={review==='pact'?'Establish commercial access, then choose a supply term.':'Lock a unit price with monthly deliveries. Signing creates a contract; payment occurs when supplies arrive.'} metrics={review==='pact'?[["Pact cost",'$5B'],['Treasury now',`$${player.economy.treasury.toFixed(3)}B`],['Treasury after',`$${(player.economy.treasury-5).toFixed(3)}B`]]:contract?[["Monthly delivery",`${(contract.quantityPerDay*30).toFixed(2)} units`],['Unit price',`$${contract.pricePerUnit.toFixed(4)}B`],['Estimated monthly payment',`$${(contract.quantityPerDay*30*contract.pricePerUnit).toFixed(3)}B`],['First delivery',`Day ${contract.nextDeliveryDay}`],['Expires',`Day ${contract.expiresDay}`],['Treasury now',`$${player.economy.treasury.toFixed(3)}B`]]:[]} warnings={review==='pact'?['The $5B diplomatic cost is paid on confirmation.']:['Actual deliveries depend on supplier inventory, funds and diplomatic access.','Cancel future deliveries in Diplomacy → Active Trade Flows. Delivered goods and payments remain settled.',...(duplicate?['A matching long-term contract already exists.']:[])]} allowed={review==='pact'?player.economy.treasury>=5&&rel.score>=15&&rel.status!=='war':Boolean(contract)&&!duplicate} confirmLabel={review==='pact'?'CONFIRM PACT':'SIGN CONTRACT'} onCancel={()=>setReview(null)} onConfirm={()=>{const choice=review,before=useGameStore.getState();state.resolveAdvisor(choice);setReview(null);const after=useGameStore.getState(),success=choice==='pact'?relationFor(after.countries[player.id],supplier.id).treaties.includes('trade'):Object.keys(after.tradeDeals).length>Object.keys(before.tradeDeals).length;after.showReceipt({title:success?(choice==='pact'?'Trade pact established':'Supply contract signed'):'Agreement unavailable',summary:success?(choice==='pact'?'Commercial access is open. Close this receipt to choose a supply term.':after.sitrep[0]):'The supplier or agreement conditions changed. Review your active contracts.'});}}/>}
  </section></div>;
 }

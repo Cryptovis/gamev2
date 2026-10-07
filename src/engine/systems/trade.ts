@@ -70,6 +70,8 @@ export function processTradeDeals(state: GameState): GameState {
     const seller = countries[deal.sellerId];
     const buyer = countries[deal.buyerId];
     if (!seller || !buyer || seller.globalSanctions || buyer.globalSanctions) continue;
+    const access=buyer.diplomacy.relations[seller.id];
+    if(!access?.treaties.includes('trade')||access.sanctions||access.status==='war')continue;
 
     const exportCap = getExportCapacity(seller, deal.resource);
     const quantity = Math.min(deal.quantityPerDay * interval, seller.resources[deal.resource], exportCap * interval);
@@ -116,6 +118,10 @@ export function makeImportDeal(state: GameState, targetCountryId: string, resour
 }
 
 export function makeLongTermImportContract(state: GameState, buyerId: string, sellerId: string, resource: TradeResource, years: 1|3|5|10): TradeDeal | null {
+  const buyer=state.countries[buyerId],seller=state.countries[sellerId];
+  const relation=buyer?.diplomacy.relations[sellerId];
+  if(!buyer||!seller||buyerId===sellerId||buyer.globalSanctions||seller.globalSanctions||!relation?.treaties.includes('trade')||relation.sanctions||relation.status==='war'||![1,3,5,10].includes(years))return null;
+  if(Object.values(state.tradeDeals).some(d=>d.active&&d.contractType==='long_term'&&d.buyerId===buyerId&&d.sellerId===sellerId&&d.resource===resource))return null;
   const quote = getTradeQuote(state, sellerId, resource, undefined, buyerId);
   if (!quote.quantity || quote.quantity <= 0) return null;
   const interval = 30;

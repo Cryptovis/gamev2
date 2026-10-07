@@ -4,6 +4,7 @@ import { useGameStore } from '../../store/gameStore';
 
 const modes:Array<{mode:MapMode;key:string;glyph:string}>=[
  {mode:'political',key:'political',glyph:'◉'},
+ {mode:'relations',key:'relations',glyph:'↔'},
  {mode:'diplomacy',key:'diplomacy',glyph:'◇'},
  {mode:'resources',key:'resources',glyph:'⬡'},
  {mode:'military',key:'military',glyph:'◆'},
@@ -28,7 +29,8 @@ export function MapModeBar(){
  const selectedCountryId=useGameStore(s=>s.selectedCountryId);
  return <section className="map-mode-bar" aria-label="Map modes">
   <header className="map-mode-heading"><span><small>STRATEGIC VIEW</small><strong>MAP COMMAND</strong></span><em>{mapMode.toUpperCase()}</em></header>
-  <div className="map-mode-buttons">{modes.map(({mode,key,glyph})=><button key={mode} className={mode===mapMode?'active':''} onClick={()=>setMapMode(mode)}><span>{glyph}</span>{tr(lang,key)}</button>)}</div>
+  <div className="map-mode-buttons">{modes.map(({mode,key,glyph})=><button key={mode} className={mode===mapMode?'active':''} onClick={()=>setMapMode(mode)}><span>{glyph}</span>{mode==='relations'?'RELATIONS':tr(lang,key)}</button>)}</div>
+  {mapMode==='relations'&&<div className="relations-legend"><span>HOSTILE −100</span><span>NEUTRAL 0</span><span>FRIENDLY +100</span></div>}
   <div className="map-command-sections">
    <div><small>BASE MAP</small><span><button className={mapPresentation==='political'?'active':''} onClick={()=>setMapPresentation('political')}>{tr(lang,'political')}</button><button className={mapPresentation==='geographic'?'active':''} onClick={()=>setMapPresentation('geographic')}>{tr(lang,'geographic')}</button></span></div>
    <div><small>PROJECTION</small><span><button className={projection==='globe'?'active':''} onClick={()=>setProjection('globe')}>GLOBE</button><button className={projection==='flat'?'active':''} onClick={()=>setProjection('flat')}>FLAT</button></span></div>

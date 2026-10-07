@@ -1,3 +1,4 @@
+import {processWorldInstitutions} from './systems/worldInstitutions';
 import type { CountryState, GameState } from '../domain/game';
 import { processCountryAI } from './systems/ai';
 import { simulateEconomy } from './systems/economy';
@@ -67,6 +68,7 @@ export function tickGame(state: GameState): GameState {
     influenceByCountry[country.id] = Math.min(100, current + 0.025 + country.diplomacy.reputation * 0.00025);
   }
   let next: GameState = { ...dated, day: nextDay, countries, council: { ...state.council, influenceByCountry }, sitrep: [...notices, ...dated.sitrep].slice(0, 12) };
+  next = processWorldInstitutions(next);
   next = processTradeDeals(next);
   next = processInfrastructure(next);
   next = processIndustrialEconomy(next);

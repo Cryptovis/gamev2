@@ -66,6 +66,7 @@ export function WorldMap() {
   const selectedCountryId = useGameStore((s) => s.selectedCountryId);
   const zoomSensitivity=useGameStore(s=>s.mapZoomSensitivity);
   const labelScale = useGameStore((s) => s.mapLabelScale);
+  const [surfaceReady,setSurfaceReady]=useState(false);
   const mapMode = useGameStore((s) => s.mapMode);
   const mapPresentation = useGameStore((s) => s.mapPresentation);
   const projectionMode = useGameStore((s) => s.mapProjection);
@@ -110,6 +111,7 @@ export function WorldMap() {
     const relation = player?.diplomacy.relations[country.id];
     const controlled = country.controllerCountryId === player?.id;
     if (mapMode === 'political') return country.id === player?.id || controlled ? '#d9ad48' : stablePoliticalColor(country.id);
+    if (mapMode === 'relations') {if(country.id===player?.id)return '#edc570';const score=relation?.score??0;const t=Math.min(1,Math.abs(score)/100),neutral=[115,133,144],end=score>=0?[57,177,115]:[204,86,98];return `rgb(${neutral.map((v,i)=>Math.round(v+(end[i]-v)*t)).join(',')})`;}
     if (mapMode === 'diplomacy') return country.id === player?.id ? '#d9ad48' : relation?.status === 'ally' ? '#3aa9ba' : relation?.status === 'friendly' ? '#4c936c' : relation?.status === 'hostile' || relation?.status === 'war' ? '#ad4952' : '#50616f';
     if (mapMode === 'resources') {
       const stock = country.resources.food + country.resources.oil * 1.7 + country.resources.iron + country.resources.uranium * 12;
@@ -293,7 +295,7 @@ export function WorldMap() {
     const isHovered = id === hovered;
     const terrain=country?terrainForCountry(country):'plains';
     const fill=mapPresentation==='geographic'&&mapMode==='political'?`url(#terrain-${terrain})`:colorFor(id);
-    return <path key={`${id}-${index}`} d={d} className={`country-shape ${photographic?'geographic photographic':''} ${isSelected ? 'selected' : ''} ${isHovered ? 'hovered' : ''}`} fill={fill} onPointerEnter={() => country && setHovered(id)} onPointerLeave={() => setHovered((v) => v === id ? null : v)}><title>{country?.name ?? feature.properties?.name}</title></path>;
+    return <path key={`${id}-${index}`} d={d} className={`country-shape ${photographic?(surfaceReady?'geographic photographic':'geographic'):''} ${isSelected ? 'selected' : ''} ${isHovered ? 'hovered' : ''}`} fill={fill} onPointerEnter={() => country && setHovered(id)} onPointerLeave={() => setHovered((v) => v === id ? null : v)}><title>{country?.name ?? feature.properties?.name}</title></path>;
   });
 
 
@@ -383,7 +385,7 @@ export function WorldMap() {
         <path d={path({ type: 'Sphere' } as any) ?? ''} className="ocean-sphere"/>
         <path d={path(graticule as any) ?? ''} className="globe-graticule"/>
       </>}
-      {photographic&&<GeographicSurface projection={projection} flat={projectionMode==='flat'} pan={flatPan} zoom={flatZoom}/>}
+      {photographic&&<GeographicSurface projection={projection} flat={projectionMode==='flat'} pan={flatPan} zoom={flatZoom} onReady={()=>setSurfaceReady(true)}/>}
       <g key={viewportKey} className="map-viewport" transform={projectionMode === 'flat' ? flatTransform : undefined}>
         <g className="country-layer">{shapeLayer}</g>
       </g>

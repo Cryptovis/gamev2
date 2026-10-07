@@ -46,7 +46,7 @@ export function StrategicDecisionModal({
  useEffect(()=>{
   const resume=speedAtOpen.current;
   if(resume!==0)state.setSpeed(0);
-  return ()=>{if(resume!==0)state.setSpeed(resume);};
+  return ()=>{const current=useGameStore.getState();if(resume!==0&&!current.activeAdvisor&&!current.activeEvent&&!current.world.tutorial.active)current.setSpeed(resume);};
  },[]);
  if(!player||!target)return null;
 
@@ -77,7 +77,7 @@ export function StrategicDecisionModal({
      <span><strong>Automatically approve similar decisions this session</strong><small>You can still review other strategic action types individually.</small></span>
     </label>:<p className="strategic-review-required">This decision always requires your explicit confirmation.</p>}
 
-    <footer><button onClick={onCancel}>CANCEL</button><button className={'confirm '+(tone==='danger'?'danger':'')} onClick={()=>{if(submitted.current)return;submitted.current=true;if(autoApprove&&canAutoApprove(spec.kind))state.setConfirmationSkip(spec.kind,true);onConfirm();}}>{spec.confirmLabel}</button></footer>
+    <footer><button onClick={onCancel}>CANCEL</button><button className={'confirm '+(tone==='danger'?'danger':'')} onClick={()=>{if(submitted.current)return;submitted.current=true;if(autoApprove&&canAutoApprove(spec.kind))state.setConfirmationSkip(spec.kind,true);const before=useGameStore.getState();onConfirm();const after=useGameStore.getState();const changed=after.countries!==before.countries||after.tradeDeals!==before.tradeDeals||after.wars!==before.wars||after.embassies!==before.embassies||after.blocs!==before.blocs;after.showReceipt({title:changed?'Decision executed':'Decision unavailable',summary:changed?(after.sitrep[0]!==before.sitrep[0]?after.sitrep[0]:spec.title+' completed.'): 'Conditions changed. Review budget, relations and existing agreements before trying again.',metrics:[["Treasury after",`$${after.countries[after.playerCountryId].economy.treasury.toFixed(3)}B`]]});}}>{spec.confirmLabel}</button></footer>
    </div>
   </section>
  </div>;

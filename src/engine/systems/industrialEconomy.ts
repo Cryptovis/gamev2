@@ -33,7 +33,8 @@ export function changeGoodStock(state:GameState,id:string,good:IndustrialGood,de
 export function buildFacility(state:GameState,id:string,kind:FacilityKind):GameState {
  const c=state.countries[id],n=state.industrialEconomy[id],d=FACILITIES[kind];
  if(!c||!n||!d||!Number.isFinite(c.economy.treasury)||c.economy.treasury<d.cost||n.projects.length>=6||(d.tech&&!c.technology.unlocked.includes(d.tech))||(d.deposit&&n.deposits[d.deposit]<=0))return state;
- const project={id:`${id}-${kind}-${state.day}-${n.projects.length}`,kind,readyDay:state.day+d.days};
+ let serial=n.projects.length;while(n.projects.some(p=>p.id===`${id}-${kind}-${state.day}-${serial}`))serial++;
+ const project={id:`${id}-${kind}-${state.day}-${serial}`,kind,readyDay:state.day+d.days};
  return {...state,countries:{...state.countries,[id]:{...c,economy:{...c.economy,treasury:c.economy.treasury-d.cost}}},industrialEconomy:{...state.industrialEconomy,[id]:{...n,projects:[...n.projects,project]}},sitrep:id===state.playerCountryId?[`INDUSTRY // ${d.label} commissioned; ready Day ${project.readyDay}.`,...state.sitrep].slice(0,12):state.sitrep};
 }
 export function processIndustrialEconomy(state:GameState):GameState {
