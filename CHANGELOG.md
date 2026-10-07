@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.74.0-playtest.1 — Industry & Living Diplomacy
+- Fixed active national-command tab contrast; selected text stays readable on a dark active surface.
+- Refreshed all 20 bundled vector portraits with shaded faces, tailored clothing and more detailed features.
+- Added citizenship independent of the commanded nation and optional validated date of birth in onboarding and profile settings.
+- Added a persistent UTC campaign calendar beginning 1 January 2026, shown in the HUD.
+- Added once-per-year birthdays: approval >=65 and stability >=50 grant +12% agricultural/industrial production for seven days.
+- Friends and rivals send deterministic birthday and performance correspondence to the diplomatic inbox, with read state and bounded message history.
+- Added 13 industrial-market goods alongside the original four commodities: fresh water, coal, copper, silicon, aluminum, rare earths, rubber, armor plates, engines, electronics, steel, fuel and armored vehicles.
+- Added supply/demand prices, stock-protected imports/exports, real treasury settlement and 1/3/5/10-year monthly supply contracts with locked unit prices, failed-delivery tracking and diplomatic restrictions.
+- Defense exports require both a trade pact and an alliance; traded armored vehicles transfer real military equipment reserves.
+- Added national water/resource potential, finite mineral deposits, eleven investable facilities, construction queues, operating costs, pause/resume and actual input bottlenecks.
+- Industrial parks add five factories and a refinery; mines and waterworks grow production; factories consume metals, fuel and power to create components.
+- Tank production now consumes two armor plates, one engine and one electronics module per vehicle, with existing steel/fuel/power needs and a research prerequisite. Imported components can satisfy assembly needs.
+- Expanded the existing research tree to seventeen programs and exposed prerequisite connections in a grouped development interface.
+- AI nations research, invest and trade through the same industrial systems without flooding the player's reports.
+- Geographic view uses a bundled NASA Blue Marble surface, reprojected for Globe/Flat while retaining sovereign selection and map labels.
+- Save schema v13; existing v12 campaigns migrate automatically, retaining equipment, infrastructure, wars and prior systems.
+
 ## 0.73.1-playtest.2 — Cartography & Decision Review Follow-up
 - High-impact decisions (war, alliance, embargo, bloc, treasury/resource aid) always require confirmation, including with stale skip preferences.
 - Added Escape cancellation, dialog semantics, keyboard focus containment/restoration and duplicate-confirm protection.

@@ -1,3 +1,4 @@
+import {IndustrialPanel} from './IndustrialPanel';
 import type { CountryState, EquipmentType } from '../../domain/game';
 import { EQUIPMENT_CATALOG, EQUIPMENT_TYPES } from '../../data/equipmentCatalog';
 import { militaryFactoryCapacity, strategicReserveScore } from '../../engine/systems/production';
@@ -26,6 +27,7 @@ export function ProductionPanel({country}:{country:CountryState}){
  const bottleneck=production.bottleneck==='none'?'CLEAR':production.bottleneck.toUpperCase();
 
  return <div className="production-panel">
+  <IndustrialPanel country={country}/>
   <section className="production-hero">
    <div className="production-hero-title"><IndustryIcon size={28}/><span><small>NATIONAL INDUSTRIAL COMMAND</small><strong>Production & Equipment</strong><em>{isPlayer?'Allocate military industry and reinforce active forces.':'Observed production estimate based on known industrial capacity.'}</em></span></div>
    <div className="production-kpis">

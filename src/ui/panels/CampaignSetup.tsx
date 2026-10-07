@@ -4,6 +4,7 @@ import { AVATAR_PRESETS } from '../../data/avatarPresets';
 import { countryThemeFor, flagEmoji } from '../../data/countryThemes';
 import { LANGUAGE_OPTIONS, tr } from '../../i18n/gameI18n';
 import { useGameStore } from '../../store/gameStore';
+import {validBirthDate,CAMPAIGN_START_DATE} from '../../engine/systems/leadership';
 import { AvatarPortrait } from '../profile/AvatarPortrait';
 
 type SetupStep=1|2|3|4|'loading';
@@ -25,6 +26,8 @@ export function CampaignSetup(){
  const [name,setName]=useState(profile.commanderName==='Commander'?'':profile.commanderName);
  const [avatar,setAvatar]=useState(profile.avatarId);
  const [countryId,setCountryId]=useState('TUR');
+ const [nationality,setNationality]=useState(profile.nationalityCountryId??'TUR');
+ const [birthDate,setBirthDate]=useState(profile.birthDate??'');
  const [query,setQuery]=useState('');
  const [loadingStep,setLoadingStep]=useState(0);
 
@@ -40,10 +43,10 @@ export function CampaignSetup(){
    window.setTimeout(()=>setLoadingStep(2),1150),
    window.setTimeout(()=>setLoadingStep(3),1900),
    window.setTimeout(()=>setLoadingStep(4),2600),
-   window.setTimeout(()=>start({commanderName:name,countryId:selected.id,avatarId:avatar,language}),3350),
+   window.setTimeout(()=>start({commanderName:name,countryId:selected.id,avatarId:avatar,language,nationalityCountryId:nationality,birthDate:birthDate||null}),3350),
   ];
   return ()=>timers.forEach(window.clearTimeout);
- },[step,start,name,selected.id,avatar,language]);
+ },[step,start,name,selected.id,avatar,language,nationality,birthDate]);
 
  if(profile.setupComplete)return null;
 
@@ -77,6 +80,7 @@ export function CampaignSetup(){
     {step===1&&<div className="wizard-single-column">
       <div className="wizard-intro"><span className="wizard-kicker">STEP 01 / LEADER IDENTITY</span><h2>Every era begins with a leader.</h2><p>Choose the name that will appear in national briefings, diplomatic reports and your command profile.</p></div>
       <label className="wizard-name-field"><span>{tr(language,'commander')}</span><input autoFocus value={name} maxLength={28} placeholder="Commander" onChange={e=>setName(e.target.value)}/></label>
+      <div className="wizard-personal-fields"><label><span>{language==='tr'?'VATANDAŞLIK':'CITIZENSHIP'}</span><select aria-label="Citizenship" value={nationality} onChange={e=>setNationality(e.target.value)}>{Object.values(countries).sort((a,b)=>a.name.localeCompare(b.name)).map(c=><option key={c.id} value={c.id}>{c.name}</option>)}</select><small>{language==='tr'?'Vatandaşlığın, yöneteceğin ülkeden bağımsızdır.':'Your citizenship is independent of the country you choose to govern.'}</small></label><label><span>{language==='tr'?'DOĞUM TARİHİ':'DATE OF BIRTH'}</span><input aria-label="Date of birth" type="date" min="1900-01-01" max={CAMPAIGN_START_DATE} value={birthDate} onChange={e=>setBirthDate(e.target.value)}/><small>{language==='tr'?'İsteğe bağlı. Oyun takvimi 1 Ocak 2026 tarihinde başlar.':'Optional. Campaign calendar begins on 1 January 2026.'}</small>{birthDate&&!validBirthDate(birthDate)&&<small className="negative">Enter a valid date before the campaign starts.</small>}</label></div>
       <div className="wizard-language"><span>{tr(language,'language')}</span><div>{LANGUAGE_OPTIONS.map(l=><button key={l.id} className={language===l.id?'active':''} onClick={()=>setLanguage(l.id)}>{l.label}</button>)}</div></div>
     </div>}
 
@@ -92,11 +96,11 @@ export function CampaignSetup(){
 
     {step===4&&<div className="wizard-confirm-stage">
       <div className="confirm-leader-card"><div className="confirm-banner" style={{background:`linear-gradient(135deg,${theme.primary},${theme.accent})`}}/><div className="confirm-avatar"><AvatarPortrait id={avatar} size={138}/><span>{flagEmoji(selected.iso2)}</span></div><small>NATIONAL COMMAND NOMINATION</small><h2>{name}</h2><strong>{selected.name}</strong><p>{selected.politics.regime.replaceAll('_',' ')} · {selected.region} · {selected.society.ideology.replaceAll('_',' ')}</p></div>
-      <div className="confirm-brief"><span className="wizard-kicker">STEP 04 / FINAL REVIEW</span><h2>{tr(language,'review_title','Ready to assume command?')}</h2><p>Once confirmed, national systems, diplomacy, markets, intelligence and military command will initialize around this profile.</p><div className="confirm-summary-grid"><span><small>COMMANDER</small><strong>{name}</strong></span><span><small>LANGUAGE</small><strong>{LANGUAGE_OPTIONS.find(x=>x.id===language)?.label}</strong></span><span><small>NATION</small><strong>{flagEmoji(selected.iso2)} {selected.name}</strong></span><span><small>STARTING TREASURY</small><strong>${selected.economy.treasury.toFixed(1)}B</strong></span><span><small>GDP</small><strong>${selected.economy.gdp.toFixed(0)}B</strong></span><span><small>MILITARY CAPABILITY</small><strong>{selected.military.assessment.capability.toFixed(1)}</strong></span></div><div className="confirm-message">“Your first briefing is ready. The world will begin reacting the moment you take office.”</div></div>
+      <div className="confirm-brief"><span className="wizard-kicker">STEP 04 / FINAL REVIEW</span><h2>{tr(language,'review_title','Ready to assume command?')}</h2><p>Once confirmed, national systems, diplomacy, markets, intelligence and military command will initialize around this profile.</p><div className="confirm-summary-grid"><span><small>COMMANDER</small><strong>{name}</strong></span><span><small>CITIZENSHIP</small><strong>{countries[nationality]?.name}</strong></span><span><small>DATE OF BIRTH</small><strong>{birthDate||'Not supplied'}</strong></span><span><small>LANGUAGE</small><strong>{LANGUAGE_OPTIONS.find(x=>x.id===language)?.label}</strong></span><span><small>NATION</small><strong>{flagEmoji(selected.iso2)} {selected.name}</strong></span><span><small>STARTING TREASURY</small><strong>${selected.economy.treasury.toFixed(1)}B</strong></span><span><small>GDP</small><strong>${selected.economy.gdp.toFixed(0)}B</strong></span><span><small>MILITARY CAPABILITY</small><strong>{selected.military.assessment.capability.toFixed(1)}</strong></span></div><div className="confirm-message">“Your first briefing is ready. The world will begin reacting the moment you take office.”</div></div>
     </div>}
    </div>
 
-   <footer className="wizard-footer"><button className="wizard-back" disabled={step===1} onClick={()=>setStep(s=>typeof s==='number'&&s>1?(s-1) as SetupStep:s)}>{tr(language,'back','BACK')}</button><span>STEP {step} / 4</span>{step!==4?<button className="wizard-next" disabled={step===1&&!name.trim()} onClick={()=>setStep(s=>typeof s==='number'&&s<4?(s+1) as SetupStep:s)}>{tr(language,'continue','CONTINUE')}</button>:<button className="wizard-next confirm" onClick={()=>{setLoadingStep(0);setStep('loading')}}>{tr(language,'confirm_begin','CONFIRM & BEGIN')}</button>}</footer>
+   <footer className="wizard-footer"><button className="wizard-back" disabled={step===1} onClick={()=>setStep(s=>typeof s==='number'&&s>1?(s-1) as SetupStep:s)}>{tr(language,'back','BACK')}</button><span>STEP {step} / 4</span>{step!==4?<button className="wizard-next" disabled={step===1&&(!name.trim()||Boolean(birthDate&&!validBirthDate(birthDate)))} onClick={()=>setStep(s=>typeof s==='number'&&s<4?(s+1) as SetupStep:s)}>{tr(language,'continue','CONTINUE')}</button>:<button className="wizard-next confirm" onClick={()=>{setLoadingStep(0);setStep('loading')}}>{tr(language,'confirm_begin','CONFIRM & BEGIN')}</button>}</footer>
   </section>
  </div>;
 }

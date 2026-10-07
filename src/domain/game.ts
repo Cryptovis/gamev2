@@ -1,3 +1,4 @@
+import type { NationalIndustrialEconomy, IndustrialContract, LeadershipState } from './industrial';
 import type { MapMode, MapPresentation } from './map';
 
 export type GameSpeed = 0 | 1 | 2 | 3 | 5;
@@ -38,7 +39,7 @@ export interface MinistryState { allocations: Record<MinistryKey, number>; effic
 export interface TechnologyState { researchPoints: number; unlocked: string[]; }
 export interface StrategicAIState { strategicGoal: StrategicGoal; goalProgress: number; threatFocus: string | null; lastGoalReviewDay: number; }
 export interface IntelOperation { id: string; type: IntelOperationType; sourceCountryId: string; targetCountryId: string; startedDay: number; completeDay: number; status: IntelOperationStatus; successChance: number; resultSummary: string; }
-export interface PlayerProfile { commanderName: string; avatarId: string; language: GameLanguage; setupComplete: boolean; }
+export interface PlayerProfile { commanderName: string; avatarId: string; language: GameLanguage; setupComplete: boolean; nationalityCountryId?:string; birthDate?:string|null; }
 export interface AdvisorPrompt { id: string; resource: TradeResource; supplierId: string; stage: 'pact' | 'contract'; createdDay: number; message: string; }
 export type EmbassyLevel = 1 | 2 | 3 | 4;
 export interface EmbassyMission { id:string; countryA:string; countryB:string; openedDay:number; level:EmbassyLevel; }
@@ -64,7 +65,7 @@ export interface NationalProductionState {
   lastDailyOutput:EquipmentStockpile;
   lastInputUse:ProductionInputUse;
   throughput:number;
-  bottleneck:'none'|'steel'|'fuel'|'electricity'|'treasury'|'capacity';
+  bottleneck:'none'|'steel'|'fuel'|'electricity'|'treasury'|'capacity'|'components'|'technology';
 }
 
 export interface CountryState {
@@ -161,6 +162,9 @@ export interface GameState {
   diplomaticOffers: DiplomaticOffer[];
   production: Record<string, NationalProductionState>;
   infrastructure: Record<string, NationalInfrastructureState>;
+  industrialEconomy:Record<string,NationalIndustrialEconomy>;
+  industrialContracts:Record<string,IndustrialContract>;
+  leadership:LeadershipState;
   lastAiDay: number;
   lastStrategicReviewDay: number;
   sitrep: string[];

@@ -1,3 +1,4 @@
+import {gameDate} from '../../engine/systems/leadership';
 import { useState, type ReactNode } from 'react';
 import type { GameSpeed } from '../../domain/game';
 import { flagEmoji } from '../../data/countryThemes';
@@ -29,15 +30,16 @@ export function TopBar(){
  const player=useGameStore(s=>s.countries[s.playerCountryId]);
  const profile=useGameStore(s=>s.playerProfile);
  const production=useGameStore(s=>s.production[playerCountryId]);
+ const industrial=useGameStore(s=>s.industrialEconomy[playerCountryId]);
  const infrastructure=useGameStore(s=>s.infrastructure[playerCountryId]);
  const lang=profile.language;
  const forecast=calculateEconomyForecast(player);
- const strategicDailyBalance=forecast.dailyBalance-(production?.lastInputUse.treasury??0)-(infrastructure?.maintenance??0);
+ const strategicDailyBalance=forecast.dailyBalance-(production?.lastInputUse.treasury??0)-(infrastructure?.maintenance??0)-(industrial?.lastCosts??0);
 
  return <header className="topbar">
   <div className="leader-brand">
    <button className="leader-avatar-button" onClick={()=>setOptionsOpen(true)} title="Open commander options"><AvatarPortrait id={profile.avatarId} size={52}/><span>⋯</span></button>
-   <div className="brand-block"><div className="eyebrow">ALPYX // GLOBAL COMMAND · CARTOGRAPHY & INTERACTION 0.73.1 PLAYTEST.2</div><div className="brand-line"><strong>{profile.commanderName}</strong><span className="day-chip">{tr(lang,'day')} {day}</span></div><small className="leader-country">{player.name} · {player.politics.regime.toUpperCase()}</small></div>
+   <div className="brand-block"><div className="eyebrow">ALPYX // GLOBAL COMMAND · INDUSTRY & LIVING DIPLOMACY 0.74 PLAYTEST.1</div><div className="brand-line"><strong>{profile.commanderName}</strong><span className="day-chip">{tr(lang,'day')} {day} · {gameDate(useGameStore.getState())}</span></div><small className="leader-country">{player.name} · {player.politics.regime.toUpperCase()}</small></div>
   </div>
 
   <div className="metrics governance-metrics" aria-label="National command indicators">

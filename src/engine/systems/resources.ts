@@ -11,12 +11,12 @@ export interface ResourceFlow {
 
 const round = (value: number) => Number(value.toFixed(4));
 
-export function simulateResources(country: CountryState): ResourceFlow {
+export function simulateResources(country: CountryState,boost=1): ResourceFlow {
   const populationMillions = country.demographics.population / 1_000_000;
   const utilization = country.industry.utilization / 100;
 
   const production: ResourceStockpile = {
-    food: country.resourceProduction.food * (0.85 + country.economy.productivity / 500),
+    food: country.resourceProduction.food * (0.85 + country.economy.productivity / 500)*boost,
     oil: country.resourceProduction.oil,
     iron: country.resourceProduction.iron + country.industry.mines * 0.025 * utilization,
     uranium: country.resourceProduction.uranium,

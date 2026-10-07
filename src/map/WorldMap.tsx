@@ -1,3 +1,4 @@
+import {GeographicSurface} from './GeographicSurface';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { geoDistance, geoGraticule10, geoNaturalEarth1, geoOrthographic, geoPath } from 'd3-geo';
 import { countryMapAnchor, microstateVisible, nearestMapMarker, type MapPoint } from './mapCoordinates';
@@ -116,6 +117,7 @@ export function WorldMap() {
     return '#355266';
   };
 
+  const photographic=mapPresentation==='geographic'&&mapMode==='political';
   const hoveredCountry = hovered ? countries[hovered] : null;
   const selectedCountry = selectedCountryId ? countries[selectedCountryId] : null;
   const flatTransform = `translate(${flatPan.x} ${flatPan.y}) translate(${W/2} ${H/2}) scale(${flatZoom}) translate(${-W/2} ${-H/2})`;
@@ -267,7 +269,7 @@ export function WorldMap() {
     const isHovered = id === hovered;
     const terrain=country?terrainForCountry(country):'plains';
     const fill=mapPresentation==='geographic'&&mapMode==='political'?`url(#terrain-${terrain})`:colorFor(id);
-    return <path key={`${id}-${index}`} d={d} className={`country-shape ${mapPresentation==='geographic'?'geographic':''} ${isSelected ? 'selected' : ''} ${isHovered ? 'hovered' : ''}`} fill={fill} onPointerEnter={() => country && setHovered(id)} onPointerLeave={() => setHovered((v) => v === id ? null : v)}><title>{country?.name ?? feature.properties?.name}</title></path>;
+    return <path key={`${id}-${index}`} d={d} className={`country-shape ${photographic?'geographic photographic':''} ${isSelected ? 'selected' : ''} ${isHovered ? 'hovered' : ''}`} fill={fill} onPointerEnter={() => country && setHovered(id)} onPointerLeave={() => setHovered((v) => v === id ? null : v)}><title>{country?.name ?? feature.properties?.name}</title></path>;
   });
 
 
@@ -357,6 +359,7 @@ export function WorldMap() {
         <path d={path({ type: 'Sphere' } as any) ?? ''} className="ocean-sphere"/>
         <path d={path(graticule as any) ?? ''} className="globe-graticule"/>
       </>}
+      {photographic&&<GeographicSurface projection={projection} flat={projectionMode==='flat'} pan={flatPan} zoom={flatZoom}/>}
       <g key={viewportKey} className="map-viewport" transform={projectionMode === 'flat' ? flatTransform : undefined}>
         <g className="country-layer">{shapeLayer}</g>
       </g>

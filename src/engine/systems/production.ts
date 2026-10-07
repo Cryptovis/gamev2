@@ -1,4 +1,6 @@
 import type { CountryState, EquipmentStockpile, EquipmentType, GameState, NationalProductionState, ProductionLine } from '../../domain/game';
+import type {NationalIndustrialEconomy} from '../../domain/industrial';
+import {TANK_COMPONENTS} from '../../data/industrialCatalog';
 import { EQUIPMENT_CATALOG, EQUIPMENT_TYPES } from '../../data/equipmentCatalog';
 
 const clamp=(v:number,min:number,max:number)=>Math.min(max,Math.max(min,v));
@@ -77,7 +79,8 @@ function bottleneckFor(country:CountryState,need:{steel:number;fuel:number;elect
   return {ratio:clamp(value,0,1),key:value>=1?'none':key};
 }
 
-export function processNationalProduction(country:CountryState,production:NationalProductionState){
+export function processNationalProduction(country:CountryState,production:NationalProductionState,industrial?:NationalIndustrialEconomy,boost=1){
+  const components=industrial?{...industrial.stock}:null;
   const capacity=militaryFactoryCapacity(country,production);
   let remainingCapacity=capacity;
   let steel=country.processedResources.steel;
@@ -106,10 +109,20 @@ export function processNationalProduction(country:CountryState,production:Nation
     };
     const localCountry={...country,processedResources:{fuel,steel,electricity},economy:{...country.economy,treasury}};
     const bottle=bottleneckFor(localCountry,need);
-    const ratio=bottle.ratio;
-    if(ratio<worstRatio){worstRatio=ratio;globalBottleneck=bottle.key as NationalProductionState['bottleneck'];}
-    const potential=def.baseOutput*assigned*(efficiency/100)*techMultiplier(country,type);
+    let ratio=bottle.ratio;
+    let lineBottleneck=bottle.key as NationalProductionState['bottleneck'];
+    const potential=def.baseOutput*assigned*(efficiency/100)*techMultiplier(country,type)*boost;
+    if(type==='armor'&&components&&potential>0){
+      if(!country.technology.unlocked.includes('mil-armor-assembly')){ratio=0;lineBottleneck='technology';}
+      else for(const [good,amount] of Object.entries(TANK_COMPONENTS)){
+        const available=components[good as keyof typeof components];
+        const componentRatio=available/(potential*(amount??1));
+        if(componentRatio<ratio){ratio=Math.max(0,componentRatio);lineBottleneck='components';}
+      }
+    }
+    if(ratio<worstRatio){worstRatio=ratio;globalBottleneck=lineBottleneck;}
     const output=potential*ratio;
+    if(type==='armor'&&components)for(const [good,amount] of Object.entries(TANK_COMPONENTS))components[good as keyof typeof components]=Math.max(0,components[good as keyof typeof components]-output*(amount??0));
 
     steel=Math.max(0,steel-need.steel*ratio);
     fuel=Math.max(0,fuel-need.fuel*ratio);
@@ -133,19 +146,22 @@ export function processNationalProduction(country:CountryState,production:Nation
   return {
     country:{...country,processedResources:{...country.processedResources,steel,fuel,electricity},economy:{...country.economy,treasury}},
     production:{...production,lines,stockpile,lastDailyOutput,lastInputUse:inputUse,throughput,bottleneck:globalBottleneck},
+    industrial:industrial&&components?{...industrial,stock:components}:industrial,
   };
 }
 
 export function processProduction(state:GameState):GameState{
   const countries={...state.countries};
   const production={...state.production};
+  const industrialEconomy={...state.industrialEconomy};
   for(const country of Object.values(state.countries)){
     const current=production[country.id]??createInitialProduction(country);
-    const result=processNationalProduction(countries[country.id],current);
+    const result=processNationalProduction(countries[country.id],current,industrialEconomy[country.id],country.id===state.playerCountryId&&state.day<state.leadership.celebrationUntilDay?1.12:1);
     countries[country.id]=result.country;
     production[country.id]=result.production;
+    if(result.industrial)industrialEconomy[country.id]=result.industrial;
   }
-  return {...state,countries,production};
+  return {...state,countries,production,industrialEconomy};
 }
 
 function normalizeFactories(production:NationalProductionState,capacity:number){

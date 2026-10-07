@@ -1,12 +1,14 @@
 import { initialCountries } from './countries';
 import type { GameState } from '../domain/game';
 import { createInitialProductionMap } from '../engine/systems/production';
+import { createIndustrialMap } from '../engine/systems/industrialEconomy';
+import { createLeadership } from '../engine/systems/leadership';
 import { createInitialInfrastructureMap } from '../engine/systems/infrastructure';
 
 export const makeInitialState = (): GameState => {
   const countries=structuredClone(initialCountries);
   return ({
-  schemaVersion: 12,
+  schemaVersion: 13,
   simulationSeed: 0xA17E5EED,
   day: 1,
   speed: 0,
@@ -17,7 +19,7 @@ export const makeInitialState = (): GameState => {
   selectedCountryId: 'TUR',
   mapMode: 'political',
   mapPresentation: 'political',
-  mapNotice: 'Cartography & Interaction 0.73.1 playtest.2 online — decluttered map labels, microstate fixes and strategic confirmations enabled.',
+  mapNotice: 'Industry & Living Diplomacy 0.74 online — expanded commodities, industrial supply chains and leader correspondence enabled.',
   countries,
   tradeDeals: {},
   wars: {},
@@ -34,10 +36,13 @@ export const makeInitialState = (): GameState => {
   diplomaticOffers: [],
   production: createInitialProductionMap(countries),
   infrastructure: createInitialInfrastructureMap(countries),
+  industrialEconomy: createIndustrialMap(countries),
+  industrialContracts: {},
+  leadership:createLeadership(countries.TUR.economy.gdp),
   lastAiDay: 1,
   lastStrategicReviewDay: 1,
   sitrep: [
-    'AlpyX Cartography & Interaction 0.73.1 playtest.2 online.',
+    'AlpyX Industry & Living Diplomacy 0.74 online.',
     'Strategic AI, covert operations and influence networks loaded alongside Strategic Command systems.',
   ],
   });

@@ -1,0 +1,9 @@
+import type {CountryState} from '../../domain/game';
+import {TECHNOLOGY_TREE,technologyById} from '../../data/technologyTree';
+import {canUnlockTechnology} from '../../engine/systems/technology';
+import {useGameStore} from '../../store/gameStore';
+import {ResearchIcon} from '../icons/GameIcons';
+export function TechnologyPanel({country}:{country:CountryState}){
+ const state=useGameStore(),own=country.id===state.playerCountryId;
+ return <section className="technology-command"><header className="industrial-heading"><ResearchIcon size={30}/><div><small>NATIONAL RESEARCH PROGRAM</small><h3>Technology & Development</h3><p>{country.technology.researchPoints.toFixed(1)} research points · {country.technology.unlocked.length} completed programs</p></div></header><div className="technology-branches">{(['industry','military','energy','economy','intelligence','society'] as const).map(category=><section key={category}><h4>{category.toUpperCase()}</h4>{TECHNOLOGY_TREE.filter(n=>n.category===category).sort((a,b)=>a.tier-b.tier).map(node=>{const unlocked=country.technology.unlocked.includes(node.id),ready=canUnlockTechnology(country,node.id);return <article key={node.id} className={'research-card '+(unlocked?'complete':ready?'available':'locked')}><small>TIER {node.tier} · {unlocked?'COMPLETE':ready?'AVAILABLE':'LOCKED'}</small><h5>{node.name}</h5><p>{node.description}</p>{node.prerequisites.length>0&&<div className="research-prerequisites">{node.prerequisites.map(id=><span key={id} className={country.technology.unlocked.includes(id)?'met':''}>↳ {technologyById[id]?.name??id}</span>)}</div>}<button disabled={!own||unlocked||!ready} onClick={()=>state.unlockTechnology(node.id)}>{unlocked?'RESEARCH COMPLETE':`RESEARCH · ${node.cost} RP`}</button></article>})}</section>)}</div></section>;
+}

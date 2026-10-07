@@ -4,6 +4,7 @@ import { useGameStore } from '../../store/gameStore';
 import { BlocIcon, CouncilIcon, DiplomacyIcon, EmbassyIcon, IntelligenceIcon, ResourceIcon, TreasuryIcon, WorldIcon } from '../icons/GameIcons';
 import { DraggableWindow } from '../windows/DraggableWindow';
 import { MapModeBar } from './MapModeBar';
+import {IndustrialMarketPanel} from '../panels/IndustrialMarketPanel';
 import { ResourceCommandWindow } from '../panels/ResourceCommandWindow';
 
 type ToolId='objectives'|'market'|'pulse'|'map'|'resources'|'sitrep'|'alerts'|'diplomacy';
@@ -45,7 +46,7 @@ export function CommandRails(){
    <RailButton active={open.has('resources')} badge={critical.length} label="RESOURCES" onClick={()=>toggle('resources')}><ResourceIcon resource={critical[0]?.resource??'oil'} size={20}/></RailButton>
   </nav>
   <nav className={`command-rail command-rail-right ${state.selectedCountryId?'country-open':'country-closed'}`} aria-label="Information tools">
-   <RailButton active={open.has('diplomacy')} badge={offers.length} label="DIPLO" onClick={()=>toggle('diplomacy')}><DiplomacyIcon size={20}/></RailButton>
+   <RailButton active={open.has('diplomacy')} badge={offers.length+state.leadership.messages.filter(m=>!m.read).length} label="DIPLO" onClick={()=>toggle('diplomacy')}><DiplomacyIcon size={20}/></RailButton>
    <RailButton active={open.has('alerts')} badge={critical.length} label="ALERTS" onClick={()=>toggle('alerts')}><ResourceIcon resource={critical[0]?.resource??'oil'} size={20}/></RailButton>
    <RailButton active={open.has('sitrep')} badge={state.sitrep.length} label="LOG" onClick={()=>toggle('sitrep')}><IntelligenceIcon size={20}/></RailButton>
   </nav>
@@ -58,8 +59,9 @@ export function CommandRails(){
    <div className="floating-objectives">{objectives.map((o,i)=><div className={o.done?'done':''} key={o.label}><b>{o.done?'✓':String(i+1).padStart(2,'0')}</b><span><strong>{o.label}</strong><small>{o.done?'Completed':'Active objective'}</small></span></div>)}</div>
   </DraggableWindow>}
 
-  {open.has('market')&&<DraggableWindow id="market-window" kicker="GLOBAL ECONOMY" title="Commodity Market" initialX={120} initialY={205} width={520} onClose={()=>close('market')}>
+  {open.has('market')&&<DraggableWindow id="market-window" kicker="GLOBAL ECONOMY" title="Global Commodity & Industrial Market" initialX={110} initialY={135} width={760} onClose={()=>close('market')}>
    <div className="floating-market">{board.map(item=><div key={item.resource}><ResourceIcon resource={item.resource} size={24}/><span><small>{item.resource.toUpperCase()}</small><strong>${item.price.toFixed(3)}</strong></span><em>WORLD PRICE</em></div>)}</div>
+   <IndustrialMarketPanel/>
    <div className="floating-note">{activeTrades.length} active global trade flows · prices react to world production and strategic scarcity.</div>
   </DraggableWindow>}
 
@@ -69,6 +71,7 @@ export function CommandRails(){
   </DraggableWindow>}
 
   {open.has('diplomacy')&&<DraggableWindow id="diplomacy-window" kicker="FOREIGN MINISTRY" title="Diplomatic Inbox" initialX={window.innerWidth-650} initialY={150} width={590} onClose={()=>close('diplomacy')}>
+   <section className="diplomatic-messages"><header><strong>LEADER CORRESPONDENCE</strong><button onClick={state.readDiplomaticMessages}>MARK READ</button></header>{state.leadership.messages.map(m=><article key={m.id} className={m.tone}><small>{m.kind.toUpperCase()} · DAY {m.day} · {m.read?'READ':'NEW'}</small><strong>{state.countries[m.senderId]?.name}</strong><p>{m.text}</p></article>)}{!state.leadership.messages.length&&<p>Friends and rivals may react to your birthday and national achievements.</p>}</section>
    <div className="diplomatic-summary"><span><EmbassyIcon size={22}/><i><small>ACTIVE EMBASSIES</small><strong>{embassies.length}</strong></i></span><span><DiplomacyIcon size={22}/><i><small>PENDING OFFERS</small><strong>{offers.length}</strong></i></span></div>
    <div className="diplomatic-offer-list">{offers.length?offers.map(offer=>{const sender=state.countries[offer.senderId];return <article key={offer.id}><header><b>{sender?.iso2??'--'}</b><span><small>{offer.type==='embassy'?'EMBASSY EXCHANGE':'TRADE FRAMEWORK'}</small><strong>{sender?.name??offer.senderId}</strong></span><em>D{offer.expiresDay-state.day}</em></header><p>{offer.message}</p><div><button onClick={()=>state.resolveDiplomaticOffer(offer.id,false)}>DECLINE</button><button className="primary" onClick={()=>state.resolveDiplomaticOffer(offer.id,true)}>ACCEPT</button></div></article>}):<div className="diplomatic-empty"><DiplomacyIcon size={30}/><strong>No pending diplomatic proposals</strong><span>Foreign governments will contact you when relations and strategic interests align.</span></div>}</div>
   </DraggableWindow>}

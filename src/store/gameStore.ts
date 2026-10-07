@@ -3,6 +3,10 @@ import { makeInitialState } from '../data/initialState';
 import type { GameCommand } from '../domain/commands';
 import type { CouncilResolutionType, EquipmentType, GameLanguage, GameSpeed, GameState, InfrastructureAsset, IntelOperationType, MinistryKey, TradeResource } from '../domain/game';
 import { canAutoApprove, type StrategicActionKind } from '../domain/interaction';
+import type {FacilityKind,IndustrialGood} from '../domain/industrial';
+import {buildFacility} from '../engine/systems/industrialEconomy';
+import {placeIndustrialOrder} from '../engine/systems/industrialMarket';
+import {createLeadership,validBirthDate} from '../engine/systems/leadership';
 import type { MapMode, MapPresentation } from '../domain/map';
 import { applyGameCommand } from '../engine/commands';
 import { acceptAdvisorContract, acceptAdvisorTradePact, dismissAdvisor } from '../engine/systems/advisor';
@@ -11,7 +15,13 @@ import { embassyFor, openEmbassy } from '../engine/systems/diplomacy';
 import { resolveDiplomaticOffer } from '../engine/systems/diplomaticOffers';
 
 interface GameActions {
-  startCampaign: (config:{commanderName:string;countryId:string;avatarId:string;language:GameLanguage})=>void;
+  buildFacility:(kind:FacilityKind)=>void;
+  toggleFacility:(kind:FacilityKind)=>void;
+  placeIndustrialOrder:(partnerId:string,good:IndustrialGood,quantity:number,direction:'buy'|'sell',years:0|1|3|5|10)=>void;
+  cancelIndustrialContract:(id:string)=>void;
+  readDiplomaticMessages:()=>void;
+  startCampaign: (config:{commanderName:string;countryId:string;avatarId:string;language:GameLanguage;nationalityCountryId?:string;birthDate?:string|null})=>void;
+  setLeaderIdentity:(nationalityCountryId:string,birthDate:string|null)=>void;
   setPlayerAvatar: (avatarId:string)=>void;
   setLanguage: (language:GameLanguage)=>void;
   resolveAdvisor: (decision:'dismiss'|'pact'|1|3|5|10)=>void;
@@ -80,12 +90,18 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
   mapProjection: 'globe',
   mapControlCommand: null,
   confirmationSkips: {},
-  startCampaign: ({commanderName,countryId,avatarId,language}) => set(() => {
+  buildFacility:(kind)=>set(state=>buildFacility(state,state.playerCountryId,kind)),
+  toggleFacility:(kind)=>set(state=>{const id=state.playerCountryId,n=state.industrialEconomy[id];return {industrialEconomy:{...state.industrialEconomy,[id]:{...n,enabled:{...n.enabled,[kind]:!n.enabled[kind]}}}};}),
+  placeIndustrialOrder:(partnerId,good,quantity,direction,years)=>set(state=>placeIndustrialOrder(state,partnerId,good,quantity,direction,years)),
+  cancelIndustrialContract:(id)=>set(state=>{const c=state.industrialContracts[id];return c&&(c.sellerId===state.playerCountryId||c.buyerId===state.playerCountryId)?{industrialContracts:{...state.industrialContracts,[id]:{...c,active:false}}}:{};}),
+  readDiplomaticMessages:()=>set(state=>({leadership:{...state.leadership,messages:state.leadership.messages.map(m=>({...m,read:true}))}})),
+  startCampaign: ({commanderName,countryId,avatarId,language,nationalityCountryId,birthDate}) => set(() => {
     const fresh=makeInitialState();
     const chosen=fresh.countries[countryId] ? countryId : 'TUR';
     const country=fresh.countries[chosen];
-    return {...fresh,mapProjection:'globe',mapControlCommand:null,confirmationSkips:{},playerCountryId:chosen,selectedCountryId:chosen,playerProfile:{commanderName:commanderName.trim()||'Commander',avatarId,language,setupComplete:true},council:{influenceByCountry:{[chosen]:28},history:[]},intelligenceLedger:{[chosen]:100},mapNotice:`${country.name} command established.`,sitrep:[`${commanderName.trim()||'Commander'} assumed national command of ${country.name}.`,...fresh.sitrep],saveMessage:'Campaign initialized'};
+    return {...fresh,mapProjection:'globe',mapControlCommand:null,confirmationSkips:{},playerCountryId:chosen,selectedCountryId:chosen,leadership:createLeadership(country.economy.gdp),playerProfile:{commanderName:commanderName.trim()||'Commander',avatarId,language,setupComplete:true,nationalityCountryId:fresh.countries[nationalityCountryId??'']?nationalityCountryId:chosen,birthDate:birthDate&&validBirthDate(birthDate)?birthDate:null},council:{influenceByCountry:{[chosen]:28},history:[]},intelligenceLedger:{[chosen]:100},mapNotice:`${country.name} command established.`,sitrep:[`${commanderName.trim()||'Commander'} assumed national command of ${country.name}.`,...fresh.sitrep],saveMessage:'Campaign initialized'};
   }),
+  setLeaderIdentity:(nationalityCountryId,birthDate)=>set(state=>state.countries[nationalityCountryId]&&(!birthDate||validBirthDate(birthDate))?{playerProfile:{...state.playerProfile,nationalityCountryId,birthDate}}:{}),
   setPlayerAvatar: (avatarId) => set((state)=>({playerProfile:{...state.playerProfile,avatarId}})),
   setLanguage: (language) => set((state)=>({playerProfile:{...state.playerProfile,language}})),
   resolveAdvisor: (decision) => set((state)=>decision==='dismiss'?dismissAdvisor(state):decision==='pact'?acceptAdvisorTradePact(state):acceptAdvisorContract(state,decision)),
