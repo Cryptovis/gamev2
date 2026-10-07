@@ -1,4 +1,4 @@
-export type MapMode = 'political' | 'diplomacy' | 'resources' | 'military' | 'religion' | 'ideology';
+export type MapMode = 'political' | 'relations' | 'diplomacy' | 'resources' | 'military' | 'religion' | 'ideology';
 export type MapPresentation = 'political' | 'geographic';
 
 export interface MapCountrySelection {

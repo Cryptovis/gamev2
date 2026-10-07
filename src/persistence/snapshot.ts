@@ -33,6 +33,7 @@ export function snapshotGame(state: GameState): GameState {
     industrialEconomy:state.industrialEconomy,
     industrialContracts:state.industrialContracts,
     leadership:state.leadership,
+    world:state.world,
     lastAiDay: state.lastAiDay,
     lastStrategicReviewDay: state.lastStrategicReviewDay,
     sitrep: state.sitrep,

@@ -68,7 +68,8 @@ export function acceptAdvisorTradePact(state:GameState):GameState{
  const supplier=state.countries[prompt.supplierId];
  if(!player||!supplier)return dismissAdvisor(state);
  const relation=relationFor(player,supplier.id);
- if(relation.score<15||player.economy.treasury<5)return {...dismissAdvisor(state),sitrep:[`ADVISOR // Trade pact with ${supplier.name} could not be completed.`,...state.sitrep].slice(0,12)};
+ if(relation.status==='war'||relation.sanctions||player.globalSanctions||supplier.globalSanctions||relation.score<15||player.economy.treasury<5)return {...dismissAdvisor(state),sitrep:[`ADVISOR // Trade pact with ${supplier.name} could not be completed.`,...state.sitrep].slice(0,12)};
+ if(relation.treaties.includes('trade'))return {...state,activeAdvisor:{...prompt,stage:'contract'}};
  let next:GameState={...state,countries:{...state.countries,[player.id]:{...player,economy:{...player.economy,treasury:player.economy.treasury-5}}}};
  next=addTreaty(next,player.id,supplier.id,'trade');
  return {...next,activeAdvisor:{...prompt,stage:'contract',message:`Trade pact secured with ${supplier.name}. Choose the duration of the ${prompt.resource.toUpperCase()} supply contract.`},speed:0};

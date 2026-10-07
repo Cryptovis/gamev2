@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.76.0-playtest.1 — Decisions & World Institutions
+- Added factory investment review, before/after capacity, input/power/upkeep previews and timed construction cancellation with an explicit partial refund.
+- Added advisor pact/contract review, locked-price monthly payment summaries, duplicate contract protection, diplomatic settlement checks and visible command receipts.
+- Added actionable Low Relations explanations and direct diplomacy navigation, plus infrastructure investment review.
+- Generated a 25-tile resource/industry/military illustration atlas and integrated colorful thumbnails across market, supply and equipment views.
+- Fixed geographic surface delivery/rendering using a local embedded satellite SVG and standard image layer with visible terrain fallback; added continuous-score Relations map colors.
+- Added persistent ten-step English/Turkish onboarding, context navigation and HELP replay.
+- Added simulated UN/WHO/Security Council applications, achievement gates, five-day member votes, membership benefits and public diplomacy research.
+- Added attack debates, player voting, AI ballots and condemnation when a rejected attack proceeds, including attacks begun while voting is open.
+- Added probabilistic voluntary religious outreach, small normalized demographic shifts and target cooldowns.
+- Migrated campaign schema 12/13 to 14; verified 133 tests, production build and browser flows. See docs/PLAYTEST-076.md.
+
 ## 0.75.0-playtest.1 — Open Command
 - Replaced the full-width HUD with floating commander/indicator and date/speed islands.
 - Added a lighter slate interface, softer vignette, brighter geographic surface, responsive layouts and shared supporting surfaces.

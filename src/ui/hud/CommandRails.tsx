@@ -1,4 +1,4 @@
-import { useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { MARKET_RESOURCES, getMarketBoard, resourceReserveDays, resourceStrategicStatus } from '../../store/marketSelectors';
 import { useGameStore } from '../../store/gameStore';
 import { BlocIcon, CouncilIcon, DiplomacyIcon, EmbassyIcon, IntelligenceIcon, ResourceIcon, TreasuryIcon, WorldIcon } from '../icons/GameIcons';
@@ -16,6 +16,7 @@ function RailButton({active,badge,label,children,onClick}:{active:boolean;badge?
 export function CommandRails(){
  const state=useGameStore();
  const [open,setOpen]=useState<Set<ToolId>>(()=>new Set());
+ useEffect(()=>{if(state.navigation&&['objectives','market','pulse','map','resources','sitrep','alerts'].includes(state.navigation.panel))setOpen(new Set([state.navigation.panel as ToolId]));},[state.navigation?.nonce]);
  const player=state.countries[state.playerCountryId];
  const board=getMarketBoard(state);
  const activeWars=Object.values(state.wars).filter(w=>w.status==='active');
@@ -44,6 +45,7 @@ export function CommandRails(){
    <RailButton active={open.has('pulse')} badge={activeWars.length} label="WORLD" onClick={()=>toggle('pulse')}><BlocIcon size={20}/></RailButton>
    <RailButton active={open.has('map')} label="MAP" onClick={()=>toggle('map')}><WorldIcon size={20}/></RailButton>
    <RailButton active={open.has('resources')} badge={critical.length} label="SUPPLY" onClick={()=>toggle('resources')}><ResourceIcon resource={critical[0]?.resource??'oil'} size={20}/></RailButton>
+   <button className="tutorial-replay" onClick={()=>state.setTutorial(0,true)}>HELP</button>
   </nav>
   <nav className={`command-rail command-rail-right ${state.selectedCountryId?'country-open':'country-closed'}`} aria-label="Information tools">
    <RailButton active={open.has('diplomacy')} badge={offers.length+state.leadership.messages.filter(m=>!m.read).length} label="DIPLO" onClick={()=>toggle('diplomacy')}><DiplomacyIcon size={20}/></RailButton>

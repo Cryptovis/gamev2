@@ -1,3 +1,4 @@
+import {applyWarCondemnation} from './systems/worldInstitutions';
 import type { GameCommand } from '../domain/commands';
 import type { GameState, TradeResource, WarState } from '../domain/game';
 import { tickGame } from './tick';
@@ -147,7 +148,7 @@ export function applyGameCommand(state: GameState, command: GameCommand): GameSt
       let next = cancelPairTrades(state, attacker.id, defender.id);
       next = setWarRelation(next, attacker.id, defender.id);
       next = { ...next, wars: { ...next.wars, [warId]: war }, countries: { ...next.countries, [attacker.id]: { ...next.countries[attacker.id], diplomacy: { ...next.countries[attacker.id].diplomacy, reputation: clamp(next.countries[attacker.id].diplomacy.reputation - 8, 0, 100) } } } };
-      return note(next, `WAR // ${attacker.name} declared war on ${defender.name}.`);
+      return applyWarCondemnation(state,note(next, `WAR // ${attacker.name} declared war on ${defender.name}.`),attacker.id,defender.id);
     }
     case 'military/assault': return resolveCombatRound(state, command.warId);
     case 'military/setAutoAssault': {

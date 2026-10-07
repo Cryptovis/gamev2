@@ -107,11 +107,15 @@ export function strategicDecisionSpec(
     ],warnings:['Aid is more diplomatically effective when the recipient is genuinely short of the resource.']};
   }
   if(kind==='declare_war'){
+    const ballot=state.world.ballots.find(b=>b.kind==='attack'&&b.proposerId===actor.id&&b.targetId===target.id&&b.status!=='open');
+    const rejected=ballot?.status==='rejected'&&!ballot.condemned;
+    const pending=state.world.ballots.some(b=>b.kind==='attack'&&b.proposerId===actor.id&&b.targetId===target.id&&b.status==='open');
     return {...base,kicker:'NATIONAL SECURITY COUNCIL',title:'Declare War on '+target.name,summary:'Authorize open armed conflict. Trade is severed, bilateral relations collapse and national reputation is damaged.',confirmLabel:'DECLARE WAR',tone:'danger',impacts:[
       {label:'Relationship',value:'WAR / 0',tone:'danger'},
-      {label:'Reputation',value:'-8',tone:'danger'},
+      {label:'Reputation',value:rejected?'-18 (includes condemnation)':'-8',tone:'danger'},
+      {label:'International mandate',value:rejected?'REJECTED':pending?'VOTE STILL OPEN':ballot?.status==='passed'?'SUPPORTED':'Not requested',tone:rejected?'danger':'warning'},
       {label:'Trade',value:'Cancelled',tone:'danger'},
-    ],warnings:['This action immediately creates an active war and cannot be undone with a simple cancel action.','Supply, fuel, infrastructure and equipment reserves will determine sustained combat effectiveness.']};
+    ],warnings:[...(rejected?['The rejected resolution adds -10 reputation and -20 relations with opposing countries and target allies.']:pending?['The vote is still open. If it rejects your attack, condemnation will apply at closing.']:[]),'This action immediately creates an active war and cannot be undone with a simple cancel action.','Supply, fuel, infrastructure and equipment reserves will determine sustained combat effectiveness.']};
   }
   return null;
 }

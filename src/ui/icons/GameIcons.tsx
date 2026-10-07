@@ -1,3 +1,4 @@
+import {AssetThumbnail} from './AssetThumbnail';
 import type { ReactNode } from 'react';
 import type { ReligionType, TradeResource } from '../../domain/game';
 
@@ -25,31 +26,16 @@ export function UraniumIcon(props: IconProps) {
 export function ApprovalIcon(props: IconProps) {
   return <Svg {...props}><path d="M7 20v-8H4l3-7h4v5h5.6a2 2 0 0 1 1.9 2.6l-1.7 5.5A2.7 2.7 0 0 1 14.2 20H7Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"/></Svg>;
 }
-export function PersonnelIcon(props: IconProps) {
-  return <Svg {...props}><circle cx="12" cy="8" r="3" stroke="currentColor" strokeWidth="1.6"/><path d="M6 20c.5-4 2.5-6 6-6s5.5 2 6 6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></Svg>;
-}
-export function TankIcon(props: IconProps) {
-  return <Svg {...props}><path d="M5 11h11l2 3H7l-2-3Z" stroke="currentColor" strokeWidth="1.5"/><path d="M9 11V8h5l2 3M14 8l5-2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/><path d="M7 17h10" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/></Svg>;
-}
-export function JetIcon(props: IconProps) {
-  return <Svg {...props}><path d="m3 13 8-2 3-7 2 1-1 6 6 2v2l-6-.3-3 5-1.5-.5.5-5.2-8-.5V13Z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round"/></Svg>;
-}
-export function ShipIcon(props: IconProps) {
-  return <Svg {...props}><path d="M4 15h16l-3 4H7l-3-4Z" stroke="currentColor" strokeWidth="1.6"/><path d="M9 15V7h5v8M14 10h3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></Svg>;
-}
-export function ArtilleryIcon(props: IconProps) {
-  return <Svg {...props}><circle cx="8" cy="17" r="3" stroke="currentColor" strokeWidth="1.5"/><path d="m10 15 8-9M13 10l5 2M11 16h8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></Svg>;
-}
+export function PersonnelIcon({size=18}:IconProps) {return <AssetThumbnail asset="infantry_equipment" size={size>=18?Math.max(size,32):size}/>;}
+export function TankIcon({size=18}:IconProps) {return <AssetThumbnail asset="tanks" size={size>=18?Math.max(size,32):size}/>;}
+export function JetIcon({size=18}:IconProps) {return <AssetThumbnail asset="fighters" size={size>=18?Math.max(size,32):size}/>;}
+export function ShipIcon({size=18}:IconProps) {return <AssetThumbnail asset="naval" size={size>=18?Math.max(size,32):size}/>;}
+export function ArtilleryIcon({size=18}:IconProps) {return <AssetThumbnail asset="artillery" size={size>=18?Math.max(size,32):size}/>;}
 export function IndustryIcon(props: IconProps) {
   return <Svg {...props}><path d="M4 20V9l5 3V8l5 3V5h3v15H4Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"/><path d="M7 16h2M12 16h2M17 16h1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></Svg>;
 }
 
-export function ResourceIcon({ resource, ...props }: IconProps & { resource: TradeResource | 'uranium' }) {
-  if (resource === 'food') return <FoodIcon {...props}/>;
-  if (resource === 'oil') return <OilIcon {...props}/>;
-  if (resource === 'iron') return <IronIcon {...props}/>;
-  return <UraniumIcon {...props}/>;
-}
+export function ResourceIcon({resource,size=18}:IconProps&{resource:TradeResource}){return <AssetThumbnail asset={resource} size={size>=18?Math.max(size,40):size}/>;}
 
 const RELIGION_SYMBOL: Record<ReligionType, string> = {
   christianity: '✝', catholic_christianity: '✝', orthodox_christianity: '☦', protestant_christianity: '✝',
@@ -59,15 +45,9 @@ export function ReligionGlyph({ religion, size = 18 }: { religion: ReligionType;
   return <span className="religion-glyph" style={{ fontSize: size }} aria-hidden="true">{RELIGION_SYMBOL[religion]}</span>;
 }
 
-export function FuelIcon(props: IconProps) {
-  return <Svg {...props}><path d="M7 4h8v16H7z" stroke="currentColor" strokeWidth="1.6"/><path d="M9 7h4M15 8l3 2v7a1.5 1.5 0 0 0 3 0v-5l-2-2" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></Svg>;
-}
-export function SteelIcon(props: IconProps) {
-  return <Svg {...props}><path d="M5 7h14l-2 4H7L5 7Zm2 6h10l-2 4H9l-2-4Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"/><path d="M4 20h16" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></Svg>;
-}
-export function PowerIcon(props: IconProps) {
-  return <Svg {...props}><path d="m13 2-6 11h5l-1 9 6-12h-5l1-8Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round"/></Svg>;
-}
+export function FuelIcon({size=18}:IconProps) {return <AssetThumbnail asset="fuel" size={size>=18?Math.max(size,32):size}/>;}
+export function SteelIcon({size=18}:IconProps) {return <AssetThumbnail asset="steel" size={size>=18?Math.max(size,32):size}/>;}
+export function PowerIcon({size=18}:IconProps) {return <AssetThumbnail asset="electricity" size={size>=18?Math.max(size,32):size}/>;}
 export function ResearchIcon(props: IconProps) {
   return <Svg {...props}><circle cx="10" cy="10" r="5" stroke="currentColor" strokeWidth="1.6"/><path d="m14 14 5 5M8 10h4M10 8v4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></Svg>;
 }

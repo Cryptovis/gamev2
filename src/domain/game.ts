@@ -1,3 +1,4 @@
+import type {WorldState} from './world';
 import type { NationalIndustrialEconomy, IndustrialContract, LeadershipState } from './industrial';
 import type { MapMode, MapPresentation } from './map';
 
@@ -165,6 +166,7 @@ export interface GameState {
   industrialEconomy:Record<string,NationalIndustrialEconomy>;
   industrialContracts:Record<string,IndustrialContract>;
   leadership:LeadershipState;
+  world:WorldState;
   lastAiDay: number;
   lastStrategicReviewDay: number;
   sitrep: string[];

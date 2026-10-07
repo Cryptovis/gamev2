@@ -1,3 +1,4 @@
+import {createWorld} from '../engine/systems/worldInstitutions';
 import { initialCountries } from './countries';
 import type { GameState } from '../domain/game';
 import { createInitialProductionMap } from '../engine/systems/production';
@@ -8,7 +9,7 @@ import { createInitialInfrastructureMap } from '../engine/systems/infrastructure
 export const makeInitialState = (): GameState => {
   const countries=structuredClone(initialCountries);
   return ({
-  schemaVersion: 13,
+  schemaVersion: 14,
   simulationSeed: 0xA17E5EED,
   day: 1,
   speed: 0,
@@ -19,7 +20,7 @@ export const makeInitialState = (): GameState => {
   selectedCountryId: 'TUR',
   mapMode: 'political',
   mapPresentation: 'political',
-  mapNotice: 'Open Command 0.75 online — leader styles, floating HUD and refined camera controls enabled.',
+  mapNotice: 'Decisions & World Institutions 0.76 online — review decisions and explore international affairs.',
   countries,
   tradeDeals: {},
   wars: {},
@@ -39,10 +40,11 @@ export const makeInitialState = (): GameState => {
   industrialEconomy: createIndustrialMap(countries),
   industrialContracts: {},
   leadership:createLeadership(countries.TUR.economy.gdp),
+  world:createWorld(countries,'TUR'),
   lastAiDay: 1,
   lastStrategicReviewDay: 1,
   sitrep: [
-    'AlpyX Open Command 0.75 online.',
+    'AlpyX Decisions & World Institutions 0.76 online.',
     'Strategic AI, covert operations and influence networks loaded alongside Strategic Command systems.',
   ],
   });

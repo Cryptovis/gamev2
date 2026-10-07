@@ -1,0 +1,326 @@
+.asset-thumbnail {
+  display: inline-block;
+  flex-shrink: 0;
+  border-radius: 10px;
+  vertical-align: middle;
+  background-repeat: no-repeat;
+  background-color: #213d51;
+  box-shadow: inset 0 0 0 1px #c9e1ed20;
+}
+.review-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1500;
+  display: grid;
+  place-items: center;
+  background: #071721b8;
+  backdrop-filter: blur(7px);
+  padding: 20px;
+}
+.review-dialog {
+  width: min(760px, 100%);
+  max-height: 90dvh;
+  overflow: auto;
+  background: linear-gradient(135deg, #294858, #162c3c);
+  border: 1px solid #789aa0;
+  border-radius: 22px;
+  padding: 26px;
+  color: #eef6f8;
+  box-shadow: 0 24px 100px #00101880;
+  font-family: inherit;
+}
+.review-dialog header,
+.review-dialog footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.review-dialog header small {
+  color: #edc570;
+  letter-spacing: 2px;
+}
+.review-dialog h2 {
+  font-size: 28px;
+  margin: 12px 0;
+}
+.review-dialog p {
+  line-height: 1.6;
+  color: #bfd4df;
+}
+.review-dialog button {
+  padding: 12px 18px;
+  border-radius: 10px;
+  background: #355668;
+  color: #edf6f9;
+  border: 1px solid #708f9e;
+  cursor: pointer;
+}
+.review-dialog button.primary {
+  background: #edc570;
+  color: #182b38;
+  font-weight: 800;
+}
+.review-dialog button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.review-dialog button:active,
+button:active {
+  transform: translateY(1px);
+  filter: brightness(1.13);
+}
+.review-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 20px 0;
+}
+.review-metrics > div {
+  background: #0e263780;
+  border-radius: 12px;
+  padding: 15px;
+}
+.review-metrics small {
+  display: block;
+  color: #a4c2d0;
+  margin-bottom: 7px;
+}
+.review-metrics strong {
+  display: block;
+  font-size: 17px;
+  overflow-wrap: anywhere;
+}
+.review-notes {
+  border-left: 3px solid #edc570;
+  padding-left: 14px;
+  margin-bottom: 24px;
+}
+.review-notes p {
+  font-size: 13px;
+}
+.supplier-command-list button.low-relations {
+  background: #a85c6830;
+  color: #ffd3d9;
+  border-color: #d6869255;
+  white-space: normal;
+}
+.relations-legend {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  padding: 12px 2px;
+  border-bottom: 4px solid transparent;
+  border-image: linear-gradient(90deg, #cc5662, #738590, #39b173) 1;
+}
+.exchange-board button .asset-thumbnail {
+  align-self: center;
+  margin: 5px auto 9px;
+}
+.industrial-stock-grid article .asset-thumbnail {
+  float: right;
+  margin-left: 6px;
+}
+.construction-list button {
+  padding: 8px;
+  border-radius: 7px;
+  color: #ffd4ae;
+  background: #764b3230;
+  border: 1px solid #a8795150;
+}
+.world-institutions {
+  display: grid;
+  gap: 14px;
+}
+.institution-card,
+.ballot-card,
+.outreach-card {
+  padding: 17px;
+  border: 1px solid #83a5b144;
+  background: #183646;
+  border-radius: 14px;
+}
+.institution-card header {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.institution-mark {
+  display: grid;
+  place-items: center;
+  width: 55px;
+  height: 55px;
+  border-radius: 15px;
+  color: #edc570;
+  background: #46718b66;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+.institution-card h3 {
+  margin: 0;
+  font-size: 16px;
+}
+.institution-card p,
+.ballot-card p,
+.outreach-card p {
+  font-size: 12px;
+  line-height: 1.6;
+  color: #b5cddb;
+}
+.institution-checks {
+  display: grid;
+  gap: 7px;
+  padding: 10px 0;
+  font-size: 12px;
+}
+.institution-checks .met {
+  color: #89d7b0;
+}
+.institution-checks .unmet {
+  color: #f0b4bc;
+}
+.world-institutions button {
+  border: 1px solid #7497a766;
+  border-radius: 8px;
+  background: #345c72;
+  color: #edf7fa;
+  padding: 10px;
+  margin: 3px;
+  cursor: pointer;
+}
+.world-institutions button.primary,
+.world-institutions button.selected {
+  background: #edc570;
+  color: #1a2e3c;
+}
+.world-institutions button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.world-institutions select {
+  width: 100%;
+  padding: 10px;
+  margin: 5px 0;
+  background: #234a5e;
+  color: #f1f8fc;
+  border: 1px solid #688899;
+  border-radius: 8px;
+}
+.ballot-votes {
+  max-height: 160px;
+  overflow: auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  font-size: 11px;
+}
+.ballot-votes span {
+  padding: 7px;
+  background: #102a3877;
+  border-radius: 5px;
+}
+.ballot-votes b {
+  float: right;
+  color: #edc570;
+}
+.religious-shares {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  color: #c9dce5;
+}
+.tutorial-dialog {
+  position: fixed;
+  z-index: 1300;
+  left: 50%;
+  bottom: 80px;
+  transform: translateX(-50%);
+  width: min(560px, calc(100% - 32px));
+  padding: 22px;
+  border: 1px solid #edc570;
+  border-radius: 18px;
+  background: #234555f5;
+  box-shadow: 0 20px 70px #00182690;
+  color: #eef8fb;
+}
+.tutorial-dialog h2 {
+  font-size: 22px;
+  margin: 10px 0;
+}
+.tutorial-dialog p {
+  line-height: 1.6;
+  color: #c8dce6;
+}
+.tutorial-dialog small {
+  color: #edc570;
+  letter-spacing: 2px;
+}
+.tutorial-dialog footer {
+  display: flex;
+  gap: 8px;
+}
+.tutorial-dialog button {
+  padding: 10px 14px;
+  border-radius: 9px;
+  border: 1px solid #7499ad;
+  background: #355e73;
+  color: #edf8fb;
+  cursor: pointer;
+}
+.tutorial-dialog button.primary {
+  background: #edc570;
+  color: #203745;
+}
+.tutorial-dialog progress {
+  width: 100%;
+  height: 5px;
+  accent-color: #edc570;
+}
+.tutorial-dialog button:disabled {
+  opacity: 0.4;
+}
+.command-rail .tutorial-replay {
+  padding: 7px;
+  font-size: 10px;
+  color: #edc570;
+  background: #213e4f;
+  border: 1px solid #779aaa;
+  border-radius: 8px;
+}
+@media (max-width: 600px) {
+  .review-dialog {
+    padding: 18px;
+  }
+  .review-metrics {
+    grid-template-columns: 1fr;
+  }
+  .tutorial-dialog {
+    bottom: 15px;
+    max-height: 70dvh;
+    overflow: auto;
+  }
+  .ballot-votes {
+    grid-template-columns: 1fr;
+  }
+}
+.command-rail .rail-button .asset-thumbnail {
+  width: 26px !important;
+  height: 26px !important;
+  border-radius: 6px;
+}
+.floating-market > div {
+  grid-template-columns: 44px 1fr auto;
+}
+.world-institutions .world-card {
+  grid-template-columns: 56px 1fr;
+  gap: 14px;
+  padding: 14px;
+}
+.world-institutions .world-card em {
+  font-size: 11px;
+  line-height: 1.5;
+}
+.world-institutions .world-card strong {
+  font-size: 18px !important;
+}
