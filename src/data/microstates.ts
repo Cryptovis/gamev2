@@ -1,4 +1,8 @@
 export const MICROSTATE_POINTS: Record<string, [number, number]> = {
+  LUX: [6.13, 49.61],
+  QAT: [51.18, 25.35],
+  CYP: [33.2, 35.0],
+  BRN: [114.94, 4.54],
   AND: [1.6016, 42.5462],
   ATG: [-61.8, 17.05],
   BHR: [50.55, 26.0],

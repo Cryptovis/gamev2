@@ -1,6 +1,7 @@
 import type { GameState, TradeResource } from '../../domain/game';
 import type { StrategicActionKind, StrategicDecisionSpec } from '../../domain/interaction';
-import { embassyFor, embassyRelationBonus, relationFor, relationshipIndex } from './diplomacy';
+import { blocForCountry } from './blocs';
+import { GIFT_PACKAGE, embassyFor, embassyRelationBonus, relationFor, relationshipIndex } from './diplomacy';
 
 export type StrategicDecisionContext={
   amountB?:1|5|10;
@@ -78,7 +79,10 @@ export function strategicDecisionSpec(
     ],warnings:[lifting?'Lifting sanctions does not automatically restore previous trade contracts.':'Existing bilateral trade flows will be cancelled immediately.']};
   }
   if(kind==='strategic_bloc'){
+    const existing=blocForCountry(state,actor.id);
     return {...base,kicker:'MULTILATERAL STRATEGY',title:'Strategic Bloc Decision',summary:'Deepen institutional alignment with '+target.name+' through a formal strategic grouping.',confirmLabel:'PROCEED WITH BLOC',tone:'warning',impacts:[
+      {label:'Treasury',value:existing?'$0B':'-$20B',tone:existing?'neutral':'warning'},
+      {label:'Requirement',value:existing?'Alliance · REL 80/100':'Alliance · REL 83/100'},
       {label:'Partner',value:target.name},
       {label:'Relationship',value:currentIndex+'/100'},
       {label:'Global signal',value:'High',tone:'warning'},
@@ -94,8 +98,10 @@ export function strategicDecisionSpec(
   }
   if(kind==='resource_aid'){
     const resource=context.resource??'food';
+    const amount=Math.min(GIFT_PACKAGE[resource],actor.resources[resource]);
     return {...base,kicker:'GOODWILL / AID',title:'Send '+resource.toUpperCase()+' Aid to '+target.name,summary:'Transfer strategic reserves to support the recipient and improve bilateral goodwill.',confirmLabel:'SEND '+resource.toUpperCase()+' AID',tone:'positive',impacts:[
-      {label:'Resource',value:resource.toUpperCase(),tone:'warning'},
+      {label:'Shipment',value:amount.toFixed(1)+' '+resource.toUpperCase(),tone:'warning'},
+      {label:'Remaining reserve',value:(actor.resources[resource]-amount).toFixed(1),tone:'warning'},
       {label:'Goodwill',value:'Improves',tone:'positive'},
       {label:'Scarcity bonus',value:target.resources[resource]<(resource==='uranium'?3:60)?'ACTIVE':'Normal',tone:'positive'},
     ],warnings:['Aid is more diplomatically effective when the recipient is genuinely short of the resource.']};

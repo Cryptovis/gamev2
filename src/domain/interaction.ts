@@ -10,6 +10,14 @@ export type StrategicActionKind =
   | 'resource_aid'
   | 'declare_war';
 
+export function canAutoApprove(kind: StrategicActionKind): boolean {
+  return kind === 'diplomatic_mission' || kind === 'embassy' || kind === 'trade_pact' || kind === 'non_aggression';
+}
+
+export function shouldConfirmAction(kind: StrategicActionKind, skips: Partial<Record<StrategicActionKind, boolean>>): boolean {
+  return !canAutoApprove(kind) || !skips[kind];
+}
+
 export type StrategicDecisionTone='positive'|'neutral'|'warning'|'danger';
 
 export interface StrategicDecisionImpact {

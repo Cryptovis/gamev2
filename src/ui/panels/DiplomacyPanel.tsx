@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { blocForCountry } from '../../engine/systems/blocs';
 import { embassyFor, relationFor, relationshipIndex, relationshipStance } from '../../engine/systems/diplomacy';
 import type { TradeResource } from '../../domain/game';
-import type { StrategicActionKind, StrategicDecisionSpec } from '../../domain/interaction';
+import { shouldConfirmAction, type StrategicActionKind, type StrategicDecisionSpec } from '../../domain/interaction';
 import { strategicDecisionSpec, type StrategicDecisionContext } from '../../engine/systems/strategicDecision';
 import { StrategicDecisionModal } from './StrategicDecisionModal';
 import { flagEmoji } from '../../data/countryThemes';
@@ -30,10 +30,13 @@ export function DiplomacyPanel({selectedId}:{selectedId:string}){
  const hasTrade=relation.treaties.includes('trade');
  const hasNonAggression=relation.treaties.includes('nonAggression');
  const hasAlliance=relation.treaties.includes('alliance');
+ const blocMember=Boolean(playerBloc?.memberIds.includes(selected.id));
+ const blocRequirement=playerBloc?'requires alliance · REL 80/100':'requires alliance · REL 83/100 · $20B';
+ const canAlign=!blocMember&&hasAlliance&&relation.status!=='war'&&relation.score>=(playerBloc?60:65)&&(Boolean(playerBloc)||player.economy.treasury>=20);
  const requestDecision=(kind:StrategicActionKind,execute:()=>void,context:StrategicDecisionContext={})=>{
-  if(state.confirmationSkips[kind]){execute();return;}
+  if(!shouldConfirmAction(kind,state.confirmationSkips)){execute();return;}
   const spec=strategicDecisionSpec(state,kind,selected.id,context);
-  if(!spec){execute();return;}
+  if(!spec)return;
   setPendingDecision({spec,execute});
  };
 
@@ -58,7 +61,7 @@ export function DiplomacyPanel({selectedId}:{selectedId:string}){
    <button data-action="nonaggression" disabled={hasNonAggression||relation.status==='war'||player.economy.treasury<4||relation.score<25} onClick={()=>requestDecision('non_aggression',()=>state.signNonAggression(selected.id))}><DiplomacyIcon size={16}/><span>{hasNonAggression?'Non-Aggression Active':'Non-Aggression'} <small>{hasNonAggression?'mutual restraint active':relation.score<25?'requires REL 63/100':'-$4B · mutual restraint'}</small></span></button>
    <button data-action="alliance" disabled={hasAlliance||relation.status==='war'||player.economy.treasury<10||relation.score<60} onClick={()=>requestDecision('alliance',()=>state.signAlliance(selected.id))}><BlocIcon size={16}/><span>{hasAlliance?'Alliance Active':'Alliance'} <small>{hasAlliance?'strategic alignment active':relation.score<60?'requires REL 80/100':'-$10B · high trust'}</small></span></button>
    <button data-action="embargo" className={relation.sanctions?'danger active':'danger'} disabled={relation.status==='war'} onClick={()=>requestDecision('embargo',()=>state.toggleEmbargo(selected.id))}><WarIcon size={16}/><span>{relation.sanctions?'Lift Embargo':'Impose Embargo'} <small>{relation.sanctions?'restore access':'trade cancelled · relations fall'}</small></span></button>
-   <button data-action="bloc" disabled={relation.status==='war'} onClick={()=>requestDecision('strategic_bloc',()=>playerBloc?state.inviteToBloc(selected.id):state.formBloc(selected.id))}><BlocIcon size={16}/><span>{playerBloc?'Invite to Bloc':'Form Strategic Bloc'} <small>high-impact alignment</small></span></button>
+   <button data-action="bloc" disabled={!canAlign} title={blocMember?'Already in your bloc':blocRequirement} onClick={()=>requestDecision('strategic_bloc',()=>playerBloc?state.inviteToBloc(selected.id):state.formBloc(selected.id))}><BlocIcon size={16}/><span>{blocMember?'Bloc Member':playerBloc?'Invite to Bloc':'Form Strategic Bloc'} <small>{blocMember?'alignment active':canAlign?(playerBloc?'expand strategic alignment':'-$20B · strategic alignment'):blocRequirement}</small></span></button>
   </div>
 
   <div className="subhead">GOODWILL & AID</div>

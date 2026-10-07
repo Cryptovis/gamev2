@@ -17,7 +17,7 @@ export const makeInitialState = (): GameState => {
   selectedCountryId: 'TUR',
   mapMode: 'political',
   mapPresentation: 'political',
-  mapNotice: 'Cartography & Interaction 0.73.1 online — decluttered map labels, microstate fixes and strategic confirmations enabled.',
+  mapNotice: 'Cartography & Interaction 0.73.1 playtest.2 online — decluttered map labels, microstate fixes and strategic confirmations enabled.',
   countries,
   tradeDeals: {},
   wars: {},
@@ -37,7 +37,7 @@ export const makeInitialState = (): GameState => {
   lastAiDay: 1,
   lastStrategicReviewDay: 1,
   sitrep: [
-    'AlpyX Cartography & Interaction 0.73.1 online.',
+    'AlpyX Cartography & Interaction 0.73.1 playtest.2 online.',
     'Strategic AI, covert operations and influence networks loaded alongside Strategic Command systems.',
   ],
   });

@@ -97,7 +97,7 @@ export function sendTreasuryGift(state: GameState, fromId: string, toId: string,
   return next;
 }
 
-const GIFT_PACKAGE: Record<TradeResource, number> = { food: 25, oil: 12, iron: 18, uranium: 1 };
+export const GIFT_PACKAGE: Record<TradeResource, number> = { food: 25, oil: 12, iron: 18, uranium: 1 };
 
 export function sendResourceGift(state: GameState, fromId: string, toId: string, resource: TradeResource): GameState {
   const from = state.countries[fromId];

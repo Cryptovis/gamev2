@@ -84,6 +84,7 @@ export function applyGameCommand(state: GameState, command: GameCommand): GameSt
       const target = state.countries[command.targetCountryId];
       if (!player || !target) return state;
       const relation = relationFor(player, target.id);
+      if (player.id === target.id || relation.treaties.includes('trade')) return state;
       if (relation.status === 'war' || relation.score < 15) return note(state, `DIPLOMACY // ${target.name} requires relations of at least +15 for a trade pact.`);
       if (player.economy.treasury < 5) return note(state, 'DIPLOMACY // Trade mission requires $5B.');
       let next: GameState = { ...state, countries: { ...state.countries, [player.id]: { ...player, economy: { ...player.economy, treasury: player.economy.treasury - 5 } } } };
@@ -97,6 +98,7 @@ export function applyGameCommand(state: GameState, command: GameCommand): GameSt
       const target = state.countries[command.targetCountryId];
       if (!player || !target) return state;
       const relation = relationFor(player, target.id);
+      if (player.id === target.id || relation.treaties.includes('nonAggression')) return state;
       if (relation.status === 'war' || relation.score < 25) return note(state, `DIPLOMACY // ${target.name} requires relations of at least +25 for a non-aggression pact.`);
       if (player.economy.treasury < 4) return note(state, 'DIPLOMACY // Non-aggression talks require $4B.');
       let next: GameState = { ...state, countries: { ...state.countries, [player.id]: { ...player, economy: { ...player.economy, treasury: player.economy.treasury - 4 } } } };
@@ -108,6 +110,7 @@ export function applyGameCommand(state: GameState, command: GameCommand): GameSt
       const target = state.countries[command.targetCountryId];
       if (!player || !target) return state;
       const relation = relationFor(player, target.id);
+      if (player.id === target.id || relation.treaties.includes('alliance')) return state;
       if (relation.status === 'war' || relation.score < 60) return note(state, `DIPLOMACY // ${target.name} requires relations of at least +60 for an alliance.`);
       if (player.economy.treasury < 10) return note(state, 'DIPLOMACY // Alliance summit requires $10B.');
       let next: GameState = { ...state, countries: { ...state.countries, [player.id]: { ...player, economy: { ...player.economy, treasury: player.economy.treasury - 10 } } } };

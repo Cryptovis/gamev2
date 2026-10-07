@@ -23,7 +23,7 @@ const overlaps=(a:ScreenLabel,b:ScreenLabel,padding:number)=>{
 };
 
 export function approximateLabelBox(candidate:ScreenLabelCandidate):ScreenLabel{
-  const width=Math.max(candidate.fontSize*2.2,candidate.text.length*candidate.fontSize*.61);
+  const width=Math.max(candidate.fontSize*2.2,candidate.text.length*candidate.fontSize*.76);
   const height=candidate.fontSize*1.2;
   return {...candidate,width,height};
 }
@@ -45,6 +45,11 @@ export function layoutScreenLabels(
   for(const raw of sorted){
     if(placed.length>=maxCount&&!raw.force)continue;
     const candidate=approximateLabelBox(raw);
+    if(![candidate.x,candidate.y,candidate.width,candidate.height].every(Number.isFinite))continue;
+    if(raw.force&&raw.x>=0&&raw.x<=viewport.width&&raw.y>=0&&raw.y<=viewport.height&&candidate.width<=viewport.width-2*margin){
+      candidate.x=Math.max(margin+1+candidate.width/2,Math.min(viewport.width-margin-1-candidate.width/2,candidate.x));
+      candidate.y=Math.max(margin+1+candidate.height/2,Math.min(viewport.height-margin-1-candidate.height/2,candidate.y));
+    }
     if(candidate.x-candidate.width/2<margin||candidate.x+candidate.width/2>viewport.width-margin)continue;
     if(candidate.y-candidate.height/2<margin||candidate.y+candidate.height/2>viewport.height-margin)continue;
     const collisions=placed.filter(p=>overlaps(candidate,p,padding));

@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.73.1-playtest.2 — Cartography & Decision Review Follow-up
+- High-impact decisions (war, alliance, embargo, bloc, treasury/resource aid) always require confirmation, including with stale skip preferences.
+- Added Escape cancellation, dialog semantics, keyboard focus containment/restoration and duplicate-confirm protection.
+- Added exact resource shipment/reserve and bloc establishment cost previews; bloc buttons expose actual prerequisites.
+- Repeated treaty commands no longer charge treasury or grant goodwill twice.
+- Visible microstate targets take precedence over neighboring simplified polygons; hidden markers cannot intercept clicks.
+- Focus uses registered microstate positions even without polygons; added Luxembourg, Qatar, Cyprus and Brunei anchors.
+- Microstate labels now share country/ocean collision suppression; selected edge labels stay within the map.
+- Added 85–140% map label sizing; label priority now uses projected land area rather than bounding rectangles.
+- Corrected click coordinates on letterboxed SVGs, flat-map drag distance at higher zoom, and zoom centering after focus.
+- Removed duplicate React shape/label keys for multipart sovereign profiles.
+- Cached projected geometry to avoid recomputing paths on hover and simulation ticks.
+- Repaired missing optional dependency lock entries for clean npm ci installations.
+- Save schema remains v12; 0.73 campaigns remain compatible.
+
 ## 0.73.1-playtest.1 — Cartography & Interaction Stabilization
 - Rebuilt country labeling into a collision-aware screen-space cartography engine instead of scaling text with map geometry
 - Flat-map zoom no longer magnifies country names into unreadable giant labels

@@ -1141,3 +1141,14 @@ button,input,select{font:inherit}
   .strategic-impact-grid{grid-template-columns:1fr}
   .strategic-decision-copy{padding:19px}
 }
+
+/* 0.73.1 playtest.2: visible markers, label sizing and keyboard decision review. */
+.screen-microstate{opacity:.85}
+.screen-microstate.selected,.screen-microstate:hover{opacity:1}
+.screen-microstate circle.microstate-hit-target{fill:transparent;stroke:none;pointer-events:all}
+.map-label-control{display:flex;align-items:center;gap:10px;margin-top:12px;color:#b3c7d3;font-size:11px;font-weight:700}
+.map-label-control input{min-width:0;flex:1;accent-color:#ddb34f}
+.map-label-control output{min-width:38px;text-align:right}
+.strategic-review-required{color:#c3a477;font-size:12px;line-height:1.5}
+.strategic-decision-copy{min-height:0}
+.strategic-decision-modal button:focus-visible,.strategic-decision-modal input:focus-visible{outline:2px solid #ffe1a0;outline-offset:3px}

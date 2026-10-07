@@ -1,6 +1,6 @@
 import { createPortal } from 'react-dom';
 import { useEffect, useRef, useState } from 'react';
-import type { StrategicDecisionSpec, StrategicActionKind } from '../../domain/interaction';
+import { canAutoApprove, type StrategicDecisionSpec, type StrategicActionKind } from '../../domain/interaction';
 import { flagEmoji } from '../../data/countryThemes';
 import { useGameStore } from '../../store/gameStore';
 import { BlocIcon, DiplomacyIcon, EmbassyIcon, ResourceIcon, TreasuryIcon, WarIcon } from '../icons/GameIcons';
@@ -21,6 +21,25 @@ export function StrategicDecisionModal({
 }:{spec:StrategicDecisionSpec;onConfirm:()=>void;onCancel:()=>void}){
  const state=useGameStore();
  const speedAtOpen=useRef(state.speed);
+ const dialogRef=useRef<HTMLElement>(null);
+ const cancelRef=useRef(onCancel);
+ cancelRef.current=onCancel;
+ const submitted=useRef(false);
+ useEffect(()=>{
+  const previous=document.activeElement as HTMLElement|null;
+  const dialog=dialogRef.current;
+  dialog?.querySelector<HTMLButtonElement>('button')?.focus();
+  const keydown=(event:KeyboardEvent)=>{
+   if(event.key==='Escape'){event.preventDefault();event.stopPropagation();cancelRef.current();}
+   if(event.key!=='Tab'||!dialog)return;
+   const controls=Array.from(dialog.querySelectorAll<HTMLElement>('button:not(:disabled),input:not(:disabled),[tabindex="0"]'));
+   const first=controls[0],last=controls[controls.length-1];
+   if(event.shiftKey&&(document.activeElement===first||!dialog.contains(document.activeElement))){event.preventDefault();last?.focus();}
+   else if(!event.shiftKey&&(document.activeElement===last||!dialog.contains(document.activeElement))){event.preventDefault();first?.focus();}
+  };
+  document.addEventListener('keydown',keydown,true);
+  return ()=>{document.removeEventListener('keydown',keydown,true);if(previous?.isConnected)previous.focus();};
+ },[]);
  const player=state.countries[state.playerCountryId];
  const target=state.countries[spec.targetCountryId];
  const [autoApprove,setAutoApprove]=useState(false);
@@ -33,7 +52,7 @@ export function StrategicDecisionModal({
 
  const tone=spec.tone??'neutral';
  const node=<div className="strategic-decision-backdrop" onMouseDown={onCancel}>
-  <section className={'strategic-decision-modal tone-'+tone} onMouseDown={e=>e.stopPropagation()}>
+  <section ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="strategic-decision-title" className={'strategic-decision-modal tone-'+tone} onMouseDown={e=>e.stopPropagation()}>
    <aside className="strategic-decision-visual">
     <div className="strategic-decision-emblem"><DecisionVisual kind={spec.kind}/></div>
     <div className="strategic-decision-flags"><span>{flagEmoji(player.iso2)}</span><i>→</i><span>{flagEmoji(target.iso2)}</span></div>
@@ -43,7 +62,7 @@ export function StrategicDecisionModal({
    </aside>
 
    <div className="strategic-decision-copy">
-    <header><div><small>{spec.kicker}</small><h2>{spec.title}</h2></div><button onClick={onCancel} aria-label="Cancel strategic decision">×</button></header>
+    <header><div><small>{spec.kicker}</small><h2 id="strategic-decision-title">{spec.title}</h2></div><button onClick={onCancel} aria-label="Cancel strategic decision">×</button></header>
     <p className="strategic-decision-summary">{spec.summary}</p>
 
     <div className="strategic-impact-grid">{spec.impacts.map((impact,i)=><div key={impact.label+i} className={impact.tone?'impact-'+impact.tone:''}><small>{impact.label.toUpperCase()}</small><strong>{impact.value}</strong></div>)}</div>
@@ -53,12 +72,12 @@ export function StrategicDecisionModal({
      {spec.warnings.map((warning,i)=><p key={i}><span>{tone==='danger'?'!':'◆'}</span>{warning}</p>)}
     </div>
 
-    <label className="strategic-autoconfirm">
+    {canAutoApprove(spec.kind)?<label className="strategic-autoconfirm">
      <input type="checkbox" checked={autoApprove} onChange={e=>setAutoApprove(e.target.checked)}/>
      <span><strong>Automatically approve similar decisions this session</strong><small>You can still review other strategic action types individually.</small></span>
-    </label>
+    </label>:<p className="strategic-review-required">This decision always requires your explicit confirmation.</p>}
 
-    <footer><button onClick={onCancel}>CANCEL</button><button className={'confirm '+(tone==='danger'?'danger':'')} onClick={()=>{if(autoApprove)state.setConfirmationSkip(spec.kind,true);onConfirm();}}>{spec.confirmLabel}</button></footer>
+    <footer><button onClick={onCancel}>CANCEL</button><button className={'confirm '+(tone==='danger'?'danger':'')} onClick={()=>{if(submitted.current)return;submitted.current=true;if(autoApprove&&canAutoApprove(spec.kind))state.setConfirmationSkip(spec.kind,true);onConfirm();}}>{spec.confirmLabel}</button></footer>
    </div>
   </section>
  </div>;
