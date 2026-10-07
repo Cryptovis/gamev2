@@ -81,7 +81,7 @@ export function ReviewDialog({
       >
         <header>
           <small><LocaleText value={"COMMAND REVIEW"}/></small>
-          <button aria-label={translateLive("Close review")} onClick={onCancel}><LocaleText value={"×"}/></button>
+          <button data-guide="review-dismiss" aria-label={translateLive("Close review")} onClick={onCancel}><LocaleText value={"×"}/></button>
         </header>
         <h2><LocaleText value={title}/></h2>
         <p><LocaleText value={summary}/></p>
@@ -99,12 +99,12 @@ export function ReviewDialog({
           ))}
         </div>
         <footer>
-          <button onClick={onCancel}>
+          <button data-guide="review-dismiss" onClick={onCancel}>
             <LocaleText value={onConfirm ? "BACK / CANCEL" : "CLOSE"}/>
           </button>
           {onConfirm && (
             <button
-              className="primary"
+              data-guide="review-confirm" className="primary"
               disabled={!allowed}
               onClick={() => {
                 if (submitted.current) return;

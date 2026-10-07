@@ -1,3 +1,5 @@
+import {CommandArt} from '../icons/CommandArt';
+import {academyFor} from '../../engine/systems/governance';
 import {LocaleText,translateLive} from '../../i18n/localeText';
 import {gameDate} from '../../engine/systems/leadership';
 import { useState,useEffect, type ReactNode } from 'react';
@@ -37,7 +39,7 @@ export function TopBar(){
  const infrastructure=useGameStore(s=>s.infrastructure[playerCountryId]);
  const lang=profile.language;
  const forecast=calculateEconomyForecast(player);
- const strategicDailyBalance=forecast.dailyBalance-(production?.lastInputUse.treasury??0)-(infrastructure?.maintenance??0)-(industrial?.lastCosts??0);
+ const strategicDailyBalance=forecast.dailyBalance-(production?.lastInputUse.treasury??0)-(infrastructure?.maintenance??0)-(industrial?.lastCosts??0)-(academyFor(useGameStore.getState(),playerCountryId).lastUpkeep);
 
  return <header className="topbar">
   <div className="command-overview-island"><div className="leader-brand">
@@ -46,10 +48,10 @@ export function TopBar(){
   </div>
 
   <div className="metrics governance-metrics" aria-label={translateLive("National command indicators")}>
-   <Metric icon={<TreasuryIcon size={16}/>} label={tr(lang,'treasury')} value={'$'+player.economy.treasury.toFixed(1)+'B'}/>
-   <Metric icon={<EconomyIcon size={16}/>} label="BUDGET / DAY" value={(strategicDailyBalance>=0?'+':'')+'$'+strategicDailyBalance.toFixed(3)+'B'} tone={strategicDailyBalance>=0?'good':'warning'}/>
-   <Metric icon={<ApprovalIcon size={16}/>} label={tr(lang,'approval')} value={player.politics.approval.toFixed(0)+'%'} tone={player.politics.approval>=60?'good':player.politics.approval<40?'warning':'neutral'}/>
-   <Metric icon={<SocietyIcon size={16}/>} label="STABILITY" value={player.politics.stability.toFixed(0)+'%'} tone={player.politics.stability>=65?'good':player.politics.stability<40?'warning':'neutral'}/>
+   <Metric icon={<CommandArt kind="treasury" size={30}/>} label={tr(lang,'treasury')} value={'$'+player.economy.treasury.toFixed(1)+'B'}/>
+   <Metric icon={<CommandArt kind="budget" size={30}/>} label="BUDGET / DAY" value={(strategicDailyBalance>=0?'+':'')+'$'+strategicDailyBalance.toFixed(3)+'B'} tone={strategicDailyBalance>=0?'good':'warning'}/>
+   <Metric icon={<CommandArt kind="approval" size={30}/>} label={tr(lang,'approval')} value={player.politics.approval.toFixed(0)+'%'} tone={player.politics.approval>=60?'good':player.politics.approval<40?'warning':'neutral'}/>
+   <Metric icon={<CommandArt kind="stability" size={30}/>} label="STABILITY" value={player.politics.stability.toFixed(0)+'%'} tone={player.politics.stability>=65?'good':player.politics.stability<40?'warning':'neutral'}/>
   </div>
 
   </div>

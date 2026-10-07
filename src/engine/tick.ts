@@ -1,3 +1,4 @@
+import {processGovernance,occupationFor} from './systems/governance';
 import {processPrograms} from './systems/nationalPrograms';
 import {processWorldInstitutions} from './systems/worldInstitutions';
 import type { CountryState, GameState } from '../domain/game';
@@ -52,7 +53,7 @@ export function tickGame(state: GameState): GameState {
   if (state.campaignStatus !== 'active' || state.activeEvent || state.activeAdvisor) return state;
   const dated=processLeadership({...state,day:state.day+1});
   const boostActive=dated.day<dated.leadership.celebrationUntilDay;
-  const countries = Object.fromEntries(Object.entries(state.countries).map(([id, country]) => [id, tickCountry(country,id===state.playerCountryId&&boostActive?1.12:1)]));
+  const countries = Object.fromEntries(Object.entries(state.countries).map(([id, country]) => [id, tickCountry(country,(id===state.playerCountryId&&boostActive?1.12:1)*((occupationFor(dated,id)?.unrest??0)>=80?.7:1))]));
   const nextDay = state.day + 1;
   const player = countries[state.playerCountryId];
   const notices: string[] = [];
@@ -71,6 +72,7 @@ export function tickGame(state: GameState): GameState {
   let next: GameState = { ...dated, day: nextDay, countries, council: { ...state.council, influenceByCountry }, sitrep: [...notices, ...dated.sitrep].slice(0, 12) };
   next = processWorldInstitutions(next);
   next = processPrograms(next);
+  next = processGovernance(next);
   next = processTradeDeals(next);
   next = processInfrastructure(next);
   next = processIndustrialEconomy(next);

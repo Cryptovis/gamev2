@@ -10,6 +10,14 @@ import {
 import { translateText } from "../../i18n/localeText";
 const faq = [
   [
+    "How do I train pilots?",
+    "Open Investments & Pilot Training. Recruit from your military personnel; training takes time, costs money and adds daily wages. Aircraft without enough funded pilots lose combat effectiveness.",
+  ],
+  [
+    "How do I manage occupied territories?",
+    "Open Territories & Political Affairs. Shortages raise unrest. Send relief, transfer control, or fund a transition election. At high unrest, production suffers and rebellion can restore independence.",
+  ],
+  [
     "How do I start?",
     "Pause time, check your budget and reserves, then build one affordable facility. Open Supply to find shortages and Diplomacy to negotiate access.",
   ],
@@ -55,7 +63,7 @@ const faq = [
   ],
   [
     "Can I replay the tutorial?",
-    "Open Help and choose Replay tutorial. The ten steps pause time and guide you through opening and closing the main windows.",
+    "Open Help and choose Replay tutorial. The ten steps pause time and include a real first construction: review the cost, confirm it and inspect the result.",
   ],
 ];
 export function HelpPanel() {

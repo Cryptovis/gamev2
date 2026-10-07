@@ -63,6 +63,7 @@ export function WorldMap() {
   const rafRef = useRef<number | null>(null);
   const pendingMoveRef = useRef<{ dx: number; dy: number } | null>(null);
 
+  const embassies=useGameStore(s=>s.embassies),tradeDeals=useGameStore(s=>s.tradeDeals),contracts=useGameStore(s=>s.industrialContracts);
   const countries = useGameStore((s) => s.countries);
   const selectedCountryId = useGameStore((s) => s.selectedCountryId);
   const zoomSensitivity=useGameStore(s=>s.mapZoomSensitivity);
@@ -112,7 +113,7 @@ export function WorldMap() {
     const relation = player?.diplomacy.relations[country.id];
     const controlled = country.controllerCountryId === player?.id;
     if (mapMode === 'political') return country.id === player?.id || controlled ? '#d9ad48' : stablePoliticalColor(country.id);
-    if (mapMode === 'relations') {if(country.id===player?.id)return '#edc570';const score=relation?.score??0;const t=Math.min(1,Math.abs(score)/100),neutral=[115,133,144],end=score>=0?[57,177,115]:[204,86,98];return `rgb(${neutral.map((v,i)=>Math.round(v+(end[i]-v)*t)).join(',')})`;}
+    if (mapMode==='relations'){if(country.id===player.id)return '#edc570';const flow=Object.values(tradeDeals).some(d=>d.active&&((d.buyerId===player.id&&d.sellerId===id)||(d.sellerId===player.id&&d.buyerId===id)))||Object.values(contracts).some(d=>d.active&&((d.buyerId===player.id&&d.sellerId===id)||(d.sellerId===player.id&&d.buyerId===id)));const embassy=Object.values(embassies).some(e=>(e.countryA===player.id&&e.countryB===id)||(e.countryB===player.id&&e.countryA===id));return flow?'#4ca775':embassy?'#599fc9':relation?.treaties.includes('nonAggression')?'#ac82cb':relation?.treaties.includes('trade')?'#ccab5d':'#526f80';}
     if (mapMode === 'diplomacy') return country.id === player?.id ? '#d9ad48' : relation?.status === 'ally' ? '#3aa9ba' : relation?.status === 'friendly' ? '#4c936c' : relation?.status === 'hostile' || relation?.status === 'war' ? '#ad4952' : '#50616f';
     if (mapMode === 'resources') {
       const stock = country.resources.food + country.resources.oil * 1.7 + country.resources.iron + country.resources.uranium * 12;
@@ -127,7 +128,7 @@ export function WorldMap() {
     return '#355266';
   };
 
-  const photographic=mapPresentation==='geographic'&&mapMode==='political';
+  const photographic=mapPresentation==='geographic';
   const hoveredCountry = hovered ? countries[hovered] : null;
   const selectedCountry = selectedCountryId ? countries[selectedCountryId] : null;
   const flatTransform = `translate(${flatPan.x} ${flatPan.y}) translate(${W/2} ${H/2}) scale(${flatZoom}) translate(${-W/2} ${-H/2})`;
@@ -296,7 +297,7 @@ export function WorldMap() {
     const isHovered = id === hovered;
     const terrain=country?terrainForCountry(country):'plains';
     const fill=mapPresentation==='geographic'&&mapMode==='political'?`url(#terrain-${terrain})`:colorFor(id);
-    return <path key={`${id}-${index}`} d={d} className={`country-shape ${photographic?(surfaceReady?'geographic photographic':'geographic'):''} ${isSelected ? 'selected' : ''} ${isHovered ? 'hovered' : ''}`} fill={fill} onPointerEnter={() => country && setHovered(id)} onPointerLeave={() => setHovered((v) => v === id ? null : v)}><title><LocaleText value={country?.name ?? feature.properties?.name}/></title></path>;
+    return <path key={`${id}-${index}`} d={d} className={`country-shape ${photographic?(surfaceReady?`geographic photographic ${mapMode==='political'?'surface-only':'surface-overlay'}`:'geographic'):''} ${isSelected ? 'selected' : ''} ${isHovered ? 'hovered' : ''}`} fill={fill} onPointerEnter={() => country && setHovered(id)} onPointerLeave={() => setHovered((v) => v === id ? null : v)}><title><LocaleText value={country?.name ?? feature.properties?.name}/></title></path>;
   });
 
 
@@ -372,6 +373,7 @@ export function WorldMap() {
       <strong><LocaleText value={hoveredCountry?.name ?? selectedCountry?.name ?? 'WORLD COMMAND'}/></strong>
       <span><LocaleText value={hoveredCountry ? `${hoveredCountry.region || 'Global'} · ${hoveredCountry.military.assessment.capability.toFixed(0)} MIL` : projectionMode === 'globe' ? 'drag globe · wheel zoom · click sovereign territory' : 'drag to pan · wheel zoom · click sovereign territory'}/></span>
     </div>
+    {mapMode==='relations'&&<div className="connections-legend"><span>● <LocaleText value="Active trade"/></span><span>● <LocaleText value="Embassy"/></span><span>● <LocaleText value="Non-aggression"/></span><span>● <LocaleText value="Trade pact"/></span><small><LocaleText value="A country may have several connections; select it to inspect all agreements."/></small></div>}
     <svg ref={svgRef} data-zoom={mapZoom.toFixed(4)} aria-label={translateLive("Interactive world map")} viewBox={`0 0 ${W} ${H}`} className={projectionMode === 'globe' ? 'strategy-svg globe-svg' : 'strategy-svg flat-svg'} onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerCancel={pointerUp} onClick={selectFromSurface} shapeRendering="geometricPrecision">
       <defs>
         <pattern id="terrain-plains" width="18" height="18" patternUnits="userSpaceOnUse"><rect width="18" height="18" fill="#6d8061"/><path d="M0 14C5 11 10 16 18 12" fill="none" stroke="#9aab83" strokeOpacity=".22" strokeWidth="1"/></pattern>

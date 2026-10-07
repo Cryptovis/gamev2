@@ -1,3 +1,4 @@
+import {createGovernance,academyFor,governance} from '../engine/systems/governance';
 import type { GameState } from '../domain/game';
 
 import {createIndustrialMap} from '../engine/systems/industrialEconomy';
@@ -10,7 +11,8 @@ export function migrateSave(state:GameState|null|undefined):GameState|null {
   state={...state,schemaVersion:13,industrialEconomy:createIndustrialMap(state.countries),industrialContracts:{},leadership:createLeadership(state.countries[state.playerCountryId].economy.gdp)};
  }
  if(state.schemaVersion===13)state={...state,schemaVersion:14,world:createWorld(state.countries,state.playerCountryId)};
- return canLoadSave(state)?state:null;
+ if(!canLoadSave(state))return null;
+ const g=governance(state);return {...state,world:{...state.world,governance:{...g,academies:{...createGovernance(state.countries).academies,...g.academies}}}};
 }
 
 export function canLoadSave(state: GameState | null | undefined): state is GameState {

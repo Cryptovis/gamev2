@@ -1,3 +1,4 @@
+import {pilotCoverage,academyFor} from '../../engine/systems/governance';
 import { LocaleText, translateLive } from "../../i18n/localeText";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
@@ -55,7 +56,7 @@ export function WarTheatreModal() {
   if (!w) return null;
   const a = s.countries[w.attackerId],
     d = s.countries[w.defenderId],
-    p = getWarPreview(a, d, s.infrastructure[a.id], s.infrastructure[d.id]);
+    p = getWarPreview({...a,military:{...a.military,fighters:a.military.fighters*pilotCoverage(s,a.id),bombers:a.military.bombers*pilotCoverage(s,a.id)}}, {...d,military:{...d.military,fighters:d.military.fighters*pilotCoverage(s,d.id),bombers:d.military.bombers*pilotCoverage(s,d.id)}}, s.infrastructure[a.id], s.infrastructure[d.id]);
   const mine =
     w.attackerId === s.playerCountryId || w.defenderId === s.playerCountryId;
   return createPortal(
@@ -118,7 +119,7 @@ export function WarTheatreModal() {
                   </span>
                 ))}
               </div>
-              <dl>
+              <dl><dt><LocaleText value="Pilots"/></dt><dd>{academyFor(s,c.id).pilots}</dd><dt><LocaleText value="Aircraft crew coverage"/></dt><dd>{(pilotCoverage(s,c.id)*100).toFixed(0)}%</dd>
                 <dt>
                   <LocaleText value={"Readiness"} />
                 </dt>
@@ -199,16 +200,6 @@ export function WarTheatreModal() {
               }
             />
           </button>
-          <button
-            disabled={
-              s.campaignStatus !== "active" ||
-              !!s.activeEvent ||
-              !!s.activeAdvisor
-            }
-            onClick={() => s.advanceDay()}
-          >
-            <LocaleText value="Advance one day" />
-          </button>
           <button className="hd-war-button" onClick={() => setWip(true)}>
             <LocaleText value={"HD War Experience"} />
           </button>
@@ -221,7 +212,7 @@ export function WarTheatreModal() {
         <p className="muted">
           <LocaleText
             value={
-              "Combat is resolved once per day. Use the campaign clock to advance time."
+              "Auto assault advances one day every two seconds while this window is open. Decisions pause the clock."
             }
           />
         </p>

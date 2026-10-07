@@ -1,5 +1,5 @@
 import { LocaleText, translateLive } from "../../i18n/localeText";
-import { useEffect, useState } from "react";
+import { useEffect, useState,useRef } from "react";
 import { useGameStore } from "../../store/gameStore";
 const steps = [
   [
@@ -22,7 +22,7 @@ const steps = [
   ],
   [
     "Build national industry",
-    "Open your nation and choose Production. Reviews compare costs and output before you commit.",
+    "Open Production and make your first real investment. Review its cost, output and upkeep, confirm construction and inspect the completion date.",
     "nation",
     "production",
   ],
@@ -63,14 +63,16 @@ const steps = [
     "world",
   ],
 ];
-type Phase = "open" | "tab" | "inspect" | "done";
+type Phase = "open" | "tab" | "inspect" | "done" | "build" | "review" | "result";
 export function CampaignTutorial() {
   const state = useGameStore(),
     t = state.world.tutorial,
     [phase, setPhase] = useState<Phase>("open"),
     [rect, setRect] = useState<DOMRect | null>(null);
+  const initialProjects=useRef(0);
   const step = steps[Math.min(9, t.step)];
-  const target =
+  const practice=t.step===3;
+  const target = phase==='build'?'learn-build':phase==='review'?'review-confirm':phase==='result'?'review-dismiss':
     phase === "open"
       ? step[2]
       : phase === "tab"
@@ -82,6 +84,7 @@ export function CampaignTutorial() {
     if (t.active && state.playerProfile.setupComplete) {
       state.setSpeed(0);
       state.closeWorkspace();
+      initialProjects.current=state.industrialEconomy[state.playerCountryId].projects.length;
       setPhase(t.step === 0 ? "done" : "open");
     }
   }, [t.active, t.step, state.playerProfile.setupComplete]);
@@ -104,6 +107,7 @@ export function CampaignTutorial() {
     measure();
     const timer = window.setInterval(measure, 180);
     const click = (event: MouseEvent) => {
+      if(phase==='review'&&(event.target as Element).closest?.('[data-guide="review-dismiss"]')){setPhase('build');return;}
       if ((event.target as Element).closest?.(`[data-guide="${target}"]`))
         setPhase(
           phase === "open"
@@ -111,8 +115,8 @@ export function CampaignTutorial() {
               ? "tab"
               : "inspect"
             : phase === "tab"
-              ? "inspect"
-              : "done",
+              ? (practice?"build":"inspect")
+              :phase==='build'?'review':phase==='review'?'result':phase==='result'?(useGameStore.getState().industrialEconomy[state.playerCountryId].projects.length>initialProjects.current?'inspect':'build'):"done",
         );
     };
     document.addEventListener("click", click);
@@ -122,12 +126,13 @@ export function CampaignTutorial() {
     };
   }, [t.active, target, phase, t.step]);
   if (!t.active || !state.playerProfile.setupComplete) return null;
-  const hole = rect
+  const spotlight=(phase==='review'||phase==='result')?document.querySelector('.review-dialog')?.getBoundingClientRect()??rect:rect;
+  const hole = spotlight
     ? {
-        x: Math.max(0, rect.left - 6),
-        y: Math.max(0, rect.top - 6),
-        w: rect.width + 12,
-        h: rect.height + 12,
+        x: Math.max(0, spotlight!.left - 6),
+        y: Math.max(0, spotlight!.top - 6),
+        w: spotlight!.width + 12,
+        h: spotlight!.height + 12,
       }
     : null;
   return (
@@ -164,7 +169,7 @@ export function CampaignTutorial() {
         <div className="tutorial-shade" style={{ inset: 0 }} />
       )}
       <section
-        className="tutorial-dialog guided-card"
+        className="tutorial-dialog guided-card" style={rect&&rect.top>window.innerHeight*.55?{top:112,bottom:'auto'}:undefined}
         role="dialog"
         aria-label={translateLive("Campaign tutorial")}
       >
@@ -183,7 +188,7 @@ export function CampaignTutorial() {
         <strong className="tutorial-instruction">
           <LocaleText
             value={
-              phase === "open"
+              phase==='build'?'Choose your first facility. This is a real investment.':phase==='review'?'Compare cost, output and upkeep, then confirm construction.':phase==='result'?'Read the result and close the confirmation.':phase === "open"
                 ? "Click the highlighted menu"
                 : phase === "tab"
                   ? "Click the highlighted tab"
@@ -197,6 +202,7 @@ export function CampaignTutorial() {
           <button
             onClick={() => {
               state.closeWorkspace();
+      initialProjects.current=state.industrialEconomy[state.playerCountryId].projects.length;
               state.setTutorial(t.step, false);
             }}
           >

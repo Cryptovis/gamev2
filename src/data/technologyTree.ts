@@ -11,8 +11,11 @@ export interface TechnologyNode {
 }
 
 export const TECHNOLOGY_TREE: TechnologyNode[] = [
- {id:'soc-public-diplomacy',category:'society',name:'Public Diplomacy',description:'Adds 0.04 diplomatic influence per day.',cost:28,prerequisites:[],tier:1},
- {id:'soc-diplomatic-leadership',category:'society',name:'Diplomatic Leadership',description:'Improves international vote support and unlocks Security Council eligibility.',cost:48,prerequisites:['soc-public-diplomacy','soc-resilience'],tier:2},
+ {id:'edu-foundation',category:'education',name:'Public Education',description:'Raises daily research generation by 5%.',cost:22,prerequisites:[],tier:1},
+ {id:'edu-laboratories',category:'education',name:'Research Laboratories',description:'Raises daily research generation by another 3% and unlocks research institutes.',cost:37,prerequisites:['edu-foundation'],tier:2},
+ {id:'mil-flight-school',category:'military',name:'Flight Instruction',description:'Speeds pilot training by 10%.',cost:45,prerequisites:['mil-command'],tier:2},
+ {id:'soc-public-diplomacy',category:'diplomacy',name:'Public Diplomacy',description:'Adds 0.04 diplomatic influence per day.',cost:28,prerequisites:[],tier:1},
+ {id:'soc-diplomatic-leadership',category:'diplomacy',name:'Diplomatic Leadership',description:'Improves international vote support and unlocks Security Council eligibility.',cost:48,prerequisites:['soc-public-diplomacy','soc-resilience'],tier:2},
   {id:'energy-water',category:'energy',name:'Water Treatment & Storage',description:'Unlocks new waterworks to produce and export clean water.',cost:20,prerequisites:[],tier:1},
   {id:'ind-extraction',category:'industry',name:'Precision Mineral Extraction',description:'Unlocks rare-earth mining and advanced deposit extraction.',cost:32,prerequisites:[],tier:1},
   {id:'ind-engines',category:'industry',name:'Engine Manufacturing',description:'Unlocks engine works: steel + copper + aluminum + rubber.',cost:40,prerequisites:['ind-metallurgy'],tier:2},

@@ -5,7 +5,7 @@ import { useGameStore } from '../../store/gameStore';
 
 const modes:Array<{mode:MapMode;key:string;glyph:string}>=[
  {mode:'political',key:'political',glyph:'◉'},
- {mode:'relations',key:'relations',glyph:'↔'},
+ {mode:'relations',key:'connections',glyph:'↔'},
  {mode:'diplomacy',key:'diplomacy',glyph:'◇'},
  {mode:'resources',key:'resources',glyph:'⬡'},
  {mode:'military',key:'military',glyph:'◆'},

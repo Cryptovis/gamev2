@@ -1,3 +1,4 @@
+import {occupationFor} from './governance';
 import type {CountryState,GameState} from '../../domain/game';
 import type {FacilityKind,IndustrialGood,NationalIndustrialEconomy} from '../../domain/industrial';
 import {canUnlockTechnology,unlockTechnology} from './technology';
@@ -47,7 +48,7 @@ export function processIndustrialEconomy(state:GameState):GameState {
   }
   n.projects=n.projects.filter(p=>p.readyDay>state.day);
   next={...next,countries:{...next.countries,[id]:c},industrialEconomy:{...next.industrialEconomy,[id]:n}};
-  const boost=id===state.playerCountryId&&state.day<state.leadership.celebrationUntilDay?1.12:1;
+  const boost=(id===state.playerCountryId&&state.day<state.leadership.celebrationUntilDay?1.12:1)*((occupationFor(state,id)?.unrest??0)>=80?.7:1);
   for(const [kind,d] of Object.entries(FACILITIES) as Array<[FacilityKind,typeof FACILITIES[FacilityKind]]>){
    const count=n.facilities[kind];if(!count||!n.enabled[kind])continue;
    const potential=d.deposit?n.potential[d.deposit]:d.output==='water'?n.potential.water:d.output==='rubber'?n.potential.rubber:1;
