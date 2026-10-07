@@ -1,59 +1,58 @@
-import type { ReactNode } from 'react';
+import {gameDate} from '../../engine/systems/leadership';
+import { useState, type ReactNode } from 'react';
 import type { GameSpeed } from '../../domain/game';
+import { flagEmoji } from '../../data/countryThemes';
+import { tr } from '../../i18n/gameI18n';
 import { useGameStore } from '../../store/gameStore';
-import { ApprovalIcon, FoodIcon, IronIcon, OilIcon, TreasuryIcon } from '../icons/GameIcons';
+import { calculateEconomyForecast } from '../../store/selectors';
+import { AvatarPortrait } from '../profile/AvatarPortrait';
+import { PlayerOptionsMenu } from '../panels/PlayerOptionsMenu';
+import { ApprovalIcon, EconomyIcon, SocietyIcon, TreasuryIcon } from '../icons/GameIcons';
 
-const speeds: Array<{ speed: GameSpeed; label: string; hint: string }> = [
-  { speed: 0, label: 'Ⅱ', hint: 'Pause' },
-  { speed: 1, label: '1×', hint: '15s/day' },
-  { speed: 2, label: '2×', hint: '7s/day' },
-  { speed: 3, label: '3×', hint: '3s/day' },
-  { speed: 5, label: '5×', hint: '1s/day' },
+const speeds:Array<{speed:GameSpeed;label:string;hint:string}>=[
+ {speed:0,label:'Ⅱ',hint:'Pause'},
+ {speed:1,label:'1×',hint:'15s/day'},
+ {speed:2,label:'2×',hint:'7s/day'},
+ {speed:3,label:'3×',hint:'3s/day'},
+ {speed:5,label:'5×',hint:'1s/day'},
 ];
 
-function Metric({ icon, label, value, tone = 'neutral' }: { icon: ReactNode; label: string; value: string; tone?: 'neutral' | 'warning' | 'good' }) {
-  return <div className={`top-metric ${tone}`}>
-    <span className="top-metric-icon">{icon}</span>
-    <span><small>{label}</small><strong>{value}</strong></span>
-  </div>;
+function Metric({icon,label,value,tone='neutral'}:{icon:ReactNode;label:string;value:string;tone?:'neutral'|'warning'|'good'}){
+ return <div className={'top-metric '+tone}><span className="top-metric-icon">{icon}</span><span><small>{label}</small><strong>{value}</strong></span></div>;
 }
 
-export function TopBar() {
-  const day = useGameStore((s) => s.day);
-  const speed = useGameStore((s) => s.speed);
-  const setSpeed = useGameStore((s) => s.setSpeed);
-  const player = useGameStore((s) => s.countries[s.playerCountryId]);
-  const saveNow = useGameStore((s) => s.saveNow);
-  const loadLatest = useGameStore((s) => s.loadLatest);
-  const reset = useGameStore((s) => s.resetGame);
-  const msg = useGameStore((s) => s.saveMessage);
+export function TopBar(){
+ const [optionsOpen,setOptionsOpen]=useState(false);
+ const day=useGameStore(s=>s.day);
+ const speed=useGameStore(s=>s.speed);
+ const setSpeed=useGameStore(s=>s.setSpeed);
+ const playerCountryId=useGameStore(s=>s.playerCountryId);
+ const player=useGameStore(s=>s.countries[s.playerCountryId]);
+ const profile=useGameStore(s=>s.playerProfile);
+ const production=useGameStore(s=>s.production[playerCountryId]);
+ const industrial=useGameStore(s=>s.industrialEconomy[playerCountryId]);
+ const infrastructure=useGameStore(s=>s.infrastructure[playerCountryId]);
+ const lang=profile.language;
+ const forecast=calculateEconomyForecast(player);
+ const strategicDailyBalance=forecast.dailyBalance-(production?.lastInputUse.treasury??0)-(infrastructure?.maintenance??0)-(industrial?.lastCosts??0);
 
-  return <header className="topbar">
-    <div className="brand-block">
-      <div className="eyebrow">ALPYX // GLOBAL COMMAND · STRATEGIC COMMAND 0.40</div>
-      <div className="brand-line"><strong>{player.name}</strong><span className="day-chip">DAY {day}</span></div>
-    </div>
+ return <header className="topbar">
+  <div className="leader-brand">
+   <button className="leader-avatar-button" onClick={()=>setOptionsOpen(true)} title="Open commander options"><AvatarPortrait id={profile.avatarId} size={52}/><span>⋯</span></button>
+   <div className="brand-block"><div className="eyebrow">ALPYX // GLOBAL COMMAND · INDUSTRY & LIVING DIPLOMACY 0.74 PLAYTEST.1</div><div className="brand-line"><strong>{profile.commanderName}</strong><span className="day-chip">{tr(lang,'day')} {day} · {gameDate(useGameStore.getState())}</span></div><small className="leader-country">{player.name} · {player.politics.regime.toUpperCase()}</small></div>
+  </div>
 
-    <div className="metrics" aria-label="National resources">
-      <Metric icon={<TreasuryIcon size={16}/>} label="TREASURY" value={`$${player.economy.treasury.toFixed(1)}B`} />
-      <Metric icon={<FoodIcon size={16}/>} label="FOOD" value={player.resources.food.toFixed(0)} tone={player.resources.food < 80 ? 'warning' : 'neutral'} />
-      <Metric icon={<OilIcon size={16}/>} label="OIL" value={player.resources.oil.toFixed(0)} tone={player.resources.oil < 25 ? 'warning' : 'neutral'} />
-      <Metric icon={<IronIcon size={16}/>} label="IRON" value={player.resources.iron.toFixed(0)} />
-      <Metric icon={<ApprovalIcon size={16}/>} label="APPROVAL" value={`${player.politics.approval.toFixed(0)}%`} tone={player.politics.approval >= 60 ? 'good' : player.politics.approval < 40 ? 'warning' : 'neutral'} />
-    </div>
+  <div className="metrics governance-metrics" aria-label="National command indicators">
+   <Metric icon={<TreasuryIcon size={16}/>} label={tr(lang,'treasury')} value={'$'+player.economy.treasury.toFixed(1)+'B'}/>
+   <Metric icon={<EconomyIcon size={16}/>} label="BUDGET / DAY" value={(strategicDailyBalance>=0?'+':'')+'$'+strategicDailyBalance.toFixed(3)+'B'} tone={strategicDailyBalance>=0?'good':'warning'}/>
+   <Metric icon={<ApprovalIcon size={16}/>} label={tr(lang,'approval')} value={player.politics.approval.toFixed(0)+'%'} tone={player.politics.approval>=60?'good':player.politics.approval<40?'warning':'neutral'}/>
+   <Metric icon={<SocietyIcon size={16}/>} label="STABILITY" value={player.politics.stability.toFixed(0)+'%'} tone={player.politics.stability>=65?'good':player.politics.stability<40?'warning':'neutral'}/>
+  </div>
 
-    <div className="top-actions">
-      <div className="save-control">
-        <button onClick={() => void saveNow()}>SAVE</button>
-        <button onClick={() => void loadLatest()}>LOAD</button>
-        <button onClick={reset}>NEW</button>
-        {msg && <small>{msg}</small>}
-      </div>
-      <div className="speed-segment" aria-label="Game speed controls">
-        {speeds.map((item) => <button key={item.speed} className={item.speed === speed ? 'active' : ''} onClick={() => setSpeed(item.speed)} title={item.hint}>
-          <strong>{item.label}</strong><small>{item.speed === 0 ? 'PAUSE' : item.hint}</small>
-        </button>)}
-      </div>
-    </div>
-  </header>;
+  <div className="top-actions">
+   <div className="speed-segment" aria-label="Game speed controls">{speeds.map(item=><button key={item.speed} className={item.speed===speed?'active':''} onClick={()=>setSpeed(item.speed)} title={item.hint}><strong>{item.label}</strong><small>{item.speed===0?tr(lang,'pause'):item.hint}</small></button>)}</div>
+   <div className="national-flag-card" title={player.name}><b>{flagEmoji(player.iso2)}</b><span><small>{player.iso2}</small><strong>{player.name}</strong></span></div>
+  </div>
+  {optionsOpen&&<PlayerOptionsMenu onClose={()=>setOptionsOpen(false)}/>}
+ </header>;
 }

@@ -12,7 +12,7 @@ export const countryStateSchema = z.object({
   processedResources: z.object({ fuel: z.number().nonnegative(), steel: z.number().nonnegative(), electricity: z.number().nonnegative() }),
   industry: z.object({ factories: z.number().int().nonnegative(), refineries: z.number().int().nonnegative(), mines: z.number().int().nonnegative(), powerCapacity: z.number().nonnegative(), utilization: boundedPercent }),
   politics: z.object({ approval: boundedPercent, stability: boundedPercent, regime: z.enum(['republic','democracy','autocracy','monarchy','theocracy']), electionDaysRemaining: z.number().int().nonnegative() }),
-  society: z.object({ dominantReligion: z.enum(['christianity','catholic_christianity','orthodox_christianity','protestant_christianity','islam','hinduism','buddhism','judaism','unaffiliated','folk_or_mixed']), ideology: z.enum(['pluralist','state_centric','state_socialist','royalist','religious_state']), cohesion: boundedPercent, secularization: boundedPercent }),
+  society: z.object({ dominantReligion: z.enum(['christianity','catholic_christianity','orthodox_christianity','protestant_christianity','islam','hinduism','buddhism','judaism','unaffiliated','folk_or_mixed']), ideology: z.enum(['pluralist','state_centric','state_socialist','royalist','religious_state']), cohesion: boundedPercent, secularization: boundedPercent, influencePressure: z.object({ ideology: boundedPercent, religion: boundedPercent }) }),
   military: z.object({
     personnel: z.number().int().nonnegative(), tanks: z.number().int().nonnegative(), artillery: z.number().int().nonnegative(), fighters: z.number().int().nonnegative(), bombers: z.number().int().nonnegative(), warships: z.number().int().nonnegative(), readiness: boundedPercent, morale: boundedPercent, logistics: boundedPercent, technology: boundedPercent,
     assessment: z.object({ gfpRank: z.number().int().positive().nullable(), gfpIndex: z.number().positive().nullable(), capability: boundedPercent, dataConfidence: z.enum(['gfp-2026','estimated']) }),
@@ -21,4 +21,5 @@ export const countryStateSchema = z.object({
   intelligence: z.object({ networkStrength: boundedPercent, counterIntelligence: boundedPercent, intelConfidence: boundedPercent }),
   ministries: z.object({ allocations: ministryAllocations, efficiency: ministryAllocations }),
   technology: z.object({ researchPoints: z.number().nonnegative(), unlocked: z.array(z.string()) }),
+  ai: z.object({ strategicGoal: z.enum(['stabilize','grow_economy','rearm','secure_resources','expand_influence']), goalProgress: boundedPercent, threatFocus: z.string().nullable(), lastGoalReviewDay: z.number().int().nonnegative() }),
 });

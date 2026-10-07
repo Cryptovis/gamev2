@@ -11,6 +11,12 @@ export interface TechnologyNode {
 }
 
 export const TECHNOLOGY_TREE: TechnologyNode[] = [
+  {id:'energy-water',category:'energy',name:'Water Treatment & Storage',description:'Unlocks new waterworks to produce and export clean water.',cost:20,prerequisites:[],tier:1},
+  {id:'ind-extraction',category:'industry',name:'Precision Mineral Extraction',description:'Unlocks rare-earth mining and advanced deposit extraction.',cost:32,prerequisites:[],tier:1},
+  {id:'ind-engines',category:'industry',name:'Engine Manufacturing',description:'Unlocks engine works: steel + copper + aluminum + rubber.',cost:40,prerequisites:['ind-metallurgy'],tier:2},
+  {id:'ind-electronics',category:'industry',name:'Industrial Electronics',description:'Unlocks electronics works: copper + silicon + rare earths.',cost:42,prerequisites:['ind-extraction'],tier:2},
+  {id:'mil-armor-assembly',category:'military',name:'Armored Vehicle Assembly',description:'Enables tank output using two armor plates, one engine and one electronics module per vehicle. Components may be imported.',cost:55,prerequisites:['mil-command','ind-metallurgy'],tier:3},
+
   { id:'econ-logistics', category:'economy', name:'Integrated Logistics', description:'Cuts economic friction and improves national distribution.', cost:24, prerequisites:[], tier:1 },
   { id:'econ-digital', category:'economy', name:'Digital Administration', description:'Raises tax efficiency and institutional productivity.', cost:38, prerequisites:['econ-logistics'], tier:2 },
   { id:'ind-refining', category:'industry', name:'High-Efficiency Refining', description:'Improves crude oil to fuel conversion.', cost:28, prerequisites:[], tier:1 },

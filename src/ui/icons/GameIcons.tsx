@@ -89,3 +89,22 @@ export function InteriorIcon(props: IconProps) {
 export function SocietyIcon(props: IconProps) {
   return <Svg {...props}><circle cx="8" cy="9" r="2.5" stroke="currentColor" strokeWidth="1.4"/><circle cx="16" cy="9" r="2.5" stroke="currentColor" strokeWidth="1.4"/><path d="M3.5 19c.5-3.4 2-5 4.5-5 1.4 0 2.5.5 3.2 1.4M20.5 19c-.5-3.4-2-5-4.5-5-1.4 0-2.5.5-3.2 1.4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/></Svg>;
 }
+
+export function DiplomacyIcon(props: IconProps) {
+  return <Svg {...props}><path d="M4 9 9 5l3 2 3-2 5 4-5 7-3-2-3 2-5-7Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/><path d="m8 9 3 2 2-2 3 2M10 16l2 2 2-2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></Svg>;
+}
+export function EmbassyIcon(props: IconProps) {
+  return <Svg {...props}><path d="M4 20h16M6 17V9h12v8M5 9l7-5 7 5M9 17v-5h6v5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/><path d="M16 4V2m0 0 4 1.5L16 5V2Z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round"/></Svg>;
+}
+export function WarIcon(props: IconProps) {
+  return <Svg {...props}><path d="m5 4 14 16M19 4 5 20" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/><path d="m4 3 4 1-3 3-1-4Zm16 0-4 1 3 3 1-4ZM3 20l4-1-3-3-1 4Zm18 0-4-1 3-3 1 4Z" fill="currentColor"/></Svg>;
+}
+export function EconomyIcon(props: IconProps) {
+  return <Svg {...props}><path d="M4 19h16M6 16v-5h3v5m3 0V7h3v9m3 0V4h2v12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/><path d="m5 8 4-3 4 2 6-5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/></Svg>;
+}
+export function WorldIcon(props: IconProps) {
+  return <Svg {...props}><circle cx="12" cy="12" r="8" stroke="currentColor" strokeWidth="1.6"/><path d="M4 12h16M12 4c2.5 2.2 3.8 4.9 3.8 8S14.5 17.8 12 20M12 4C9.5 6.2 8.2 8.9 8.2 12s1.3 5.8 3.8 8" stroke="currentColor" strokeWidth="1.3"/></Svg>;
+}
+export function OverviewIcon(props: IconProps) {
+  return <Svg {...props}><path d="M4 5h7v6H4zM13 5h7v4h-7zM4 13h7v6H4zM13 11h7v8h-7z" stroke="currentColor" strokeWidth="1.5"/></Svg>;
+}

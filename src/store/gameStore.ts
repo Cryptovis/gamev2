@@ -1,20 +1,57 @@
 import { create } from 'zustand';
 import { makeInitialState } from '../data/initialState';
 import type { GameCommand } from '../domain/commands';
-import type { CouncilResolutionType, GameSpeed, GameState, MinistryKey, TradeResource } from '../domain/game';
-import type { MapMode } from '../domain/map';
+import type { CouncilResolutionType, EquipmentType, GameLanguage, GameSpeed, GameState, InfrastructureAsset, IntelOperationType, MinistryKey, TradeResource } from '../domain/game';
+import { canAutoApprove, type StrategicActionKind } from '../domain/interaction';
+import type {FacilityKind,IndustrialGood} from '../domain/industrial';
+import {buildFacility} from '../engine/systems/industrialEconomy';
+import {placeIndustrialOrder} from '../engine/systems/industrialMarket';
+import {createLeadership,validBirthDate} from '../engine/systems/leadership';
+import type { MapMode, MapPresentation } from '../domain/map';
 import { applyGameCommand } from '../engine/commands';
+import { acceptAdvisorContract, acceptAdvisorTradePact, dismissAdvisor } from '../engine/systems/advisor';
+import { makeLongTermImportContract } from '../engine/systems/trade';
+import { embassyFor, openEmbassy } from '../engine/systems/diplomacy';
+import { resolveDiplomaticOffer } from '../engine/systems/diplomaticOffers';
 
 interface GameActions {
+  buildFacility:(kind:FacilityKind)=>void;
+  toggleFacility:(kind:FacilityKind)=>void;
+  placeIndustrialOrder:(partnerId:string,good:IndustrialGood,quantity:number,direction:'buy'|'sell',years:0|1|3|5|10)=>void;
+  cancelIndustrialContract:(id:string)=>void;
+  readDiplomaticMessages:()=>void;
+  startCampaign: (config:{commanderName:string;countryId:string;avatarId:string;language:GameLanguage;nationalityCountryId?:string;birthDate?:string|null})=>void;
+  setLeaderIdentity:(nationalityCountryId:string,birthDate:string|null)=>void;
+  setPlayerAvatar: (avatarId:string)=>void;
+  setLanguage: (language:GameLanguage)=>void;
+  resolveAdvisor: (decision:'dismiss'|'pact'|1|3|5|10)=>void;
+  createLongTermContract: (targetCountryId:string,resource:TradeResource,years:1|3|5|10)=>void;
   dispatch: (command: GameCommand) => void;
   setSpeed: (speed: GameSpeed) => void;
   selectCountry: (countryId: string | null) => void;
   selectCountryByMapFeatureId: (featureId: string | number | null) => void;
   setMapMode: (mode: MapMode) => void;
+  setMapPresentation: (mode: MapPresentation) => void;
+  mapLabelScale: number;
+  setMapLabelScale: (scale:number)=>void;
+  mapProjection: 'globe'|'flat';
+  setMapProjection: (mode:'globe'|'flat')=>void;
+  mapControlCommand: {action:'zoomIn'|'zoomOut'|'focus'|'reset';nonce:number}|null;
+  issueMapControl: (action:'zoomIn'|'zoomOut'|'focus'|'reset')=>void;
+  confirmationSkips: Partial<Record<StrategicActionKind,boolean>>;
+  setConfirmationSkip: (kind:StrategicActionKind,skip:boolean)=>void;
   setMapNotice: (message: string | null) => void;
   advanceDay: () => void;
   setTaxRate: (rate: number) => void;
+  setMilitaryFactoryShare: (share:number)=>void;
+  setProductionFactories: (equipment:EquipmentType,factories:number)=>void;
+  deployEquipment: (equipment:EquipmentType)=>void;
+  investInfrastructure: (asset:InfrastructureAsset)=>void;
   improveRelations: (targetCountryId: string) => void;
+  giftTreasury: (targetCountryId:string,amountB:1|5|10)=>void;
+  giftResource: (targetCountryId:string,resource:TradeResource)=>void;
+  openEmbassyWith: (targetCountryId:string)=>void;
+  resolveDiplomaticOffer: (offerId:string,accept:boolean)=>void;
   signTradePact: (targetCountryId: string) => void;
   signNonAggression: (targetCountryId: string) => void;
   signAlliance: (targetCountryId: string) => void;
@@ -35,6 +72,7 @@ interface GameActions {
   setMinistryAllocation: (ministry: MinistryKey, value: number) => void;
   unlockTechnology: (technologyId: string) => void;
   proposeCouncilResolution: (resolutionType: CouncilResolutionType, targetCountryId: string) => void;
+  launchIntelOperation: (operationType: IntelOperationType, targetCountryId: string) => void;
   resolveEvent: (optionId: string) => void;
   pushSitrep: (message: string) => void;
   saveMessage: string | null;
@@ -47,6 +85,27 @@ interface GameActions {
 export const useGameStore = create<GameState & GameActions>((set, get) => ({
   ...makeInitialState(),
   saveMessage: null,
+  mapLabelScale: 1,
+  setMapLabelScale: (scale) => set({mapLabelScale: Number.isFinite(scale)?Math.max(.85,Math.min(1.4,scale)):1}),
+  mapProjection: 'globe',
+  mapControlCommand: null,
+  confirmationSkips: {},
+  buildFacility:(kind)=>set(state=>buildFacility(state,state.playerCountryId,kind)),
+  toggleFacility:(kind)=>set(state=>{const id=state.playerCountryId,n=state.industrialEconomy[id];return {industrialEconomy:{...state.industrialEconomy,[id]:{...n,enabled:{...n.enabled,[kind]:!n.enabled[kind]}}}};}),
+  placeIndustrialOrder:(partnerId,good,quantity,direction,years)=>set(state=>placeIndustrialOrder(state,partnerId,good,quantity,direction,years)),
+  cancelIndustrialContract:(id)=>set(state=>{const c=state.industrialContracts[id];return c&&(c.sellerId===state.playerCountryId||c.buyerId===state.playerCountryId)?{industrialContracts:{...state.industrialContracts,[id]:{...c,active:false}}}:{};}),
+  readDiplomaticMessages:()=>set(state=>({leadership:{...state.leadership,messages:state.leadership.messages.map(m=>({...m,read:true}))}})),
+  startCampaign: ({commanderName,countryId,avatarId,language,nationalityCountryId,birthDate}) => set(() => {
+    const fresh=makeInitialState();
+    const chosen=fresh.countries[countryId] ? countryId : 'TUR';
+    const country=fresh.countries[chosen];
+    return {...fresh,mapProjection:'globe',mapControlCommand:null,confirmationSkips:{},playerCountryId:chosen,selectedCountryId:chosen,leadership:createLeadership(country.economy.gdp),playerProfile:{commanderName:commanderName.trim()||'Commander',avatarId,language,setupComplete:true,nationalityCountryId:fresh.countries[nationalityCountryId??'']?nationalityCountryId:chosen,birthDate:birthDate&&validBirthDate(birthDate)?birthDate:null},council:{influenceByCountry:{[chosen]:28},history:[]},intelligenceLedger:{[chosen]:100},mapNotice:`${country.name} command established.`,sitrep:[`${commanderName.trim()||'Commander'} assumed national command of ${country.name}.`,...fresh.sitrep],saveMessage:'Campaign initialized'};
+  }),
+  setLeaderIdentity:(nationalityCountryId,birthDate)=>set(state=>state.countries[nationalityCountryId]&&(!birthDate||validBirthDate(birthDate))?{playerProfile:{...state.playerProfile,nationalityCountryId,birthDate}}:{}),
+  setPlayerAvatar: (avatarId) => set((state)=>({playerProfile:{...state.playerProfile,avatarId}})),
+  setLanguage: (language) => set((state)=>({playerProfile:{...state.playerProfile,language}})),
+  resolveAdvisor: (decision) => set((state)=>decision==='dismiss'?dismissAdvisor(state):decision==='pact'?acceptAdvisorTradePact(state):acceptAdvisorContract(state,decision)),
+  createLongTermContract: (targetCountryId,resource,years) => set((state)=>{const contract=makeLongTermImportContract(state,state.playerCountryId,targetCountryId,resource,years);return contract?{tradeDeals:{...state.tradeDeals,[contract.id]:contract},sitrep:[`TRADE // ${years}-year ${resource.toUpperCase()} contract opened with ${state.countries[targetCountryId].name}.`,...state.sitrep].slice(0,12)}:{};}),
   dispatch: (command) => set((state) => applyGameCommand(state, command)),
   setSpeed: (speed) => set((state) => applyGameCommand(state, { type: 'clock/setSpeed', speed })),
   selectCountry: (selectedCountryId) => set({ selectedCountryId }),
@@ -58,10 +117,27 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
       : { mapNotice: `Map feature selected. No sovereign-state profile is attached to this geometry.` };
   }),
   setMapMode: (mapMode) => set({ mapMode }),
+  setMapPresentation: (mapPresentation) => set({ mapPresentation }),
+  setMapProjection: (mapProjection) => set({ mapProjection }),
+  issueMapControl: (action) => set((state)=>({mapControlCommand:{action,nonce:(state.mapControlCommand?.nonce??0)+1}})),
+  setConfirmationSkip: (kind,skip) => set((state)=>({confirmationSkips:{...state.confirmationSkips,[kind]:skip && canAutoApprove(kind)}})),
   setMapNotice: (mapNotice) => set({ mapNotice }),
   advanceDay: () => set((state) => applyGameCommand(state, { type: 'time/advanceDay' })),
   setTaxRate: (rate) => set((state) => applyGameCommand(state, { type: 'economy/setTaxRate', rate })),
+  setMilitaryFactoryShare: (share) => set((state)=>applyGameCommand(state,{type:'production/setMilitaryShare',share})),
+  setProductionFactories: (equipment,factories) => set((state)=>applyGameCommand(state,{type:'production/setFactories',equipment,factories})),
+  deployEquipment: (equipment) => set((state)=>applyGameCommand(state,{type:'production/deploy',equipment})),
+  investInfrastructure: (asset) => set((state)=>applyGameCommand(state,{type:'infrastructure/invest',asset})),
   improveRelations: (targetCountryId) => set((state) => applyGameCommand(state, { type: 'diplomacy/improveRelations', targetCountryId })),
+  giftTreasury: (targetCountryId,amountB) => set((state)=>applyGameCommand(state,{type:'diplomacy/giftTreasury',targetCountryId,amountB})),
+  giftResource: (targetCountryId,resource) => set((state)=>applyGameCommand(state,{type:'diplomacy/giftResource',targetCountryId,resource})),
+  openEmbassyWith: (targetCountryId) => set((state)=>{
+    const player=state.countries[state.playerCountryId],target=state.countries[targetCountryId];
+    if(!player||!target||embassyFor(state,player.id,target.id)||player.economy.treasury<3)return {};
+    const opened=openEmbassy(state,player.id,target.id,1);
+    return {...opened,countries:{...opened.countries,[player.id]:{...opened.countries[player.id],economy:{...opened.countries[player.id].economy,treasury:opened.countries[player.id].economy.treasury-3}}},sitrep:[`EMBASSY // Diplomatic mission opened with ${target.name}. Establishment cost $3B.`,...opened.sitrep].slice(0,12)};
+  }),
+  resolveDiplomaticOffer: (offerId,accept) => set((state)=>resolveDiplomaticOffer(state,offerId,accept)),
   signTradePact: (targetCountryId) => set((state) => applyGameCommand(state, { type: 'diplomacy/signTradePact', targetCountryId })),
   signNonAggression: (targetCountryId) => set((state) => applyGameCommand(state, { type: 'diplomacy/signNonAggression', targetCountryId })),
   signAlliance: (targetCountryId) => set((state) => applyGameCommand(state, { type: 'diplomacy/signAlliance', targetCountryId })),
@@ -82,6 +158,7 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
   setMinistryAllocation: (ministry, value) => set((state) => applyGameCommand(state, { type: 'ministry/setAllocation', ministry, value })),
   unlockTechnology: (technologyId) => set((state) => applyGameCommand(state, { type: 'technology/unlock', technologyId })),
   proposeCouncilResolution: (resolutionType, targetCountryId) => set((state) => applyGameCommand(state, { type: 'council/propose', resolutionType, targetCountryId })),
+  launchIntelOperation: (operationType, targetCountryId) => set((state) => applyGameCommand(state, { type: 'intelligence/launch', operationType, targetCountryId })),
   resolveEvent: (optionId) => set((state) => applyGameCommand(state, { type: 'event/resolve', optionId })),
   pushSitrep: (message) => set((state) => ({ sitrep: [message, ...state.sitrep].slice(0, 12) })),
   setSaveMessage: (saveMessage) => set({ saveMessage }),
@@ -94,8 +171,8 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
     const { loadMostRecentSave } = await import('../persistence/saveGame');
     const loaded = await loadMostRecentSave();
     if (!loaded) { set({ saveMessage: 'No save found' }); return false; }
-    set({ ...loaded, speed: 0, saveMessage: `Loaded Day ${loaded.day}` });
+    set({ ...loaded, speed: 0, confirmationSkips: {}, mapControlCommand: null, saveMessage: `Loaded Day ${loaded.day}` });
     return true;
   },
-  resetGame: () => set({ ...makeInitialState(), saveMessage: 'New campaign started' }),
+  resetGame: () => set({ ...makeInitialState(), mapProjection:'globe', mapControlCommand:null, confirmationSkips:{}, saveMessage: 'New campaign started' }),
 }));

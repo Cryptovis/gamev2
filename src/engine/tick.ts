@@ -8,10 +8,22 @@ import { processTradeDeals } from './systems/trade';
 import { processMinistries } from './systems/ministries';
 import { processIndustry } from './systems/industry';
 import { processAutoWars } from './systems/warfare';
+import { processIntelOperations } from './systems/espionage';
+import { processInfluence } from './systems/influence';
+import { processStrategicGoals } from './systems/strategicGoals';
+import { processLivingEconomyAI } from './systems/livingEconomyAI';
+import { processWorldDiplomacy } from './systems/worldDynamics';
+import { maybeCreateResourceAdvisor } from './systems/advisor';
+import { processIncomingDiplomaticOffers } from './systems/diplomaticOffers';
+import { processProduction, processProductionAI } from './systems/production';
+import {processIndustrialEconomy,processIndustrialAI} from './systems/industrialEconomy';
+import {processIndustrialContracts,processIndustrialMarketAI} from './systems/industrialMarket';
+import {processLeadership} from './systems/leadership';
+import { processInfrastructure, processInfrastructureAI } from './systems/infrastructure';
 
-export function tickCountry(country: CountryState): CountryState {
+export function tickCountry(country: CountryState,boost=1): CountryState {
   const administered = processMinistries(country);
-  const resources = simulateResources(administered);
+  const resources = simulateResources(administered,boost);
   const economy = simulateEconomy(administered, resources);
   const politics = simulatePolitics(administered, economy, resources);
   const base: CountryState = {
@@ -21,7 +33,7 @@ export function tickCountry(country: CountryState): CountryState {
     resources: resources.next,
     politics,
   };
-  return processIndustry(base);
+  return processIndustry(base,boost);
 }
 
 function processElection(state: GameState): GameState {
@@ -35,8 +47,10 @@ function processElection(state: GameState): GameState {
 }
 
 export function tickGame(state: GameState): GameState {
-  if (state.campaignStatus !== 'active' || state.activeEvent) return state;
-  const countries = Object.fromEntries(Object.entries(state.countries).map(([id, country]) => [id, tickCountry(country)]));
+  if (state.campaignStatus !== 'active' || state.activeEvent || state.activeAdvisor) return state;
+  const dated=processLeadership({...state,day:state.day+1});
+  const boostActive=dated.day<dated.leadership.celebrationUntilDay;
+  const countries = Object.fromEntries(Object.entries(state.countries).map(([id, country]) => [id, tickCountry(country,id===state.playerCountryId&&boostActive?1.12:1)]));
   const nextDay = state.day + 1;
   const player = countries[state.playerCountryId];
   const notices: string[] = [];
@@ -52,11 +66,26 @@ export function tickGame(state: GameState): GameState {
     const current = influenceByCountry[country.id] ?? Math.max(8, country.diplomacy.reputation * 0.25);
     influenceByCountry[country.id] = Math.min(100, current + 0.025 + country.diplomacy.reputation * 0.00025);
   }
-  let next: GameState = { ...state, day: nextDay, countries, council: { ...state.council, influenceByCountry }, sitrep: [...notices, ...state.sitrep].slice(0, 12) };
+  let next: GameState = { ...dated, day: nextDay, countries, council: { ...state.council, influenceByCountry }, sitrep: [...notices, ...dated.sitrep].slice(0, 12) };
   next = processTradeDeals(next);
+  next = processInfrastructure(next);
+  next = processIndustrialEconomy(next);
+  next = processIndustrialContracts(next);
+  next = processProduction(next);
   next = processAutoWars(next);
   next = processElection(next);
+  next = processIntelOperations(next);
+  next = processInfluence(next);
+  next = processStrategicGoals(next);
+  next = processProductionAI(next);
+  next = processInfrastructureAI(next);
+  next = processLivingEconomyAI(next);
+  next = processWorldDiplomacy(next);
+  next = processIncomingDiplomaticOffers(next);
   next = processCountryAI(next);
+  next = processIndustrialAI(next);
+  next = processIndustrialMarketAI(next);
   next = maybeTriggerEvent(next);
+  next = maybeCreateResourceAdvisor(next);
   return next;
 }
