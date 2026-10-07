@@ -1,3 +1,4 @@
+import {processPrograms} from './systems/nationalPrograms';
 import {processWorldInstitutions} from './systems/worldInstitutions';
 import type { CountryState, GameState } from '../domain/game';
 import { processCountryAI } from './systems/ai';
@@ -69,6 +70,7 @@ export function tickGame(state: GameState): GameState {
   }
   let next: GameState = { ...dated, day: nextDay, countries, council: { ...state.council, influenceByCountry }, sitrep: [...notices, ...dated.sitrep].slice(0, 12) };
   next = processWorldInstitutions(next);
+  next = processPrograms(next);
   next = processTradeDeals(next);
   next = processInfrastructure(next);
   next = processIndustrialEconomy(next);

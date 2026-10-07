@@ -24,6 +24,7 @@ export interface OutreachMission {
   effect: number;
 }
 export interface WorldState {
+ programs?:Array<{id:string;kind:'jobs'|'education'|'health';readyDay:number;status:'active'|'completed'}>;
   members: Record<InstitutionId, string[]>;
   ballots: WorldBallot[];
   missions: OutreachMission[];

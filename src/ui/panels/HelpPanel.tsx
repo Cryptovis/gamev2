@@ -1,0 +1,228 @@
+import { LocaleText, translateLive } from "../../i18n/localeText";
+import { useState } from "react";
+import { useGameStore } from "../../store/gameStore";
+import { DraggableWindow } from "../windows/DraggableWindow";
+import { ReviewDialog } from "./ReviewDialog";
+import {
+  PROGRAMS,
+  type ProgramKind,
+} from "../../engine/systems/nationalPrograms";
+import { translateText } from "../../i18n/localeText";
+const faq = [
+  [
+    "How do I start?",
+    "Pause time, check your budget and reserves, then build one affordable facility. Open Supply to find shortages and Diplomacy to negotiate access.",
+  ],
+  [
+    "Why is a factory not producing?",
+    "Construction must finish first. Production needs all listed inputs, power and operating funds. Supply shortages reduce output.",
+  ],
+  [
+    "How do I cancel construction?",
+    "Open Production and cancel an unfinished project. The review shows the remaining refundable cost; completed construction cannot be undone.",
+  ],
+  [
+    "How do I import resources?",
+    "Improve relations, sign a trade pact, then use Market or the partner’s economy panel. Review volume, duration and budget before confirming.",
+  ],
+  [
+    "What does Low Relations mean?",
+    "The partner does not trust you enough. Open diplomacy, exchange embassies, send aid or complete a diplomatic mission.",
+  ],
+  [
+    "Why are my units not ready?",
+    "Check fuel, logistics, power and equipment reserves. Supply and infrastructure matter as much as unit counts.",
+  ],
+  [
+    "How do research prerequisites work?",
+    "Technology branches require earlier unlocks and enough research points. Equipment factories also require their material inputs.",
+  ],
+  [
+    "How do I join international institutions?",
+    "Open your nation’s World tab. Complete the requirements, apply and wait for the membership ballot. Other countries vote.",
+  ],
+  [
+    "What happens when war starts?",
+    "The war command window compares both forces and shows supply, terrain and losses. Each side can fight once per day. HD War Experience is planned.",
+  ],
+  [
+    "How do national programs work?",
+    "Pay once to fund a timed program. Its stated benefits are applied once on completion. You cannot run two copies of the same program at once.",
+  ],
+  [
+    "Where is my save?",
+    "Use commander options to save a campaign or load your latest save. Autosave keeps local progress in this browser.",
+  ],
+  [
+    "Can I replay the tutorial?",
+    "Open Help and choose Replay tutorial. The ten steps pause time and guide you through opening and closing the main windows.",
+  ],
+];
+export function HelpPanel() {
+  const state = useGameStore(),
+    [query, setQuery] = useState(""),
+    [review, setReview] = useState<ProgramKind | null>(null),
+    player = state.countries[state.playerCountryId];
+  const matching = faq.filter((row) =>
+    row.some((t) =>
+      translateText(state.playerProfile.language, t)
+        .toLocaleLowerCase()
+        .includes(query.toLocaleLowerCase()),
+    ),
+  );
+  return (
+    <DraggableWindow
+      id="help-window"
+      title={translateLive("Help & National Development")}
+      kicker="START HERE"
+      initialX={110}
+      initialY={125}
+      width={640}
+      onClose={state.closeWorkspace}
+    >
+      <section className="help-intro">
+        <h3>
+          <LocaleText value={"Your first days in office"} />
+        </h3>
+        <p>
+          <LocaleText
+            value={
+              "Start with one decision at a time. Keep time paused while you explore; you decide when the next day begins."
+            }
+          />
+        </p>
+        <div className="help-shortcuts">
+          <button onClick={() => state.navigate("economy")}>
+            <LocaleText value={"Check budget"} />
+          </button>
+          <button onClick={() => state.navigate("production")}>
+            <LocaleText value={"Build industry"} />
+          </button>
+          <button onClick={() => state.navigate("technology")}>
+            <LocaleText value={"Explore research"} />
+          </button>
+          <button
+            onClick={() => {
+              state.closeWorkspace();
+              state.setTutorial(0, true);
+            }}
+          >
+            <LocaleText value={"Replay tutorial"} />
+          </button>
+        </div>
+      </section>
+      <section>
+        <h3>
+          <LocaleText value={"National development programs"} />
+        </h3>
+        <p>
+          <LocaleText
+            value={
+              "Small, predictable investments with a clear completion date."
+            }
+          />
+        </p>
+        <div className="program-grid">
+          {(Object.keys(PROGRAMS) as ProgramKind[]).map((kind) => {
+            const d = PROGRAMS[kind],
+              active = state.world.programs?.find(
+                (p) => p.kind === kind && p.status === "active",
+              );
+            return (
+              <article key={kind}>
+                <h4>
+                  <LocaleText value={d.title} />
+                </h4>
+                <p>
+                  <LocaleText value={d.description} />
+                </p>
+                <small>
+                  <LocaleText value={"$"} />
+                  <LocaleText value={d.cost} />
+                  <LocaleText value={"B · "} />
+                  <LocaleText value={d.days} />
+                  <LocaleText value={" days"} />
+                </small>
+                <button
+                  disabled={!!active || player.economy.treasury < d.cost}
+                  onClick={() => setReview(kind)}
+                >
+                  <LocaleText
+                    value={
+                      active
+                        ? `${Math.max(0, active.readyDay - state.day)} days remaining`
+                        : "Review program"
+                    }
+                  />
+                </button>
+              </article>
+            );
+          })}
+        </div>
+      </section>
+      <section className="faq">
+        <h3>
+          <LocaleText value={"Frequently asked questions"} />
+        </h3>
+        <input
+          aria-label={translateLive("Search help")}
+          placeholder={translateLive("Search questions…")}
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
+        {matching.map(([question, answer]) => (
+          <details key={question}>
+            <summary>
+              <LocaleText value={question} />
+            </summary>
+            <p>
+              <LocaleText value={answer} />
+            </p>
+          </details>
+        ))}
+        {!matching.length && (
+          <p>
+            <LocaleText value={"No matching questions."} />
+          </p>
+        )}
+      </section>
+      <section>
+        <h3>
+          <LocaleText value={"HD War Experience roadmap"} />
+        </h3>
+        <p>
+          <LocaleText
+            value={
+              "Planned: battlefield camera, terrain, animated units and combat playback synchronized with the strategy simulation. The current command window already uses the real combat engine."
+            }
+          />
+        </p>
+      </section>
+      {review && (
+        <ReviewDialog
+          title={translateLive(PROGRAMS[review].title)}
+          summary={PROGRAMS[review].description}
+          metrics={[
+            ["Cost", `$${PROGRAMS[review].cost}B`],
+            [
+              "Treasury after",
+              `$${(player.economy.treasury - PROGRAMS[review].cost).toFixed(2)}B`,
+            ],
+            ["Completion", `Day ${state.day + PROGRAMS[review].days}`],
+          ]}
+          allowed={
+            player.economy.treasury >= PROGRAMS[review].cost &&
+            !state.world.programs?.some(
+              (p) => p.kind === review && p.status === "active",
+            )
+          }
+          onCancel={() => setReview(null)}
+          onConfirm={() => {
+            state.startProgram(review);
+            setReview(null);
+          }}
+        />
+      )}
+    </DraggableWindow>
+  );
+}

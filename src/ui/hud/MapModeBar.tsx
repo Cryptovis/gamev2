@@ -1,3 +1,4 @@
+import {LocaleText,translateLive} from '../../i18n/localeText';
 import type { MapMode } from '../../domain/map';
 import { tr } from '../../i18n/gameI18n';
 import { useGameStore } from '../../store/gameStore';
@@ -27,17 +28,17 @@ export function MapModeBar(){
  const setProjection=useGameStore(s=>s.setMapProjection);
  const issueMapControl=useGameStore(s=>s.issueMapControl);
  const selectedCountryId=useGameStore(s=>s.selectedCountryId);
- return <section className="map-mode-bar" aria-label="Map modes">
-  <header className="map-mode-heading"><span><small>STRATEGIC VIEW</small><strong>MAP COMMAND</strong></span><em>{mapMode.toUpperCase()}</em></header>
-  <div className="map-mode-buttons">{modes.map(({mode,key,glyph})=><button key={mode} className={mode===mapMode?'active':''} onClick={()=>setMapMode(mode)}><span>{glyph}</span>{mode==='relations'?'RELATIONS':tr(lang,key)}</button>)}</div>
-  {mapMode==='relations'&&<div className="relations-legend"><span>HOSTILE −100</span><span>NEUTRAL 0</span><span>FRIENDLY +100</span></div>}
+ return <section className="map-mode-bar" aria-label={translateLive("Map modes")}>
+  <header className="map-mode-heading"><span><small><LocaleText value={"STRATEGIC VIEW"}/></small><strong><LocaleText value={"MAP COMMAND"}/></strong></span><em><LocaleText value={mapMode.toUpperCase()}/></em></header>
+  <div className="map-mode-buttons">{modes.map(({mode,key,glyph})=><button key={mode} className={mode===mapMode?'active':''} onClick={()=>setMapMode(mode)}><span><LocaleText value={glyph}/></span><LocaleText value={mode==='relations'?'RELATIONS':tr(lang,key)}/></button>)}</div>
+  {mapMode==='relations'&&<div className="relations-legend"><span><LocaleText value={"HOSTILE −100"}/></span><span><LocaleText value={"NEUTRAL 0"}/></span><span><LocaleText value={"FRIENDLY +100"}/></span></div>}
   <div className="map-command-sections">
-   <div><small>BASE MAP</small><span><button className={mapPresentation==='political'?'active':''} onClick={()=>setMapPresentation('political')}>{tr(lang,'political')}</button><button className={mapPresentation==='geographic'?'active':''} onClick={()=>setMapPresentation('geographic')}>{tr(lang,'geographic')}</button></span></div>
-   <div><small>PROJECTION</small><span><button className={projection==='globe'?'active':''} onClick={()=>setProjection('globe')}>GLOBE</button><button className={projection==='flat'?'active':''} onClick={()=>setProjection('flat')}>FLAT</button></span></div>
-   <div><small>CAMERA</small><span className="map-camera-actions"><button onClick={()=>issueMapControl('zoomOut')}>−</button><button onClick={()=>issueMapControl('zoomIn')}>+</button><button disabled={!selectedCountryId} onClick={()=>issueMapControl('focus')}>FOCUS</button><button onClick={()=>issueMapControl('reset')}>RESET</button></span></div>
+   <div><small><LocaleText value={"BASE MAP"}/></small><span><button className={mapPresentation==='political'?'active':''} onClick={()=>setMapPresentation('political')}><LocaleText value={tr(lang,'political')}/></button><button className={mapPresentation==='geographic'?'active':''} onClick={()=>setMapPresentation('geographic')}><LocaleText value={tr(lang,'geographic')}/></button></span></div>
+   <div><small><LocaleText value={"PROJECTION"}/></small><span><button className={projection==='globe'?'active':''} onClick={()=>setProjection('globe')}><LocaleText value={"GLOBE"}/></button><button className={projection==='flat'?'active':''} onClick={()=>setProjection('flat')}><LocaleText value={"FLAT"}/></button></span></div>
+   <div><small><LocaleText value={"CAMERA"}/></small><span className="map-camera-actions"><button onClick={()=>issueMapControl('zoomOut')}><LocaleText value={"−"}/></button><button onClick={()=>issueMapControl('zoomIn')}><LocaleText value={"+"}/></button><button disabled={!selectedCountryId} onClick={()=>issueMapControl('focus')}><LocaleText value={"FOCUS"}/></button><button onClick={()=>issueMapControl('reset')}><LocaleText value={"RESET"}/></button></span></div>
   </div>
-  <label className="map-label-control">ZOOM SPEED <input aria-label="Map zoom speed" type="range" min="0.3" max="1.5" step="0.05" value={zoomSpeed} onChange={e=>setZoomSpeed(Number(e.target.value))}/><output>{zoomSpeed<.5?'SLOW':zoomSpeed>.9?'FAST':'NORMAL'}</output></label>
-  <label className="map-label-control">LABEL SIZE <input aria-label="Map label size" type="range" min="0.85" max="1.4" step="0.05" value={labelScale} onChange={e=>setLabelScale(Number(e.target.value))}/><output>{Math.round(labelScale*100)}%</output></label>
-  <div className="map-notice">{mapNotice}</div>
+  <label className="map-label-control"><LocaleText value={"ZOOM SPEED "}/><input aria-label={translateLive("Map zoom speed")} type="range" min="0.3" max="1.5" step="0.05" value={zoomSpeed} onChange={e=>setZoomSpeed(Number(e.target.value))}/><output><LocaleText value={zoomSpeed<.5?'SLOW':zoomSpeed>.9?'FAST':'NORMAL'}/></output></label>
+  <label className="map-label-control"><LocaleText value={"LABEL SIZE "}/><input aria-label={translateLive("Map label size")} type="range" min="0.85" max="1.4" step="0.05" value={labelScale} onChange={e=>setLabelScale(Number(e.target.value))}/><output><LocaleText value={Math.round(labelScale*100)}/><LocaleText value={"%"}/></output></label>
+  <div className="map-notice"><LocaleText value={mapNotice}/></div>
  </section>;
 }

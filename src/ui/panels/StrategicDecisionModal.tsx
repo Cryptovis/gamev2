@@ -1,3 +1,4 @@
+import {LocaleText,translateLive} from '../../i18n/localeText';
 import { createPortal } from 'react-dom';
 import { useEffect, useRef, useState } from 'react';
 import { canAutoApprove, type StrategicDecisionSpec, type StrategicActionKind } from '../../domain/interaction';
@@ -55,29 +56,29 @@ export function StrategicDecisionModal({
   <section ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="strategic-decision-title" className={'strategic-decision-modal tone-'+tone} onMouseDown={e=>e.stopPropagation()}>
    <aside className="strategic-decision-visual">
     <div className="strategic-decision-emblem"><DecisionVisual kind={spec.kind}/></div>
-    <div className="strategic-decision-flags"><span>{flagEmoji(player.iso2)}</span><i>→</i><span>{flagEmoji(target.iso2)}</span></div>
-    <small>{player.name.toUpperCase()}</small>
-    <strong>{target.name}</strong>
-    <p>{spec.kind.replaceAll('_',' ').toUpperCase()}</p>
+    <div className="strategic-decision-flags"><span><LocaleText value={flagEmoji(player.iso2)}/></span><i><LocaleText value={"→"}/></i><span><LocaleText value={flagEmoji(target.iso2)}/></span></div>
+    <small><LocaleText value={player.name.toUpperCase()}/></small>
+    <strong><LocaleText value={target.name}/></strong>
+    <p><LocaleText value={spec.kind.replaceAll('_',' ').toUpperCase()}/></p>
    </aside>
 
    <div className="strategic-decision-copy">
-    <header><div><small>{spec.kicker}</small><h2 id="strategic-decision-title">{spec.title}</h2></div><button onClick={onCancel} aria-label="Cancel strategic decision">×</button></header>
-    <p className="strategic-decision-summary">{spec.summary}</p>
+    <header><div><small><LocaleText value={spec.kicker}/></small><h2 id="strategic-decision-title"><LocaleText value={spec.title}/></h2></div><button onClick={onCancel} aria-label={translateLive("Cancel strategic decision")}><LocaleText value={"×"}/></button></header>
+    <p className="strategic-decision-summary"><LocaleText value={spec.summary}/></p>
 
-    <div className="strategic-impact-grid">{spec.impacts.map((impact,i)=><div key={impact.label+i} className={impact.tone?'impact-'+impact.tone:''}><small>{impact.label.toUpperCase()}</small><strong>{impact.value}</strong></div>)}</div>
+    <div className="strategic-impact-grid">{spec.impacts.map((impact,i)=><div key={impact.label+i} className={impact.tone?'impact-'+impact.tone:''}><small><LocaleText value={impact.label.toUpperCase()}/></small><strong><LocaleText value={impact.value}/></strong></div>)}</div>
 
     <div className="strategic-warning-list">
-     <small>STRATEGIC ASSESSMENT</small>
-     {spec.warnings.map((warning,i)=><p key={i}><span>{tone==='danger'?'!':'◆'}</span>{warning}</p>)}
+     <small><LocaleText value={"STRATEGIC ASSESSMENT"}/></small>
+     {spec.warnings.map((warning,i)=><p key={i}><span><LocaleText value={tone==='danger'?'!':'◆'}/></span><LocaleText value={warning}/></p>)}
     </div>
 
     {canAutoApprove(spec.kind)?<label className="strategic-autoconfirm">
      <input type="checkbox" checked={autoApprove} onChange={e=>setAutoApprove(e.target.checked)}/>
-     <span><strong>Automatically approve similar decisions this session</strong><small>You can still review other strategic action types individually.</small></span>
-    </label>:<p className="strategic-review-required">This decision always requires your explicit confirmation.</p>}
+     <span><strong><LocaleText value={"Automatically approve similar decisions this session"}/></strong><small><LocaleText value={"You can still review other strategic action types individually."}/></small></span>
+    </label>:<p className="strategic-review-required"><LocaleText value={"This decision always requires your explicit confirmation."}/></p>}
 
-    <footer><button onClick={onCancel}>CANCEL</button><button className={'confirm '+(tone==='danger'?'danger':'')} onClick={()=>{if(submitted.current)return;submitted.current=true;if(autoApprove&&canAutoApprove(spec.kind))state.setConfirmationSkip(spec.kind,true);const before=useGameStore.getState();onConfirm();const after=useGameStore.getState();const changed=after.countries!==before.countries||after.tradeDeals!==before.tradeDeals||after.wars!==before.wars||after.embassies!==before.embassies||after.blocs!==before.blocs;after.showReceipt({title:changed?'Decision executed':'Decision unavailable',summary:changed?(after.sitrep[0]!==before.sitrep[0]?after.sitrep[0]:spec.title+' completed.'): 'Conditions changed. Review budget, relations and existing agreements before trying again.',metrics:[["Treasury after",`$${after.countries[after.playerCountryId].economy.treasury.toFixed(3)}B`]]});}}>{spec.confirmLabel}</button></footer>
+    <footer><button onClick={onCancel}><LocaleText value={"CANCEL"}/></button><button className={'confirm '+(tone==='danger'?'danger':'')} onClick={()=>{if(submitted.current)return;submitted.current=true;if(autoApprove&&canAutoApprove(spec.kind))state.setConfirmationSkip(spec.kind,true);const before=useGameStore.getState();onConfirm();const after=useGameStore.getState();const changed=after.countries!==before.countries||after.tradeDeals!==before.tradeDeals||after.wars!==before.wars||after.embassies!==before.embassies||after.blocs!==before.blocs;if(spec.kind!=='declare_war')after.showReceipt({title:changed?'Decision executed':'Decision unavailable',summary:changed?(after.sitrep[0]!==before.sitrep[0]?after.sitrep[0]:spec.title+' completed.'): 'Conditions changed. Review budget, relations and existing agreements before trying again.',metrics:[["Treasury after",`$${after.countries[after.playerCountryId].economy.treasury.toFixed(3)}B`]]});}}><LocaleText value={spec.confirmLabel}/></button></footer>
    </div>
   </section>
  </div>;
