@@ -1,3 +1,4 @@
+import {LocaleText,translateLive} from '../i18n/localeText';
 import {boundPan,clampZoom,wheelZoomFactor,zoomAtPoint} from './cameraControls';
 import {GeographicSurface} from './GeographicSurface';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -286,7 +287,7 @@ export function WorldMap() {
     else if(mapControlCommand.action==='reset')resetView();
   },[mapControlCommand?.nonce]);
 
-  if (!geojson || !projection || !path) return <div className="world-map political-map"><div className="map-loading">INITIALIZING WORLD GEOMETRY…</div></div>;
+  if (!geojson || !projection || !path) return <div className="world-map political-map"><div className="map-loading"><LocaleText value={"INITIALIZING WORLD GEOMETRY…"}/></div></div>;
 
   const shapeLayer = featureMetrics.map(({feature,id,d},index) => {
     const country = countries[id];
@@ -295,7 +296,7 @@ export function WorldMap() {
     const isHovered = id === hovered;
     const terrain=country?terrainForCountry(country):'plains';
     const fill=mapPresentation==='geographic'&&mapMode==='political'?`url(#terrain-${terrain})`:colorFor(id);
-    return <path key={`${id}-${index}`} d={d} className={`country-shape ${photographic?(surfaceReady?'geographic photographic':'geographic'):''} ${isSelected ? 'selected' : ''} ${isHovered ? 'hovered' : ''}`} fill={fill} onPointerEnter={() => country && setHovered(id)} onPointerLeave={() => setHovered((v) => v === id ? null : v)}><title>{country?.name ?? feature.properties?.name}</title></path>;
+    return <path key={`${id}-${index}`} d={d} className={`country-shape ${photographic?(surfaceReady?'geographic photographic':'geographic'):''} ${isSelected ? 'selected' : ''} ${isHovered ? 'hovered' : ''}`} fill={fill} onPointerEnter={() => country && setHovered(id)} onPointerLeave={() => setHovered((v) => v === id ? null : v)}><title><LocaleText value={country?.name ?? feature.properties?.name}/></title></path>;
   });
 
 
@@ -362,16 +363,16 @@ export function WorldMap() {
     const selected=id===selectedCountryId;
     return <g key={id} className={`microstate-point screen-microstate ${selected?'selected':''}`} transform={`translate(${point[0]},${point[1]})`} onPointerEnter={()=>setHovered(id)} onPointerLeave={()=>setHovered(v=>v===id?null:v)}>
       <circle className="microstate-hit-target" r={12}/>
-      <circle r={selected?5:3.5}/><title>{countries[id].name}</title>
+      <circle r={selected?5:3.5}/><title><LocaleText value={countries[id].name}/></title>
     </g>;
   });
 
   return <div className="world-map political-map">
     <div className="map-hover-readout">
-      <strong>{hoveredCountry?.name ?? selectedCountry?.name ?? 'WORLD COMMAND'}</strong>
-      <span>{hoveredCountry ? `${hoveredCountry.region || 'Global'} · ${hoveredCountry.military.assessment.capability.toFixed(0)} MIL` : projectionMode === 'globe' ? 'drag globe · wheel zoom · click sovereign territory' : 'drag to pan · wheel zoom · click sovereign territory'}</span>
+      <strong><LocaleText value={hoveredCountry?.name ?? selectedCountry?.name ?? 'WORLD COMMAND'}/></strong>
+      <span><LocaleText value={hoveredCountry ? `${hoveredCountry.region || 'Global'} · ${hoveredCountry.military.assessment.capability.toFixed(0)} MIL` : projectionMode === 'globe' ? 'drag globe · wheel zoom · click sovereign territory' : 'drag to pan · wheel zoom · click sovereign territory'}/></span>
     </div>
-    <svg ref={svgRef} data-zoom={mapZoom.toFixed(4)} aria-label="Interactive world map" viewBox={`0 0 ${W} ${H}`} className={projectionMode === 'globe' ? 'strategy-svg globe-svg' : 'strategy-svg flat-svg'} onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerCancel={pointerUp} onClick={selectFromSurface} shapeRendering="geometricPrecision">
+    <svg ref={svgRef} data-zoom={mapZoom.toFixed(4)} aria-label={translateLive("Interactive world map")} viewBox={`0 0 ${W} ${H}`} className={projectionMode === 'globe' ? 'strategy-svg globe-svg' : 'strategy-svg flat-svg'} onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerCancel={pointerUp} onClick={selectFromSurface} shapeRendering="geometricPrecision">
       <defs>
         <pattern id="terrain-plains" width="18" height="18" patternUnits="userSpaceOnUse"><rect width="18" height="18" fill="#6d8061"/><path d="M0 14C5 11 10 16 18 12" fill="none" stroke="#9aab83" strokeOpacity=".22" strokeWidth="1"/></pattern>
         <pattern id="terrain-forest" width="14" height="14" patternUnits="userSpaceOnUse"><rect width="14" height="14" fill="#3f6b52"/><circle cx="3" cy="4" r="1.5" fill="#234936" fillOpacity=".65"/><circle cx="10" cy="9" r="1.7" fill="#2a513c" fillOpacity=".7"/></pattern>
@@ -387,19 +388,19 @@ export function WorldMap() {
       </>}
       {photographic&&<GeographicSurface projection={projection} flat={projectionMode==='flat'} pan={flatPan} zoom={flatZoom} onReady={()=>setSurfaceReady(true)}/>}
       <g key={viewportKey} className="map-viewport" transform={projectionMode === 'flat' ? flatTransform : undefined}>
-        <g className="country-layer">{shapeLayer}</g>
+        <g className="country-layer"><LocaleText value={shapeLayer}/></g>
       </g>
       <g className="screen-label-layer" pointerEvents="none">
-        {screenLabels.map(label=><text key={label.id} x={label.x} y={label.y} className={label.className} style={{fontSize:label.fontSize}}>{label.text}</text>)}
+        {screenLabels.map(label=><text key={label.id} x={label.x} y={label.y} className={label.className} style={{fontSize:label.fontSize}}><LocaleText value={label.text}/></text>)}
       </g>
-      <g className="screen-microstate-layer">{microstateMarkers}</g>
+      <g className="screen-microstate-layer"><LocaleText value={microstateMarkers}/></g>
     </svg>
-    <div className="map-camera-hud" aria-label="Map camera controls">
-      <button aria-label="Zoom out" disabled={mapZoom<=(projectionMode==='flat'?1:.72)} onClick={()=>zoomBy(1/1.18)}>−</button>
-      <output aria-label="Map zoom level">{Math.round(mapZoom*100)}%</output>
-      <button aria-label="Zoom in" disabled={mapZoom>=(projectionMode==='flat'?12:6)} onClick={()=>zoomBy(1.18)}>+</button>
+    <div className="map-camera-hud" aria-label={translateLive("Map camera controls")}>
+      <button aria-label={translateLive("Zoom out")} disabled={mapZoom<=(projectionMode==='flat'?1:.72)} onClick={()=>zoomBy(1/1.18)}><LocaleText value={"−"}/></button>
+      <output aria-label={translateLive("Map zoom level")}><LocaleText value={Math.round(mapZoom*100)}/><LocaleText value={"%"}/></output>
+      <button aria-label={translateLive("Zoom in")} disabled={mapZoom>=(projectionMode==='flat'?12:6)} onClick={()=>zoomBy(1.18)}><LocaleText value={"+"}/></button>
       <i/>
-      <button className="camera-reset" onClick={resetView} title="Reset camera">RESET</button>
+      <button className="camera-reset" onClick={resetView} title={translateLive("Reset camera")}><LocaleText value={"RESET"}/></button>
     </div>
   </div>;
 }

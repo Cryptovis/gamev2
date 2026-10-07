@@ -1,3 +1,4 @@
+import {LocaleText} from '../../i18n/localeText';
 import { useMemo, useState } from 'react';
 import { useGameStore } from '../../store/gameStore';
 
@@ -15,7 +16,7 @@ export function PlaytestObjectives(){
  ],[state.tradeDeals,state.intelOperations,state.blocs,state.wars,state.day,player.id,player.technology.unlocked.length]);
  const complete=objectives.filter((o)=>o.done).length;
  return <aside className={`playtest-objectives ${collapsed?'collapsed':''}`}>
-  <button className="playtest-header" onClick={()=>setCollapsed((v)=>!v)}><span><small>0.61 PLAYTEST</small><strong>STRATEGIC OBJECTIVES</strong></span><b>{complete}/{objectives.length}</b></button>
-  {!collapsed&&<><div className="playtest-progress"><i style={{width:`${complete/objectives.length*100}%`}}/></div><div className="objective-list">{objectives.map((o)=><div key={o.id} className={o.done?'done':''}><span>{o.done?'✓':'○'}</span><p>{o.label}</p></div>)}</div><footer>Use these as a guided systems check, then free-play at 5× and watch the Living World react.</footer></>}
+  <button className="playtest-header" onClick={()=>setCollapsed((v)=>!v)}><span><small><LocaleText value={"0.61 PLAYTEST"}/></small><strong><LocaleText value={"STRATEGIC OBJECTIVES"}/></strong></span><b><LocaleText value={complete}/><LocaleText value={"/"}/><LocaleText value={objectives.length}/></b></button>
+  {!collapsed&&<><div className="playtest-progress"><i style={{width:`${complete/objectives.length*100}%`}}/></div><div className="objective-list">{objectives.map((o)=><div key={o.id} className={o.done?'done':''}><span><LocaleText value={o.done?'✓':'○'}/></span><p><LocaleText value={o.label}/></p></div>)}</div><footer><LocaleText value={"Use these as a guided systems check, then free-play at 5× and watch the Living World react."}/></footer></>}
  </aside>;
 }

@@ -1,3 +1,4 @@
+import {LocaleText,translateLive} from '../../i18n/localeText';
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { useGameStore } from "../../store/gameStore";
@@ -75,33 +76,31 @@ export function ReviewDialog({
         ref={ref}
         role="dialog"
         aria-modal="true"
-        aria-label={title}
+        aria-label={translateLive(title)}
         className="review-dialog"
       >
         <header>
-          <small>COMMAND REVIEW</small>
-          <button aria-label="Close review" onClick={onCancel}>
-            ×
-          </button>
+          <small><LocaleText value={"COMMAND REVIEW"}/></small>
+          <button aria-label={translateLive("Close review")} onClick={onCancel}><LocaleText value={"×"}/></button>
         </header>
-        <h2>{title}</h2>
-        <p>{summary}</p>
+        <h2><LocaleText value={title}/></h2>
+        <p><LocaleText value={summary}/></p>
         <div className="review-metrics">
           {metrics.map(([label, value]) => (
             <div key={label}>
-              <small>{label}</small>
-              <strong>{value}</strong>
+              <small><LocaleText value={label}/></small>
+              <strong><LocaleText value={value}/></strong>
             </div>
           ))}
         </div>
         <div className="review-notes">
           {warnings.map((w) => (
-            <p key={w}>{w}</p>
+            <p key={w}><LocaleText value={w}/></p>
           ))}
         </div>
         <footer>
           <button onClick={onCancel}>
-            {onConfirm ? "BACK / CANCEL" : "CLOSE"}
+            <LocaleText value={onConfirm ? "BACK / CANCEL" : "CLOSE"}/>
           </button>
           {onConfirm && (
             <button
@@ -113,7 +112,7 @@ export function ReviewDialog({
                 onConfirm();
               }}
             >
-              {confirmLabel}
+              <LocaleText value={confirmLabel}/>
             </button>
           )}
         </footer>

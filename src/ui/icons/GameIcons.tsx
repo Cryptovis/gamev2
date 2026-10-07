@@ -1,3 +1,4 @@
+import {LocaleText} from '../../i18n/localeText';
 import {AssetThumbnail} from './AssetThumbnail';
 import type { ReactNode } from 'react';
 import type { ReligionType, TradeResource } from '../../domain/game';
@@ -5,7 +6,7 @@ import type { ReligionType, TradeResource } from '../../domain/game';
 type IconProps = { size?: number; className?: string };
 
 const Svg = ({ size = 18, className, children, viewBox = '0 0 24 24' }: IconProps & { children: ReactNode; viewBox?: string }) => (
-  <svg className={className} width={size} height={size} viewBox={viewBox} fill="none" aria-hidden="true">{children}</svg>
+  <svg className={className} width={size} height={size} viewBox={viewBox} fill="none" aria-hidden="true"><LocaleText value={children}/></svg>
 );
 
 export function TreasuryIcon(props: IconProps) {
@@ -42,7 +43,7 @@ const RELIGION_SYMBOL: Record<ReligionType, string> = {
   islam: '☪', hinduism: 'ॐ', buddhism: '☸', judaism: '✡', unaffiliated: '◌', folk_or_mixed: '✦',
 };
 export function ReligionGlyph({ religion, size = 18 }: { religion: ReligionType; size?: number }) {
-  return <span className="religion-glyph" style={{ fontSize: size }} aria-hidden="true">{RELIGION_SYMBOL[religion]}</span>;
+  return <span className="religion-glyph" style={{ fontSize: size }} aria-hidden="true"><LocaleText value={RELIGION_SYMBOL[religion]}/></span>;
 }
 
 export function FuelIcon({size=18}:IconProps) {return <AssetThumbnail asset="fuel" size={size>=18?Math.max(size,32):size}/>;}

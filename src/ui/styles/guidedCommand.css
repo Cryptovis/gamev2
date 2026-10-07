@@ -1,0 +1,381 @@
+:root {
+  --text: #f3fafc;
+  --muted: #ccdee8;
+  --panel: #36566b;
+  --border: #7394a455;
+}
+body {
+  background: #243f52;
+  color: #f3fafc;
+}
+.game-shell {
+  background: radial-gradient(ellipse at 50% 0, #446b7d, #283f51 70%);
+}
+.command-overview-island,
+.clock-island,
+.command-rail,
+.command-panel,
+.floating-command-window,
+.command-window,
+.review-dialog,
+.left-command-dock {
+  background: linear-gradient(140deg, #416478f5, #29495ff5);
+  border-color: #86acba66;
+  box-shadow: 0 12px 40px #112b3945;
+}
+.topbar small,
+.command-panel small,
+.floating-command-window small,
+.command-window small,
+.muted,
+.data-note {
+  color: #d1e1e8;
+}
+.rail-button {
+  min-height: 72px;
+  color: #f2f8fb;
+}
+.rail-button.active,
+.tabs button.active {
+  color: #fff0aa;
+  border-color: #f1cd79;
+  background: #80693155;
+  box-shadow: inset 0 0 0 1px #e8bd6266;
+}
+.rail-button.active small,
+.tabs button.active span {
+  color: #fff0aa;
+  background: transparent;
+}
+.rail-button > span {
+  background: transparent;
+}
+.navigation-art,
+.asset-thumbnail {
+  display: inline-block;
+  flex-shrink: 0;
+  vertical-align: middle;
+  border-radius: 9px;
+  box-shadow: 0 2px 7px #07192366;
+}
+.navigation-art img,
+.asset-thumbnail img {
+  display: block;
+  pointer-events: none;
+}
+.tabs button .asset-thumbnail {
+  min-width: 24px;
+  min-height: 24px;
+}
+.tutorial-replay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  color: #f3fafc;
+}
+.national-flag-card {
+  color: inherit;
+  cursor: pointer;
+}
+.map-close {
+  position: absolute;
+  right: 9px;
+  top: 6px;
+  font-size: 22px;
+  z-index: 3;
+}
+.map-command-dock {
+  padding-top: 26px;
+}
+.program-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 9px;
+}
+.program-grid article {
+  padding: 12px;
+  border: 1px solid #7797a777;
+  border-radius: 12px;
+  background: #d6e7ef0d;
+}
+.program-grid h4 {
+  margin: 0;
+}
+.program-grid p {
+  font-size: 12px;
+  line-height: 1.5;
+}
+.program-grid button {
+  margin-top: 10px;
+  width: 100%;
+}
+.help-intro p,
+.faq p {
+  line-height: 1.6;
+}
+.help-shortcuts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.faq input {
+  width: 100%;
+  margin: 8px 0 14px;
+  background: #25465b;
+  color: white;
+  padding: 12px;
+  border: 1px solid #84a6b6;
+  border-radius: 8px;
+}
+.faq details {
+  border-bottom: 1px solid #7a9dad55;
+  padding: 12px 2px;
+}
+.faq summary {
+  cursor: pointer;
+  color: #f8e4a8;
+  font-weight: 600;
+}
+.guided-tutorial {
+  position: fixed;
+  inset: 0;
+  z-index: 1400;
+  pointer-events: none;
+}
+.tutorial-shade {
+  position: fixed;
+  background: #081a2bc4;
+  pointer-events: auto;
+}
+.tutorial-highlight {
+  position: fixed;
+  outline: 3px solid #ffd26b;
+  border-radius: 10px;
+  box-shadow:
+    0 0 0 5px #ffc45830,
+    0 0 30px #ffc45890;
+  pointer-events: none;
+}
+.guided-card {
+  position: fixed;
+  left: 50%;
+  right: auto;
+  top: auto;
+  bottom: 18px;
+  transform: translateX(-50%);
+  width: min(520px, calc(100vw - 26px));
+  background: #365a70;
+  pointer-events: auto;
+  z-index: 1401;
+}
+.tutorial-instruction {
+  display: block;
+  color: #ffe1a0;
+  font-size: 13px;
+  margin: 12px 0;
+}
+.guided-card p {
+  line-height: 1.5;
+}
+.guided-card button:disabled {
+  opacity: 0.45;
+}
+.war-theatre-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1300;
+  background: #081e34b8;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  pointer-events: auto;
+}
+.war-theatre-backdrop > .war-theatre {
+  display: block;
+  background: linear-gradient(150deg, #45697b, #29485e);
+  color: #f4faff;
+  width: min(920px, 100%);
+  max-height: 92vh;
+  overflow: auto;
+  padding: 22px;
+  border: 1px solid #9cb4c1;
+  border-radius: 20px;
+  box-shadow: 0 25px 85px #04102190;
+}
+.war-theatre header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.war-theatre h2 {
+  margin: 5px 0;
+}
+.war-theatre header button {
+  font-size: 25px;
+}
+.war-sides {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin: 16px 0;
+}
+.war-sides article {
+  border: 1px solid #86a9b866;
+  background: #102e402b;
+  border-radius: 14px;
+  padding: 18px;
+}
+.war-nation {
+  text-align: center;
+}
+.war-nation > b {
+  font-size: 42px;
+}
+.war-nation h3 {
+  margin: 5px 0;
+}
+.war-units {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 18px;
+}
+.war-units > span {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+.war-units small {
+  font-size: 10px;
+  word-break: break-word;
+}
+.war-sides dl {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 9px;
+  font-size: 13px;
+}
+.war-sides dd {
+  margin: 0;
+  color: #fff0bc;
+}
+.war-front progress {
+  width: 100%;
+  accent-color: #ffd26b;
+  display: block;
+  margin: 12px 0;
+}
+.war-front p {
+  font-size: 12px;
+  line-height: 1.6;
+}
+.war-theatre footer {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.hd-war-button {
+  background: linear-gradient(145deg, #ffe4a2, #c29844) !important;
+  color: #24374a !important;
+  border-color: #ffe4a2 !important;
+  font-weight: 800 !important;
+}
+.floating-market > div,
+.resource-card,
+.unit-grid > div,
+.wizard-country-preview {
+  background: #5e7b8c26;
+}
+.campaign-wizard,
+.loading-command-card {
+  background: linear-gradient(145deg, #385c73, #29495e);
+}
+.wizard-intro p,
+.wizard-header p,
+.opening-profile,
+.confirm-brief p {
+  color: #d4e2ea;
+}
+.speed-segment button.active {
+  color: #fff0a9;
+  background: #716d4166;
+}
+.floating-command-body,
+.command-window-body {
+  overscroll-behavior: contain;
+}
+button {
+  transition:
+    background 0.15s,
+    box-shadow 0.15s,
+    transform 0.12s;
+}
+button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+@media (max-width: 760px) {
+  .program-grid {
+    grid-template-columns: 1fr;
+  }
+  .war-theatre-backdrop {
+    padding: 8px;
+  }
+  .war-sides {
+    gap: 8px;
+  }
+  .war-sides article {
+    padding: 9px;
+  }
+  .war-units {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .guided-card {
+    bottom: 8px;
+    font-size: 12px;
+  }
+  .guided-card h2 {
+    font-size: 18px;
+  }
+  .rail-button {
+    min-height: 58px;
+  }
+  .rail-button .navigation-art {
+    width: 30px !important;
+    height: 30px !important;
+  }
+  .command-rail-right {
+    right: 8px;
+  }
+}
+
+.war-theatre button,
+.help-intro button,
+.program-grid button {
+  background: #274b63;
+  color: #f4fbff;
+  border: 1px solid #89a9b977;
+  border-radius: 8px;
+  padding: 10px 14px;
+  cursor: pointer;
+  font: inherit;
+}
+.war-theatre button:hover,
+.help-intro button:hover,
+.program-grid button:hover {
+  background: #52798e;
+}
+.war-theatre button:disabled,
+.program-grid button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.war-theatre small {
+  font-size: 11px;
+  color: #d0e1e8;
+}
+.war-theatre header button {
+  font-size: 22px;
+  padding: 4px 12px;
+}
