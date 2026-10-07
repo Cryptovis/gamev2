@@ -1,0 +1,381 @@
+.command-art {
+  border-radius: 7px;
+  vertical-align: middle;
+  box-shadow: 0 2px 8px #10243070;
+}
+.top-metric-icon {
+  width: 32px !important;
+  height: 32px !important;
+  background: transparent !important;
+  display: grid;
+  place-items: center;
+}
+.governance-metrics {
+  gap: 11px;
+}
+.top-metric {
+  gap: 7px;
+  min-width: 0;
+}
+.rail-button {
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 5px !important;
+  min-height: 78px;
+  height: auto;
+}
+.rail-button > span {
+  position: relative !important;
+  inset: auto !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  min-height: 36px;
+  line-height: 1;
+}
+.rail-button > small {
+  display: block;
+  line-height: 1.2;
+  margin: 0;
+  padding: 0;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: center;
+}
+.rail-button > b {
+  top: 3px;
+  right: 4px;
+}
+.panel-tabs button {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 48px;
+  padding: 7px 9px;
+}
+.panel-tabs button > span:not(.command-art) {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.national-development-shortcuts {
+  display: flex;
+  gap: 8px;
+  margin: 16px 0;
+}
+.national-development-shortcuts button {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex: 1;
+  padding: 9px;
+  color: #f3f8fb;
+  background: #355d73;
+  border: 1px solid #6f92a2;
+  border-radius: 9px;
+  font-size: 11px;
+}
+.country-shape.photographic.surface-overlay {
+  fill-opacity: 0.4;
+}
+.country-shape.photographic.surface-only {
+  fill-opacity: 0.01;
+}
+.connections-legend {
+  position: absolute;
+  bottom: 115px;
+  left: 100px;
+  max-width: 470px;
+  z-index: 2;
+  padding: 10px 14px;
+  border: 1px solid #7a9eb170;
+  border-radius: 12px;
+  background: #284a61e8;
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  pointer-events: none;
+}
+.connections-legend span:nth-child(1) {
+  color: #69d496;
+}
+.connections-legend span:nth-child(2) {
+  color: #78bbec;
+}
+.connections-legend span:nth-child(3) {
+  color: #d0a6ee;
+}
+.connections-legend span:nth-child(4) {
+  color: #efd68d;
+}
+.connections-legend small {
+  color: #d5e3ed;
+  font-size: 10px;
+}
+.tree-branches {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 15px;
+}
+.tree-branches button,
+.tree-node > button,
+.campus-grid button,
+.pilot-recruitment button,
+.governance-actions button,
+.control-transfer button,
+.candidate-grid button,
+.political-campaign button,
+.election-result button,
+.governance-navigation button {
+  padding: 10px 14px;
+  border: 1px solid #81a2b55a;
+  border-radius: 8px;
+  background: #335b73;
+  color: #f4faff;
+  cursor: pointer;
+}
+.tree-branches button.active {
+  background: #a78a40;
+  color: #fff9df;
+}
+.tree-scroll {
+  overflow: auto;
+  padding: 10px;
+}
+.research-tree {
+  position: relative;
+}
+.research-tree > svg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.tree-node {
+  position: absolute;
+  width: 270px;
+  height: 212px;
+  padding: 13px;
+  border-radius: 13px;
+  border: 1px solid #7992a177;
+  background: #305267;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.tree-node.complete {
+  border-color: #5fb998;
+}
+.tree-node.available {
+  border-color: #e5c774;
+  box-shadow: 0 0 18px #ffd47015;
+}
+.tree-node.locked {
+  background: #294457;
+}
+.tree-node h3 {
+  font-size: 15px;
+  margin: 3px 0;
+}
+.tree-node p {
+  font-size: 11px;
+  line-height: 1.35;
+  margin: 2px 0;
+}
+.tree-node small {
+  font-size: 10px;
+  color: #d8e7f0;
+}
+.tree-node > button {
+  margin-top: auto;
+  padding: 6px;
+  font-size: 12px;
+}
+.prerequisite-link {
+  font-size: 10px !important;
+  border: 0;
+  background: transparent;
+  color: #e2c68e;
+  cursor: pointer;
+  padding: 3px 4px;
+}
+.investment-summary,
+.occupation-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 13px;
+  padding: 14px;
+  background: #244356;
+  border-radius: 12px;
+}
+.investment-summary > span,
+.occupation-summary > span {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  font-size: 12px;
+  flex: 1;
+}
+.campus-grid,
+.candidate-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin: 18px 0;
+}
+.campus-grid article,
+.candidate-grid article {
+  background: #305469;
+  border: 1px solid #7b9bb06b;
+  border-radius: 12px;
+  padding: 17px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.campus-grid article h3,
+.candidate-grid h4 {
+  margin: 0;
+  font-size: 17px;
+}
+.campus-grid article p {
+  font-size: 13px;
+}
+.campus-grid article small {
+  font-size: 11px;
+}
+.campus-grid article button {
+  margin-top: auto;
+}
+.pilot-recruitment,
+.control-transfer,
+.political-campaign,
+.election-result {
+  border-top: 1px solid #819aad55;
+  padding-top: 18px;
+  margin-top: 20px;
+}
+.pilot-recruitment p,
+.political-campaign p,
+.governance-actions + p {
+  line-height: 1.6;
+}
+.pilot-recruitment input,
+.governance-navigation select,
+.control-transfer select {
+  color: #f3faff;
+  background: #26465a;
+  border: 1px solid #8fa4b77a;
+  border-radius: 8px;
+  padding: 10px;
+  margin: 0 10px;
+}
+.governance-navigation {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.governance-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 16px 0;
+}
+.occupation-summary progress {
+  width: 130px;
+  accent-color: #e9bd68;
+}
+.campus-grid button:disabled,
+.tree-node button:disabled,
+.governance-actions button:disabled,
+.control-transfer button:disabled,
+.candidate-grid button:disabled,
+.political-campaign button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.guided-card p {
+  line-height: 1.4;
+}
+.guided-card footer {
+  flex-wrap: wrap;
+}
+@media (max-width: 800px) {
+  .campus-grid,
+  .candidate-grid {
+    grid-template-columns: 1fr;
+  }
+  .connections-legend {
+    left: 70px;
+    right: 70px;
+    bottom: 120px;
+    font-size: 10px;
+    gap: 6px;
+  }
+  .top-metric-icon {
+    width: 24px !important;
+    height: 24px !important;
+  }
+  .top-metric .command-art {
+    transform: scale(0.8);
+  }
+  .rail-button {
+    min-height: 62px;
+    gap: 3px;
+  }
+  .rail-button > span {
+    height: 30px;
+    min-height: 30px;
+  }
+  .panel-tabs button {
+    padding: 6px;
+    gap: 5px;
+  }
+  .national-development-shortcuts {
+    flex-direction: column;
+  }
+  .tree-scroll {
+    max-width: 100%;
+  }
+  .investment-summary > span,
+  .occupation-summary > span {
+    flex: 1 0 40%;
+  }
+}
+
+.guided-tutorial {
+  z-index: 1700;
+}
+.loading-popup {
+  position: fixed;
+  left: 50%;
+  top: 40%;
+  padding: 25px;
+  border-radius: 14px;
+  background: #315a70;
+  z-index: 1200;
+  color: white;
+}
+
+.governance-metrics .top-metric-icon {
+  display: grid !important;
+  flex-shrink: 0;
+}
+.panel-tabs.panel-tabs-10 button > span:not(.command-art) {
+  white-space: normal;
+  text-overflow: clip;
+  overflow: visible;
+  line-height: 1.2;
+}
+.panel-tabs.panel-tabs-10 button {
+  min-width: 0;
+}
+.national-development-shortcuts {
+  margin: 10px 0 14px;
+}

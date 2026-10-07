@@ -1,7 +1,10 @@
 import {LocaleText,translateLive} from '../../i18n/localeText';
+const ResearchWindow=lazy(()=>import('../panels/ResearchWindow').then(m=>({default:m.ResearchWindow})));
+const InvestmentWindow=lazy(()=>import('../panels/InvestmentWindow').then(m=>({default:m.InvestmentWindow})));
+const GovernanceWindow=lazy(()=>import('../panels/GovernanceWindow').then(m=>({default:m.GovernanceWindow})));
 import {HelpPanel} from '../panels/HelpPanel';
 import {NavigationArt} from '../icons/NavigationArt';
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import {lazy,Suspense,useEffect, useMemo, useState, type ReactNode } from 'react';
 import { MARKET_RESOURCES, getMarketBoard, resourceReserveDays, resourceStrategicStatus } from '../../store/marketSelectors';
 import { useGameStore } from '../../store/gameStore';
 import { BlocIcon, CouncilIcon, DiplomacyIcon, EmbassyIcon, IntelligenceIcon, ResourceIcon, TreasuryIcon, WorldIcon } from '../icons/GameIcons';
@@ -55,6 +58,11 @@ export function CommandRails(){
    <RailButton active={open.has('sitrep')} badge={state.sitrep.length} label="LOG" onClick={()=>toggle('sitrep')}><NavigationArt kind="intel"/></RailButton>
   </nav>
 
+  <Suspense fallback={<div className="loading-popup"><LocaleText value="Loading command…"/></div>}>
+  {open.has('research')&&<ResearchWindow/>}
+  {open.has('investment')&&<InvestmentWindow/>}
+  {open.has('governance')&&<GovernanceWindow/>}
+  </Suspense>
   {open.has('help')&&<HelpPanel/>}
   {open.has('map')&&<div className="left-command-dock map-command-dock"><button className="map-close" data-guide="close-workspace" onClick={state.closeWorkspace} aria-label={translateLive("Close map command")}><LocaleText value={"×"}/></button><MapModeBar/></div>}
   {open.has('resources')&&<ResourceCommandWindow onClose={()=>close('resources')}/>}

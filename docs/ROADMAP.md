@@ -41,3 +41,18 @@ World map → national economy/resources → diplomacy → bilateral commodity f
 - deeper production chains and military manufacturing
 - front geography / terrain / supply routes
 - event art expansion and audio foundation
+
+## 0.78 Civic Command delivered
+- Practical first-construction tutorial and illustrated national controls.
+- Popup research branches, education campuses, funded pilot training and crew effectiveness.
+- Occupation unrest, resource relief, costly suppression, territorial transfer and transition elections.
+- Conditional foreign political campaigns with seeded outcomes, eligibility checks and cooldown.
+- Single-clock auto war and satellite connection overlays.
+
+## Next development candidates
+- HD War Experience remains planned in ROADMAP-HD-WAR.md: first record deterministic combat events, then build a renderer that cannot change outcomes.
+- Timed research projects and researcher staffing; current unlocks remain immediate after confirmation.
+- AI campus investment and pilot recruitment policies, with upkeep and reserve constraints.
+- Territory taxation, autonomous administration and peace settlements; current control governs occupation consequences without merging sovereign economies.
+- Multiple connection badges on country hover, richer trade route visualization and logistics bottlenecks.
+- Fully templated localization for dynamic reports and remaining legacy descriptions.

@@ -1,3 +1,4 @@
+import type {GovernanceState} from "./governance";
 import type { ReligionType } from "./game";
 export type InstitutionId = "un" | "who" | "security";
 export type VoteChoice = "yes" | "no" | "abstain";
@@ -24,6 +25,7 @@ export interface OutreachMission {
   effect: number;
 }
 export interface WorldState {
+ governance?:GovernanceState;
  programs?:Array<{id:string;kind:'jobs'|'education'|'health';readyDay:number;status:'active'|'completed'}>;
   members: Record<InstitutionId, string[]>;
   ballots: WorldBallot[];

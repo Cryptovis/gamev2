@@ -31,7 +31,7 @@ export function GeographicSurface({projection,flat,pan,zoom,onReady}:{projection
    const shade=flat?.91:.76+.18*Math.sqrt(Math.max(0,1-((sx-center[0])**2+(sy-center[1])**2)/scale**2));
    pixels[to]=sample(0)*shade;pixels[to+1]=sample(1)*shade;pixels[to+2]=sample(2)*shade;pixels[to+3]=255;
   }
-  ctx.putImageData(output,0,0);setRaster(canvas.toDataURL());onReady();
+  ctx.putImageData(output,0,0);setRaster(canvas.toDataURL('image/webp',.9));onReady();
  },[source,projection,flat,pan.x,pan.y,zoom]);
  return raster?<image x="0" y="0" width="1200" height="700" href={raster} pointerEvents="none" aria-label={translateLive("NASA Blue Marble geographic surface")}/>:<text x="600" y="670" textAnchor="middle" fill="#f5d38d" fontSize="12"><LocaleText value={failed?'Satellite texture unavailable · terrain fallback active':'Loading satellite surface…'}/></text>;
 }
