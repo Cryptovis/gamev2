@@ -65,7 +65,7 @@ export function PlayerOptionsMenu({onClose}:{onClose:()=>void}){
       </section>
 
       <footer className="player-options-footer">
-       <span>ALPYX // INDUSTRY & LIVING DIPLOMACY 0.74 PLAYTEST.1</span>
+       <span>ALPYX // OPEN COMMAND 0.75 PLAYTEST.1</span>
        <button onClick={onClose}>RETURN TO COMMAND</button>
       </footer>
      </div>

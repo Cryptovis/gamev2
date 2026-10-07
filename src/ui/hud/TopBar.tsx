@@ -37,9 +37,9 @@ export function TopBar(){
  const strategicDailyBalance=forecast.dailyBalance-(production?.lastInputUse.treasury??0)-(infrastructure?.maintenance??0)-(industrial?.lastCosts??0);
 
  return <header className="topbar">
-  <div className="leader-brand">
+  <div className="command-overview-island"><div className="leader-brand">
    <button className="leader-avatar-button" onClick={()=>setOptionsOpen(true)} title="Open commander options"><AvatarPortrait id={profile.avatarId} size={52}/><span>⋯</span></button>
-   <div className="brand-block"><div className="eyebrow">ALPYX // GLOBAL COMMAND · INDUSTRY & LIVING DIPLOMACY 0.74 PLAYTEST.1</div><div className="brand-line"><strong>{profile.commanderName}</strong><span className="day-chip">{tr(lang,'day')} {day} · {gameDate(useGameStore.getState())}</span></div><small className="leader-country">{player.name} · {player.politics.regime.toUpperCase()}</small></div>
+   <div className="brand-block"><div className="eyebrow">ALPYX · GLOBAL COMMAND</div><div className="brand-line"><strong>{profile.commanderName}</strong><span className="day-chip">{tr(lang,'day')} {day}</span></div><small className="leader-country">{player.name} · {player.politics.regime.toUpperCase()}</small></div>
   </div>
 
   <div className="metrics governance-metrics" aria-label="National command indicators">
@@ -49,8 +49,10 @@ export function TopBar(){
    <Metric icon={<SocietyIcon size={16}/>} label="STABILITY" value={player.politics.stability.toFixed(0)+'%'} tone={player.politics.stability>=65?'good':player.politics.stability<40?'warning':'neutral'}/>
   </div>
 
-  <div className="top-actions">
-   <div className="speed-segment" aria-label="Game speed controls">{speeds.map(item=><button key={item.speed} className={item.speed===speed?'active':''} onClick={()=>setSpeed(item.speed)} title={item.hint}><strong>{item.label}</strong><small>{item.speed===0?tr(lang,'pause'):item.hint}</small></button>)}</div>
+  </div>
+  <div className="top-actions clock-island">
+   <div className="campaign-clock"><small>CAMPAIGN DATE</small><strong>{gameDate(useGameStore.getState())}</strong></div>
+   <div className="speed-segment" aria-label="Game speed controls">{speeds.map(item=><button key={item.speed} aria-pressed={item.speed===speed} className={item.speed===speed?'active':''} onClick={()=>setSpeed(item.speed)} title={item.hint}><strong>{item.label}</strong><small>{item.speed===0?tr(lang,'pause'):item.hint}</small></button>)}</div>
    <div className="national-flag-card" title={player.name}><b>{flagEmoji(player.iso2)}</b><span><small>{player.iso2}</small><strong>{player.name}</strong></span></div>
   </div>
   {optionsOpen&&<PlayerOptionsMenu onClose={()=>setOptionsOpen(false)}/>}

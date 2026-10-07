@@ -19,7 +19,7 @@ export const makeInitialState = (): GameState => {
   selectedCountryId: 'TUR',
   mapMode: 'political',
   mapPresentation: 'political',
-  mapNotice: 'Industry & Living Diplomacy 0.74 online — expanded commodities, industrial supply chains and leader correspondence enabled.',
+  mapNotice: 'Open Command 0.75 online — leader styles, floating HUD and refined camera controls enabled.',
   countries,
   tradeDeals: {},
   wars: {},
@@ -42,7 +42,7 @@ export const makeInitialState = (): GameState => {
   lastAiDay: 1,
   lastStrategicReviewDay: 1,
   sitrep: [
-    'AlpyX Industry & Living Diplomacy 0.74 online.',
+    'AlpyX Open Command 0.75 online.',
     'Strategic AI, covert operations and influence networks loaded alongside Strategic Command systems.',
   ],
   });

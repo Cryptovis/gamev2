@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import {clampSensitivity,readZoomSensitivity} from '../map/cameraControls';
 import { makeInitialState } from '../data/initialState';
 import type { GameCommand } from '../domain/commands';
 import type { CouncilResolutionType, EquipmentType, GameLanguage, GameSpeed, GameState, InfrastructureAsset, IntelOperationType, MinistryKey, TradeResource } from '../domain/game';
@@ -32,6 +33,8 @@ interface GameActions {
   selectCountryByMapFeatureId: (featureId: string | number | null) => void;
   setMapMode: (mode: MapMode) => void;
   setMapPresentation: (mode: MapPresentation) => void;
+  mapZoomSensitivity:number;
+  setMapZoomSensitivity:(value:number)=>void;
   mapLabelScale: number;
   setMapLabelScale: (scale:number)=>void;
   mapProjection: 'globe'|'flat';
@@ -85,6 +88,8 @@ interface GameActions {
 export const useGameStore = create<GameState & GameActions>((set, get) => ({
   ...makeInitialState(),
   saveMessage: null,
+  mapZoomSensitivity:readZoomSensitivity(),
+  setMapZoomSensitivity:(value)=>{const zoom=clampSensitivity(value);try{localStorage.setItem('alpyx-map-zoom',String(zoom));}catch{}set({mapZoomSensitivity:zoom});},
   mapLabelScale: 1,
   setMapLabelScale: (scale) => set({mapLabelScale: Number.isFinite(scale)?Math.max(.85,Math.min(1.4,scale)):1}),
   mapProjection: 'globe',

@@ -10,7 +10,7 @@ import { ResourceCommandWindow } from '../panels/ResourceCommandWindow';
 type ToolId='objectives'|'market'|'pulse'|'map'|'resources'|'sitrep'|'alerts'|'diplomacy';
 
 function RailButton({active,badge,label,children,onClick}:{active:boolean;badge?:number|string;label:string;children:ReactNode;onClick:()=>void}){
- return <button className={active?'rail-button active':'rail-button'} onClick={onClick} title={label}><span>{children}</span>{badge!==undefined&&badge!==0&&<b>{badge}</b>}<small>{label}</small></button>;
+ return <button className={active?'rail-button active':'rail-button'} onClick={onClick} aria-pressed={active} title={`${label} · ${active?'Open — click to close':'Closed — click to open'}`}><span>{children}</span>{badge!==undefined&&badge!==0&&<b>{badge}</b>}<small>{label}</small></button>;
 }
 
 export function CommandRails(){
@@ -39,11 +39,11 @@ export function CommandRails(){
 
  return <>
   <nav className="command-rail command-rail-left" aria-label="World command tools">
-   <RailButton active={open.has('objectives')} badge={`${done}/6`} label="OBJECTIVES" onClick={()=>toggle('objectives')}><CouncilIcon size={20}/></RailButton>
+   <RailButton active={open.has('objectives')} badge={`${done}/6`} label="GOALS" onClick={()=>toggle('objectives')}><CouncilIcon size={20}/></RailButton>
    <RailButton active={open.has('market')} badge={activeTrades.length} label="MARKET" onClick={()=>toggle('market')}><TreasuryIcon size={20}/></RailButton>
    <RailButton active={open.has('pulse')} badge={activeWars.length} label="WORLD" onClick={()=>toggle('pulse')}><BlocIcon size={20}/></RailButton>
    <RailButton active={open.has('map')} label="MAP" onClick={()=>toggle('map')}><WorldIcon size={20}/></RailButton>
-   <RailButton active={open.has('resources')} badge={critical.length} label="RESOURCES" onClick={()=>toggle('resources')}><ResourceIcon resource={critical[0]?.resource??'oil'} size={20}/></RailButton>
+   <RailButton active={open.has('resources')} badge={critical.length} label="SUPPLY" onClick={()=>toggle('resources')}><ResourceIcon resource={critical[0]?.resource??'oil'} size={20}/></RailButton>
   </nav>
   <nav className={`command-rail command-rail-right ${state.selectedCountryId?'country-open':'country-closed'}`} aria-label="Information tools">
    <RailButton active={open.has('diplomacy')} badge={offers.length+state.leadership.messages.filter(m=>!m.read).length} label="DIPLO" onClick={()=>toggle('diplomacy')}><DiplomacyIcon size={20}/></RailButton>

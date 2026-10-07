@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, type CSSProperties } from 'react';
 import type { GameLanguage } from '../../domain/game';
-import { AVATAR_PRESETS } from '../../data/avatarPresets';
+import { LeaderStyleFilter } from '../profile/LeaderStyleFilter';
+import { AVATAR_PRESETS, type LeaderStyle } from '../../data/avatarPresets';
 import { countryThemeFor, flagEmoji } from '../../data/countryThemes';
 import { LANGUAGE_OPTIONS, tr } from '../../i18n/gameI18n';
 import { useGameStore } from '../../store/gameStore';
@@ -25,6 +26,7 @@ export function CampaignSetup(){
  const [language,setLanguage]=useState<GameLanguage>(profile.language);
  const [name,setName]=useState(profile.commanderName==='Commander'?'':profile.commanderName);
  const [avatar,setAvatar]=useState(profile.avatarId);
+ const [portraitStyle,setPortraitStyle]=useState<LeaderStyle|'all'>('all');
  const [countryId,setCountryId]=useState('TUR');
  const [nationality,setNationality]=useState(profile.nationalityCountryId??'TUR');
  const [birthDate,setBirthDate]=useState(profile.birthDate??'');
@@ -86,7 +88,7 @@ export function CampaignSetup(){
 
     {step===2&&<div className="wizard-portrait-stage">
       <div className="wizard-intro compact"><span className="wizard-kicker">STEP 02 / COMMAND PROFILE</span><h2>{tr(language,'choose_avatar')}</h2><p>Your portrait is shown in the command HUD and national briefing screens. You can change it later.</p></div>
-      <div className="wizard-avatar-layout"><div className="wizard-avatar-grid">{AVATAR_PRESETS.map(a=><button key={a.id} className={avatar===a.id?'active':''} onClick={()=>setAvatar(a.id)}><AvatarPortrait id={a.id} size={72}/><span>{a.label}</span></button>)}</div><aside className="wizard-avatar-preview"><AvatarPortrait id={avatar} size={152}/><small>COMMANDER</small><strong>{name||'Commander'}</strong><span>{AVATAR_PRESETS.find(a=>a.id===avatar)?.label}</span></aside></div>
+      <LeaderStyleFilter value={portraitStyle} onChange={setPortraitStyle} turkish={language==='tr'}/><div className="wizard-avatar-layout"><div className="wizard-avatar-grid">{AVATAR_PRESETS.filter(a=>portraitStyle==='all'||a.category===portraitStyle).map(a=><button key={a.id} aria-pressed={avatar===a.id} className={avatar===a.id?'active':''} onClick={()=>setAvatar(a.id)}><AvatarPortrait id={a.id} size={72}/><span>{a.label}</span></button>)}</div><aside className="wizard-avatar-preview"><AvatarPortrait id={avatar} size={152}/><small>COMMANDER</small><strong>{name||'Commander'}</strong><span>{AVATAR_PRESETS.find(a=>a.id===avatar)?.label}</span></aside></div>
     </div>}
 
     {step===3&&<div className="wizard-country-stage">

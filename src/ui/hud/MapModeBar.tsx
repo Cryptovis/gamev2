@@ -12,6 +12,8 @@ const modes:Array<{mode:MapMode;key:string;glyph:string}>=[
 ];
 
 export function MapModeBar(){
+ const zoomSpeed=useGameStore(s=>s.mapZoomSensitivity);
+ const setZoomSpeed=useGameStore(s=>s.setMapZoomSensitivity);
  const labelScale=useGameStore(s=>s.mapLabelScale);
  const setLabelScale=useGameStore(s=>s.setMapLabelScale);
  const mapMode=useGameStore(s=>s.mapMode);
@@ -32,6 +34,7 @@ export function MapModeBar(){
    <div><small>PROJECTION</small><span><button className={projection==='globe'?'active':''} onClick={()=>setProjection('globe')}>GLOBE</button><button className={projection==='flat'?'active':''} onClick={()=>setProjection('flat')}>FLAT</button></span></div>
    <div><small>CAMERA</small><span className="map-camera-actions"><button onClick={()=>issueMapControl('zoomOut')}>−</button><button onClick={()=>issueMapControl('zoomIn')}>+</button><button disabled={!selectedCountryId} onClick={()=>issueMapControl('focus')}>FOCUS</button><button onClick={()=>issueMapControl('reset')}>RESET</button></span></div>
   </div>
+  <label className="map-label-control">ZOOM SPEED <input aria-label="Map zoom speed" type="range" min="0.3" max="1.5" step="0.05" value={zoomSpeed} onChange={e=>setZoomSpeed(Number(e.target.value))}/><output>{zoomSpeed<.5?'SLOW':zoomSpeed>.9?'FAST':'NORMAL'}</output></label>
   <label className="map-label-control">LABEL SIZE <input aria-label="Map label size" type="range" min="0.85" max="1.4" step="0.05" value={labelScale} onChange={e=>setLabelScale(Number(e.target.value))}/><output>{Math.round(labelScale*100)}%</output></label>
   <div className="map-notice">{mapNotice}</div>
  </section>;

@@ -1,3 +1,4 @@
+import {boundPan,clampZoom,wheelZoomFactor,zoomAtPoint} from './cameraControls';
 import {GeographicSurface} from './GeographicSurface';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { geoDistance, geoGraticule10, geoNaturalEarth1, geoOrthographic, geoPath } from 'd3-geo';
@@ -51,6 +52,11 @@ export function WorldMap() {
   const [flatZoom, setFlatZoom] = useState(1);
   const [flatPan, setFlatPan] = useState({ x: 0, y: 0 });
   const [hovered, setHovered] = useState<string | null>(null);
+  const svgRef=useRef<SVGSVGElement>(null);
+  const wheelFrame=useRef<number|null>(null);
+  const pendingWheel=useRef({factor:1,point:[600,350] as [number,number]});
+  const camera=useRef({globeZoom,flatZoom,flatPan});
+  camera.current={globeZoom,flatZoom,flatPan};
   const dragRef = useRef<DragState | null>(null);
   const justDraggedRef = useRef(false);
   const rafRef = useRef<number | null>(null);
@@ -58,6 +64,7 @@ export function WorldMap() {
 
   const countries = useGameStore((s) => s.countries);
   const selectedCountryId = useGameStore((s) => s.selectedCountryId);
+  const zoomSensitivity=useGameStore(s=>s.mapZoomSensitivity);
   const labelScale = useGameStore((s) => s.mapLabelScale);
   const mapMode = useGameStore((s) => s.mapMode);
   const mapPresentation = useGameStore((s) => s.mapPresentation);
@@ -165,9 +172,9 @@ export function WorldMap() {
       rafRef.current = null;
       if (!pending || !drag) return;
       if (projectionMode === 'globe') {
-        setRotation([drag.rotation[0] + pending.dx * 0.20, Math.max(-75, Math.min(75, drag.rotation[1] - pending.dy * 0.17)), 0]);
+        setRotation([drag.rotation[0] + pending.dx * 0.20 / camera.current.globeZoom, Math.max(-75, Math.min(75, drag.rotation[1] - pending.dy * 0.17 / camera.current.globeZoom)), 0]);
       } else {
-        setFlatPan({ x: drag.pan.x + pending.dx, y: drag.pan.y + pending.dy });
+        setFlatPan(boundPan({ x: drag.pan.x + pending.dx, y: drag.pan.y + pending.dy },camera.current.flatZoom));
       }
     });
   };
@@ -178,18 +185,35 @@ export function WorldMap() {
     try { e.currentTarget.releasePointerCapture(e.pointerId); } catch {}
   };
 
-  const changeFlatZoom = (next:number) => {
-    const zoom=Math.max(1,Math.min(8,next));
-    const ratio=zoom/flatZoom;
-    setFlatPan(pan=>({x:pan.x*ratio,y:pan.y*ratio}));
-    setFlatZoom(zoom);
+  const changeFlatZoom = (next:number,point:[number,number]=[W/2,H/2]) => {
+    const current=camera.current,zoom=clampZoom(next,true);
+    const pan=boundPan(zoomAtPoint(current.flatPan,current.flatZoom,zoom,point),zoom);
+    camera.current={...current,flatZoom:zoom,flatPan:pan};
+    setFlatPan(pan);setFlatZoom(zoom);
   };
 
-  const wheel = (e: React.WheelEvent<SVGSVGElement>) => {
-    e.preventDefault();
-    if (projectionMode === 'globe') setGlobeZoom((z) => Math.max(.68, Math.min(3.2, z + (e.deltaY < 0 ? .11 : -.11))));
-    else changeFlatZoom(Number((flatZoom*(e.deltaY<0?1.15:.87)).toFixed(3)));
-  };
+  // Native non-passive handling keeps map gestures on the map. One update per
+  // animation frame coalesces high-frequency trackpad events without losing deltas.
+  useEffect(()=>{
+    const svg=svgRef.current;if(!svg)return;
+    const wheel=(e:WheelEvent)=>{
+      if(e.deltaY===0||!Number.isFinite(e.deltaY))return;
+      e.preventDefault();
+      const matrix=svg.getScreenCTM();if(!matrix)return;
+      const point=new DOMPoint(e.clientX,e.clientY).matrixTransform(matrix.inverse());
+      pendingWheel.current.factor*=wheelZoomFactor(e.deltaY,e.deltaMode,zoomSensitivity);
+      pendingWheel.current.point=[point.x,point.y];
+      if(wheelFrame.current!==null)return;
+      wheelFrame.current=requestAnimationFrame(()=>{
+        wheelFrame.current=null;
+        const {factor,point:anchor}=pendingWheel.current;pendingWheel.current.factor=1;
+        if(projectionMode==='flat')changeFlatZoom(camera.current.flatZoom*factor,anchor);
+        else {const zoom=clampZoom(camera.current.globeZoom*factor,false);camera.current.globeZoom=zoom;setGlobeZoom(zoom);}
+      });
+    };
+    svg.addEventListener('wheel',wheel,{passive:false});
+    return ()=>{svg.removeEventListener('wheel',wheel);if(wheelFrame.current!==null)cancelAnimationFrame(wheelFrame.current);wheelFrame.current=null;pendingWheel.current.factor=1;};
+  },[projectionMode,zoomSensitivity,Boolean(geojson)]);
 
   const screenPoint = (e: React.MouseEvent<SVGSVGElement>) => {
     const matrix=e.currentTarget.getScreenCTM();
@@ -234,8 +258,8 @@ export function WorldMap() {
   };
 
   const zoomBy=(factor:number)=>{
-    if(projectionMode==='globe')setGlobeZoom(z=>Math.max(.68,Math.min(3.2,Number((z*factor).toFixed(2)))));
-    else changeFlatZoom(Number((flatZoom*factor).toFixed(2)));
+    if(projectionMode==='globe')setGlobeZoom(z=>clampZoom(z*factor,false));
+    else changeFlatZoom(camera.current.flatZoom*factor);
   };
 
   const focusSelected=()=>{
@@ -254,8 +278,8 @@ export function WorldMap() {
 
   useEffect(()=>{
     if(!mapControlCommand)return;
-    if(mapControlCommand.action==='zoomIn')zoomBy(1.25);
-    else if(mapControlCommand.action==='zoomOut')zoomBy(.8);
+    if(mapControlCommand.action==='zoomIn')zoomBy(1.18);
+    else if(mapControlCommand.action==='zoomOut')zoomBy(1/1.18);
     else if(mapControlCommand.action==='focus')focusSelected();
     else if(mapControlCommand.action==='reset')resetView();
   },[mapControlCommand?.nonce]);
@@ -345,7 +369,7 @@ export function WorldMap() {
       <strong>{hoveredCountry?.name ?? selectedCountry?.name ?? 'WORLD COMMAND'}</strong>
       <span>{hoveredCountry ? `${hoveredCountry.region || 'Global'} · ${hoveredCountry.military.assessment.capability.toFixed(0)} MIL` : projectionMode === 'globe' ? 'drag globe · wheel zoom · click sovereign territory' : 'drag to pan · wheel zoom · click sovereign territory'}</span>
     </div>
-    <svg viewBox={`0 0 ${W} ${H}`} className={projectionMode === 'globe' ? 'strategy-svg globe-svg' : 'strategy-svg flat-svg'} onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerCancel={pointerUp} onWheel={wheel} onClick={selectFromSurface} shapeRendering="geometricPrecision">
+    <svg ref={svgRef} data-zoom={mapZoom.toFixed(4)} aria-label="Interactive world map" viewBox={`0 0 ${W} ${H}`} className={projectionMode === 'globe' ? 'strategy-svg globe-svg' : 'strategy-svg flat-svg'} onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerCancel={pointerUp} onClick={selectFromSurface} shapeRendering="geometricPrecision">
       <defs>
         <pattern id="terrain-plains" width="18" height="18" patternUnits="userSpaceOnUse"><rect width="18" height="18" fill="#6d8061"/><path d="M0 14C5 11 10 16 18 12" fill="none" stroke="#9aab83" strokeOpacity=".22" strokeWidth="1"/></pattern>
         <pattern id="terrain-forest" width="14" height="14" patternUnits="userSpaceOnUse"><rect width="14" height="14" fill="#3f6b52"/><circle cx="3" cy="4" r="1.5" fill="#234936" fillOpacity=".65"/><circle cx="10" cy="9" r="1.7" fill="#2a513c" fillOpacity=".7"/></pattern>
@@ -368,5 +392,12 @@ export function WorldMap() {
       </g>
       <g className="screen-microstate-layer">{microstateMarkers}</g>
     </svg>
+    <div className="map-camera-hud" aria-label="Map camera controls">
+      <button aria-label="Zoom out" disabled={mapZoom<=(projectionMode==='flat'?1:.72)} onClick={()=>zoomBy(1/1.18)}>−</button>
+      <output aria-label="Map zoom level">{Math.round(mapZoom*100)}%</output>
+      <button aria-label="Zoom in" disabled={mapZoom>=(projectionMode==='flat'?12:6)} onClick={()=>zoomBy(1.18)}>+</button>
+      <i/>
+      <button className="camera-reset" onClick={resetView} title="Reset camera">RESET</button>
+    </div>
   </div>;
 }

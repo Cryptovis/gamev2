@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.75.0-playtest.1 — Open Command
+- Replaced the full-width HUD with floating commander/indicator and date/speed islands.
+- Added a lighter slate interface, softer vignette, brighter geographic surface, responsive layouts and shared supporting surfaces.
+- Added explicit amber open/selected states, accessible pressed states, shorter rail labels and a national-panel close control.
+- Generated and bundled 20 realistic painted leader portraits in four cosmetic clothing styles, with filters in onboarding and the existing profile picker. Stable portrait IDs retain save compatibility.
+- Normalized wheel/trackpad input, coalesced camera updates per frame, anchored flat zoom to the cursor, bounded panning and expanded zoom limits.
+- Added persistent local zoom-speed preference and always-available camera controls.
+- Verified 113 tests, production build and browser interactions/layouts. See docs/PLAYTEST-075.md.
+
 ## 0.74.0-playtest.1 — Industry & Living Diplomacy
 - Fixed active national-command tab contrast; selected text stays readable on a dark active surface.
 - Refreshed all 20 bundled vector portraits with shaded faces, tailored clothing and more detailed features.

@@ -26,7 +26,7 @@ export function GeographicSurface({projection,flat,pan,zoom}:{projection:GeoProj
    const check=projection(geo);if(!check||Math.hypot(check[0]-sx,check[1]-sy)>1)continue;
    const tx=Math.max(0,Math.min(source.width-1,Math.floor((geo[0]+180)/360*source.width))),ty=Math.max(0,Math.min(source.height-1,Math.floor((90-geo[1])/180*source.height)));
    const from=(ty*source.width+tx)*4,to=(y*width+x)*4;
-   const shade=flat?.76:.60+.23*Math.sqrt(Math.max(0,1-((sx-center[0])**2+(sy-center[1])**2)/scale**2));
+   const shade=flat?.91:.76+.18*Math.sqrt(Math.max(0,1-((sx-center[0])**2+(sy-center[1])**2)/scale**2));
    pixels[to]=src[from]*shade;pixels[to+1]=src[from+1]*shade;pixels[to+2]=src[from+2]*shade;pixels[to+3]=255;
   }
   ctx.putImageData(output,0,0);
