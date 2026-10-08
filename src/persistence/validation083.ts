@@ -10,11 +10,13 @@ const event=z.object({round:finite.int().positive(),day,playerSide:side,orders:z
 const tactical=z.object({version:z.literal(1),size:z.literal(6),startedDay:day,round:finite.int().nonnegative(),terrain:z.array(z.enum(['plains','urban','mountain','forest','desert','coastal'])).length(36),objectiveCell:cell,initialUnits:units,units,revealed:z.object({attacker:z.array(cell).max(36),defender:z.array(cell).max(36)}),events:z.array(event).max(60)});
 const history=z.object({countryId:z.string(),points:z.array(z.object({day,gdp:finite.positive(),treasury:finite,inflation:finite,treasuryChange:finite})).min(1).max(180)});
 export function valid083State(value:unknown):boolean {
-  const s=value as {day:number;playerCountryId:string;countries:Record<string,unknown>;wars:Record<string,{id:string;attackerId:string;defenderId:string;rounds:number;lastCombatDay:number;tactical?:unknown}>;world:{economicHistory?:unknown}};
+  const s=value as {day:number;playerCountryId:string;countries:Record<string,unknown>;wars:Record<string,{id:string;attackerId:string;defenderId:string;rounds:number;lastCombatDay:number;tactical?:unknown;attackerStartPersonnel?:unknown;defenderStartPersonnel?:unknown}>;world:{economicHistory?:unknown}};
   if(s.world.economicHistory!==undefined){
     const h=history.safeParse(s.world.economicHistory);if(!h.success||h.data.countryId!==s.playerCountryId||h.data.points.some((p,i)=>p.day>s.day||(i>0&&p.day<=h.data.points[i-1].day)))return false;
   }
   for(const [id,w] of Object.entries(s.wars)){
+    // 0.84 optional war-start strength; absent in older saves.
+    if(w&&[w.attackerStartPersonnel,w.defenderStartPersonnel].some(n=>n!==undefined&&(typeof n!=='number'||!Number.isFinite(n)||n<0)))return false;
     if(!w||w.tactical===undefined)continue;
     const parsed=tactical.safeParse(w.tactical);if(!parsed.success)return false;
     const t=parsed.data;

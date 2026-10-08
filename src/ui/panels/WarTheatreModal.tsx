@@ -206,7 +206,7 @@ export function WarTheatreModal() {
               }
             />
           </button>
-          <button className="hd-war-button" disabled={!mine||(!w.tactical&&(w.status!=="active"||!!tacticalStartStatus(s,w.id)))} onClick={() => {if(!w.tactical)s.startTactical(w.id);else if(w.status==='active')s.setAutoAssault(w.id,false);setTacticalView(true);}}>
+          <button className="hd-war-button" disabled={!mine||(!w.tactical&&(w.status!=="active"||!!tacticalStartStatus(s,w.id)))} onClick={() => {if(!w.tactical)s.startTactical(w.id);else if(w.status==='active'&&w.autoAssault)s.setAutoAssault(w.id,false);setTacticalView(true);}}>
             <LocaleText value={"HD War Experience"} />
           </button>
         </footer>
