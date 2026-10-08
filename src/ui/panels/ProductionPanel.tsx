@@ -1,3 +1,4 @@
+import {EnergyPanel} from './EnergyPanel';
 import {LocaleText} from '../../i18n/localeText';
 import {IndustrialPanel} from './IndustrialPanel';
 import type { CountryState, EquipmentType } from '../../domain/game';
@@ -28,6 +29,7 @@ export function ProductionPanel({country}:{country:CountryState}){
  const bottleneck=production.bottleneck==='none'?'CLEAR':production.bottleneck.toUpperCase();
 
  return <div className="production-panel">
+  <EnergyPanel country={country}/>
   <IndustrialPanel country={country}/>
   <section className="production-hero">
    <div className="production-hero-title"><IndustryIcon size={28}/><span><small><LocaleText value={"NATIONAL INDUSTRIAL COMMAND"}/></small><strong><LocaleText value={"Production & Equipment"}/></strong><em><LocaleText value={isPlayer?'Allocate military industry and reinforce active forces.':'Observed production estimate based on known industrial capacity.'}/></em></span></div>

@@ -1,3 +1,4 @@
+import {processEnergy,processEnergyAI} from './systems/energy';
 import {processCredit} from './systems/sovereignCredit';
 import {processIntegration} from './systems/integration';
 import {pendingVictory} from './systems/victory';
@@ -29,7 +30,7 @@ import {processIndustrialContracts,processIndustrialMarketAI} from './systems/in
 import {processLeadership} from './systems/leadership';
 import { processInfrastructure, processInfrastructureAI } from './systems/infrastructure';
 
-export function tickCountry(country: CountryState,boost=1): CountryState {
+export function tickCountry(country: CountryState,boost=1,managedEnergy=false): CountryState {
   const administered = processMinistries(country);
   const resources = simulateResources(administered,boost);
   const economy = simulateEconomy(administered, resources);
@@ -41,7 +42,7 @@ export function tickCountry(country: CountryState,boost=1): CountryState {
     resources: resources.next,
     politics,
   };
-  return processIndustry(base,boost);
+  return processIndustry(base,boost,managedEnergy);
 }
 
 function processElection(state: GameState): GameState {
@@ -58,7 +59,7 @@ export function tickGame(state: GameState): GameState {
   if (state.campaignStatus !== 'active' || state.activeEvent || state.activeAdvisor || state.world.living?.advice.active || state.world.living?.notice || pendingVictory(state)) return state;
   const dated=processLeadership({...state,day:state.day+1});
   const boostActive=dated.day<dated.leadership.celebrationUntilDay;
-  const countries = distributeMigration(Object.fromEntries(Object.entries(state.countries).map(([id, country]) => [id, country.annexedBy?country:tickCountry(country,(id===state.playerCountryId&&boostActive?1.12:1)*((occupationFor(dated,id)?.unrest??0)>=80?.7:1))])));
+  const countries = distributeMigration(Object.fromEntries(Object.entries(state.countries).map(([id, country]) => [id, country.annexedBy?country:tickCountry(country,(id===state.playerCountryId&&boostActive?1.12:1)*((occupationFor(dated,id)?.unrest??0)>=80?.7:1),true)])));
   const nextDay = state.day + 1;
   const player = countries[state.playerCountryId];
   const notices: string[] = [];
@@ -80,6 +81,7 @@ export function tickGame(state: GameState): GameState {
   next = processGovernance(next);
   next = processTradeDeals(next);
   next = processInfrastructure(next);
+  next = processEnergy(next);
   next = processIndustrialEconomy(next);
   next = processIndustrialContracts(next);
   next = processProduction(next);
@@ -96,6 +98,7 @@ export function tickGame(state: GameState): GameState {
   next = processLetters(next);
   next = processExchange(next);
   next = processCountryAI(next);
+  next = processEnergyAI(next);
   next = processIndustrialAI(next);
   next = processIndustrialMarketAI(next);
   next = maybeTriggerEvent(next);

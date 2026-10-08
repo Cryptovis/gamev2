@@ -1,3 +1,4 @@
+import {energyFor} from './energy';
 import type { GameState, CountryState } from "../../domain/game";
 import { expansion, updateExpansion } from "./sovereignCredit";
 import { occupationFor, governance, academyFor } from "./governance";
@@ -292,6 +293,8 @@ export function consolidateTerritory(
     countries: { ...s.countries, [owner]: merged, [id]: retired },
     selectedCountryId: s.selectedCountryId === id ? owner : s.selectedCountryId,
   };
+  const ep=energyFor(s,owner),ec=energyFor(s,id);
+  n={...n,world:{...n.world,energy:{...n.world.energy,[owner]:{...ep,plants:Object.fromEntries(Object.keys(ep.plants).map(k=>[k,ep.plants[k as keyof typeof ep.plants]+ec.plants[k as keyof typeof ec.plants]])) as typeof ep.plants,legacyCapacity:ep.legacyCapacity+ec.legacyCapacity,projects:[...ep.projects,...ec.projects]},[id]:{...ec,plants:{coal:0,oil:0,solar:0,wind:0,hydro:0,nuclear:0},legacyCapacity:0,projects:[]}}}};
   const ip = s.industrialEconomy[owner],
     ic = s.industrialEconomy[id];
   if (ip && ic)

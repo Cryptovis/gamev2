@@ -1,3 +1,5 @@
+import {dominantResources} from './resourceBadges';
+import {ResourceMapBadge} from '../ui/icons/ResourceMapBadge';
 import {sovereignId} from '../domain/sovereignty';
 import {LocaleText,translateLive} from '../i18n/localeText';
 import {boundPan,clampZoom,wheelZoomFactor,zoomAtPoint} from './cameraControls';
@@ -66,6 +68,7 @@ export function WorldMap() {
 
   const embassies=useGameStore(s=>s.embassies),tradeDeals=useGameStore(s=>s.tradeDeals),contracts=useGameStore(s=>s.industrialContracts);
   const countries = useGameStore((s) => s.countries);
+  const industrialEconomy = useGameStore(s=>s.industrialEconomy);
   const selectedCountryId = useGameStore((s) => s.selectedCountryId);
   const zoomSensitivity=useGameStore(s=>s.mapZoomSensitivity);
   const labelScale = useGameStore((s) => s.mapLabelScale);
@@ -321,7 +324,8 @@ export function WorldMap() {
       +country.demographics.population/2_000_000;
     labelCandidates.push({
       id,
-      text:country.name.toUpperCase(),
+      text:translateLive(country.name).toLocaleUpperCase(),
+      extraHeight:mapMode==='resources'?28:0,
       x:p[0],
       y:p[1],
       fontSize:(forced?Math.min(16,13.5+(mapZoom>=2?1:0)):labelFontSize(screenArea,mapZoom))*labelScale,
@@ -393,7 +397,7 @@ export function WorldMap() {
         <g className="country-layer">{shapeLayer}</g>
       </g>
       <g className="screen-label-layer" pointerEvents="none">
-        {screenLabels.map(label=><text key={label.id} x={label.x} y={label.y} className={label.className} style={{fontSize:label.fontSize}}><LocaleText value={label.text}/></text>)}
+        {screenLabels.map(label=><g key={label.id}><text x={label.x} y={label.y} className={label.className} style={{fontSize:label.fontSize}}><LocaleText value={label.text}/></text>{mapMode==='resources'&&countries[label.id]&&dominantResources(countries[label.id],industrialEconomy[label.id]).map((r,index,all)=><ResourceMapBadge key={r} resource={r} x={label.x+(index-(all.length-1)/2)*27-11} y={label.y+7}/>)}</g>)}
       </g>
       <g className="screen-microstate-layer"><LocaleText value={microstateMarkers}/></g>
     </svg>

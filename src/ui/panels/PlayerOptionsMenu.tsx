@@ -1,3 +1,4 @@
+import {activeCountries} from '../../domain/sovereignty';
 import {LocaleText,translateLive} from '../../i18n/localeText';
 import {validBirthDate,CAMPAIGN_START_DATE,gameDate} from '../../engine/systems/leadership';
 import { useState } from 'react';
@@ -9,6 +10,9 @@ import { AvatarPicker } from './AvatarPicker';
 import { EconomyIcon, OverviewIcon, TreasuryIcon, WorldIcon } from '../icons/GameIcons';
 
 export function PlayerOptionsMenu({onClose}:{onClose:()=>void}){
+ const [view,setView]=useState<'profile'|'history'|'session'>('profile');
+ const history=useGameStore(s=>s.sitrep);
+ const world=useGameStore(s=>s.world);
  const [avatarOpen,setAvatarOpen]=useState(false);
  const [confirmNew,setConfirmNew]=useState(false);
  const profile=useGameStore(s=>s.playerProfile);
@@ -54,8 +58,10 @@ export function PlayerOptionsMenu({onClose}:{onClose:()=>void}){
        <span><EconomyIcon size={19}/><i><small><LocaleText value={"GDP"}/></small><strong><LocaleText value={"$"}/><LocaleText value={player.economy.gdp.toFixed(0)}/><LocaleText value={"B"}/></strong></i></span>
       </div>
 
-      <section className="campaign-options-section"><div><small><LocaleText value={"PERSONAL PROFILE"}/></small><h3><LocaleText value={"Leader Identity"}/></h3></div><div className="wizard-personal-fields"><label><span><LocaleText value={"CITIZENSHIP"}/></span><select aria-label={translateLive("Profile citizenship")} value={citizenship} onChange={e=>{setCitizenship(e.target.value);setIdentitySaved(false)}}>{Object.values(countries).sort((a,b)=>a.name.localeCompare(b.name)).map(c=><option key={c.id} value={c.id}><LocaleText value={c.name}/></option>)}</select></label><label><span><LocaleText value={"DATE OF BIRTH"}/></span><input aria-label={translateLive("Profile birth date")} type="date" min="1900-01-01" max={CAMPAIGN_START_DATE} value={birthday} onChange={e=>{setBirthday(e.target.value);setIdentitySaved(false)}}/></label></div><button className="change-portrait-button" disabled={Boolean(birthday&&!validBirthDate(birthday))} onClick={()=>{setIdentity(citizenship,birthday||null);setIdentitySaved(true)}}><LocaleText value={identitySaved?'PROFILE UPDATED':'UPDATE IDENTITY'}/></button></section>
-      <section className="campaign-options-section">
+      <nav className="profile-tabs" aria-label={translateLive("Profile sections")}>{(['profile','history','session'] as const).map(tab=><button key={tab} aria-pressed={view===tab} className={view===tab?'active':''} onClick={()=>setView(tab)}><LocaleText value={tab==='profile'?'Profile':tab==='history'?'Campaign history':'Session'}/></button>)}</nav>
+      {view==='history'&&<section className="campaign-history"><h3><LocaleText value="Campaign history"/></h3><div className="campaign-status-grid">{[["Completed victories",world.expansion?.victories.length??0],["Integrated territories",Object.values(world.expansion?.integrations??{}).filter(x=>x.status==='completed').length],["Active loans",world.expansion?.loans.filter(x=>x.status!=='paid'&&[x.lenderId,x.borrowerId].includes(player.id)).length??0],["Active power projects",world.energy?.[player.id]?.projects.length??0]].map(([label,count])=><span key={label}><i><small><LocaleText value={label}/></small><strong>{count}</strong></i></span>)}</div><h4><LocaleText value="Recent decisions"/></h4><ol>{history.map((line,index)=><li key={index}><LocaleText value={line}/></li>)}</ol>{!history.length&&<p><LocaleText value="No recent decisions yet."/></p>}</section>}
+      {view==='profile'&&<section className="campaign-options-section"><div><small><LocaleText value={"PERSONAL PROFILE"}/></small><h3><LocaleText value={"Leader Identity"}/></h3></div><div className="wizard-personal-fields"><label><span><LocaleText value={"CITIZENSHIP"}/></span><select aria-label={translateLive("Profile citizenship")} value={citizenship} onChange={e=>{setCitizenship(e.target.value);setIdentitySaved(false)}}>{activeCountries(countries).sort((a,b)=>a.name.localeCompare(b.name)).map(c=><option key={c.id} value={c.id}><LocaleText value={c.name}/></option>)}</select></label><label><span><LocaleText value={"DATE OF BIRTH"}/></span><input aria-label={translateLive("Profile birth date")} type="date" min="1900-01-01" max={CAMPAIGN_START_DATE} value={birthday} onChange={e=>{setBirthday(e.target.value);setIdentitySaved(false)}}/></label></div><button className="change-portrait-button" disabled={Boolean(birthday&&!validBirthDate(birthday))} onClick={()=>{setIdentity(citizenship,birthday||null);setIdentitySaved(true)}}><LocaleText value={identitySaved?'PROFILE UPDATED':'UPDATE IDENTITY'}/></button></section>}
+      {view==='session'&&<section className="campaign-options-section">
        <div><small><LocaleText value={"CAMPAIGN CONTROL"}/></small><h3><LocaleText value={"Save & Session"}/></h3><p><LocaleText value={"Campaign management lives here so the main strategic HUD stays focused on the world."}/></p></div>
        <div className="campaign-option-actions">
         <button onClick={()=>void saveNow()}><strong><LocaleText value={"SAVE CAMPAIGN"}/></strong><span><LocaleText value={"Create a manual save at Day "}/><LocaleText value={day}/></span></button>
@@ -63,10 +69,9 @@ export function PlayerOptionsMenu({onClose}:{onClose:()=>void}){
         <button className="danger" onClick={()=>setConfirmNew(true)}><strong><LocaleText value={"NEW CAMPAIGN"}/></strong><span><LocaleText value={"Return to campaign setup and choose a new command"}/></span></button>
        </div>
        {saveMessage&&<div className="campaign-save-status"><LocaleText value={saveMessage}/></div>}
-      </section>
+      </section>}
 
       <footer className="player-options-footer">
-       <span><LocaleText value={"ALPYX // OPEN COMMAND 0.75 PLAYTEST.1"}/></span>
        <button onClick={onClose}><LocaleText value={"RETURN TO COMMAND"}/></button>
       </footer>
      </div>
