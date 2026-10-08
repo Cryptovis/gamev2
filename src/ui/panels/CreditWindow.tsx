@@ -1,3 +1,4 @@
+import {useWorldView} from '../../store/useWorldView';
 import { useState } from "react";
 import { useGameStore } from "../../store/gameStore";
 import {
@@ -9,9 +10,9 @@ import {
 import { CommandWindow } from "./CommandWindow";
 import { ReviewDialog, type ReviewContent } from "./ReviewDialog";
 import { LocaleText } from "../../i18n/localeText";
-import { money } from "../formatMoney";
+import {money as formatMoney} from '../formatMoney';
 export function CreditWindow() {
-  const s = useGameStore(),
+  const s = useWorldView(),
     e = expansion(s),
     p = s.countries[s.playerCountryId],
     [kind, setKind] = useState<"lend" | "borrow">("borrow"),
@@ -19,9 +20,10 @@ export function CreditWindow() {
     [apr, setApr] = useState(3),
     [days, setDays] = useState<90 | 180 | 365>(365),
     [review, setReview] = useState<
-      (ReviewContent & { execute: () => void; allowed?: boolean }) | null
+      (ReviewContent & { execute: (commandId:string) => void; allowed?: boolean }) | null
     >(null);
   const principal = millions / 1000;
+  const money=(value:number)=>formatMoney(value,s.playerProfile.language);
   return (
     <CommandWindow
       wide
@@ -125,7 +127,7 @@ export function CreditWindow() {
                 apr <= 30 &&
                 arrears(s, p.id) === 0 &&
                 (kind === "borrow" || p.economy.treasury >= principal),
-              execute: () => s.postCredit(kind, principal, apr, days),
+              execute: (commandId) => s.postCredit(kind, principal, apr, days, commandId),
             })
           }
         >
@@ -164,7 +166,7 @@ export function CreditWindow() {
                           title: "Cancel unmatched credit",
                           summary:
                             "Reserved lending cash is returned. Matched loans cannot be cancelled.",
-                          execute: () => s.cancelCredit(o.id),
+                          execute: (commandId) => s.cancelCredit(o.id, commandId),
                         }
                       : {
                           title:
@@ -182,7 +184,7 @@ export function CreditWindow() {
                             ],
                             ["Maturity day", String(s.day + o.days)],
                           ],
-                          execute: () => s.acceptCredit(o.id),
+                          execute: (commandId) => s.acceptCredit(o.id, commandId),
                         },
                   )
                 }
@@ -216,8 +218,8 @@ export function CreditWindow() {
         <ReviewDialog
           {...review}
           onCancel={() => setReview(null)}
-          onConfirm={() => {
-            review.execute();
+          onConfirm={(commandId) => {
+            review.execute(commandId);
             setReview(null);
           }}
         />

@@ -24,6 +24,8 @@ export function NavigationArt({
       role="img"
       aria-label={translateLive(kind)}
       style={{
+        display: "inline-block",
+        flexShrink: 0,
         width: size,
         height: size,
         position: "relative",

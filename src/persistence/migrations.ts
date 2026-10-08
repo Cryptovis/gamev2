@@ -1,22 +1,24 @@
 import {createLiving} from '../engine/systems/livingEconomy';
-import {createGovernance,academyFor,governance} from '../engine/systems/governance';
-import type { GameState } from '../domain/game';
-
+import {createGovernance,governance} from '../engine/systems/governance';
+import type {GameState} from '../domain/game';
 import {createIndustrialMap} from '../engine/systems/industrialEconomy';
 import {createLeadership} from '../engine/systems/leadership';
 import {createWorld} from '../engine/systems/worldInstitutions';
-export const CURRENT_SCHEMA_VERSION = 14;
-export function migrateSave(state:GameState|null|undefined):GameState|null {
- if(!state)return null;
- if(state.schemaVersion===12&&state.countries&&state.production&&state.infrastructure){
-  state={...state,schemaVersion:13,industrialEconomy:createIndustrialMap(state.countries),industrialContracts:{},leadership:createLeadership(state.countries[state.playerCountryId].economy.gdp)};
- }
- if(state.schemaVersion===13)state={...state,schemaVersion:14,world:createWorld(state.countries,state.playerCountryId)};
- if(!canLoadSave(state))return null;
- const defaults=createIndustrialMap(state.countries);const industrialEconomy=Object.fromEntries(Object.entries(state.industrialEconomy).map(([id,n])=>[id,{...n,stock:{...defaults[id].stock,...n.stock},facilities:{...defaults[id].facilities,...n.facilities},enabled:{...defaults[id].enabled,...n.enabled},potential:{...defaults[id].potential,...n.potential},deposits:{...defaults[id].deposits,...n.deposits}}]));
- const g=governance(state);return {...state,industrialEconomy,world:{...state.world,living:state.world.living??createLiving(state.countries),governance:{...g,academies:{...createGovernance(state.countries).academies,...g.academies}}}};
+import {validSaveShape} from './validation';
+export const CURRENT_SCHEMA_VERSION=15;
+export function migrateSave(input:GameState|null|undefined):GameState|null {
+ try {
+  let state=input;if(!state||!state.countries?.[state.playerCountryId])return null;
+  if(state.schemaVersion===12&&state.production&&state.infrastructure)state={...state,schemaVersion:13,industrialEconomy:createIndustrialMap(state.countries),industrialContracts:{},leadership:createLeadership(state.countries[state.playerCountryId].economy.gdp)};
+  if(state.schemaVersion===13)state={...state,schemaVersion:14,world:createWorld(state.countries,state.playerCountryId)};
+  if(state.schemaVersion===14)state={...state,schemaVersion:15,world:{...state.world,campaignId:state.world?.campaignId??`legacy-${state.playerCountryId}-${state.simulationSeed}`,commandIds:state.world?.commandIds??[],journal:state.world?.journal??state.sitrep.map((message,index)=>({id:`legacy:${index}`,day:input!.day,message,kind:'legacy' as const}))}};
+  if(!canLoadSave(state))return null;
+  const defaults=createIndustrialMap(state.countries);
+  const industrialEconomy=Object.fromEntries(Object.entries(state.industrialEconomy).map(([id,n])=>[id,{...n,stock:{...defaults[id]?.stock,...n.stock},facilities:{...defaults[id]?.facilities,...n.facilities},enabled:{...defaults[id]?.enabled,...n.enabled},potential:{...defaults[id]?.potential,...n.potential},deposits:{...defaults[id]?.deposits,...n.deposits}}]));
+  const g=governance(state);
+  return {...state,industrialEconomy,world:{...state.world,living:state.world.living??createLiving(state.countries),governance:{...g,academies:{...createGovernance(state.countries).academies,...g.academies}}}};
+ }catch{return null;}
 }
-
-export function canLoadSave(state: GameState | null | undefined): state is GameState {
-  return Boolean(state && state.schemaVersion === CURRENT_SCHEMA_VERSION && state.world && state.industrialEconomy && state.industrialContracts && state.leadership && state.blocs && state.council && state.intelOperations && state.intelligenceLedger && state.culturalInfluence && state.playerProfile && state.preferredSpeed && state.mapPresentation && state.advisorCooldownUntil !== undefined && state.embassies && state.diplomaticOffers && state.production && state.infrastructure);
+export function canLoadSave(state:GameState|null|undefined):state is GameState {
+ return !!state&&state.schemaVersion===CURRENT_SCHEMA_VERSION&&validSaveShape(state);
 }

@@ -1,3 +1,6 @@
+import {useWorldView} from '../../store/useWorldView';
+import {NavigationArt} from '../icons/NavigationArt';
+import {CivicArt} from '../icons/CivicArt';
 import {activeCountries} from '../../domain/sovereignty';
 import {LocaleText,translateLive} from '../../i18n/localeText';
 import { useState } from "react";
@@ -25,7 +28,7 @@ const religions: ReligionType[] = [
   "folk_or_mixed",
 ];
 export function WorldInstitutionsPanel() {
-  const state = useGameStore(),
+  const state = useWorldView(),
     player = state.countries[state.playerCountryId];
   const [target, setTarget] = useState(
     state.selectedCountryId !== player.id
@@ -36,7 +39,7 @@ export function WorldInstitutionsPanel() {
     player.society.dominantReligion,
   );
   const [review, setReview] = useState<
-    (ReviewContent & { execute: () => void }) | null
+    (ReviewContent & { execute: (commandId:string) => void }) | null
   >(null);
   const foreign = activeCountries(state.countries)
     .filter((c) => c.id !== player.id)
@@ -64,7 +67,7 @@ export function WorldInstitutionsPanel() {
     <section className="world-institutions">
       <header>
         <small><LocaleText value={"WORLD / INSTITUTIONS & SOCIETY"}/></small>
-        <h2><LocaleText value={"International Affairs"}/></h2>
+        <h2><CivicArt kind="bloc" size={44}/><LocaleText value={"International Affairs"}/></h2>
         <p className="data-note"><LocaleText value={"Game rules and starting memberships are simulated. Voting uses one member, one vote; more yes than no passes, abstentions excluded. Institution badges are original game artwork."}/></p>
       </header>
       <div className="world-card">
@@ -97,7 +100,7 @@ export function WorldInstitutionsPanel() {
         return (
           <article className="institution-card" key={id}>
             <header>
-              <span className="institution-mark"><LocaleText value={d.short}/></span>
+              <span className="institution-mark"><NavigationArt kind={id==='security'?'military':'world'} size={46}/><LocaleText value={d.short}/></span>
               <div>
                 <h3><LocaleText value={d.name}/></h3>
                 <small>
@@ -147,7 +150,7 @@ export function WorldInstitutionsPanel() {
                     "Relations, reputation and diplomatic leadership affect member votes.",
                     "Rejected applications may be retried 30 days after the vote closes.",
                   ],
-                  execute: () => state.applyMembership(id),
+                  execute: (commandId) => state.applyMembership(id, commandId),
                 })
               }
             >
@@ -200,7 +203,7 @@ export function WorldInstitutionsPanel() {
               warnings: [
                 "A rejected resolution carries a -10 reputation and -20 bilateral relations penalty if you subsequently attack.",
               ],
-              execute: () => state.proposeAttack(chosen.id),
+              execute: (commandId) => state.proposeAttack(chosen.id, commandId),
             })
           }
         ><LocaleText value={"REVIEW ATTACK PROPOSAL"}/></button>
@@ -300,7 +303,7 @@ export function WorldInstitutionsPanel() {
                 "The campaign can fail. Costs are not refunded.",
                 "Religious shares remain normalized to 100%; results are deterministic for this saved campaign.",
               ],
-              execute: () => state.startOutreach(chosen.id, religion),
+              execute: (commandId) => state.startOutreach(chosen.id, religion, commandId),
             })
           }
         ><LocaleText value={"REVIEW OUTREACH"}/></button>
@@ -317,8 +320,8 @@ export function WorldInstitutionsPanel() {
         <ReviewDialog
           {...review}
           onCancel={() => setReview(null)}
-          onConfirm={() => {
-            review.execute();
+          onConfirm={(commandId) => {
+            review.execute(commandId);
             setReview(null);
           }}
         />

@@ -28,6 +28,9 @@ export interface OutreachMission {
   effect: number;
 }
 export interface WorldState {
+ campaignId?:string;
+ commandIds?:string[];
+ journal?:Array<{id:string;day:number;message:string;kind:'command'|'world'|'legacy'}>;
  energy?:Record<string,NationalEnergy>;
  expansion?:ExpansionState;
  living?:LivingWorld;
@@ -37,6 +40,6 @@ export interface WorldState {
   ballots: WorldBallot[];
   missions: OutreachMission[];
   religiousShares: Record<string, Partial<Record<ReligionType, number>>>;
-  tutorial: { active: boolean; step: number; completed: boolean };
+  tutorial: { active: boolean; step: number; completed: boolean; practiceProjectId?:string };
   lastAiProposalDay: number;
 }

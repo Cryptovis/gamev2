@@ -1,4 +1,5 @@
 import {processEnergy,processEnergyAI} from './systems/energy';
+import {processResearch} from './systems/technology';
 import {processCredit} from './systems/sovereignCredit';
 import {processIntegration} from './systems/integration';
 import {pendingVictory} from './systems/victory';
@@ -79,6 +80,7 @@ export function tickGame(state: GameState): GameState {
   next = processWorldInstitutions(next);
   next = processPrograms(next);
   next = processGovernance(next);
+  next = processResearch(next);
   next = processTradeDeals(next);
   next = processInfrastructure(next);
   next = processEnergy(next);

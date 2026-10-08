@@ -23,12 +23,12 @@ export function CivicArt({
       role="img"
       aria-label={kind}
       style={{
+        display: "inline-block",
+        flexShrink: 0,
         width: size,
         height: size,
-        display: "inline-block",
         position: "relative",
         overflow: "hidden",
-        flexShrink: 0,
       }}
     >
       <img

@@ -1,3 +1,15 @@
+import {buildPlant,togglePlant,cancelPowerProject} from './systems/energy';
+import {buildFacility} from './systems/industrialEconomy';
+import {placeIndustrialOrder} from './systems/industrialMarket';
+import {postCredit,acceptCredit,cancelCredit} from './systems/sovereignCredit';
+import {prepareIntegration,beginIntegration} from './systems/integration';
+import {postListing,buyListing,cancelListing,moveBankGold,startActivity,recruitPersonnel,resolveIncomingLetter} from './systems/livingEconomy';
+import {buildCampus,hirePilots,manageOccupation,fundPoliticalCampaign,acceptElectionOffer} from './systems/governance';
+import {startProgram} from './systems/nationalPrograms';
+import {cancelConstruction} from './systems/investmentReview';
+import {applyMembership,proposeAttack,voteWorld,startOutreach} from './systems/worldInstitutions';
+import {cancelResearch} from './systems/technology';
+import {recordReports} from './journal';
 import {arrears} from './systems/sovereignCredit';
 import {pendingVictory} from './systems/victory';
 import {requestDiplomacy} from './systems/livingEconomy';
@@ -36,8 +48,42 @@ function createImport(state: GameState, targetCountryId: string, resource: Trade
   return note({ ...state, tradeDeals: { ...state.tradeDeals, [deal.id]: deal } }, `TRADE // ${resource.toUpperCase()} import contract signed with ${target.name} at $${deal.pricePerUnit.toFixed(3)}/unit.`);
 }
 
-export function applyGameCommand(state: GameState, command: GameCommand): GameState {
+function executeGameCommand(state: GameState, command: GameCommand): GameState {
   switch (command.type) {
+    case 'energy/build': return buildPlant(state,state.playerCountryId,command.kind);
+    case 'energy/toggle': return togglePlant(state,state.playerCountryId,command.kind);
+    case 'energy/cancel': return cancelPowerProject(state,state.playerCountryId,command.id);
+    case 'industry/build': {
+      const n=buildFacility(state,state.playerCountryId,command.kind);
+      const project=n.industrialEconomy[state.playerCountryId].projects.at(-1);
+      return n!==state&&state.world.tutorial.active&&state.world.tutorial.step===3&&project?{...n,world:{...n.world,tutorial:{...n.world.tutorial,practiceProjectId:project.id}}}:n;
+    }
+    case 'industry/order': return placeIndustrialOrder(state,command.partnerId,command.good,command.quantity,command.direction,command.years);
+    case 'credit/post': return postCredit(state,command.kind,command.principal,command.apr,command.days);
+    case 'credit/accept': return acceptCredit(state,command.id);
+    case 'credit/cancel': return cancelCredit(state,command.id);
+    case 'integration/prepare': return prepareIntegration(state,command.id,command.kind);
+    case 'integration/begin': return beginIntegration(state,command.id);
+    case 'exchange/post': return postListing(state,command.good,command.quantity,command.price);
+    case 'exchange/buy': return buyListing(state,command.id,command.quantity);
+    case 'exchange/cancel': return cancelListing(state,command.id);
+    case 'gold/move': return moveBankGold(state,command.tonnes,command.direction);
+    case 'activity/start': return startActivity(state,command.kind);
+    case 'personnel/recruit': return recruitPersonnel(state,command.count);
+    case 'diplomacy/request': return requestDiplomacy(state,command.id,command.kind,command.years);
+    case 'diplomacy/resolveLetter': return resolveIncomingLetter(state,command.id,command.accept);
+    case 'campus/build': return buildCampus(state,command.kind);
+    case 'pilots/hire': return hirePilots(state,command.count);
+    case 'occupation/manage': return manageOccupation(state,command.id,command.action,command.value);
+    case 'politics/campaign': return fundPoliticalCampaign(state,command.id);
+    case 'politics/acceptElection': return acceptElectionOffer(state,command.id);
+    case 'program/start': return startProgram(state,command.kind);
+    case 'construction/cancel': {const n=cancelConstruction(state,command.id);return n!==state&&state.world.tutorial.practiceProjectId===command.id?{...n,world:{...n.world,tutorial:{...n.world.tutorial,practiceProjectId:undefined}}}:n;}
+    case 'world/membership': return applyMembership(state,command.id);
+    case 'world/attackProposal': return proposeAttack(state,command.id);
+    case 'world/vote': return voteWorld(state,command.id,command.choice);
+    case 'world/outreach': return startOutreach(state,command.id,command.religion);
+    case 'technology/cancel': return cancelResearch(state,state.playerCountryId);
     case 'time/advanceDay': return tickGame(state);
     case 'clock/setSpeed': {
       const preferredSpeed = command.speed === 0 ? state.preferredSpeed : command.speed;
@@ -196,3 +242,14 @@ export function applyGameCommand(state: GameState, command: GameCommand): GameSt
     }
   }
 }
+
+export interface CommandResult {state:GameState;status:'applied'|'unavailable'|'duplicate';message:string}
+export function executeCommandResult(state:GameState,command:GameCommand):CommandResult {
+ if(command.commandId && state.world.commandIds?.includes(command.commandId))return {state,status:'duplicate',message:'This command has already been applied.'};
+ const next=executeGameCommand(state,command);
+ const changed=next.countries!==state.countries||next.tradeDeals!==state.tradeDeals||next.world!==state.world||next.wars!==state.wars||next.production!==state.production||next.infrastructure!==state.infrastructure||next.intelOperations!==state.intelOperations||next.council!==state.council||next.day!==state.day||next.speed!==state.speed;
+ let recorded=recordReports(state,next,command.type==='time/advanceDay'?'world':'command');
+ if(command.commandId && changed)recorded={...recorded,world:{...recorded.world,commandIds:[...(recorded.world.commandIds??[]),command.commandId].slice(-512)}};
+ return {state:recorded,status:changed?'applied':'unavailable',message:next.sitrep[0]!==state.sitrep[0]?next.sitrep[0]:changed?'Your command has been applied.':'Check budget, stock, prerequisites, access or an existing order.'};
+}
+export function applyGameCommand(state:GameState,command:GameCommand):GameState {return executeCommandResult(state,command).state;}

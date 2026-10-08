@@ -1,3 +1,4 @@
+import {useWorldView} from '../../store/useWorldView';
 import {EnergyPanel} from './EnergyPanel';
 import {LocaleText} from '../../i18n/localeText';
 import {IndustrialPanel} from './IndustrialPanel';
@@ -18,7 +19,7 @@ function EquipmentGlyph({type}:{type:EquipmentType}){
 const fmt=(v:number)=>v>=1_000_000?(v/1_000_000).toFixed(1)+'M':v>=1000?(v/1000).toFixed(1)+'K':v>=100?Math.round(v).toLocaleString():v.toFixed(v<10?1:0);
 
 export function ProductionPanel({country}:{country:CountryState}){
- const state=useGameStore();
+ const state=useWorldView();
  const production=state.production[country.id];
  const isPlayer=country.id===state.playerCountryId;
  if(!production)return <div className="production-empty"><LocaleText value={"Production intelligence unavailable."}/></div>;

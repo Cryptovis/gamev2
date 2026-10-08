@@ -1,3 +1,4 @@
+import {useWorldView} from '../../store/useWorldView';
 import {activeCountries} from '../../domain/sovereignty';
 import { useState } from "react";
 import { useGameStore } from "../../store/gameStore";
@@ -7,12 +8,12 @@ import { CivicArt } from "../icons/CivicArt";
 import { ReviewDialog, type ReviewContent } from "./ReviewDialog";
 import { money } from "../formatMoney";
 export function DiplomaticPost() {
-  const s = useGameStore(),
+  const s = useWorldView(),
     l = living(s),
     [target, setTarget] = useState("BRA"),
     [kind, setKind] = useState<"embassy" | "trade_pact">("embassy"),
     [review, setReview] = useState<
-      (ReviewContent & { execute: () => void; allowed?: boolean }) | null
+      (ReviewContent & { execute: (commandId:string) => void; allowed?: boolean }) | null
     >(null);
   return (
     <section className="diplomatic-post">
@@ -71,7 +72,7 @@ export function DiplomaticPost() {
               allowed:
                 s.countries[s.playerCountryId].economy.treasury >=
                 LETTER_COST[kind],
-              execute: () => s.requestDiplomacy(target, kind, 1),
+              execute: (commandId) => s.requestDiplomacy(target, kind, 1, commandId),
             })
           }
         >
@@ -117,7 +118,7 @@ export function DiplomaticPost() {
                           title: "Decline proposal",
                           summary:
                             "The proposal will close without spending funds or opening an agreement.",
-                          execute: () => s.resolveIncomingLetter(x.id, false),
+                          execute: (commandId) => s.resolveIncomingLetter(x.id, false, commandId),
                         })
                       }
                     >
@@ -146,7 +147,7 @@ export function DiplomaticPost() {
                               LETTER_COST[x.kind] * 0.5 &&
                             s.countries[x.senderId].economy.treasury >=
                               LETTER_COST[x.kind] * 0.5,
-                          execute: () => s.resolveIncomingLetter(x.id, true),
+                          execute: (commandId) => s.resolveIncomingLetter(x.id, true, commandId),
                         })
                       }
                     >
@@ -171,8 +172,8 @@ export function DiplomaticPost() {
         <ReviewDialog
           {...review}
           onCancel={() => setReview(null)}
-          onConfirm={() => {
-            review.execute();
+          onConfirm={(commandId) => {
+            review.execute(commandId);
             setReview(null);
           }}
         />

@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.82.0-playtest.1 — Reliable Command
+- Added validated schema-15 save migration, compatible-record fallback, retryable autosave and direct setup loading.
+- Routed reviewed commands through bounded persisted confirmation identities and retained tutorial construction identity.
+- Added daily research work, campus capacity, shared AI rules, completion effects and unfinished-work refunds.
+- Added 200 dated NEWS reports with Turkish historical rendering.
+- Added player-country location beside zoom, resource-specific supply popups and Buy actions; removed the duplicated national supply board.
+- Moved Goals right and grouped Map/Help bottom-right; fixed Help pressed state and added colored civic/diplomacy/world artwork.
+- Split heavy UI modules, narrowed panel subscriptions and added production-browser regression coverage. See docs/PLAYTEST-082.md for verification and remaining debt.
+
 ## 0.76.0-playtest.1 — Decisions & World Institutions
 - Added factory investment review, before/after capacity, input/power/upkeep previews and timed construction cancellation with an explicit partial refund.
 - Added advisor pact/contract review, locked-price monthly payment summaries, duplicate contract protection, diplomatic settlement checks and visible command receipts.

@@ -8,6 +8,7 @@ import {WorldInstitutionsPanel} from './WorldInstitutionsPanel';
 import {TechnologyPanel} from './TechnologyPanel';
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { CountryDossierWindow } from './CountryDossierWindow';
+import {ResourceCommandWindow} from './ResourceCommandWindow';
 import { SupplyCommandWindow } from './SupplyCommandWindow';
 import { DiplomacyPanel } from './DiplomacyPanel';
 import { ProductionPanel } from './ProductionPanel';
@@ -34,15 +35,16 @@ const resources:TradeResource[]=['food','oil','iron','uranium'];
 const humanize=(value:string)=>value.replaceAll('_',' ').replace(/\b\w/g,(m)=>m.toUpperCase());
 type PanelTab='overview'|'economy'|'production'|'diplomacy'|'military'|'intel'|'cabinet'|'technology'|'world'|'war';
 
-function ResourceCard({ country, resource }: { country: CountryState; resource: TradeResource }) {
+function ResourceCard({ country, resource, onOpen }: { country: CountryState; resource: TradeResource; onOpen?:()=>void }) {
   const flow=calculateDailyResourceFlow(country); const status=resourceStrategicStatus(country,resource); const suff=resourceSelfSufficiency(country,resource); const days=resourceReserveDays(country,resource);
-  return <div className={`resource-card status-${status.toLowerCase().replace(' ','-')}`}><div className="resource-card-head"><ResourceIcon resource={resource} size={19}/><span><LocaleText value={resource.toUpperCase()}/></span><em><LocaleText value={status}/></em></div><strong><LocaleText value={country.resources[resource].toFixed(resource==='uranium'?1:0)}/></strong><div className="resource-card-flow"><span><LocaleText value={"NET "}/><LocaleText value={signed(flow.net[resource])}/><LocaleText value={"/d"}/></span><span><LocaleText value={"SELF "}/><LocaleText value={Math.min(999,suff*100).toFixed(0)}/><LocaleText value={"%"}/></span></div><small><LocaleText value={days>365?'365+':Math.max(0,days).toFixed(0)}/><LocaleText value={" reserve days"}/></small></div>;
+  return <div className={`resource-card status-${status.toLowerCase().replace(' ','-')}`}><div className="resource-card-head"><button className="resource-name" disabled={!onOpen} onClick={onOpen}><ResourceIcon resource={resource} size={22}/><LocaleText value={resource.toUpperCase()}/></button><em><LocaleText value={status}/></em></div><strong><LocaleText value={country.resources[resource].toFixed(resource==='uranium'?1:0)}/></strong><div className="resource-card-flow"><span><LocaleText value="NET "/><LocaleText value={signed(flow.net[resource])}/><LocaleText value="/d"/></span><span><LocaleText value="SELF "/><LocaleText value={Math.min(999,suff*100).toFixed(0)}/>%</span></div>{onOpen&&<button className="resource-buy" onClick={onOpen}><LocaleText value="Buy / supply options"/></button>}<small><LocaleText value={days>365?'365+':Math.max(0,days).toFixed(0)}/><LocaleText value=" reserve days"/></small></div>;
 }
 function UnitStat({ icon, label, value }: { icon: ReactNode; label:string; value:number }) { return <div className="unit-stat"><span className="unit-icon"><LocaleText value={icon}/></span><span><small><LocaleText value={label}/></small><strong><LocaleText value={value.toLocaleString()}/></strong></span></div>; }
 function MinistryIcon({id}:{id:MinistryKey}){ if(id==='economy')return <IndustryIcon/>; if(id==='defense')return <TankIcon/>; if(id==='science')return <ResearchIcon/>; if(id==='intelligence')return <IntelligenceIcon/>; if(id==='interior')return <InteriorIcon/>; return <SocietyIcon/>; }
 function PanelTabIcon({id}:{id:PanelTab}){return <CommandArt kind={id} size={26}/>;}
 
 export function CountryPanel(){
+  const [supplyResource,setSupplyResource]=useState<TradeResource|null>(null);
   const [tab,setTab]=useState<PanelTab>('overview');
   const [commandWindow,setCommandWindow]=useState<'dossier'|'supply'|null>(null);
   const [pendingDecision,setPendingDecision]=useState<{spec:StrategicDecisionSpec;execute:()=>void}|null>(null);
@@ -56,12 +58,12 @@ export function CountryPanel(){
   const countryList=useMemo(()=>activeCountries(state.countries).sort((a,b)=>a.name.localeCompare(b.name)),[state.countries]);
   const activeWar=useMemo(()=>Object.values(state.wars).find((war)=>war.status==='active'&&(war.attackerId===selected.id||war.defenderId===selected.id)&&(war.attackerId===player.id||war.defenderId===player.id)),[player.id,selected.id,state.wars]);
   const tradeDeals=Object.values(state.tradeDeals).filter((deal)=>deal.active&&(deal.sellerId===selected.id||deal.buyerId===selected.id));
-  const suppliers=useMemo(()=>Object.fromEntries(MARKET_RESOURCES.map((r)=>[r,findBestSuppliers(state,player.id,r,3)])),[state,player.id]);
   const playerBloc=blocForCountry(state,player.id); const selectedBloc=blocForCountry(state,selected.id); const influence=state.council.influenceByCountry[player.id]??0;
   const intelKnowledge=isPlayer?100:(state.intelligenceLedger[selected.id]??12); const culturalInfluence=isPlayer?100:(state.culturalInfluence[selected.id]??0);
   const intelOps=Object.values(state.intelOperations).filter((op)=>op.sourceCountryId===player.id&&(isPlayer||op.targetCountryId===selected.id)).sort((a,b)=>b.startedDay-a.startedDay).slice(0,6);
   const warPreview=!isPlayer?getWarPreview(player,selected):null;
 
+  useEffect(()=>setSupplyResource(null),[selected.id]);
   return <aside className="command-panel" style={commandWindow?{visibility:'hidden'}:undefined}>
     <div className="national-panel-heading"><div className="panel-kicker"><LocaleText value={tr(language,'state_command','STATE / NATIONAL COMMAND')}/></div><button data-guide="close-workspace" onClick={()=>state.selectCountry(null)} aria-label={translateLive("Close country panel")} title={translateLive("Return to map")}><LocaleText value={"×"}/></button></div>
     <select className="country-select" value={selected.id} onChange={(e)=>state.selectCountry(e.target.value)} aria-label={translateLive("Select country")}>{countryList.map((country)=><option key={country.id} value={country.id}><LocaleText value={country.name}/><LocaleText value={" ("}/><LocaleText value={country.iso2}/><LocaleText value={")"}/></option>)}</select>
@@ -81,7 +83,7 @@ export function CountryPanel(){
       {isPlayer&&<button onClick={()=>setTab('economy')}><LocaleText value="Review tax policy"/></button>}
     </>}
 
-    {tab==='economy'&&<div className="economy-panel"><PopulationPanel country={selected}/><div className="subhead"><LocaleText value={"STRATEGIC RESOURCE POSITION"}/></div><div className="resource-card-grid">{resources.map((r)=><ResourceCard key={r} country={selected} resource={r}/>)}</div>{isPlayer?<><div className="subhead"><LocaleText value={"GLOBAL SUPPLY OPTIONS"}/></div><div className="supplier-board">{resources.map((resource)=><div key={resource} className="supplier-row"><span className="supplier-resource"><ResourceIcon resource={resource} size={15}/><b><LocaleText value={resource.toUpperCase()}/></b></span><span className="supplier-list">{suppliers[resource].length?suppliers[resource].map((item)=><button key={item.seller.id} onClick={()=>{state.selectCountry(item.seller.id);setTab('economy')}}><LocaleText value={item.seller.iso2}/><small><LocaleText value={money(item.price)}/></small></button>):<em><LocaleText value={"No safe supplier"}/></em>}</span></div>)}</div></>:<><div className="subhead"><LocaleText value={"BILATERAL EXPORT DESK"}/></div><div className="export-desk">{resources.map((resource)=>{const quote=getTradeQuote(state,selected.id,resource);const canTrade=relation?.treaties.includes('trade')&&!relation?.sanctions&&relation?.status!=='war';return <div key={resource}><ResourceIcon resource={resource} size={17}/><span><b><LocaleText value={resource.toUpperCase()}/></b><small><LocaleText value={quote.available.toFixed(2)}/><LocaleText value={"/day available · "}/><LocaleText value={money(quote.price)}/></small></span><button disabled={!canTrade||quote.available<=0} onClick={()=>state.createImport(selected.id,resource)}><LocaleText value={canTrade?'IMPORT':'PACT REQ.'}/></button></div>})}</div></>}</div>}
+    {tab==='economy'&&<div className="economy-panel"><PopulationPanel country={selected}/><div className="subhead"><LocaleText value={"STRATEGIC RESOURCE POSITION"}/></div><div className="resource-card-grid">{resources.map((r)=><ResourceCard key={r} country={selected} resource={r} onOpen={isPlayer?()=>setSupplyResource(r):undefined}/>)}</div>{isPlayer?null:<><div className="subhead"><LocaleText value={"BILATERAL EXPORT DESK"}/></div><div className="export-desk">{resources.map((resource)=>{const quote=getTradeQuote(state,selected.id,resource);const canTrade=relation?.treaties.includes('trade')&&!relation?.sanctions&&relation?.status!=='war';return <div key={resource}><ResourceIcon resource={resource} size={17}/><span><b><LocaleText value={resource.toUpperCase()}/></b><small><LocaleText value={quote.available.toFixed(2)}/><LocaleText value={"/day available · "}/><LocaleText value={money(quote.price)}/></small></span><button disabled={!canTrade||quote.available<=0} onClick={()=>state.createImport(selected.id,resource)}><LocaleText value={canTrade?'IMPORT':'PACT REQ.'}/></button></div>})}</div></>}</div>}
 
     {tab==='production'&&<ProductionPanel country={selected}/>}
 
@@ -107,5 +109,6 @@ export function CountryPanel(){
     {commandWindow==='dossier'&&<CountryDossierWindow country={selected} onClose={()=>setCommandWindow(null)}/>} 
     {commandWindow==='supply'&&<SupplyCommandWindow country={selected} war={activeWar} onClose={()=>setCommandWindow(null)}/>} 
     {pendingDecision&&<StrategicDecisionModal spec={pendingDecision.spec} onCancel={()=>setPendingDecision(null)} onConfirm={()=>{pendingDecision.execute();setPendingDecision(null);}}/>}
+  {supplyResource&&<ResourceCommandWindow key={supplyResource} resource={supplyResource} onClose={()=>setSupplyResource(null)}/>}
   </aside>;
 }

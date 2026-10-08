@@ -1,3 +1,4 @@
+import {useWorldView} from '../../store/useWorldView';
 import { useState } from "react";
 import { useGameStore } from "../../store/gameStore";
 import {
@@ -13,15 +14,16 @@ import type { CountryState } from "../../domain/game";
 import { LocaleText } from "../../i18n/localeText";
 import { PowerPlantArt } from "../icons/PowerPlantArt";
 import { ReviewDialog } from "./ReviewDialog";
-import { money } from "../formatMoney";
+import {money as formatMoney} from '../formatMoney';
 export function EnergyPanel({ country }: { country: CountryState }) {
-  const s = useGameStore(),
+  const s = useWorldView(),
     e = energyFor(s, country.id),
     [review, setReview] = useState<PlantKind | null>(null),
     [cancelId, setCancelId] = useState<string | null>(null),
     player = country.id === s.playerCountryId;
   const demand = energyDemand(s, country.id),
     d = review ? POWER_PLANTS[review] : null;
+  const money=(value:number)=>formatMoney(value,s.playerProfile.language);
   return (
     <section className="energy-command" data-testid="energy-panel">
       <header>
@@ -165,8 +167,8 @@ export function EnergyPanel({ country }: { country: CountryState }) {
           ]}
           allowed={powerProjectRefund(s, country.id, cancelId) > 0}
           onCancel={() => setCancelId(null)}
-          onConfirm={() => {
-            s.cancelPowerProject(cancelId);
+          onConfirm={(commandId) => {
+            s.cancelPowerProject(cancelId, commandId);
             setCancelId(null);
           }}
           confirmLabel="CANCEL PROJECT"
@@ -204,8 +206,8 @@ export function EnergyPanel({ country }: { country: CountryState }) {
           ]}
           allowed={canBuildPlant(s, country.id, review)}
           onCancel={() => setReview(null)}
-          onConfirm={() => {
-            s.buildPlant(review);
+          onConfirm={(commandId) => {
+            s.buildPlant(review, commandId);
             setReview(null);
           }}
         />

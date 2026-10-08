@@ -23,6 +23,7 @@ export function CampaignSetup(){
  const profile=useGameStore(s=>s.playerProfile);
  const countries=useGameStore(s=>s.countries);
  const start=useGameStore(s=>s.startCampaign);
+ const load=useGameStore(s=>s.loadLatest),saveMessage=useGameStore(s=>s.saveMessage);
  const [step,setStep]=useState<SetupStep>(1);
  const [language,setLanguage]=useState<GameLanguage>(profile.language);
  const [name,setName]=useState(profile.commanderName==='Commander'?'':profile.commanderName);
@@ -103,7 +104,7 @@ export function CampaignSetup(){
     </div>}
    </div>
 
-   <footer className="wizard-footer"><button className="wizard-back" disabled={step===1} onClick={()=>setStep(s=>typeof s==='number'&&s>1?(s-1) as SetupStep:s)}><LocaleText value={tr(language,'back','BACK')}/></button><span><LocaleText value={"STEP "}/><LocaleText value={step}/><LocaleText value={" / 4"}/></span>{step!==4?<button className="wizard-next" disabled={step===1&&(!name.trim()||Boolean(birthDate&&!validBirthDate(birthDate)))} onClick={()=>setStep(s=>typeof s==='number'&&s<4?(s+1) as SetupStep:s)}><LocaleText value={tr(language,'continue','CONTINUE')}/></button>:<button className="wizard-next confirm" onClick={()=>{setLoadingStep(0);setStep('loading')}}><LocaleText value={tr(language,'confirm_begin','CONFIRM & BEGIN')}/></button>}</footer>
+   <footer className="wizard-footer">{step===1&&<button className="load-previous" onClick={()=>void load()}><LocaleText value="Load previous progress"/></button>}{step===1&&saveMessage&&<small role="status"><LocaleText value={saveMessage}/></small>}<button className="wizard-back" disabled={step===1} onClick={()=>setStep(s=>typeof s==='number'&&s>1?(s-1) as SetupStep:s)}><LocaleText value={tr(language,'back','BACK')}/></button><span><LocaleText value={"STEP "}/><LocaleText value={step}/><LocaleText value={" / 4"}/></span>{step!==4?<button className="wizard-next" disabled={step===1&&(!name.trim()||Boolean(birthDate&&!validBirthDate(birthDate)))} onClick={()=>setStep(s=>typeof s==='number'&&s<4?(s+1) as SetupStep:s)}><LocaleText value={tr(language,'continue','CONTINUE')}/></button>:<button className="wizard-next confirm" onClick={()=>{setLoadingStep(0);setStep('loading')}}><LocaleText value={tr(language,'confirm_begin','CONFIRM & BEGIN')}/></button>}</footer>
   </section>
  </div>;
 }

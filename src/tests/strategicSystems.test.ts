@@ -26,13 +26,14 @@ describe('strategic command systems', () => {
     expect(next.resources.oil).toBeLessThan(turkey.resources.oil);
   });
 
-  it('unlocks an affordable technology and spends research points', () => {
+  it('starts affordable research and spends points without an instant unlock', () => {
     const state = makeInitialState();
     const player = state.countries.TUR;
     const boosted = { ...player, technology: { ...player.technology, researchPoints: 100 } };
     const prepared = { ...state, countries: { ...state.countries, TUR: boosted } };
     const next = unlockTechnology(prepared, 'TUR', 'econ-logistics');
-    expect(next.countries.TUR.technology.unlocked).toContain('econ-logistics');
+    expect(next.countries.TUR.technology.unlocked).not.toContain('econ-logistics');
+    expect(next.countries.TUR.technology.project?.technologyId).toBe('econ-logistics');
     expect(next.countries.TUR.technology.researchPoints).toBeLessThan(100);
   });
 

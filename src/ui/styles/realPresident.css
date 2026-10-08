@@ -694,3 +694,38 @@ body:has(.guided-tutorial) .review-backdrop { background: rgb(7 23 33 / 16%); ba
 }
 .leader-nation-link { border: 0; padding: 2px 0; background: transparent; text-align: left; cursor: pointer; }
 .leader-nation-link:hover,.leader-nation-link:focus-visible { color: #ffdf9c; text-decoration: underline; }
+
+/* 0.82: compact, separated navigation and resource-based supply access. */
+.command-rail.map-help-cluster {top:auto!important;left:auto!important;right:16px!important;bottom:64px!important;transform:none!important;display:flex!important;gap:8px;padding:8px;background:#152b36e8;border:1px solid #637b86;border-radius:13px}
+.map-help-cluster .rail-button {width:62px;min-height:60px;display:grid;grid-template-rows:34px auto;place-items:center;padding:5px;border:1px solid transparent;border-radius:8px;background:#27404c;color:#e0e8ed;cursor:pointer}
+.map-help-cluster .rail-button>span {width:36px;height:36px}
+.map-help-cluster .rail-button.active {border-color:#f2d283;background:#3b4a49;color:#ffe2a0}
+.map-help-cluster .rail-button small {color:inherit!important}
+.resource-name {display:flex;align-items:center;gap:7px;border:0;background:transparent;color:#ffe6b0;padding:0;cursor:pointer;text-align:left;font:inherit}
+.resource-name:disabled {cursor:default;opacity:1}
+.resource-card-head {flex-wrap:wrap;gap:8px}
+.resource-buy {display:block;width:100%;margin:9px 0;padding:9px;border:1px solid #bda45e;border-radius:7px;background:#f0ce80;color:#152c38;font-weight:700;cursor:pointer}
+.resource-filter {display:flex;flex-wrap:wrap;gap:7px;margin:14px 0}
+.resource-filter button {display:flex;align-items:center;gap:6px;padding:9px;background:#274450;color:#e6edf0;border:1px solid #6c8791;border-radius:8px;cursor:pointer}
+.resource-filter .active {background:#f0ce80;color:#152c38;border-color:#ffdfa0}
+.resource-command-grid:has(>article:only-child) {grid-template-columns:1fr}
+.research-progress {padding:16px;margin-bottom:15px;border:1px solid #8e936a;border-radius:12px;background:#223d48;color:#e1edf1}
+.research-progress p {line-height:1.5}
+.research-progress progress {width:100%;accent-color:#e4c77e}
+.research-progress button {padding:10px;border:1px solid #d1b16e;background:#3e4237;border-radius:8px;color:#ffdfa3;cursor:pointer}
+.institution-mark {display:flex;align-items:center;gap:8px}
+.world-institutions h2 {display:flex;align-items:center;gap:10px}
+.diplomacy-actions button {align-items:center;gap:10px}
+:is(.activity-cards,.goodwill-card) .civic-art {display:inline-block;flex-shrink:0;margin-bottom:8px}
+.resource-card-flow {flex-wrap:wrap;gap:6px}
+@media(max-width:640px) {
+ .command-rail.map-help-cluster {right:8px!important;bottom:54px!important;padding:5px;gap:5px}
+ .map-help-cluster .rail-button {width:48px;min-width:48px;min-height:48px;grid-template-rows:28px auto}
+ .map-help-cluster .rail-button>span {width:28px;height:28px}
+ .map-help-cluster .navigation-art {transform:scale(.78);transform-origin:top left}
+ .map-camera-hud {bottom:120px!important}
+ .map-camera-hud button {min-width:32px}
+ .command-panel {bottom:120px!important}
+ .resource-filter button {font-size:12px;padding:7px}
+ .resource-command-summary {grid-template-columns:repeat(2,minmax(0,1fr))}
+}

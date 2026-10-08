@@ -28,7 +28,7 @@ const steps = [
   ],
   [
     "Research new capabilities",
-    "Open your nation and choose Technology. Read prerequisites before spending research points.",
+    "Open your nation and choose Technology. Research projects take several campaign days. One national team can run one project; campuses increase its capacity. Review duration and cost before confirming.",
     "nation",
     "technology",
   ],
@@ -146,7 +146,7 @@ export function CampaignTutorial() {
               : "detail"
             : phase === "tab"
               ? practice
-                ? "build"
+                ? useGameStore.getState().world.tutorial.practiceProjectId ? "inspect" : "build"
                 : "detail"
               : phase === "detail"
                 ? "reading"
@@ -157,9 +157,7 @@ export function CampaignTutorial() {
                     : phase === "review"
                       ? "result"
                       : phase === "result"
-                        ? useGameStore.getState().industrialEconomy[
-                            state.playerCountryId
-                          ].projects.length > initialProjects.current
+                        ? !!useGameStore.getState().world.tutorial.practiceProjectId
                           ? "inspect"
                           : "build"
                         : "done",
@@ -188,8 +186,7 @@ export function CampaignTutorial() {
             ? "inspect"
             : phase === "review" || phase === "reviewReading"
               ? "build"
-              : useGameStore.getState().industrialEconomy[state.playerCountryId]
-                    .projects.length > initialProjects.current
+              : !!useGameStore.getState().world.tutorial.practiceProjectId
                 ? "inspect"
                 : "build",
       );

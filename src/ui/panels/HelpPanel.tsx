@@ -109,7 +109,7 @@ export function HelpPanel() {
       onClose={state.closeWorkspace}
     >
       <section className="game-notes">
-        <h3>The Real President · 0.81</h3>
+        <h3>The Real President · 0.82</h3>
         <p>
           <LocaleText value="203 sovereign profiles · economy · population · resource markets · diplomacy · research · military command." />
         </p>
@@ -266,8 +266,8 @@ export function HelpPanel() {
             )
           }
           onCancel={() => setReview(null)}
-          onConfirm={() => {
-            state.startProgram(review);
+          onConfirm={(commandId) => {
+            state.startProgram(review, commandId);
             setReview(null);
           }}
         />

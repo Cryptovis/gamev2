@@ -1,23 +1,24 @@
-import { useEffect, useRef } from 'react';
-import { useGameStore } from '../store/gameStore';
-
+import {useEffect,useRef} from 'react';
+import {useGameStore} from '../store/gameStore';
+import {AutosaveCoordinator} from '../persistence/autosaveCoordinator';
 export function useAutosave() {
-  const day = useGameStore((state) => state.day);
-  const campaignStatus = useGameStore((state) => state.campaignStatus);
-  const lastSavedDay = useRef(0);
-
-  useEffect(() => {
-    if (campaignStatus !== 'active' || day < 5 || day % 5 !== 0 || lastSavedDay.current === day) return;
-
-    lastSavedDay.current = day;
-
-    void import('../persistence/saveGame')
-      .then(({ saveGame }) => saveGame(useGameStore.getState(), 'autosave', `Autosave · Day ${day}`))
-      .then(() => {
-        useGameStore.getState().setSaveMessage(`Autosaved Day ${day}`);
-      })
-      .catch(() => {
-        useGameStore.getState().setSaveMessage('Autosave failed');
-      });
-  }, [campaignStatus, day]);
+ const day=useGameStore(s=>s.day),campaignStatus=useGameStore(s=>s.campaignStatus),campaignId=useGameStore(s=>s.world.campaignId);
+ const coordinator=useRef(new AutosaveCoordinator());
+ useEffect(()=>{
+  if(campaignStatus!=='active'||day<5||day%5!==0)return;
+  let cancelled=false,timer=0,attempt=0;
+  const run=async()=>{
+   const ok=await coordinator.current.save(`${campaignId}:${day}`,async()=>{
+    const {saveGame}=await import('../persistence/saveGame');
+    // Capture the intended campaign/day, not whichever state is current after async import.
+    if(cancelled||useGameStore.getState().world.campaignId!==snapshot.world.campaignId)throw new Error('Autosave checkpoint superseded');
+    await saveGame(snapshot,'autosave',`Autosave · Day ${day}`);
+   });
+   if(cancelled)return;
+   useGameStore.getState().setSaveMessage(ok?`Autosaved Day ${day}`:'Autosave failed; retrying');
+   if(!ok)timer=window.setTimeout(run,Math.min(30000,3000*2**attempt++));
+  };
+  const snapshot=useGameStore.getState();void run();
+  return ()=>{cancelled=true;if(timer)window.clearTimeout(timer);};
+ },[campaignStatus,day,campaignId]);
 }

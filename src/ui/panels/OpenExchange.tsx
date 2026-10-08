@@ -1,3 +1,4 @@
+import {useWorldView} from '../../store/useWorldView';
 import { useState } from "react";
 import { useGameStore } from "../../store/gameStore";
 import { LocaleText } from "../../i18n/localeText";
@@ -11,7 +12,7 @@ import {
 } from "../../engine/systems/livingEconomy";
 import type { ExchangeGood } from "../../domain/living";
 import { GOODS } from "../../data/industrialCatalog";
-import { money } from "../formatMoney";
+import {money as formatMoney} from '../formatMoney';
 import { AssetThumbnail } from "../icons/AssetThumbnail";
 import { ReviewDialog, type ReviewContent } from "./ReviewDialog";
 import { tankDomesticCost } from "../../engine/systems/industrialMarket";
@@ -19,7 +20,7 @@ import { GOLD_SOURCE } from "../../data/preciousMetals";
 const label = (g: ExchangeGood) =>
   g in GOODS ? GOODS[g as keyof typeof GOODS].label : g.toUpperCase();
 export function OpenExchange() {
-  const s = useGameStore(),
+  const s = useWorldView(),
     l = living(s),
     p = s.countries[s.playerCountryId],
     [good, setGood] = useState<ExchangeGood>("gold"),
@@ -27,7 +28,7 @@ export function OpenExchange() {
     [ask, setAsk] = useState(0),
     [bankQty, setBankQty] = useState(0.1),
     [review, setReview] = useState<
-      (ReviewContent & { execute: () => void; allowed?: boolean }) | null
+      (ReviewContent & { execute: (commandId:string) => void; allowed?: boolean }) | null
     >(null);
   const reference = exchangePrice(s, good),
     price = ask || reference,
@@ -42,6 +43,7 @@ export function OpenExchange() {
       .sort((a, b) => a.unitPrice - b.unitPrice),
     own = l.listings.filter((x) => x.sellerId === p.id && x.status === "open"),
     vault = l.bankGold[p.id];
+  const money=(value:number)=>formatMoney(value,s.playerProfile.language);
   return (
     <section className="open-exchange">
       <header>
@@ -141,7 +143,7 @@ export function OpenExchange() {
                           ["Treasury after", money(p.economy.treasury - cost)],
                         ],
                         allowed: p.economy.treasury >= cost,
-                        execute: () => s.buyListing(x.id, q),
+                        execute: (commandId) => s.buyListing(x.id, q, commandId),
                       })
                     : s.navigate("diplomacy", x.sellerId)
                 }
@@ -192,7 +194,7 @@ export function OpenExchange() {
                 ["Ask per unit", money(price)],
                 ["Potential proceeds", money(quantity * price)],
               ],
-              execute: () => s.postListing(good, quantity, price),
+              execute: (commandId) => s.postListing(good, quantity, price, commandId),
             })
           }
         >
@@ -221,7 +223,7 @@ export function OpenExchange() {
                   summary:
                     "Only the unsold reserved quantity returns to your stock. Previous sales remain settled.",
                   metrics: [["Returned quantity", x.remaining.toFixed(3)]],
-                  execute: () => s.cancelListing(x.id),
+                  execute: (commandId) => s.cancelListing(x.id, commandId),
                 })
               }
             >
@@ -286,7 +288,7 @@ export function OpenExchange() {
                     summary:
                       "Transfer between the central-bank vault and industrial metal inventory. This transfer itself does not earn or spend money.",
                     metrics: [["Gold tonnes", bankQty.toFixed(3)]],
-                    execute: () => s.moveBankGold(bankQty, direction),
+                    execute: (commandId) => s.moveBankGold(bankQty, direction, commandId),
                   })
                 }
               >
@@ -306,8 +308,8 @@ export function OpenExchange() {
         <ReviewDialog
           {...review}
           onCancel={() => setReview(null)}
-          onConfirm={() => {
-            review.execute();
+          onConfirm={(commandId) => {
+            review.execute(commandId);
             setReview(null);
           }}
         />

@@ -1,5 +1,10 @@
 // Keep stored messages language-independent. Translate at render time, including historical reports.
 export const NEWS_TEMPLATES: Record<string, string> = {
+ "Saved Day {0}":"Gün {0} kaydedildi",
+ "Loaded Day {0}":"Gün {0} kaydı yüklendi",
+ "RESEARCH // {0} started by {1}; estimated {2} days.":"ARAŞTIRMA // {1}, {0} projesini başlattı; tahmini süre {2} gün.",
+ "RESEARCH // Project cancelled; {0} RP refunded.":"ARAŞTIRMA // Proje iptal edildi; {0} araştırma puanı iade edildi.",
+
   "ENERGY // Construction cancelled; ${0}B refunded.":
     "ENERJİ // İnşaat iptal edildi; {0} milyar $ iade edildi.",
 

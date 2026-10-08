@@ -42,6 +42,8 @@ export function AssetThumbnail({
       role="img"
       aria-label={translateLive(asset.replaceAll("_", " "))}
       style={{
+        display: "inline-block",
+        flexShrink: 0,
         width: size,
         height: size,
         position:'relative',overflow:'hidden',
