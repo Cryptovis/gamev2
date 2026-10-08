@@ -26,9 +26,10 @@ export function VictoryScroll() {
           {s.countries[w.attackerId]?.name} · {s.countries[w.defenderId]?.name}
         </p>
         <blockquote>{q.text}</blockquote>
-        {tr && q.author !== "Mustafa Kemal Atatürk" && (
+        {/* Turkish originals carry an English translation; English originals carry a Turkish one. */}
+        {tr !== (q.author === "Mustafa Kemal Atatürk") && (
           <p className="quote-translation">
-            {q.translation} · <LocaleText value="Translation" />
+            {tr ? q.translation : <LocaleText value={q.translation} />} · <LocaleText value="Translation" />
           </p>
         )}
         <strong>— {q.author}</strong>

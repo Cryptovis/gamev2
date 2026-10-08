@@ -56,7 +56,8 @@ export function IntegrationPanel({ countryId }: { countryId: string }) {
           />
         </p>
       )}
-      {open && (
+      {/* Hide the overlay (z 2800) while the portaled review (z 1500) is open, or the review sits behind it; cancel returns here. */}
+      {open && !review && (
         <div className="integration-overlay">
           <section
             role="dialog"

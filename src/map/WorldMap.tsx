@@ -4,7 +4,7 @@ import {sovereignId} from '../domain/sovereignty';
 import {LocaleText,translateLive} from '../i18n/localeText';
 import {boundPan,clampZoom,wheelZoomFactor,zoomAtPoint} from './cameraControls';
 import {GeographicSurface} from './GeographicSurface';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { geoArea, geoDistance, geoGraticule10, geoNaturalEarth1, geoOrthographic, geoPath } from 'd3-geo';
 import { countryMapAnchor, microstateVisible, nearestMapMarker, type MapPoint } from './mapCoordinates';
 import { findCountryAtGeoPoint } from './mapSelection';
@@ -49,8 +49,10 @@ function stablePoliticalColor(id: string) {
   return politicalPalette[hash % politicalPalette.length];
 }
 
-export function WorldMap() {
+function WorldMapView() {
   const [geojson, setGeojson] = useState<FeatureCollection | null>(null);
+  const [geojsonError, setGeojsonError] = useState(false);
+  const [geojsonAttempt, setGeojsonAttempt] = useState(0);
   const [rotation, setRotation] = useState<[number, number, number]>([-26,-24,0]);
   const [globeZoom, setGlobeZoom] = useState(1);
   const [flatZoom, setFlatZoom] = useState(1);
@@ -83,9 +85,10 @@ export function WorldMap() {
 
   useEffect(() => {
     let alive = true;
-    fetch('/data/countries.geojson').then((r) => r.json()).then((data) => { if (alive) setGeojson(data); });
+    setGeojsonError(false);
+    fetch('/data/countries.geojson').then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }).then((data) => { if (alive) setGeojson(data); }).catch((error) => { console.warn('World geometry failed to load:', error); if (alive) setGeojsonError(true); });
     return () => { alive = false; if (rafRef.current) cancelAnimationFrame(rafRef.current); };
-  }, []);
+  }, [geojsonAttempt]);
 
   const projection = useMemo(() => {
     if (!geojson) return null;
@@ -150,7 +153,6 @@ export function WorldMap() {
     if(!point||point[0]<0||point[0]>W||point[1]<0||point[1]>H)return [];
     return [{id,point}];
   });
-  const viewportKey = projectionMode === 'globe' ? `g-${rotation[0].toFixed(1)}-${rotation[1].toFixed(1)}-${globeZoom.toFixed(2)}` : 'flat-static-geometry';
 
   const resetView = () => {
     setRotation([-26,-24,0]);
@@ -292,6 +294,7 @@ export function WorldMap() {
     else if(mapControlCommand.action==='reset')resetView();
   },[mapControlCommand?.nonce]);
 
+  if (!geojson && geojsonError) return <div className="world-map political-map"><div className="map-loading" role="alert"><LocaleText value={"WORLD GEOMETRY FAILED TO LOAD"}/> <button type="button" onClick={() => setGeojsonAttempt((n) => n + 1)}><LocaleText value={"RETRY"}/></button></div></div>;
   if (!geojson || !projection || !path) return <div className="world-map political-map"><div className="map-loading"><LocaleText value={"INITIALIZING WORLD GEOMETRY…"}/></div></div>;
 
   const shapeLayer = featureMetrics.map(({feature,id,d},index) => {
@@ -394,7 +397,7 @@ export function WorldMap() {
         <path d={path(graticule as any) ?? ''} className="globe-graticule"/>
       </>}
       {photographic&&<GeographicSurface projection={projection} flat={projectionMode==='flat'} pan={flatPan} zoom={flatZoom} onReady={()=>setSurfaceReady(true)}/>}
-      <g key={viewportKey} className="map-viewport" transform={projectionMode === 'flat' ? flatTransform : undefined}>
+      <g className="map-viewport" transform={projectionMode === 'flat' ? flatTransform : undefined}>
         <g className="country-layer">{shapeLayer}</g>
       </g>
       <g className="screen-label-layer" pointerEvents="none">
@@ -412,3 +415,5 @@ export function WorldMap() {
     </div>
   </div>;
 }
+// No props: memo stops parent (App) re-renders from re-running the map; store subscriptions still drive updates.
+export const WorldMap = memo(WorldMapView);
