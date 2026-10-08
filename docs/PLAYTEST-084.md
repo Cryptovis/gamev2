@@ -9,9 +9,11 @@ Branch: `dev/audit-fixes-084`. Base: 0.83.0-playtest.3 at `54ec9e7`. Source of t
 
 | Day 1460 | 0.83 | 0.84 |
 |---|---|---|
-| AI median approval | 0.0 | 65.2 |
-| AI countries in oil shortage | 184 | 63 |
-| AI countries with treasury < $1B | 144 | 31 |
+| AI median approval | 0.0 | 75.5 |
+| AI approval, bottom 10% | 0.0 | 64.0 |
+| AI countries in oil shortage (counting contracted imports) | 184 | 10 |
+| AI countries with treasury < $1B | 144 | 28 |
+| China / India approval | 0 / 0 | 81 / 55 |
 | Event kinds seen | 3 | 7 |
 | Player (TUR, no actions) | Lost the election with 0% approval | Lost the election with 0% approval |
 
@@ -34,5 +36,6 @@ Still to verify in CI or a browser: `tsc --noEmit`, `vite build`, and the Playwr
 
 - One oil import makes the default campaign fairly comfortable; tax, activity and debt pressure are Phase 2 (C4).
 - The tactical depot can still be locked by whichever side reaches it first, and auto-resolve still uses different loss scaling from tactical combat. Both are planned for HD War v2 (B5, B8).
-- Saves made before this release keep their original food production numbers, so China and India in an old save can still run short.
+- The per-capita food floor and trade-aware shortage test apply to old saves at runtime. Old saves keep their existing plants and deals, so recovery in a loaded 0.83 world takes a few in-game months.
+- The `foodSeverity`/`oilSeverity` fields are computed, but penalties are still on/off; scaling them by severity is a Phase 2 balance item.
 - Manual saves still use one shared slot per account. The UI can only load the most recent save; older campaigns are kept but cannot be picked yet.

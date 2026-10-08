@@ -1,17 +1,12 @@
 import {demoOwner} from '../session/demoAccounts';
-import {useEffect,useRef} from 'react';
+import {useEffect,useState} from 'react';
 import {useGameStore} from '../store/gameStore';
 import {AutosaveCoordinator,startAutosave} from '../persistence/autosaveCoordinator';
-import type {GameState} from '../domain/game';
-// Capture the intended campaign/day, not whichever state is current after async import.
-const autosaveWrite=(snapshot:GameState,owner:string)=>async()=>{
- const {saveGame,autosaveId}=await import('../persistence/saveGame');
- if(useGameStore.getState().world.campaignId!==snapshot.world.campaignId)throw new Error('Autosave checkpoint superseded');
- await saveGame(snapshot,autosaveId(snapshot.world.campaignId),`Autosave · Day ${snapshot.day}`,owner);
-};
+import {autosaveWrite} from './autosaveWrite';
 export function useAutosave(enabled=true) {
  const day=useGameStore(s=>s.day),campaignStatus=useGameStore(s=>s.campaignStatus),campaignId=useGameStore(s=>s.world.campaignId);
- const ref=useRef<AutosaveCoordinator|null>(null),coordinator=ref.current??=new AutosaveCoordinator();
+ // Lazy one-time construction (plain JS syntax only; see autosaveWrite.ts).
+ const [coordinator]=useState(()=>new AutosaveCoordinator());
  useEffect(()=>{
   if(!enabled||campaignStatus!=='active'||day<5||day%5!==0)return;
   const snapshot=useGameStore.getState();

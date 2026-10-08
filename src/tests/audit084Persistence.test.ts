@@ -1,4 +1,17 @@
-import {describe,it,expect,beforeEach} from 'vitest';
+import {describe,it,expect,beforeEach,vi} from 'vitest';
+// Vitest runs in Node without IndexedDB, so the Dexie database is replaced by an in-memory table with the API saveGame uses.
+vi.mock('../persistence/database',()=>{
+ type Row={id:string;updatedAt:number;[key:string]:unknown};
+ const rows=new Map<string,Row>();
+ const sorted=(key:string)=>[...rows.values()].sort((a,b)=>Number(a[key])-Number(b[key]));
+ const collection=(list:()=>Row[])=>({toArray:async()=>list(),primaryKeys:async()=>list().map(row=>row.id)});
+ const saves={
+  clear:async()=>{rows.clear();},put:async(row:Row)=>{rows.set(row.id,row);return row.id;},get:async(id:string)=>rows.get(id),
+  delete:async(id:string)=>{rows.delete(id);},bulkDelete:async(ids:string[])=>{for(const id of ids)rows.delete(id);},toArray:async()=>[...rows.values()],
+  orderBy:(key:string)=>({...collection(()=>sorted(key)),reverse:()=>collection(()=>sorted(key).reverse())}),
+ };
+ return {db:{saves}};
+});
 import {makeInitialState} from '../data/initialState';
 import {db} from '../persistence/database';
 import {snapshotGame} from '../persistence/snapshot';

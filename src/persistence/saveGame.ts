@@ -13,17 +13,19 @@ const isAutosave=(record:SaveRecord)=>{const id=record.owner&&record.owner!=='gu
 export async function saveGame(state: GameState, id = 'manual', name = 'Manual Save',owner=demoOwner()) {
   const snapshot=snapshotGame(state);
   // Never replace a good save with one that could not be loaded back.
-  if(!canLoadSave(snapshot))throw new Error(`Refusing to write invalid save "${id}" (schema ${snapshot?.schemaVersion})`);
+  if(!canLoadSave(snapshot))throw new Error(`Refusing to write invalid save "${id}" (schema ${state.schemaVersion})`);
   const record: SaveRecord = { id:scopedId(id,owner), owner, name, updatedAt: Date.now(), schemaVersion: state.schemaVersion, state: snapshot };
   await db.saves.put(record);
   if(isAutosave(record))await pruneAutosaves(owner);
   return record;
 }
 
-/** Keeps the newest AUTOSAVE_LIMIT autosave records (legacy `autosave` included) for one owner. */
+/** Keeps the newest AUTOSAVE_LIMIT autosave records (legacy `autosave` included) for one owner. Reads keys only, not save bodies. */
 export async function pruneAutosaves(owner=demoOwner(),limit=AUTOSAVE_LIMIT) {
-  const stale=(await db.saves.orderBy('updatedAt').reverse().toArray()).filter(record=>owned(record,owner)&&isAutosave(record)).slice(limit);
-  for(const record of stale)await db.saves.delete(record.id);
+  const prefix=owner==='guest'?'':owner+':';
+  const keys=(await db.saves.orderBy('updatedAt').reverse().primaryKeys()) as string[];
+  const stale=keys.filter(id=>{if(!id.startsWith(prefix))return false;const local=id.slice(prefix.length);return local==='autosave'||local.startsWith('autosave:');}).slice(limit);
+  if(stale.length)await db.saves.bulkDelete(stale);
   return stale.length;
 }
 

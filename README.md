@@ -37,7 +37,7 @@ npm run test:e2e
 
 ### 0.84.0-playtest.1 — Stable Command
 
-- Rebalanced world oil, food and upkeep so the world no longer collapses within two years. One oil import keeps a default campaign healthy, while a passive player still loses.
+- Rebalanced world oil, food, energy and upkeep, and made AI trade cover real deficits. After four idle years the AI median approval is 75 instead of 0. One oil import keeps a default campaign healthy; a passive player still loses.
 - Stability follows approval; events are varied and weighted; Council sanctions expire; AI trades and taxes follow the player's rules more closely.
 - Closed the hold-still war victory and the round-one collapse of small militaries, and blocked wars on controlled states.
 - Autosaves are per campaign and validated before writing; a new campaign no longer overwrites the previous one.

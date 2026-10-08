@@ -179,7 +179,7 @@ function executeGameCommand(state: GameState, command: GameCommand): GameState {
       const attacker = state.countries[state.playerCountryId];
       const defender = state.countries[command.targetCountryId];
       if (!attacker || !defender || attacker.id === defender.id) return state;
-      if (defender.annexedBy || defender.controllerCountryId !== null) return note(state, `WAR // ${defender.name} is not an independent state and cannot be targeted.`);
+      if (defender.annexedBy || defender.controllerCountryId != null) return note(state, `WAR // ${defender.name} is not an independent state and cannot be targeted.`);
       const existing = Object.values(state.wars).find((war) => war.status === 'active' && ((war.attackerId === attacker.id && war.defenderId === defender.id) || (war.attackerId === defender.id && war.defenderId === attacker.id)));
       if (existing) return note(state, `WAR // Conflict with ${defender.name} is already active.`);
       let warId = `${attacker.id}-${defender.id}-${state.day}`;

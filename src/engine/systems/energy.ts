@@ -337,8 +337,11 @@ export function processEnergyAI(s: GameState): GameState {
     )
       continue;
     const e = energyFor(n, c.id);
+    // Countries in a deep outage may run several builds at once; otherwise one at a time (audit follow-up: India
+    // and other large states sat below 70% coverage for years while waiting on single projects).
+    const maxProjects = e.lastCoverage < 80 ? 3 : 1;
     if (
-      e.projects.length ||
+      e.projects.length >= maxProjects ||
       e.lastGeneration >= e.lastDemand * 1.1 ||
       c.economy.treasury < 3
     )

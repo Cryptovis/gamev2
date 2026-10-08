@@ -1,4 +1,5 @@
 import type { CountryState } from '../domain/game';
+import { FOOD_OUTPUT_FLOOR_PER_MILLION } from '../engine/systems/resources';
 
 const OIL = new Set(['SAU','RUS','USA','CAN','IRN','IRQ','ARE','KWT','QAT','VEN','NOR','DZA','LBY','NGA','AGO','AZE','KAZ','BRA']);
 const FOOD = new Set(['USA','CAN','BRA','ARG','UKR','RUS','FRA','IND','CHN','AUS','THA','VNM','IDN','TUR','POL','ROU']);
@@ -15,8 +16,9 @@ export function applyStrategicSpecialization(country: CountryState): CountryStat
   if (FOOD.has(country.id)) { p.food = Math.max(p.food * 1.8, 1.5); r.food = Math.max(r.food, 220); }
   if (IRON.has(country.id)) { p.iron = Math.max(p.iron * 2.4, 1.25); r.iron = Math.max(r.iron, 190); industry.mines = Math.max(industry.mines, 2); }
   if (URANIUM.has(country.id)) { p.uranium = Math.max(p.uranium * 4, 0.08); r.uranium = Math.max(r.uranium, 18); }
-  // The catalog caps food output at 7/day; populous states would otherwise starve within a year (consumption is 0.035/M).
-  p.food = Math.max(p.food, (country.demographics.population / 1_000_000) * 0.04);
+  // The catalog caps food output at 7/day; populous states get a per-capita floor just below consumption (0.035/M),
+  // so they stay food importers without starving.
+  p.food = Math.max(p.food, (country.demographics.population / 1_000_000) * FOOD_OUTPUT_FLOOR_PER_MILLION);
   if (INDUSTRY.has(country.id)) { industry.factories = Math.max(industry.factories, 5); industry.utilization = Math.min(92, industry.utilization + 4); country = { ...country, economy: { ...country.economy, productivity: Math.min(96, country.economy.productivity + 4) } }; }
 
   return { ...country, resourceProduction: p, resources: r, industry };

@@ -14,6 +14,8 @@ export interface ResourceFlow {
 
 /** A resource is in shortage when its stock covers fewer than this many days of net deficit. */
 export const SHORTAGE_RESERVE_DAYS = 10;
+/** Minimum daily food output per million people; the catalog caps output at 7/day, which starves populous states. */
+export const FOOD_OUTPUT_FLOOR_PER_MILLION = 0.033;
 /** Reserve days reported when production covers consumption (kept finite so it is safe to store or display). */
 export const SURPLUS_RESERVE_DAYS = 9999;
 
@@ -31,7 +33,8 @@ function dailyFlows(country: CountryState, boost = 1) {
   const utilization = country.industry.utilization / 100;
 
   const production: ResourceStockpile = {
-    food: country.resourceProduction.food * (0.85 + country.economy.productivity / 500)*boost,
+    // Per-capita floor applied here (not only at country creation) so saves from before 0.84 get it too.
+    food: Math.max(country.resourceProduction.food, populationMillions * FOOD_OUTPUT_FLOOR_PER_MILLION) * (0.85 + country.economy.productivity / 500)*boost,
     oil: country.resourceProduction.oil,
     iron: country.resourceProduction.iron + country.industry.mines * 0.025 * utilization,
     uranium: country.resourceProduction.uranium,
@@ -47,10 +50,17 @@ function dailyFlows(country: CountryState, boost = 1) {
   return { production, consumption };
 }
 
-export const oilReserveDays = (country: CountryState) => { const f = dailyFlows(country); return reserveDays(country.resources.oil, f.production.oil, f.consumption.oil); };
-export const foodReserveDays = (country: CountryState) => { const f = dailyFlows(country); return reserveDays(country.resources.food, f.production.food, f.consumption.food); };
+export const oilReserveDays = (country: CountryState, tradeInflow?: TradeInflow) => { const f = dailyFlows(country); return reserveDays(country.resources.oil, f.production.oil + (tradeInflow?.oil ?? 0), f.consumption.oil); };
+export const foodReserveDays = (country: CountryState, tradeInflow?: TradeInflow) => { const f = dailyFlows(country); return reserveDays(country.resources.food, f.production.food + (tradeInflow?.food ?? 0), f.consumption.food); };
 
-export function simulateResources(country: CountryState,boost=1): ResourceFlow {
+/** Contracted daily trade flow per resource (imports positive, exports negative). */
+export type TradeInflow = Partial<Record<'food' | 'oil', number>>;
+
+/**
+ * `tradeInflow` lets the shortage test count contracted imports/exports (deliveries themselves are applied
+ * by processTradeDeals). Without it, an importer covering its deficit would still be flagged as short.
+ */
+export function simulateResources(country: CountryState,boost=1,tradeInflow?: TradeInflow): ResourceFlow {
   const { production, consumption } = dailyFlows(country, boost);
 
   const net: ResourceStockpile = {
@@ -67,8 +77,10 @@ export function simulateResources(country: CountryState,boost=1): ResourceFlow {
     uranium: Math.max(0, round(country.resources.uranium + net.uranium)),
   };
 
-  const foodDays = reserveDays(next.food, production.food, consumption.food);
-  const oilDays = reserveDays(next.oil, production.oil, consumption.oil);
+  // With contracted imports, the stock that matters is what is on hand after today's deliveries arrive.
+  const foodIn = tradeInflow?.food ?? 0, oilIn = tradeInflow?.oil ?? 0;
+  const foodDays = reserveDays(next.food + Math.max(0, foodIn), production.food + foodIn, consumption.food);
+  const oilDays = reserveDays(next.oil + Math.max(0, oilIn), production.oil + oilIn, consumption.oil);
   return {
     production,
     consumption,

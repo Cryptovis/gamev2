@@ -138,6 +138,6 @@ describe('0.84 audit: tactical bombardment', () => {
     const miss = sideModifiers(t, w, 'defender', [], [{ unitId: 'attacker-artillery', kind: 'bombard', target: empty }]);
     const hit = sideModifiers(t, w, 'defender', [], [{ unitId: 'attacker-artillery', kind: 'bombard', target: target.cell }]);
     expect(miss.power).toBe(quiet.power); expect(miss.loss).toBe(quiet.loss); expect(miss.lossByType).toEqual({});
-    expect(hit.power).toBeLessThan(quiet.power); expect(hit.loss).toBeGreaterThan(quiet.loss); expect(hit.lossByType.personnel).toBe(.12);
+    expect(hit.power).toBeLessThan(quiet.power); expect(hit.loss).toBeGreaterThan(quiet.loss); expect(hit.lossByType?.personnel).toBe(.12);
   });
 });

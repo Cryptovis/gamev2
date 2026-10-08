@@ -41,16 +41,22 @@ export function processLivingEconomyAI(state: GameState): GameState {
     if (!buyer || buyer.id === next.playerCountryId || buyer.controllerCountryId || buyer.globalSanctions) continue;
     if (Object.values(next.tradeDeals).filter((deal) => deal.active && deal.buyerId === buyer.id).length >= 4) continue;
 
+    // Pick the most urgent need not yet covered by contracted imports, so a covered food need cannot block oil
+    // forever and a large importer can add a second supplier when one deal does not close its deficit.
+    const buying = Object.values(next.tradeDeals).filter((deal) => deal.active && deal.buyerId === buyer.id);
+    const contracted = (resource: TradeResource) => buying.filter((deal) => deal.resource === resource).reduce((sum, deal) => sum + deal.quantityPerDay, 0);
+    const covered = (resource: TradeResource) => buying.some((deal) => deal.resource === resource) && flows[buyer.id].net[resource] + contracted(resource) >= 0;
     const need = resources
+      .filter((resource) => !covered(resource))
       .map((resource) => ({ resource, score: needScore(buyer.id, resource) }))
       .sort((a, b) => b.score - a.score)[0];
 
     if (!need || need.score < 45) continue;
-    if (Object.values(next.tradeDeals).some((deal) => deal.active && deal.buyerId === buyer.id && deal.resource === need.resource)) continue;
 
     const supplier = countryList
       // The player is never auto-signed as a supplier: pacts with the player need its consent (letters/offers).
-      .filter((candidate) => candidate.id !== buyer.id && candidate.id !== next.playerCountryId && exportCapacity[candidate.id][need.resource] > 0.05)
+      .filter((candidate) => candidate.id !== buyer.id && candidate.id !== next.playerCountryId && exportCapacity[candidate.id][need.resource] > 0.05
+        && !buying.some((deal) => deal.sellerId === candidate.id && deal.resource === need.resource))
       .map((candidate) => {
         const relation = relationFor(next.countries[buyer.id], candidate.id);
         const score = exportCapacity[candidate.id][need.resource] * 24

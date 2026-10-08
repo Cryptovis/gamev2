@@ -86,13 +86,14 @@ describe('0.84 economy audit fixes', () => {
     expect(consumption).toBeGreaterThan(production * 0.2);
   });
 
-  it('C2: the ten most populous countries produce at least the food they consume', () => {
+  it('C2: the ten most populous countries start with at least a year of food reserve (mild importers, never starving)', () => {
     const s = makeInitialState();
     const top = Object.values(s.countries).sort((a, b) => b.demographics.population - a.demographics.population).slice(0, 10);
     for (const c of top) {
       const f = simulateResources(c);
-      expect(f.production.food).toBeGreaterThan(f.consumption.food);
-      expect(foodReserveDays(c)).toBe(SURPLUS_RESERVE_DAYS);
+      // The per-capita floor keeps output within ~10% of consumption, so food remains a tradeable need.
+      expect(f.production.food).toBeGreaterThan(f.consumption.food * 0.85);
+      expect(foodReserveDays(c)).toBeGreaterThanOrEqual(365);
     }
   });
 

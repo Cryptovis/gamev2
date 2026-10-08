@@ -1,5 +1,11 @@
 export const UI_CATALOG_FLOW:Record<string,string[]>={
   "Round": ["Tur", "Turno", "回合", "Раунд"],
+  // 0.84 Stable Command engine messages.
+  "Enter a valid finite number.": ["Geçerli bir sayı girin.", "Introduce un número válido.", "请输入有效的数字。", "Введите допустимое число."],
+  "COUNCIL // {0} is not at war; no ceasefire to impose.": ["KONSEY // {0} savaşta değil; dayatılacak bir ateşkes yok.", "CONSEJO // {0} no está en guerra; no hay alto el fuego que imponer.", "理事会 // {0} 未处于战争状态，无需实施停火。", "СОВЕТ // {0} не ведёт войну; вводить перемирие не требуется."],
+  "COUNCIL // Global sanctions on {0} have expired.": ["KONSEY // {0} üzerindeki küresel yaptırımların süresi doldu.", "CONSEJO // Las sanciones globales contra {0} han expirado.", "理事会 // 对{0}的全球制裁已到期。", "СОВЕТ // Срок глобальных санкций против {0} истёк."],
+  "EVENT // Treasury cannot fund this response (${0}B).": ["OLAY // Hazine bu yanıtı karşılayamıyor ({0} milyar $).", "EVENTO // El tesoro no puede financiar esta respuesta ({0} mil M$).", "事件 // 国库无法支付此应对措施（{0}十亿美元）。", "СОБЫТИЕ // Казна не может профинансировать этот ответ ({0} млрд $)."],
+  "WAR // {0} is not an independent state and cannot be targeted.": ["SAVAŞ // {0} bağımsız bir devlet değil ve hedef alınamaz.", "GUERRA // {0} no es un estado independiente y no puede ser objetivo.", "战争 // {0}不是独立国家，无法作为目标。", "ВОЙНА // {0} не является независимым государством и не может быть целью."],
   "Game entry": [
     "Oyuna giriş",
     "Entrada al juego",

@@ -15,7 +15,7 @@ import { processCountryAI } from './systems/ai';
 import { simulateEconomy } from './systems/economy';
 import { maybeTriggerEvent } from './systems/events';
 import { simulatePolitics } from './systems/politics';
-import { simulateResources } from './systems/resources';
+import { simulateResources, type TradeInflow } from './systems/resources';
 import { processTradeDeals } from './systems/trade';
 import { processMinistries } from './systems/ministries';
 import { processIndustry } from './systems/industry';
@@ -33,9 +33,9 @@ import {processIndustrialContracts,processIndustrialMarketAI} from './systems/in
 import {processLeadership} from './systems/leadership';
 import { processInfrastructure, processInfrastructureAI } from './systems/infrastructure';
 
-export function tickCountry(country: CountryState,boost=1,managedEnergy=false): CountryState {
+export function tickCountry(country: CountryState,boost=1,managedEnergy=false,tradeInflow?: TradeInflow): CountryState {
   const administered = processMinistries(country);
-  const resources = simulateResources(administered,boost);
+  const resources = simulateResources(administered,boost,tradeInflow);
   const economy = simulateEconomy(administered, resources);
   const politics = simulatePolitics(administered, economy, resources);
   const base: CountryState = {
@@ -46,6 +46,18 @@ export function tickCountry(country: CountryState,boost=1,managedEnergy=false): 
     politics,
   };
   return processIndustry(base,boost,managedEnergy);
+}
+
+/** Average daily food/oil each country receives (+) or ships (-) under active trade deals. */
+function contractedTradeInflow(state: GameState): Record<string, TradeInflow> {
+  const inflow: Record<string, TradeInflow> = {};
+  for (const deal of Object.values(state.tradeDeals)) {
+    if (!deal.active || (deal.resource !== 'food' && deal.resource !== 'oil')) continue;
+    const buyer = (inflow[deal.buyerId] ??= {}), seller = (inflow[deal.sellerId] ??= {});
+    buyer[deal.resource] = (buyer[deal.resource] ?? 0) + deal.quantityPerDay;
+    seller[deal.resource] = (seller[deal.resource] ?? 0) - deal.quantityPerDay;
+  }
+  return inflow;
 }
 
 function processElection(state: GameState): GameState {
@@ -62,7 +74,8 @@ export function tickGame(state: GameState): GameState {
   if (state.campaignStatus !== 'active' || state.activeEvent || state.activeAdvisor || state.world.living?.advice.active || state.world.living?.notice || pendingVictory(state)) return state;
   const dated=processLeadership({...state,day:state.day+1});
   const boostActive=dated.day<dated.leadership.celebrationUntilDay;
-  const countries = distributeMigration(Object.fromEntries(Object.entries(state.countries).map(([id, country]) => [id, country.annexedBy?country:tickCountry(country,(id===state.playerCountryId&&boostActive?1.12:1)*((occupationFor(dated,id)?.unrest??0)>=80?.7:1),true)])));
+  const inflow = contractedTradeInflow(state);
+  const countries = distributeMigration(Object.fromEntries(Object.entries(state.countries).map(([id, country]) => [id, country.annexedBy?country:tickCountry(country,(id===state.playerCountryId&&boostActive?1.12:1)*((occupationFor(dated,id)?.unrest??0)>=80?.7:1),true,inflow[id])])));
   const nextDay = state.day + 1;
   const player = countries[state.playerCountryId];
   const notices: string[] = [];
