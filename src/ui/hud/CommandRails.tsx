@@ -77,7 +77,7 @@ export function CommandRails(){
   </Suspense>
   {open.has('society')&&<DomesticWindow/>}
   {open.has('credit')&&<Suspense fallback={null}><CreditWindow/></Suspense>}{open.has('help')&&<HelpPanel/>}
-  {open.has('map')&&<div className="left-command-dock map-command-dock"><button className="map-close" data-guide="close-workspace" onClick={state.closeWorkspace} aria-label={translateLive("Close map command")}><LocaleText value={"×"}/></button><GuideBriefing/><MapModeBar/></div>}
+  {open.has('map')&&<div className="left-command-dock map-command-dock"><header className="map-dock-header"><strong><LocaleText value="MAP COMMAND"/></strong><button className="map-close" data-guide="close-workspace" onClick={state.closeWorkspace} aria-label={translateLive("Close map command")}><LocaleText value={"×"}/></button></header><div className="map-dock-body"><GuideBriefing/><MapModeBar/></div></div>}
   {open.has('resources')&&<ResourceCommandWindow onClose={()=>close('resources')}/>}
 
   {open.has('objectives')&&<DraggableWindow id="objectives-window" kicker="CAMPAIGN / GUIDANCE" title={translateLive("Strategic Objectives")} initialX={88} initialY={170} width={470} onClose={()=>close('objectives')}>

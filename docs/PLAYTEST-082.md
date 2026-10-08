@@ -27,3 +27,7 @@ Continue on this repository. V3 is not justified by these changes: the existing 
 ## Onboarding patch — 0.82.0-playtest.2
 
 Setup now shows the exact package version. The cover/frame keeps fixed dimensions across identity, portrait, nation, confirmation and language changes. Desktop nation selection confines scrolling to the list; its scrollbar matches the portrait list. The nation summary is compact, and mobile puts it above the list. Selected secondary text has dark contrast against the gold background. Browser layout checks cover 1440×900, 1280×720 and 390×844.
+
+## UI hotfix — 0.82.0-playtest.3
+
+The identity footer's fourth item previously wrapped Continue into a clipped second row. Save utilities and navigation now have separate bounded rows. Rails sit behind national and floating windows, so the Map/Help cluster cannot cover a tutorial investment. The map dock has a close header outside its scrolling body; the profile return footer is transparent and campaign dates wrap instead of truncating. Production browser checks additionally verify footer button geometry/hit-testing, map close hit-testing, overlapping panel priority and profile footer background.

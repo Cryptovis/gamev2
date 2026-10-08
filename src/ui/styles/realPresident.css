@@ -798,3 +798,41 @@ body:has(.guided-tutorial) .review-backdrop { background: rgb(7 23 33 / 16%); ba
 @media (max-width: 640px) {
   .wizard-release { display: block; margin: 3px 0 0; }
 }
+
+/* 0.82.0-playtest.3: persistent footer controls and explicit workspace layers. */
+.campaign-wizard .wizard-footer { display: flex; flex-direction: column; justify-content: center; gap: 5px; padding: 8px 20px !important; min-height: 0; }
+.wizard-save-tools { display: flex; align-items: center; gap: 10px; min-width: 0; width: 100%; }
+.wizard-save-tools:empty { display: none; }
+.wizard-save-tools .load-previous { min-height: 24px; padding: 3px 8px; font-size: 10px; }
+.wizard-save-tools small { font-size: 10px; line-height: 1.15; }
+.wizard-navigation { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 12px; align-items: center; width: 100%; min-width: 0; }
+.wizard-navigation > span { text-align: center; font-size: 10px; white-space: nowrap; }
+.wizard-navigation button { min-height: 34px; padding: 6px 10px; min-width: 0; }
+.command-rail { z-index: 20; }
+.command-panel { z-index: 60; }
+.floating-command-window { z-index: 70; }
+.left-command-dock.map-command-dock {
+  z-index: 70; padding: 0; display: flex; flex-direction: column;
+  width: 360px; max-height: calc(100dvh - 190px); overflow: hidden;
+  background: #203748; border: 1px solid #66869a; border-radius: 14px;
+  box-shadow: 0 15px 40px #06141d66;
+}
+.map-dock-header { display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; gap: 10px; padding: 10px 12px; background: #294657; border-bottom: 1px solid #66869a; }
+.map-dock-header strong { color: #edf7fc; font-size: 12px; letter-spacing: .08em; }
+.map-dock-header .map-close { position: static; width: 32px; height: 32px; border-radius: 7px; border: 1px solid #68889a; background: #142b38; color: #edf7fc; cursor: pointer; }
+.map-dock-body { min-height: 0; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; scrollbar-color: #65889d #203747; }
+.map-dock-body .guide-briefing { margin: 10px; }
+.left-command-dock.map-command-dock .map-mode-bar { width: 100% !important; border: 0; border-radius: 0; box-shadow: none; }
+.player-options-main > .player-options-footer { background: transparent; border: 0; padding: 0; }
+.player-options-footer button { min-height: 36px; }
+.campaign-status-grid strong { white-space: normal; overflow-wrap: anywhere; }
+@media (max-width: 760px) {
+  .left-command-dock.map-command-dock { width: calc(100vw - 104px); max-height: calc(100dvh - 238px); }
+  .map-dock-header { padding: 8px; }
+  .wizard-navigation { gap: 8px; }
+  .wizard-navigation button { font-size: 11px; }
+}
+@media (max-height: 600px) and (min-width: 901px) {
+  .campaign-wizard { grid-template-rows: 100px minmax(0, 1fr) 82px; }
+  .wizard-header p { display: none; }
+}

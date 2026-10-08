@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.82.0-playtest.3 — UI hotfix
+- Reserved explicit setup navigation and save-tool rows so Continue cannot spill below the footer.
+- Put navigation rails behind national/floating windows, keeping tutorial construction targets clickable.
+- Rebuilt the map dock with an integrated close header and a bounded scrolling body.
+- Removed the forced profile footer background and let full campaign dates wrap.
+- Added browser checks for unclipped setup buttons, window hit-testing and plain profile footer surfaces.
+
 ## 0.82.0-playtest.2 — Onboarding layout patch
 - Fixed the setup frame dimensions across steps and language changes.
 - Matched country-list scrollbars to portrait selection and bounded desktop list height.
