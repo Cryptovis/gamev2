@@ -1,3 +1,4 @@
+import {UI_CATALOG_083} from './uiCatalog083';
 import {UI_CATALOG_082} from './uiCatalog082';
 import { TECHNOLOGY_TREE } from "../data/technologyTree";
 import { UI_CATALOG_081 } from "./uiCatalog081";
@@ -23,6 +24,7 @@ for (const language of languages) {
     UI_CATALOG_080,
     UI_CATALOG_081,
     UI_CATALOG_082,
+    UI_CATALOG_083,
   ])
     for (const [key, values] of Object.entries(catalog))
       if (

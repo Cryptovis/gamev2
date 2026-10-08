@@ -15,3 +15,5 @@ import "./ui/styles/guidedCommand.css";
 import "./ui/styles/civicCommand.css";
 
 import "./ui/styles/realPresident.css";
+
+import "./ui/styles/tacticalCommand.css";

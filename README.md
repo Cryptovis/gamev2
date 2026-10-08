@@ -1,10 +1,10 @@
-# The Real President — Reliable Command 0.82
+# The Real President — Tactical Command 0.83
 
 A browser-based grand-strategy prototype built with React, TypeScript, Zustand, D3 Geo, Dexie and Vitest.
 
-Current version: **0.82.0-playtest.6**, branch `dev/reliable-command-082`, save schema 15. Existing schemas 12–14 migrate automatically; incompatible records are skipped when loading previous progress.
+Current version: **0.83.0-playtest.1**, branch `dev/tactical-command-083`, save schema 16. Existing schemas 12–15 migrate automatically; incompatible records are skipped when loading previous progress.
 
-This release adds reliable reviewed commands, recoverable saves/tutorial practice, timed research, dated NEWS history and a more compact map/resource interface. See [0.82 playtest notes](docs/PLAYTEST-082.md) and [roadmap](docs/ROADMAP.md) for delivered scope and remaining debt. V3 remains a conditional architectural decision.
+This release adds playable tactical battle orders, bounded force groups, recon, saved movement replay and retained economic charts on top of 0.82’s reliable command foundation. See [0.83 playtest notes](docs/PLAYTEST-083.md), [0.82 notes](docs/PLAYTEST-082.md) and [roadmap](docs/ROADMAP.md). V3 is deferred until the complete-playability milestone.
 
 ```bash
 npm ci

@@ -28,6 +28,7 @@ export interface OutreachMission {
   effect: number;
 }
 export interface WorldState {
+ economicHistory?:import('../engine/systems/economicHistory').EconomicHistory;
  campaignId?:string;
  commandIds?:string[];
  journal?:Array<{id:string;day:number;message:string;kind:'command'|'world'|'legacy'}>;

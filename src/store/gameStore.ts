@@ -1,3 +1,4 @@
+import {recordEconomicHistory} from '../engine/systems/economicHistory';
 import {buildPlant,togglePlant,cancelPowerProject} from '../engine/systems/energy';
 import type {PlantKind} from '../domain/energy';
 import {sovereignId} from '../domain/sovereignty';
@@ -33,6 +34,8 @@ import {makeLongTermImportContract} from '../engine/systems/trade';
 import {resolveDiplomaticOffer} from '../engine/systems/diplomaticOffers';
 
 interface GameActions {
+ startTactical:(id:string,commandId?:string)=>void;
+ commitTactical:(id:string,expectedRound:number,orders:import('../domain/tactical').TacticalOrder[],commandId?:string)=>void;
  cancelPowerProject:(id:string,commandId?:string)=>void;
  buildPlant:(kind:PlantKind,commandId?:string)=>void;
  togglePlant:(kind:PlantKind)=>void;
@@ -149,6 +152,8 @@ function livingReceipt(s:GameState,n:GameState,title:string,summary:string){retu
 function governanceReceipt(s:GameState,n:GameState){return {...n,actionReceipt:{title:n===s?'Decision unavailable':'Decision executed',summary:n===s?'Requirements changed; check the budget, cooldown and ownership.':n.sitrep[0]}}}
 export const useGameStore = create<GameState & GameActions>((set, get) => ({
   ...makeInitialState(),
+  startTactical:(warId,commandId)=>set(s=>commandWithReceipt(s,{type:'tactical/start',warId,commandId})),
+  commitTactical:(warId,expectedRound,orders,commandId)=>set(s=>commandWithReceipt(s,{type:'tactical/commit',warId,expectedRound,orders,commandId})),
   cancelPowerProject:(id,commandId)=>set(s=>commandWithReceipt(s,{...{type:'energy/cancel',id},commandId})),
   buildPlant:(kind,commandId)=>set(s=>commandWithReceipt(s,{...{type:'energy/build',kind},commandId})),
   togglePlant:(kind)=>set(s=>applyGameCommand(s,{type:'energy/toggle',kind})),
@@ -204,7 +209,7 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
     const fresh=makeInitialState();
     const chosen=fresh.countries[countryId] ? countryId : 'TUR';
     const country=fresh.countries[chosen];
-    const boot={...fresh,actionReceipt:null,navigation:null,activeTool:null,warWindowId:null,world:{...createWorld(fresh.countries,chosen),campaignId:crypto.randomUUID(),commandIds:[],journal:[],governance:createGovernance(fresh.countries),tutorial:{active:true,step:0,completed:false}},mapProjection:'globe',mapControlCommand:null,confirmationSkips:{},playerCountryId:chosen,selectedCountryId:chosen,leadership:createLeadership(country.economy.gdp),playerProfile:{commanderName:commanderName.trim()||'Commander',avatarId,language,setupComplete:true,nationalityCountryId:fresh.countries[nationalityCountryId??'']?nationalityCountryId:chosen,birthDate:birthDate&&validBirthDate(birthDate)?birthDate:null},council:{influenceByCountry:{[chosen]:28},history:[]},intelligenceLedger:{[chosen]:100},mapNotice:`${country.name} command established.`,sitrep:[`${commanderName.trim()||'Commander'} assumed national command of ${country.name}.`,...fresh.sitrep],saveMessage:'Campaign initialized'};let seeded=processExchange(boot,true);for(const id of ['FRA','DEU','USA','JPN','GBR'])if(id!==chosen)seeded=postCredit(seeded,'lend',1,3+Object.keys(expansion(seeded).creditOffers).length*.5,365,id);return seeded;
+    const boot={...fresh,actionReceipt:null,navigation:null,activeTool:null,warWindowId:null,world:{...createWorld(fresh.countries,chosen),campaignId:crypto.randomUUID(),commandIds:[],journal:[],governance:createGovernance(fresh.countries),tutorial:{active:true,step:0,completed:false}},mapProjection:'globe',mapControlCommand:null,confirmationSkips:{},playerCountryId:chosen,selectedCountryId:chosen,leadership:createLeadership(country.economy.gdp),playerProfile:{commanderName:commanderName.trim()||'Commander',avatarId,language,setupComplete:true,nationalityCountryId:fresh.countries[nationalityCountryId??'']?nationalityCountryId:chosen,birthDate:birthDate&&validBirthDate(birthDate)?birthDate:null},council:{influenceByCountry:{[chosen]:28},history:[]},intelligenceLedger:{[chosen]:100},mapNotice:`${country.name} command established.`,sitrep:[`${commanderName.trim()||'Commander'} assumed national command of ${country.name}.`,...fresh.sitrep],saveMessage:'Campaign initialized'};let seeded=processExchange(boot,true);for(const id of ['FRA','DEU','USA','JPN','GBR'])if(id!==chosen)seeded=postCredit(seeded,'lend',1,3+Object.keys(expansion(seeded).creditOffers).length*.5,365,id);return recordEconomicHistory(seeded);
   }),
   setLeaderIdentity:(nationalityCountryId,birthDate)=>set(state=>state.countries[nationalityCountryId]&&(!birthDate||validBirthDate(birthDate))?{playerProfile:{...state.playerProfile,nationalityCountryId,birthDate}}:{}),
   setPlayerAvatar: (avatarId) => set((state)=>({playerProfile:{...state.playerProfile,avatarId}})),

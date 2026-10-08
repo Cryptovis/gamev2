@@ -1,7 +1,7 @@
 {
   "name": "alpyx-global-command",
   "private": true,
-  "version": "0.82.0-playtest.6",
+  "version": "0.83.0-playtest.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -13,6 +13,7 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
+    "chart.js": "4.5.1",
     "d3-geo": "3.1.1",
     "dexie": "4.4.6",
     "react": "19.3.0",

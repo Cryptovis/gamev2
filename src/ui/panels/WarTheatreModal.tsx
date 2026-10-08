@@ -1,16 +1,17 @@
 import {calculateSupplyNetwork} from '../../engine/systems/supplyNetwork';
 import {pilotCoverage,academyFor} from '../../engine/systems/governance';
 import { LocaleText, translateLive } from "../../i18n/localeText";
-import { useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useGameStore } from "../../store/gameStore";
 import { flagEmoji } from "../../data/countryThemes";
 import { getWarPreview } from "../../engine/systems/warfare";
 import { AssetThumbnail } from "../icons/AssetThumbnail";
-import { ReviewDialog } from "./ReviewDialog";
+import {tacticalStartStatus} from '../../engine/systems/tactical';
+const TacticalBattlefield=lazy(()=>import('./TacticalBattlefield').then(m=>({default:m.TacticalBattlefield})));
 export function WarTheatreModal() {
   const s = useGameStore(),
-    [wip, setWip] = useState(false),
+    [tacticalView, setTacticalView] = useState(false),
     dialog = useRef<HTMLElement>(null),
     seen = useRef(new Set(Object.keys(s.wars)));
   useEffect(() => {
@@ -29,16 +30,16 @@ export function WarTheatreModal() {
     if (!w) return;
     const previous = document.activeElement as HTMLElement | null;
     const onKey = (e: KeyboardEvent) => {
-      if (wip) return;
+      if (document.querySelector('.review-dialog')) return;
       if (e.key === "Escape") s.openWarWindow(null);
       if (e.key === "Tab") {
         const buttons = Array.from(
-            dialog.current?.querySelectorAll<HTMLButtonElement>(
+            (dialog.current?.querySelectorAll<HTMLButtonElement>(
               "button:not(:disabled)",
-            ) ?? [],
+            ) ?? []),
           ),
-          first = buttons[0],
-          last = buttons.at(-1);
+          first = buttons.filter(b=>b.offsetParent!==null)[0],
+          last = buttons.filter(b=>b.offsetParent!==null).at(-1);
         if (e.shiftKey && document.activeElement === first) {
           e.preventDefault();
           last?.focus();
@@ -53,7 +54,8 @@ export function WarTheatreModal() {
       document.removeEventListener("keydown", onKey);
       previous?.focus();
     };
-  }, [w?.id, wip]);
+  }, [w?.id]);
+  useEffect(()=>setTacticalView(!!w?.tactical),[w?.id]);
   if (!w) return null;
   const a = s.countries[w.attackerId],
     d = s.countries[w.defenderId],
@@ -70,7 +72,7 @@ export function WarTheatreModal() {
         aria-modal="true"
         aria-label={translateLive("War command")}
       >
-        {mine&&fuel<14&&<div className="war-fuel-warning" role="alert"><strong><LocaleText value={fuel<3?'Critical fuel on the front':'Fuel reserves are insufficient for a sustained operation'}/></strong><p><LocaleText value="Fuel operational days"/>: {fuel.toFixed(1)}. <LocaleText value="Consider halting the assault, securing imports or withdrawing before supply and readiness collapse."/></p><button onClick={()=>s.navigate('resources')}><LocaleText value="Inspect fuel supply"/></button></div>}<header>
+        <header>
           <span>
             <small>
               <LocaleText value={"WAR COMMAND"} />
@@ -89,6 +91,8 @@ export function WarTheatreModal() {
             <LocaleText value={"×"} />
           </button>
         </header>
+        {mine&&fuel<14&&<div className="war-fuel-warning" role="alert"><strong><LocaleText value={fuel<3?'Critical fuel on the front':'Fuel reserves are insufficient for a sustained operation'}/></strong><p><LocaleText value="Fuel operational days"/>: {fuel.toFixed(1)}. <LocaleText value="Consider halting the assault, securing imports or withdrawing before supply and readiness collapse."/></p><button onClick={()=>s.navigate('resources')}><LocaleText value="Inspect fuel supply"/></button></div>}
+        {tacticalView&&w.tactical?<Suspense fallback={<p><LocaleText value="Preparing the battlefield…"/></p>}><TacticalBattlefield warId={w.id} onReturn={()=>setTacticalView(false)}/></Suspense>:<>
         <div className="war-sides">
           {[a, d].map((c, i) => (
             <article key={c.id}>
@@ -202,7 +206,7 @@ export function WarTheatreModal() {
               }
             />
           </button>
-          <button className="hd-war-button" onClick={() => setWip(true)}>
+          <button className="hd-war-button" disabled={!mine||(!w.tactical&&(w.status!=="active"||!!tacticalStartStatus(s,w.id)))} onClick={() => {if(!w.tactical)s.startTactical(w.id);else if(w.status==='active')s.setAutoAssault(w.id,false);setTacticalView(true);}}>
             <LocaleText value={"HD War Experience"} />
           </button>
         </footer>
@@ -218,14 +222,9 @@ export function WarTheatreModal() {
             }
           />
         </p>
+        </>}
       </section>
-      {wip && (
-        <ReviewDialog
-          title={translateLive("HD War Experience")}
-          summary="Work in progress. The cinematic battlefield is planned; current combat already uses terrain, supply, air superiority, equipment and losses. See Help for the roadmap."
-          onCancel={() => setWip(false)}
-        />
-      )}
+
     </div>,
     document.body,
   );

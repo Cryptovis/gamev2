@@ -1,3 +1,5 @@
+import {recordEconomicHistory} from './systems/economicHistory';
+import {processAutoTacticalWars} from './systems/tactical';
 import {processEnergy,processEnergyAI} from './systems/energy';
 import {processResearch} from './systems/technology';
 import {processCredit} from './systems/sovereignCredit';
@@ -89,6 +91,7 @@ export function tickGame(state: GameState): GameState {
   next = processIndustrialContracts(next);
   next = processProduction(next);
   next = processAutoWars(next);
+  next = processAutoTacticalWars(next);
   next = processElection(next);
   next = processIntelOperations(next);
   next = processInfluence(next);
@@ -109,5 +112,5 @@ export function tickGame(state: GameState): GameState {
   next = processIntegration(next);
   next = processWellbeing(next);
   if(!next.world.living?.advice.active&&!next.world.living?.notice)next = maybeCreateResourceAdvisor(next);
-  return next;
+  return recordEconomicHistory(next);
 }

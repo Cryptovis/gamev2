@@ -64,6 +64,8 @@ export type ReliableCommand =
  | {type:'world/attackProposal';id:string}
  | {type:'world/vote';id:string;choice:import('./world').VoteChoice}
  | {type:'world/outreach';id:string;religion:import('./game').ReligionType}
- | {type:'technology/cancel'};
+ | {type:'technology/cancel'}
+ | {type:'tactical/start';warId:string}
+ | {type:'tactical/commit';warId:string;expectedRound:number;orders:import('./tactical').TacticalOrder[]};
 
 export type GameCommand = (LegacyCommand | ReliableCommand) & {commandId?:string};
