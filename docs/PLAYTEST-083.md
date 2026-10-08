@@ -1,4 +1,4 @@
-# 0.83.0-playtest.1 — Tactical Command
+# 0.83.0-playtest.2 — Tactical Command / Clear Command
 
 Branch: `dev/tactical-command-083`. Base: 0.82.0-playtest.6 at `30bc453`.
 
@@ -13,9 +13,24 @@ Branch: `dev/tactical-command-083`. Base: 0.82.0-playtest.6 at `30bc453`.
 - Save schema 16 migrates schemas 12–15 and validates the new tactical and history records. Round identity and existing bounded command deduplication prevent repeat confirmation/reload spending.
 - Tactical and Chart.js screens load on demand. Existing bundled military atlas assets provide the unit artwork. Keyboard sector navigation, touch controls and reduced-motion behavior are included. No PixiJS/Phaser runtime or 3D battlefield is introduced.
 
+## Clear Command patch
+
+- Diplomacy → Proposal history contains accepted, rejected, expired and closed letters. Pending/Sent/Received views contain pending letters only. Status labels accompany outcome colors. The existing 150-resolved-letter retention limit remains; accepting an old proposal does not prove its agreement is still active.
+- Supply stock values occupy their own grid column. Trade eligibility uses 20/100 consistently, including the advisor and supply button; a proposal can still be rejected or blocked for other reasons.
+- Monthly import contracts show recurring quantities, fixed prices, first delivery, expiry and cancellation terms. The signed receipt shows paper, pen and a decorative signature; reduced motion displays the completed signature immediately. The animation does not spend funds or sign a second contract.
+- Shared reviews/results include subject artwork, and a single receipt close button is centered. Speed digits have stronger weight and a lit active state.
+- Five-language coverage includes static UI gaps, events, tactical/economic messages and historical news templates. Existing translations are preserved. New static drafts were produced during authoring and important contract, history, credit and energy terms were reviewed; remaining prose still needs native-speaker playtesting. This is not a certified B1 translation. Country names and figures remain separate from translated templates. No translation service or model runs in the game.
+
+### Patch playtest
+
+1. In each supported language, send a diplomatic proposal and advance to its reply. Check pending letters disappear into history, accepted results are green and rejected results red; save/reload retains the records.
+2. Open Supply and compare each resource image, quantity and supplier caption, including on a narrow phone. Neutral 50/100 relations must not read Low relations.
+3. Open an advisor import contract, choose a duration and review monthly price/delivery terms. Sign once; check the localized receipt, pen presentation and centered close. Future billing still occurs only on delivery.
+4. Repeat with reduced motion and check the signature is visible immediately. Follow all tutorial lessons to ensure the extra artwork does not obscure close controls.
+
 ## How to playtest
 
-1. Update to the release branch, run `npm ci` and `npm run dev`; verify 0.83.0-playtest.1 in setup. Previous saves can be loaded directly.
+1. Update to the release branch, run `npm ci` and `npm run dev`; verify 0.83.0-playtest.2 in setup. Previous saves can be loaded directly.
 2. Select another country → War → review a declaration. Inside War Command open HD War Experience.
 3. Select a group, choose an order, and choose a target sector if needed. Queue up to three command points, review fuel and confirm. Compare the army totals and recorded result.
 4. Replay the recorded movement; verify fuel, losses and front progress do not change. Close, save, reload and reopen War Command to resume the same battlefield.
@@ -30,3 +45,5 @@ Branch: `dev/tactical-command-083`. Base: 0.82.0-playtest.6 at `30bc453`.
 This is the first playable tactical slice. AI is a deterministic rules-based commander, not a competitive search engine. The board is an abstract theatre rather than a geographic military map; representative force groups do not model every soldier. Air/naval contributions remain in the strategic resolver. Long campaign balance, sustained mobile profiling, audio and richer animation still need playtesting. PixiJS remains a later rendering candidate when measured needs justify it.
 
 V3 is deferred until the whole game is ready for the complete-playability milestone; it is not a prerequisite or rewrite for 0.83.
+
+Static locale completion increases the compressed localization chunk by roughly 170 KB. Language-per-chunk loading and native-language prose review remain follow-up work; the build continues to report a large-chunk advisory.

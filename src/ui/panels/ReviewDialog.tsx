@@ -2,11 +2,13 @@ import {LocaleText,translateLive} from '../../i18n/localeText';
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { useGameStore } from "../../store/gameStore";
+import {ReviewVisual,reviewVisualKind,type ReviewVisualKind} from '../icons/ReviewVisual';
 export interface ReviewContent {
   title: string;
   summary: string;
   metrics?: string[][];
   warnings?: string[];
+  visual?: ReviewVisualKind;
 }
 export function ReviewDialog({
   title,
@@ -17,6 +19,7 @@ export function ReviewDialog({
   onConfirm,
   confirmLabel = "CONFIRM",
   allowed = true,
+  visual,
 }: {
   onCancel: () => void;
   onConfirm?: (commandId:string) => void;
@@ -78,12 +81,13 @@ export function ReviewDialog({
         role="dialog"
         aria-modal="true"
         aria-label={translateLive(title)}
-        className="review-dialog"
+        className={`review-dialog ${onConfirm?'review-confirmation':'review-result'}`}
       >
         <header>
           <small><LocaleText value={"COMMAND REVIEW"}/></small>
           <button data-guide="review-dismiss" aria-label={translateLive("Close review")} onClick={onCancel}><LocaleText value={"×"}/></button>
         </header>
+        <ReviewVisual kind={visual??reviewVisualKind(title+' '+summary)} signed={!onConfirm&&/signed|agreed/i.test(title)}/>
         <h2><LocaleText value={title}/></h2>
         <p><LocaleText value={summary}/></p>
         <div className="review-metrics">

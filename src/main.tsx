@@ -17,3 +17,4 @@ import "./ui/styles/civicCommand.css";
 import "./ui/styles/realPresident.css";
 
 import "./ui/styles/tacticalCommand.css";
+import "./ui/styles/commandPolish.css";

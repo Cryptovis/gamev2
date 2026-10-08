@@ -1,6 +1,6 @@
 import {test,expect,type Page} from '@playwright/test';
 async function start(page:Page){
- await page.goto('/');await expect(page.locator('.wizard-release')).toHaveText('0.83.0-playtest.1');
+ await page.goto('/');await expect(page.locator('.wizard-release')).toHaveText('0.83.0-playtest.2');
  await page.locator('.wizard-name-field input').fill('Tactical playtest');await page.getByRole('button',{name:'Türkçe',exact:true}).click();
  for(let i=0;i<4;i++)await page.locator('.wizard-footer .wizard-next').click();
  await page.locator('.guided-card footer button').first().click();

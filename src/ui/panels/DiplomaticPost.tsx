@@ -13,15 +13,15 @@ export function DiplomaticPost() {
     l = living(s),
     [target, setTarget] = useState(()=>{const nav=useGameStore.getState().navigation;return nav?.panel==='diplomacy-inbox'&&nav.countryId!==s.playerCountryId?nav.countryId:"BRA";}),
     [kind, setKind] = useState<"embassy" | "trade_pact">("embassy"),
-    [filter,setFilter]=useState<'all'|'outgoing'|'incoming'>('all'),
+    [filter,setFilter]=useState<'all'|'outgoing'|'incoming'|'history'>('all'),
     [help,setHelp]=useState(false),
     [review, setReview] = useState<
       (ReviewContent & { execute: (commandId:string) => void; allowed?: boolean }) | null
     >(null);
   const status=diplomaticProposalStatus(s,target,kind);
   const relation=relationFor(s.countries[s.playerCountryId],target),index=relationshipIndex(relation),chance=proposalAcceptanceChance(s,s.playerCountryId,target,kind);
-  const visibleLetters=l.letters.filter(x=>filter==='all'||(filter==='incoming'?x.incoming:!x.incoming));
-  const track=()=>{setFilter(status.letter?.incoming?'incoming':'outgoing');setHelp(true);window.setTimeout(()=>document.getElementById('proposal-tracker')?.scrollIntoView({block:'nearest'}),0);};
+  const visibleLetters=l.letters.filter(x=>filter==='history'?x.status!=='pending':x.status==='pending'&&(filter==='all'||(filter==='incoming'?x.incoming:!x.incoming)));
+  const track=()=>{setFilter(status.letter&&status.letter.status!=='pending'?'history':status.letter?.incoming?'incoming':'outgoing');setHelp(true);window.setTimeout(()=>document.getElementById('proposal-tracker')?.scrollIntoView({block:'nearest'}),0);};
   return (
     <section className="diplomatic-post">
       <header>
@@ -93,7 +93,8 @@ export function DiplomaticPost() {
       {!status.allowed&&<aside className="proposal-status" role="status"><strong><LocaleText value="Proposal status"/></strong><p><LocaleText value={status.reason}/></p>{status.letter&&<small><LocaleText value="Reply day"/>: {status.letter.replyDay}{status.letter.status!=='pending'&&<> · <LocaleText value="Retry day"/>: {status.retryDay}</>}</small>}<div><button onClick={track}><LocaleText value="Help / track proposals"/></button><button onClick={()=>s.navigate('diplomacy',target)}><LocaleText value="Open partner diplomacy"/></button></div></aside>}
       {help&&<aside className="proposal-status"><strong><LocaleText value="Where are my proposals?"/></strong><p><LocaleText value="Open Diplomacy, then Proposal tracker and Sent proposals. Pending replies arrive after three campaign days; advance time to receive them. Sending again will not accelerate the answer. No fee is charged at submission; accepted outgoing proposals charge the stated fee once."/></p></aside>}
       <h4 id="proposal-tracker"><LocaleText value="Proposal tracker"/> · <LocaleText value="Pending"/>: {l.letters.filter(x=>x.status==='pending').length}</h4>
-      <nav className="proposal-filters" aria-label="Proposal tracker filters">{(['all','outgoing','incoming'] as const).map(f=><button key={f} className={filter===f?'active':''} aria-pressed={filter===f} onClick={()=>setFilter(f)}><LocaleText value={f==='all'?'All correspondence':f==='outgoing'?'Sent proposals':'Received proposals'}/></button>)}</nav>
+      <nav className="proposal-filters" aria-label="Proposal tracker filters">{(['all','outgoing','incoming','history'] as const).map(f=><button key={f} data-proposal-filter={f} className={filter===f?'active':''} aria-pressed={filter===f} onClick={()=>setFilter(f)}><LocaleText value={f==='history'?'Proposal history':f==='all'?'Pending proposals':f==='outgoing'?'Sent proposals':'Received proposals'}/>{f==='history'&&<> ({l.letters.filter(x=>x.status!=='pending').length})</>}</button>)}</nav>
+      {filter==='history'&&<p className="proposal-history-note"><LocaleText value="Accepted, rejected and closed proposals are kept here. A past acceptance does not mean the agreement is still active."/></p>}
       <div className="letter-list">
         {visibleLetters.map((x) => {
           const other =
@@ -106,7 +107,7 @@ export function DiplomaticPost() {
               <div>
                 <small>
                   <LocaleText value={x.incoming ? "INCOMING" : "OUTGOING"} /> ·{" "}
-                  <LocaleText value={x.status} /> · D{x.sentDay}
+                  <LocaleText value={x.status} /> · <LocaleText value="Day"/> {x.sentDay}
                 </small>
                 <h4>
                   <LocaleText value={s.countries[other]?.name ?? other} />
