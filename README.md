@@ -2,9 +2,9 @@
 
 A browser-based grand-strategy prototype built with React, TypeScript, Zustand, D3 Geo, Dexie and Vitest.
 
-Current version: **0.83.0-playtest.2**, branch `dev/tactical-command-083`, save schema 16. Existing schemas 12–15 migrate automatically; incompatible records are skipped when loading previous progress.
+Current version: **0.83.0-playtest.3**, branch `dev/tactical-command-083`, save schema 16. Existing schemas 12–15 migrate automatically; incompatible records are skipped when loading previous progress.
 
-This release adds diplomatic history, clearer supply/contracts, shared result artwork and broader five-language coverage alongside playable tactical battle orders, bounded force groups, recon, saved movement replay and retained economic charts on top of 0.82’s reliable command foundation. See [0.83 playtest notes](docs/PLAYTEST-083.md), [0.82 notes](docs/PLAYTEST-082.md) and [roadmap](docs/ROADMAP.md). V3 is deferred until the complete-playability milestone.
+This release adds local demo account entry, a new/continue game menu, guided tactical turns and image recovery alongside diplomatic history, clearer supply/contracts, shared result artwork and broader five-language coverage alongside playable tactical battle orders, bounded force groups, recon, saved movement replay and retained economic charts on top of 0.82’s reliable command foundation. See [0.83 playtest notes](docs/PLAYTEST-083.md), [0.82 notes](docs/PLAYTEST-082.md) and [roadmap](docs/ROADMAP.md). V3 is deferred until the complete-playability milestone.
 
 ```bash
 npm ci

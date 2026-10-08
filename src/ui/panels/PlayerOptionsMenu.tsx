@@ -1,3 +1,4 @@
+import {retryFailedImages} from '../icons/reliableImage';
 import {activeCountries} from '../../domain/sovereignty';
 import {LocaleText,translateLive} from '../../i18n/localeText';
 import {validBirthDate,CAMPAIGN_START_DATE,gameDate} from '../../engine/systems/leadership';
@@ -69,6 +70,7 @@ export function PlayerOptionsMenu({onClose}:{onClose:()=>void}){
         <button onClick={async()=>{const loaded=await loadLatest(); if(loaded)onClose();}}><strong><LocaleText value={"LOAD LATEST"}/></strong><span><LocaleText value={"Restore your most recent save"}/></span></button>
         <button className="danger" onClick={()=>setConfirmNew(true)}><strong><LocaleText value={"NEW CAMPAIGN"}/></strong><span><LocaleText value={"Return to campaign setup and choose a new command"}/></span></button>
        </div>
+       <button className="change-portrait-button" data-testid="retry-artwork" onClick={retryFailedImages}><LocaleText value="Retry missing images"/></button>
        {saveMessage&&<div className="campaign-save-status"><LocaleText value={saveMessage}/></div>}
       </section>}
 

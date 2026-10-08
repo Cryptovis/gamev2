@@ -20,11 +20,13 @@ export function ReviewDialog({
   confirmLabel = "CONFIRM",
   allowed = true,
   visual,
+  actions=[],
 }: {
   onCancel: () => void;
   onConfirm?: (commandId:string) => void;
   confirmLabel?: string;
   allowed?: boolean;
+  actions?:Array<{label:string;onClick:()=>void}>;
 } & ReviewContent) {
   const ref = useRef<HTMLElement>(null),
     submitted = useRef(false),
@@ -107,6 +109,7 @@ export function ReviewDialog({
           <button data-guide="review-dismiss" onClick={onCancel}>
             <LocaleText value={onConfirm ? "BACK / CANCEL" : "CLOSE"}/>
           </button>
+          {actions.map(action=><button key={action.label} onClick={action.onClick}><LocaleText value={action.label}/></button>)}
           {onConfirm && (
             <button
               data-guide="review-confirm" className="primary"

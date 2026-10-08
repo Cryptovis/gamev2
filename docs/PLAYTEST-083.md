@@ -1,6 +1,14 @@
-# 0.83.0-playtest.2 — Tactical Command / Clear Command
+# 0.83.0-playtest.3 — Tactical Command / Clear Command
 
 Branch: `dev/tactical-command-083`. Base: 0.82.0-playtest.6 at `30bc453`.
+
+## Guided Play patch
+
+1. Start at Sign in. Demo skips accounts and opens New game/Continue. Continue is disabled until this device/session has a compatible save; New game opens the existing leader wizard. Old unscoped saves remain under guest Demo.
+2. Create a local demo account with username, email, password and the random addition question. A wrong answer gives a new question. Registration opens the game menu; later sign-in checks the stored salted password hash. Account names are case-insensitive. Save under one account, then verify another account/guest cannot see it. This is UI/local demo functionality, not online authentication: records stay in localStorage/IndexedDB, email is not verified, and client-side math is not anti-bot protection. A backend, server-side authorization and production identity service remain future work.
+3. In HD War Experience, queue orders and finish the plan. Confirm the handoff to the opponent. Both plans resolve simultaneously exactly once; the result popup shows both sides' losses, fuel, front change and opponent orders. Next turn advances one campaign day automatically. Pending national decisions route back to campaign; replay never spends fuel again. Withdrawal remains reviewed.
+4. Interrupt an atlas request and verify shared retries recover without refresh. Leader atlases use the same original WebP pixels directly; resource failures no longer stick until remount. Three automatic retries are bounded; terminal failures retry on online/focus/visibility or Profile → Session → Retry missing images.
+5. Entry screens pause the clock/autosave and do not mount the command HUD. All new entry and turn-flow text is supplied for all five languages.
 
 ## Delivered
 
@@ -30,7 +38,7 @@ Branch: `dev/tactical-command-083`. Base: 0.82.0-playtest.6 at `30bc453`.
 
 ## How to playtest
 
-1. Update to the release branch, run `npm ci` and `npm run dev`; verify 0.83.0-playtest.2 in setup. Previous saves can be loaded directly.
+1. Update to the release branch, run `npm ci` and `npm run dev`; verify 0.83.0-playtest.3 in setup. Previous saves can be loaded directly.
 2. Select another country → War → review a declaration. Inside War Command open HD War Experience.
 3. Select a group, choose an order, and choose a target sector if needed. Queue up to three command points, review fuel and confirm. Compare the army totals and recorded result.
 4. Replay the recorded movement; verify fuel, losses and front progress do not change. Close, save, reload and reopen War Command to resume the same battlefield.

@@ -4,6 +4,7 @@ import type { GameState } from '../domain/game';
 export interface SaveRecord {
   id: string;
   name: string;
+  owner?:string;
   updatedAt: number;
   schemaVersion: number;
   state: GameState;

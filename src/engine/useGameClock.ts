@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { campaignInterval } from "./clock";
 import { useGameStore } from "../store/gameStore";
 
-export function useGameClock() {
+export function useGameClock(enabled=true) {
   const tutorial = useGameStore((s) => s.world.tutorial.active);
   const autoWar = useGameStore((s) =>
     Object.values(s.wars).some(
@@ -27,9 +27,9 @@ export function useGameClock() {
 
   useEffect(() => {
     const interval = campaignInterval(speed, autoWar, blocked, tutorial);
-    if (interval === null || tutorial || blocked) return;
+    if (!enabled || interval === null || tutorial || blocked) return;
 
     const timer = window.setInterval(() => advanceDay(), interval);
     return () => window.clearInterval(timer);
-  }, [advanceDay, speed, tutorial, autoWar, blocked]);
+  }, [enabled,advanceDay, speed, tutorial, autoWar, blocked]);
 }

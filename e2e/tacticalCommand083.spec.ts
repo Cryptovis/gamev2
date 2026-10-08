@@ -1,6 +1,6 @@
 import {test,expect,type Page} from '@playwright/test';
 async function start(page:Page){
- await page.goto('/');await expect(page.locator('.wizard-release')).toHaveText('0.83.0-playtest.2');
+ await page.goto('/');await page.locator('[data-entry="demo"]').click();await page.locator('[data-entry="new-game"]').click();await expect(page.locator('.wizard-release')).toHaveText('0.83.0-playtest.3');
  await page.locator('.wizard-name-field input').fill('Tactical playtest');await page.getByRole('button',{name:'Türkçe',exact:true}).click();
  for(let i=0;i<4;i++)await page.locator('.wizard-footer .wizard-next').click();
  await page.locator('.guided-card footer button').first().click();
@@ -19,7 +19,7 @@ for(const viewport of [{width:1440,height:900},{width:390,height:844}]){
   await page.locator('[data-cell="0"]').focus();await page.keyboard.press('ArrowRight');await expect(page.locator('[data-cell="1"]')).toBeFocused();
   await page.locator('[data-unit="attacker-infantry"]').click();await page.locator('[data-order-kind="move"]').click();await page.locator('[data-cell="8"]').click();await page.locator('.tactical-queue').click();
   await expect(page.locator('.tactical-plan li')).toHaveCount(1);await page.locator('.tactical-commit').click();await expect(page.locator('.review-dialog h2')).toHaveText('Taktik emirleri onayla');
-  await page.locator('[data-guide="review-confirm"]').click();await page.locator('[data-guide="review-dismiss"]').first().click();await expect(page.locator('.tactical-round-result h4')).toContainText('1');
+  await page.locator('[data-guide="review-confirm"]').click();await expect(page.locator('.review-dialog h2')).toHaveText('Planın tamamlandı');await page.locator('[data-guide="review-confirm"]').click();await page.locator('[data-guide="review-dismiss"]').first().click();await expect(page.locator('.tactical-round-result h4')).toContainText('1');
   const result=await page.locator('.tactical-round-result p').first().innerText();await expect(page.locator('.tactical-commit')).toBeDisabled();
   await page.locator('.tactical-round-result button').first().click();await expect(page.locator('.tactical-round-result p').first()).toHaveText(result);await page.locator('.tactical-round-result button').first().click();
   await page.screenshot({path:`test-results/tactical-083-${viewport.width}.png`,fullPage:true});
@@ -35,4 +35,13 @@ test('economic observations draw a chart and accessible table after a campaign d
  await page.locator('.speed-segment button').last().click();await expect(page.locator('.campaign-clock strong')).not.toHaveText(date);await page.locator('.speed-segment button').first().click();
  await expect(page.locator('.economic-chart canvas')).toBeVisible();await page.getByRole('button',{name:'Veri tablosunu göster',exact:true}).click();expect(await page.locator('.economic-table-scroll tbody tr').count()).toBeGreaterThanOrEqual(2);
  await page.getByRole('button',{name:'Grafiği göster',exact:true}).click();await expect(page.locator('.economic-chart canvas')).toBeVisible();await page.screenshot({path:'test-results/economic-history-083.png',fullPage:true});
+});
+test('guided turn results advance the campaign once and offer withdrawal',async({page})=>{
+ await battle(page);await page.locator('[data-order-kind="defend"]').click();await page.locator('.tactical-queue').click();await page.locator('.tactical-commit').click();await page.locator('[data-guide="review-confirm"]').click();await expect(page.locator('.review-dialog h2')).toHaveText('Planın tamamlandı');
+ const day=await page.locator('.campaign-clock strong').innerText();await page.locator('[data-guide="review-confirm"]').click();await expect(page.locator('.review-dialog h2')).toHaveText('Tur tamamlandı');await expect(page.locator('.review-dialog')).toContainText('Karşı tarafın emirleri');await page.screenshot({path:'test-results/guided-round-result.png',fullPage:true});
+ await page.locator('[data-guide="review-confirm"]').click();await expect(page.locator('.review-dialog h2')).toHaveText('Bekleyen ülke kararı var');await expect(page.locator('.campaign-clock strong')).not.toHaveText(day);
+ await page.locator('[data-guide="review-confirm"]').click();await expect(page.locator('.war-theatre-backdrop')).toHaveCount(0);await page.getByRole('button',{name:'Bu uyarıyı bir daha gösterme',exact:true}).click();
+ await page.locator('[data-guide="nation"]').first().click();await page.locator('.country-select').selectOption('GRC');await page.locator('[data-guide="tab-war"]').click();await page.locator('.war-command > button').click();await expect(page.locator('.tactical-commit')).toBeEnabled();
+ await page.locator('[data-order-kind="defend"]').click();await page.locator('.tactical-queue').click();await page.locator('.tactical-commit').click();await page.locator('[data-guide="review-confirm"]').click();await page.locator('[data-guide="review-confirm"]').click();await expect(page.locator('.review-dialog h2')).toHaveText('Tur tamamlandı');await expect(page.locator('.tactical-round-result h4')).toContainText('2');
+ await page.locator('.review-dialog footer').getByRole('button',{name:/çekil/i}).click();await expect(page.locator('.review-dialog h2')).toHaveText('Muharebe sahasından çekil');await page.locator('[data-guide="review-dismiss"]').first().click();await expect(page.locator('.tactical-outcome')).toHaveCount(0);
 });

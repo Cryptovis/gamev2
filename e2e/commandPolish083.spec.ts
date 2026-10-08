@@ -11,7 +11,7 @@ function fixture(language:typeof languages[number],advisor=false){
  return s;
 }
 async function load(page:Page,state:GameState){
- await page.goto('/');await expect(page.locator('.campaign-wizard')).toBeVisible();
+ await page.goto('/');await page.locator('[data-entry="demo"]').click();await page.locator('[data-entry="new-game"]').click();await expect(page.locator('.campaign-wizard')).toBeVisible();
  await page.locator('.wizard-name-field input').fill('Fixture loader');for(let i=0;i<4;i++)await page.locator('.wizard-next').click();await page.locator('.guided-card footer button').first().click();await page.locator('.leader-avatar-button').click();await page.locator('.profile-tabs button').last().click();await page.locator('.campaign-option-actions button').first().click();await expect(page.locator('.campaign-save-status')).toContainText(/saved/i);
  await page.evaluate(async state=>{
   await new Promise<void>((resolve,reject)=>{const req=indexedDB.open('alpyx-global-command');req.onerror=()=>reject(req.error);req.onsuccess=()=>{const db=req.result;const tx=db.transaction('saves','readwrite');tx.objectStore('saves').put({id:'manual',name:'Browser fixture',updatedAt:Date.now(),schemaVersion:state.schemaVersion,state});tx.oncomplete=()=>{db.close();resolve();};tx.onerror=()=>reject(tx.error);};});

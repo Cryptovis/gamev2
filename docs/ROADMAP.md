@@ -90,3 +90,6 @@ Next priorities: long-campaign profiling and balance; deep legacy save validatio
 
 ## V3 milestone
 V3 is reserved for the release where the whole game is ready for complete playability. Continue incremental gameplay and reliability improvements in this repository; no V3 rewrite is required for the 0.83 tactical slice.
+
+## 0.83 Guided Play follow-up
+Delivered in playtest.3: local demo entry, per-account local saves, guided combat results/next-turn flow and shared image recovery. Real online accounts need a backend, verified email and server authorization; the local demo form is not that service. Keep simultaneous combat and one-round-per-day accounting. Next: native wording review, deployment/cache observability, extended turn-flow balance and per-language loading.

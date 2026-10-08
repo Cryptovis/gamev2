@@ -277,7 +277,8 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
     try {
       const {loadMostRecentSave}=await import('../persistence/saveGame');const loaded=await loadMostRecentSave();
       if(!loaded){set({saveMessage:'No compatible save found'});return false;}
-      set({...loaded,actionReceipt:null,navigation:null,activeTool:null,warWindowId:null,speed:0,confirmationSkips:{},mapControlCommand:null,saveMessage:`Loaded Day ${loaded.day}`});return true;
+      const resumedWar=Object.values(loaded.wars).find(w=>w.status==='active'&&w.tactical&&(w.attackerId===loaded.playerCountryId||w.defenderId===loaded.playerCountryId));
+      set({...loaded,actionReceipt:null,navigation:null,activeTool:null,warWindowId:resumedWar?.id??null,speed:0,confirmationSkips:{},mapControlCommand:null,saveMessage:`Loaded Day ${loaded.day}`});return true;
     }catch {set({saveMessage:'Save could not be loaded'});return false;}
   },
   resetGame: () => set({ ...makeInitialState(),actionReceipt:null,navigation:null,activeTool:null,warWindowId:null, mapProjection:'globe', mapControlCommand:null, confirmationSkips:{}, saveMessage: 'New campaign started' }),
