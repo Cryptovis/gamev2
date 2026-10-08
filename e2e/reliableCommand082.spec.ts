@@ -1,6 +1,6 @@
 import {test,expect,type Page} from '@playwright/test';
 async function start(page:Page){
- await page.goto('/');await page.locator('.wizard-name-field input').fill('Playtest');await page.getByRole('button',{name:'Türkçe',exact:true}).click();
+ await page.goto('/');await page.locator('[data-entry="demo"]').click();await page.locator('[data-entry="new-game"]').click();await page.locator('.wizard-name-field input').fill('Playtest');await page.getByRole('button',{name:'Türkçe',exact:true}).click();
  for(let i=0;i<4;i++)await page.locator('.wizard-footer .wizard-next').click();
  await expect(page.locator('.guided-tutorial')).toBeVisible();
 }
@@ -63,8 +63,8 @@ test(`${viewport.width}px all ten tutorial lessons including funded construction
 
 for(const viewport of [{width:1440,height:900},{width:1280,height:720},{width:390,height:844}]){
  test(`${viewport.width}px stable setup and readable nation selection`,async({page})=>{
-  await page.setViewportSize(viewport);await page.goto('/');
-  await expect(page.locator('.wizard-release')).toHaveText('0.82.0-playtest.6');
+  await page.setViewportSize(viewport);await page.goto('/');await page.locator('[data-entry="demo"]').click();await page.locator('[data-entry="new-game"]').click();
+  await expect(page.locator('.wizard-release')).toHaveText('0.83.0-playtest.3');
   const nextButton=page.locator('.wizard-next');
   const nextBounds=await nextButton.boundingBox(),footerBounds=await page.locator('.wizard-footer').boundingBox();
   expect(nextBounds!.y).toBeGreaterThanOrEqual(footerBounds!.y);
@@ -124,7 +124,7 @@ test('diplomacy retry tracker and raster supply/world artwork',async({page})=>{
 
 
 test('failed atlas requests retain decorative fallback',async({page})=>{
- await page.route('**/assets/command/resource-atlas.webp',r=>r.abort());
+ await page.route('**/assets/command/resource-atlas.webp*',r=>r.abort());
  await start(page);await skip(page);await page.locator('[data-guide="rail-supply"]').click();
  await expect(page.locator('.floating-command-window .atlas-fallback').first()).toBeVisible();
  await expect(page.locator('.floating-command-window img[src$="resource-atlas.webp"]')).toHaveCount(0);
@@ -133,7 +133,7 @@ test('failed atlas requests retain decorative fallback',async({page})=>{
 
 for(const viewport of [{width:1440,height:900},{width:390,height:844}]){
  test(`${viewport.width}px localized nation search and warm setup palette`,async({page})=>{
-  await page.setViewportSize(viewport);await page.goto('/');await page.locator('.wizard-name-field input').fill('Palette test');await page.getByRole('button',{name:'Türkçe',exact:true}).click();
+  await page.setViewportSize(viewport);await page.goto('/');await page.locator('[data-entry="demo"]').click();await page.locator('[data-entry="new-game"]').click();await page.locator('.wizard-name-field input').fill('Palette test');await page.getByRole('button',{name:'Türkçe',exact:true}).click();
   await page.locator('.wizard-next').click();await page.locator('.wizard-next').click();
   const search=page.locator('.country-search');
   for(const query of ['Türkiye','Turkiye','TUR']){

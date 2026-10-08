@@ -2,11 +2,13 @@ import {LocaleText,translateLive} from '../../i18n/localeText';
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { useGameStore } from "../../store/gameStore";
+import {ReviewVisual,reviewVisualKind,type ReviewVisualKind} from '../icons/ReviewVisual';
 export interface ReviewContent {
   title: string;
   summary: string;
   metrics?: string[][];
   warnings?: string[];
+  visual?: ReviewVisualKind;
 }
 export function ReviewDialog({
   title,
@@ -17,11 +19,14 @@ export function ReviewDialog({
   onConfirm,
   confirmLabel = "CONFIRM",
   allowed = true,
+  visual,
+  actions=[],
 }: {
   onCancel: () => void;
   onConfirm?: (commandId:string) => void;
   confirmLabel?: string;
   allowed?: boolean;
+  actions?:Array<{label:string;onClick:()=>void}>;
 } & ReviewContent) {
   const ref = useRef<HTMLElement>(null),
     submitted = useRef(false),
@@ -78,12 +83,13 @@ export function ReviewDialog({
         role="dialog"
         aria-modal="true"
         aria-label={translateLive(title)}
-        className="review-dialog"
+        className={`review-dialog ${onConfirm?'review-confirmation':'review-result'}`}
       >
         <header>
           <small><LocaleText value={"COMMAND REVIEW"}/></small>
           <button data-guide="review-dismiss" aria-label={translateLive("Close review")} onClick={onCancel}><LocaleText value={"×"}/></button>
         </header>
+        <ReviewVisual kind={visual??reviewVisualKind(title+' '+summary)} signed={!onConfirm&&/signed|agreed/i.test(title)}/>
         <h2><LocaleText value={title}/></h2>
         <p><LocaleText value={summary}/></p>
         <div className="review-metrics">
@@ -103,6 +109,7 @@ export function ReviewDialog({
           <button data-guide="review-dismiss" onClick={onCancel}>
             <LocaleText value={onConfirm ? "BACK / CANCEL" : "CLOSE"}/>
           </button>
+          {actions.map(action=><button key={action.label} onClick={action.onClick}><LocaleText value={action.label}/></button>)}
           {onConfirm && (
             <button
               data-guide="review-confirm" className="primary"

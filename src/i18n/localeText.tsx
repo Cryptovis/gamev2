@@ -1,7 +1,11 @@
+import {UI_CATALOG_FLOW} from './uiCatalogFlow083';
+import {UI_CATALOG_083} from './uiCatalog083';
+import {UI_CATALOG_COMPLETE} from './uiCatalogComplete';
+import {UI_CATALOG_POLISH,PLAIN_EN} from './uiCatalogPolish';
 import {UI_CATALOG_082} from './uiCatalog082';
 import { TECHNOLOGY_TREE } from "../data/technologyTree";
 import { UI_CATALOG_081 } from "./uiCatalog081";
-import { translateNews } from "./newsTemplates";
+import { translateNews,NEWS_TEMPLATES } from "./newsTemplates";
 import { UI_CATALOG_080 } from "./uiCatalog080";
 import { UI_CATALOG_079 } from "./uiCatalog079";
 import { UI_CATALOG_078 } from "./uiCatalog078";
@@ -12,7 +16,10 @@ import { WORLD_COUNTRY_SEEDS } from "../data/worldCountryCatalog";
 import { useGameStore } from "../store/gameStore";
 
 const languages = ["tr", "es", "zh", "ru"];
+const catalogKey=(text:string)=>text.trim().replace(/\s+/g," ").toLowerCase().replaceAll("_"," ");
+const templates = new Map<string, {pattern:RegExp;value:string;slots:number[]}[]>();
 const catalogs = new Map<string, Map<string, string>>();
+catalogs.set('en',new Map(Object.entries(PLAIN_EN).map(([key,value])=>[key.toLowerCase(),value])));
 for (const language of languages) {
   const index = languages.indexOf(language),
     entries = new Map<string, string>();
@@ -23,28 +30,35 @@ for (const language of languages) {
     UI_CATALOG_080,
     UI_CATALOG_081,
     UI_CATALOG_082,
-  ])
-    for (const [key, values] of Object.entries(catalog))
-      if (
-        values[index] &&
-        !(
-          values[index] === key &&
-          entries.has(key.trim().toLowerCase().replaceAll("_", " "))
-        )
-      )
-        entries.set(
-          key.trim().replace(/\s+/g, " ").toLowerCase().replaceAll("_", " "),
-          values[index].trim(),
-        );
+    UI_CATALOG_083,
+    Object.fromEntries(Object.entries(NEWS_TEMPLATES).map(([key,tr])=>[key,[tr,key,key,key]])),
+    UI_CATALOG_COMPLETE,
+  ]) {
+    for (const [key, values] of Object.entries(catalog)) {
+      const normalized = catalogKey(key), previous = entries.get(normalized);
+      if (!values[index]) continue;
+      // Completion fills gaps; reviewed overrides below may replace existing wording.
+      if (catalog === UI_CATALOG_COMPLETE && previous && catalogKey(previous) !== normalized) continue;
+      if (values[index] === key && previous) continue;
+      entries.set(normalized, values[index].trim());
+    }
+  }
   for (const [key, value] of Object.entries(D.en))
     if (D[language as keyof typeof D]?.[key])
       entries.set(value.toLowerCase(), D[language as keyof typeof D][key]);
+  for(const [key,values] of Object.entries({...UI_CATALOG_POLISH,...UI_CATALOG_FLOW}))
+    entries.set(key.trim().toLowerCase().replaceAll("_", " "),values[index]);
   const countries = new Intl.DisplayNames([language], { type: "region" });
   for (const c of WORLD_COUNTRY_SEEDS)
     entries.set(c.name.toLowerCase(), countries.of(c.iso2) ?? c.name);
   for (const node of TECHNOLOGY_TREE)
     entries.set(node.id, entries.get(node.name.toLowerCase()) ?? node.name);
   catalogs.set(language, entries);
+  templates.set(language,[...entries].filter(([key])=>/\{\d+\}/.test(key)).map(([key,value])=>{
+    const slots:number[]=[];
+    const pattern=new RegExp('^'+key.split(/(\{\d+\})/).map(p=>{if(/^\{\d+\}$/.test(p)){slots.push(Number(p.slice(1,-1)));return '([\\s\\S]+?)';}return p.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');}).join('')+'$','i');
+    return {pattern,value,slots};
+  }));
 }
 export function translateText(
   language: string,
@@ -63,6 +77,11 @@ export function translateText(
         : exact;
     return text.replace(text.trim(), result);
   }
+  if(depth<3)for(const row of templates.get(language)??[]){
+    const match=clean.match(row.pattern);if(!match)continue;
+    const slots=new Map(row.slots.map((slot,i)=>[slot,match[i+1]]));
+    return row.value.replace(/\{(\d+)\}/g,(_,n)=>translateText(language,slots.get(Number(n))??'',depth+1));
+  }
   if (language === "tr" && depth < 3 && /[A-Za-z]{3}/.test(clean)) {
     const news = translateNews(clean, (value) =>
       translateText(language, value, depth + 1),
@@ -70,7 +89,7 @@ export function translateText(
     if (news) return text.replace(text.trim(), news);
   }
   // Translate composed labels while preserving numbers, names and punctuation.
-  const parts = text.split(/(\s*[·|↔→]\s*|\s*\/\s*|\s+\+\s+)/);
+  const parts = text.split(/(\s*[·|↔→,]\s*|\s*\/\s*|\s+\+\s+)/);
   if (parts.length > 1)
     return parts
       .map((part, i) => (i % 2 ? part : translatePart(part, entries)))
@@ -80,7 +99,7 @@ export function translateText(
 function translatePart(text: string, entries: Map<string, string>): string {
   const exact = entries.get(text.trim().toLowerCase().replaceAll("_", " "));
   if (exact) return text.replace(text.trim(), exact);
-  const match = text.match(/^(.*?)(\s+\d[\s\S]*|:\s*[\s\S]*)$/);
+  const match = text.match(/^(.*?)(\s+[+-]?\d[\s\S]*|:\s*[\s\S]*)$/);
   if (match) {
     const prefix = entries.get(match[1].toLowerCase().replaceAll("_", " "));
     if (prefix) return prefix + match[2];
@@ -94,6 +113,10 @@ function translatePart(text: string, entries: Map<string, string>): string {
 }
 export const translateLive = (text: string) =>
   translateText(useGameStore.getState().playerProfile.language, text);
+export function formatText(language:string,key:string,values:string[]):string {
+ return translateText(language,key).replace(/\{(\d+)\}/g,(_,n)=>translateText(language,values[Number(n)]??''));
+}
+export const formatLive=(key:string,values:string[])=>formatText(useGameStore.getState().playerProfile.language,key,values);
 export function LocaleText({ value }: { value: ReactNode }) {
   const language = useGameStore((s) => s.playerProfile.language);
   const walk = (v: ReactNode): ReactNode =>

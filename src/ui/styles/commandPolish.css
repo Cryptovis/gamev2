@@ -1,0 +1,38 @@
+.resource-command-card>header {grid-template-columns:40px minmax(0,1fr) auto;gap:12px}
+.resource-command-card>header>.resource-card-values {min-width:0;display:grid;gap:3px}
+.resource-command-card>header>.asset-thumbnail {display:block}
+.resource-command-card>header em {max-width:100px;overflow-wrap:anywhere;text-align:center}
+.letter-list article[data-status=accepted] {border-color:#6caf83;background:linear-gradient(110deg,#244b3d,#203e49);border-left:4px solid #83d69c}
+.letter-list article[data-status=rejected] {border-color:#b76971;background:linear-gradient(110deg,#4c3039,#203e49);border-left:4px solid #ed9298}
+.letter-list article:is([data-status=expired],[data-status=closed]) {border-left:4px solid #a8a99e}
+.letter-list article[data-status=accepted] small {color:#b3edc6}
+.letter-list article[data-status=rejected] small {color:#ffc3c6}
+.proposal-filters {display:flex;flex-wrap:wrap;gap:8px}
+.proposal-history-note {font-size:12px;line-height:1.6;color:#c9d8d8}
+.clock-island .speed-segment {padding:5px;background:linear-gradient(135deg,#112631,#213e4b);border:1px solid #81b9ba;border-radius:12px;box-shadow:inset 0 0 18px #7cd9d01a,0 0 0 3px #142c3477}
+.clock-island .speed-segment button {min-width:46px;min-height:48px;border:1px solid transparent;font-variant-numeric:tabular-nums}
+.clock-island .speed-segment button strong {font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:18px;font-weight:900;letter-spacing:-.04em}
+.clock-island .speed-segment button small {font-size:9px!important;font-weight:700;letter-spacing:.02em;color:#c7d8dd}
+.clock-island .speed-segment button.active {background:linear-gradient(135deg,#ffe2a1,#eabc62);border-color:#ffeaba;box-shadow:0 0 14px #e7bd6240,inset 0 1px #fff6cd}
+.clock-island .speed-segment button:focus-visible {outline:2px solid #a7f0df;outline-offset:2px}
+.review-visual {display:flex;align-items:center;justify-content:center;min-height:92px;background:radial-gradient(ellipse,#9bbaae20,transparent 70%);margin:8px 0;border-bottom:1px solid #abbea126;padding-bottom:12px}
+.review-visual svg {width:250px;height:125px;max-width:100%;filter:drop-shadow(0 8px 9px #0004)}
+.contract-signature {stroke-dasharray:160;stroke-dashoffset:160}
+.is-signed .contract-signature {animation:write-contract 1s ease forwards}
+.contract-pen {transform-origin:155px 110px;transform:rotate(-8deg)}
+.is-signed .contract-pen {animation:signing-pen 1s ease forwards}
+.review-result footer {justify-content:center}
+.review-result footer button {min-width:150px}
+.review-dialog:has(.visual-contract) {background:linear-gradient(145deg,#294348,#172c32);border-color:#b6a878}
+.review-dialog:has(.visual-contract) .review-metrics {gap:9px}
+.review-dialog:has(.visual-contract) .review-metrics strong {overflow-wrap:anywhere}
+@keyframes write-contract {to{stroke-dashoffset:0}}
+@keyframes signing-pen {0%{transform:translateX(-60px) rotate(-8deg)}80%{transform:translateX(0) rotate(0)}100%{transform:translate(40px,-30px) rotate(12deg)}}
+@media(max-width:760px) {.clock-island .speed-segment{gap:1px;padding:3px}.clock-island .speed-segment button{min-width:24px;min-height:34px;padding:3px}.clock-island .speed-segment button strong{font-size:14px}.review-visual{min-height:64px}.review-visual svg{height:92px}.resource-command-card>header{gap:8px;grid-template-columns:40px minmax(0,1fr)}.resource-command-card>header em{grid-column:2;justify-self:start}}
+@media(prefers-reduced-motion:reduce) {.is-signed .contract-signature{animation:none;stroke-dashoffset:0}.is-signed .contract-pen{animation:none;transform:translate(40px,-30px)}}
+
+.player-options-footer {justify-content:center}
+
+.proposal-filters button.active,.proposal-filters button.active:hover {background:#f1ce80!important;color:#172b34!important;opacity:1;font-weight:800;border-color:#f6dfa5}
+
+.proposal-filters button {transition:none}

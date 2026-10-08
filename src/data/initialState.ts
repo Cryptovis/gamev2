@@ -1,3 +1,4 @@
+import {recordEconomicHistory} from '../engine/systems/economicHistory';
 import {createWorld} from '../engine/systems/worldInstitutions';
 import { initialCountries } from './countries';
 import type { GameState } from '../domain/game';
@@ -9,7 +10,7 @@ import { createInitialInfrastructureMap } from '../engine/systems/infrastructure
 export const makeInitialState = (): GameState => {
   const countries=structuredClone(initialCountries);
   const state:GameState=({
-  schemaVersion: 15,
+  schemaVersion: 16,
   simulationSeed: 0xA17E5EED,
   day: 1,
   speed: 0,
@@ -20,7 +21,7 @@ export const makeInitialState = (): GameState => {
   selectedCountryId: 'TUR',
   mapMode: 'political',
   mapPresentation: 'political',
-  mapNotice: 'The Real President 0.82 — economy, people and diplomacy.',
+  mapNotice: 'The Real President 0.83 — economy, people and diplomacy.',
   countries,
   tradeDeals: {},
   wars: {},
@@ -44,9 +45,9 @@ export const makeInitialState = (): GameState => {
   lastAiDay: 1,
   lastStrategicReviewDay: 1,
   sitrep: [
-    'The Real President 0.82 online.',
+    'The Real President 0.83 online.',
     'Strategic AI, covert operations and influence networks loaded alongside Strategic Command systems.',
   ],
   });
- return state;
+ return recordEconomicHistory(state);
 };

@@ -103,6 +103,7 @@ export interface TradeDeal {
 }
 export interface CasualtySnapshot { personnel: number; tanks: number; artillery: number; fighters: number; bombers: number; warships: number; }
 export interface WarState {
+  tactical?: import('./tactical').TacticalBattle;
   id: string; attackerId: string; defenderId: string; startedDay: number; progress: number; rounds: number; autoAssault: boolean; status: WarStatus;
   terrain: BattlefieldTerrain; attackerSupply: number; defenderSupply: number; airSuperiority: number; attackerExhaustion: number; defenderExhaustion: number; lastCombatDay: number;
   attackerLosses: CasualtySnapshot; defenderLosses: CasualtySnapshot; lastReport: string;

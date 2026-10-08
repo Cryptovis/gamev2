@@ -50,7 +50,7 @@ World map → national economy/resources → diplomacy → bilateral commodity f
 - Single-clock auto war and satellite connection overlays.
 
 ## Next development candidates
-- HD War Experience remains planned in ROADMAP-HD-WAR.md: first record deterministic combat events, then build a renderer that cannot change outcomes.
+- 0.83 delivers the first playable HD War tactical board with bounded orders and recorded replay. Next: balance playtests, AI counterplay and measured rendering improvements; see ROADMAP-HD-WAR.md.
 - Specialized researcher staffing; 0.82 adds funded multi-day projects and campus capacity.
 - AI campus investment and pilot recruitment policies, with upkeep and reserve constraints.
 - Territory taxation, autonomous administration and peace settlements; current control governs occupation consequences without merging sovereign economies.
@@ -86,4 +86,10 @@ Next energy work: regional grid capacity and transmission loss, paid electrical 
 
 Delivered: save compatibility/fallback/retry, bounded command deduplication, funded tutorial identity, timed research, dated NEWS archive, resource popup consolidation, home camera, right-side Goals and bottom-right Map/Help. Added lazy windows and production Chromium regression tests. See PLAYTEST-082.md.
 
-Next priorities: long-campaign profiling and balance; deep legacy save validation; durable autosave scheduling; structured per-system events; full dynamic localization. Preserve current completed systems. V3 remains conditional on measured performance constraints or an authoritative multiplayer requirement, not on interface rearrangement.
+Next priorities: long-campaign profiling and balance; deep legacy save validation; durable autosave scheduling; structured per-system events; native-language wording review and per-language bundle loading. Static five-language gaps and generic dynamic templates are covered in 0.83.0-playtest.2. Preserve current completed systems. V3 remains conditional on measured performance constraints or an authoritative multiplayer requirement, not on interface rearrangement.
+
+## V3 milestone
+V3 is reserved for the release where the whole game is ready for complete playability. Continue incremental gameplay and reliability improvements in this repository; no V3 rewrite is required for the 0.83 tactical slice.
+
+## 0.83 Guided Play follow-up
+Delivered in playtest.3: local demo entry, per-account local saves, guided combat results/next-turn flow and shared image recovery. Real online accounts need a backend, verified email and server authorization; the local demo form is not that service. Keep simultaneous combat and one-round-per-day accounting. Next: native wording review, deployment/cache observability, extended turn-flow balance and per-language loading.

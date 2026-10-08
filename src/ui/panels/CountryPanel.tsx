@@ -1,3 +1,4 @@
+const EconomicTrends=lazy(()=>import('./EconomicTrends').then(m=>({default:m.EconomicTrends})));
 import {activeCountries} from '../../domain/sovereignty';
 import {money} from '../formatMoney';
 import {GuideBriefing} from './GuideBriefing';
@@ -6,7 +7,7 @@ import {CommandArt} from '../icons/CommandArt';
 import {LocaleText,translateLive} from '../../i18n/localeText';
 import {WorldInstitutionsPanel} from './WorldInstitutionsPanel';
 import {TechnologyPanel} from './TechnologyPanel';
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { lazy, Suspense, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { CountryDossierWindow } from './CountryDossierWindow';
 import {ResourceCommandWindow} from './ResourceCommandWindow';
 import { SupplyCommandWindow } from './SupplyCommandWindow';
@@ -83,7 +84,7 @@ export function CountryPanel(){
       {isPlayer&&<button onClick={()=>setTab('economy')}><LocaleText value="Review tax policy"/></button>}
     </>}
 
-    {tab==='economy'&&<div className="economy-panel"><PopulationPanel country={selected}/><div className="subhead"><LocaleText value={"STRATEGIC RESOURCE POSITION"}/></div><div className="resource-card-grid">{resources.map((r)=><ResourceCard key={r} country={selected} resource={r} onOpen={isPlayer?()=>setSupplyResource(r):undefined}/>)}</div>{isPlayer?null:<><div className="subhead"><LocaleText value={"BILATERAL EXPORT DESK"}/></div><div className="export-desk">{resources.map((resource)=>{const quote=getTradeQuote(state,selected.id,resource);const canTrade=relation?.treaties.includes('trade')&&!relation?.sanctions&&relation?.status!=='war';return <div key={resource}><ResourceIcon resource={resource} size={17}/><span><b><LocaleText value={resource.toUpperCase()}/></b><small><LocaleText value={quote.available.toFixed(2)}/><LocaleText value={"/day available · "}/><LocaleText value={money(quote.price)}/></small></span><button disabled={!canTrade||quote.available<=0} onClick={()=>state.createImport(selected.id,resource)}><LocaleText value={canTrade?'IMPORT':'PACT REQ.'}/></button></div>})}</div></>}</div>}
+    {tab==='economy'&&<div className="economy-panel">{isPlayer&&<Suspense fallback={<p><LocaleText value="Loading economic history…"/></p>}><EconomicTrends/></Suspense>}<PopulationPanel country={selected}/><div className="subhead"><LocaleText value={"STRATEGIC RESOURCE POSITION"}/></div><div className="resource-card-grid">{resources.map((r)=><ResourceCard key={r} country={selected} resource={r} onOpen={isPlayer?()=>setSupplyResource(r):undefined}/>)}</div>{isPlayer?null:<><div className="subhead"><LocaleText value={"BILATERAL EXPORT DESK"}/></div><div className="export-desk">{resources.map((resource)=>{const quote=getTradeQuote(state,selected.id,resource);const canTrade=relation?.treaties.includes('trade')&&!relation?.sanctions&&relation?.status!=='war';return <div key={resource}><ResourceIcon resource={resource} size={17}/><span><b><LocaleText value={resource.toUpperCase()}/></b><small><LocaleText value={quote.available.toFixed(2)}/><LocaleText value={"/day available · "}/><LocaleText value={money(quote.price)}/></small></span><button disabled={!canTrade||quote.available<=0} onClick={()=>state.createImport(selected.id,resource)}><LocaleText value={canTrade?'IMPORT':'PACT REQ.'}/></button></div>})}</div></>}</div>}
 
     {tab==='production'&&<ProductionPanel country={selected}/>}
 

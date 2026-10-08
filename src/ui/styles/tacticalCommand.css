@@ -1,0 +1,75 @@
+.tactical-experience { color:#e8edf0; min-width:0; }
+.tactical-heading {display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin:8px 0 18px}
+.tactical-heading small {color:#e1bc70;letter-spacing:.12em;font-size:10px}
+.tactical-heading h3 {font-size:26px;margin:7px 0}
+.tactical-heading p,.tactical-note,.economic-trends>p {color:#becdcf;font-size:12px;line-height:1.6;margin:8px 0}
+.tactical-experience button,.economic-chart-controls :is(button,select) {border:1px solid #637778;border-radius:7px;background:#23363b;color:#edf1ee;padding:9px 12px;cursor:pointer;font:inherit;font-size:12px}
+.tactical-experience button:disabled {opacity:.45;cursor:default}
+.tactical-experience button:focus-visible {outline:3px solid #f2cc76;outline-offset:2px}
+.tactical-summary {display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.tactical-summary span {background:#14272d;border:1px solid #415756;border-radius:8px;padding:10px;font-size:11px;display:flex;gap:10px;align-items:center}
+.tactical-summary b {color:#efce86;font-size:15px}
+.tactical-layout {display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:22px;align-items:start}
+.tactical-board {position:relative;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));aspect-ratio:1;width:100%;border:2px solid #76806b;border-radius:12px;overflow:hidden;background:#29362e;isolation:isolate}
+.tactical-board .tactical-cell {position:relative;min-width:0;min-height:0;padding:0;border:1px solid #6c76635e;border-radius:0;background:linear-gradient(140deg,#53604a,#3c4c3e);color:#d6dfc9;opacity:1}
+.tactical-cell small {position:absolute;top:5px;left:5px;font-size:9px;opacity:.75}
+.tactical-board .terrain-mountain {background:repeating-linear-gradient(125deg,#616352 0 12px,#4a5144 12px 22px)}
+.tactical-board .terrain-forest {background:radial-gradient(circle at 30% 30%,#2e4934 0 24%,transparent 25%),radial-gradient(circle at 70% 65%,#243e2d 0 27%,#3f5840 28%)}
+.tactical-board .terrain-desert {background:linear-gradient(135deg,#7b7251,#625b40)}
+.tactical-board .terrain-urban {background:repeating-linear-gradient(90deg,#586360 0 8px,#3d4847 9px 14px)}
+.tactical-board .terrain-coastal {background:linear-gradient(120deg,#49615b 50%,#294d5a 51%)}
+.tactical-board .tactical-cell.fogged {background:#15252a;color:#748486}
+.tactical-board .tactical-cell.targeted {box-shadow:inset 0 0 0 3px #f1cd7d}
+.tactical-board .tactical-cell.ordered {box-shadow:inset 0 0 0 3px #91c7ac}
+.tactical-board .tactical-cell.selected {box-shadow:inset 0 0 0 2px #cbded1}
+.tactical-depot {position:absolute;right:6px;bottom:4px;color:#ffe39b;font-size:23px;text-shadow:0 1px 7px #172b20}
+.tactical-token {position:absolute;width:16.666%;height:16.666%;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;transition:left .5s ease,top .5s ease;z-index:1}
+.tactical-token>svg {filter:drop-shadow(0 3px 3px #0008)}
+.tactical-token span {font-size:9px;border-radius:4px;padding:2px 5px;background:#123d2f;color:#d1f5db;border:1px solid #a1d8b566;line-height:1}
+.tactical-token.enemy span {background:#653932;color:#ffe3d2;border-color:#e2a59888}
+.tactical-legend {display:flex;flex-wrap:wrap;gap:12px;font-size:10px;margin:12px 0;color:#bdcbca}
+.tactical-legend span {display:flex;align-items:center;gap:5px}
+.tactical-legend i {width:9px;height:9px;border-radius:50%;background:#a1d8b5}
+.tactical-legend i.enemy {background:#e2a598}
+.tactical-orders h4 {margin:0 0 12px;font-size:14px}
+.tactical-unit-list {display:grid;gap:7px;margin-bottom:15px}
+.tactical-unit-list button {display:flex;align-items:center;gap:10px;text-align:left}
+.tactical-unit-list span {display:grid;gap:4px;text-transform:capitalize}
+.tactical-unit-list small {font-size:10px;color:#c3cfcd}
+.tactical-order-types {display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.tactical-order-types button {display:grid;gap:4px;text-align:left}
+.tactical-order-types small {font-size:9px;color:#b8c8c5}
+.tactical-orders [aria-pressed=true] {border-color:#d6b979;background:#42504b}
+.tactical-orders>p {font-size:11px;line-height:1.65;color:#c5d3d0}
+.tactical-orders .tactical-queue {width:100%;background:#395a48}
+.tactical-feedback p {font-size:11px;color:#efcc91;line-height:1.5;margin:8px 0}
+.tactical-plan {list-style:none;padding:0;margin:12px 0;display:grid;gap:7px}
+.tactical-plan li {display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:11px;background:#193036;border-radius:6px;padding:7px}
+.tactical-plan li button {padding:2px 6px}
+.tactical-orders .tactical-commit {width:100%;background:#dfbf7b;color:#172b32;font-weight:700}
+.tactical-orders>button {margin:5px 0}
+.tactical-round-result {background:#182d32;border:1px solid #667464;border-radius:10px;padding:15px;margin-top:18px}
+.tactical-round-result>div {display:flex;justify-content:space-between;gap:12px;align-items:center}
+.tactical-round-result h4 {margin:0;font-size:14px}
+.tactical-round-result p {font-size:11px;line-height:1.6;color:#cbd7d1}
+.tactical-outcome {padding:14px;background:#3f4b34;color:#f2deb0;border-radius:8px}
+.war-theatre-backdrop > .war-theatre:has(.tactical-experience) {width:min(1000px,calc(100vw - 28px));background:linear-gradient(135deg,#243b40,#172b31)}
+.war-theatre-backdrop > .war-theatre > header {position:sticky;top:0;z-index:3;background:#243e48;padding:8px 0;border-bottom:1px solid #86937b44;margin-bottom:14px}
+.economic-trends {background:#1c3036;border:1px solid #6b7562;border-radius:10px;padding:14px;margin:12px 0 20px;min-width:0}
+.economic-trends h3 {margin:0;font-size:17px;color:#efcd8a}
+.economic-chart-controls {display:flex;flex-wrap:wrap;gap:7px;margin:12px 0}
+.economic-chart-controls select {min-width:0;max-width:100%;width:auto}
+.economic-chart {height:210px;position:relative}
+.economic-trend-summary {font-size:11px;color:#dac391;margin-top:12px;line-height:1.5}
+.economic-table-scroll {max-height:220px;overflow:auto}
+.economic-table-scroll table {border-collapse:collapse;width:100%;font-size:11px}
+.economic-table-scroll :is(th,td) {padding:8px;border-bottom:1px solid #6c77734a;text-align:left}
+.economic-table-scroll caption {text-align:left;padding:8px;color:#dec28b}
+@media(max-width:760px) {.tactical-layout {grid-template-columns:1fr;gap:16px}.tactical-heading {gap:10px}.tactical-heading h3 {font-size:21px}.tactical-heading>button {max-width:110px}.tactical-summary {gap:5px}.tactical-summary span {padding:7px;font-size:10px}.tactical-orders {border-top:1px solid #7b867655;padding-top:16px}.tactical-token svg {width:30px;height:30px}.tactical-cell small {font-size:8px}.tactical-round-result>div {align-items:flex-start}.war-theatre:has(.tactical-experience) {padding:14px;max-height:calc(100dvh - 24px)}}
+@media(prefers-reduced-motion:reduce) {.tactical-token {transition:none}}
+
+.tactical-replay-controls {display:flex;flex-wrap:wrap;gap:10px;margin:12px 0}.tactical-replay-controls label {font-size:11px;display:flex;align-items:center;gap:8px}.tactical-replay-controls select {background:#20383e;color:#edf1ee;border:1px solid #708174;border-radius:6px;padding:7px}
+
+.war-theatre:has(.tactical-experience) .war-fuel-warning {padding:9px;font-size:11px;margin-bottom:12px}
+.war-theatre:has(.tactical-experience) .war-fuel-warning p {margin:6px 0;line-height:1.4}
+@media(min-width:761px) {.tactical-board {max-width:480px;margin-inline:auto}}

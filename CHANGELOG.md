@@ -1,5 +1,31 @@
 # Changelog
 
+## 0.83.0-playtest.3 — Guided Play
+- Rebuilt README around the current release, added recent patch summaries and retained milestone history, removed obsolete 0.40 run/save instructions, and documented the per-release update checklist.
+- Added sign-in/create-account screens, random math checks and account-free Demo entry. Local demo profiles use salted password hashes; online identity/email verification is explicitly not connected.
+- Added a New game/Continue menu with compatible-save detection, device-local account save namespaces and legacy guest-save continuity. Paused/unmounted the campaign behind entry screens and preserved autosave ownership.
+- Added guided tactical plan handoff and round-result choices for next turn, replay, withdrawal or map. Next turn advances one campaign day and directs blocked players to national decisions; combat remains simultaneous and deduplicated.
+- Updated tactical cards, status guidance and scrollbar presentation for desktop/mobile. Added multi-action shared dialogs.
+- Added shared bounded image retries with recovery on focus/online and a manual retry control. Extracted existing leader/cover WebP pixels from SVG wrappers without changing the artwork.
+- Added all five language labels for entry, validation and guided turns; added local-account, image-recovery and guided-turn regressions.
+
+## 0.83.0-playtest.2 — Clear Command
+- Separated pending diplomatic letters from a persistent history tab; accepted/rejected outcomes use green/red borders and explicit status labels. Existing resolved records move automatically without save migration.
+- Fixed supply icons overlapping stock totals, localized supplier captions and aligned supply/advisor trade eligibility with the shared 20/100 trust rule.
+- Strengthened the game-speed control, centered single-action receipt/profile footers, and added subject artwork to shared reviews/results.
+- Added paper/pen signing presentation to recurring supply contract receipts, clearer monthly-payment/cancellation terms and translated whole duration labels. Existing delivery and billing rules remain authoritative.
+- Completed static translation gaps across Turkish, Spanish, Chinese and Russian, added cross-language dynamic news templates and value-safe formatting, preserved existing translations, and reviewed key contract/credit/energy/history wording. Simplified selected English explanations. No online translator or model is shipped.
+- Added placeholder/news regressions and production-browser checks for five-language history, supply geometry, stronger speed text and desktop/mobile contract receipts with reduced motion.
+
+## 0.83.0-playtest.1 — Tactical Command
+- Added a playable 6×6 battlefield with allocated infantry/armor/artillery groups, a three-point command budget, fuel reviews and simultaneous AI orders under the same validator.
+- Added movement/path/visibility constraints, recon, terrain defense, forward flanking, prepared reserves, targeted artillery and a supply depot objective. Existing national strength, supply, exhaustion and victory rules remain authoritative.
+- Routed tactical auto assault through the same engine and retained up to 60 round events for movement replay without repeated casualties or new RNG draws.
+- Added schema-16 save migration and deep validation for tactical groups/events and economic history; kept existing reviewed-command deduplication and one-round-per-day safeguards.
+- Added up to 180 actual national economic observations, lazy Chart.js GDP/treasury/inflation/net-change charts, range controls and an accessible data table.
+- Added responsive keyboard/touch controls, reduced motion, Turkish feedback/help and explicit defender-withdrawal consequences. Preserved old war records when redeclaring on the same day.
+- Deferred PixiJS/3D rendering until measured need; V3 remains the later complete-playability milestone.
+
 ## 0.82.0-playtest.6 — Credit feedback and trade trust
 - Unified market filter labels; credit reviews now share engine validation, show cash/GDP/offer limits and quantified shortfall, and offer an affordable lending amount.
 - Stopped strategic confirmation from overwriting command receipts or treating a posted diplomatic letter as a failed action.

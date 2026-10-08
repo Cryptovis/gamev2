@@ -1,3 +1,4 @@
+import {startTacticalBattle,tacticalStartStatus,tacticalCommandStatus,resolveTacticalRound,chooseTacticalOrders,playerSide} from './systems/tactical';
 import {buildPlant,togglePlant,cancelPowerProject} from './systems/energy';
 import {buildFacility} from './systems/industrialEconomy';
 import {placeIndustrialOrder} from './systems/industrialMarket';
@@ -50,6 +51,8 @@ function createImport(state: GameState, targetCountryId: string, resource: Trade
 
 function executeGameCommand(state: GameState, command: GameCommand): GameState {
   switch (command.type) {
+    case 'tactical/start': return startTacticalBattle(state,command.warId);
+    case 'tactical/commit': return resolveTacticalRound(state,command.warId,command.orders,command.expectedRound);
     case 'energy/build': return buildPlant(state,state.playerCountryId,command.kind);
     case 'energy/toggle': return togglePlant(state,state.playerCountryId,command.kind);
     case 'energy/cancel': return cancelPowerProject(state,state.playerCountryId,command.id);
@@ -178,7 +181,8 @@ function executeGameCommand(state: GameState, command: GameCommand): GameState {
       if (!attacker || !defender || attacker.id === defender.id) return state;
       const existing = Object.values(state.wars).find((war) => war.status === 'active' && ((war.attackerId === attacker.id && war.defenderId === defender.id) || (war.attackerId === defender.id && war.defenderId === attacker.id)));
       if (existing) return note(state, `WAR // Conflict with ${defender.name} is already active.`);
-      const warId = `${attacker.id}-${defender.id}-${state.day}`;
+      let warId = `${attacker.id}-${defender.id}-${state.day}`;
+      let suffix=0;while(state.wars[warId])warId=`${attacker.id}-${defender.id}-${state.day}-${++suffix}`;
       const preview = getWarPreview(attacker, defender, state.infrastructure[attacker.id], state.infrastructure[defender.id]);
       const war: WarState = { id: warId, attackerId: attacker.id, defenderId: defender.id, startedDay: state.day, progress: 0, rounds: 0, autoAssault: false, status: 'active', terrain: preview.terrain, attackerSupply: preview.attackerSupply, defenderSupply: preview.defenderSupply, airSuperiority: preview.airSuperiority, attackerExhaustion: 0, defenderExhaustion: 0, lastCombatDay: state.day - 1, attackerLosses: emptyLosses(), defenderLosses: emptyLosses(), lastReport: `Mobilization ordered · ${preview.terrain.toUpperCase()} theatre · supply ${preview.attackerSupply.toFixed(0)}%.` };
       let next = cancelPairTrades(state, attacker.id, defender.id);
@@ -186,10 +190,10 @@ function executeGameCommand(state: GameState, command: GameCommand): GameState {
       next = { ...next, wars: { ...next.wars, [warId]: war }, countries: { ...next.countries, [attacker.id]: { ...next.countries[attacker.id], diplomacy: { ...next.countries[attacker.id].diplomacy, reputation: clamp(next.countries[attacker.id].diplomacy.reputation - 8, 0, 100) } } } };
       return applyWarCondemnation(state,note(next, `WAR // ${attacker.name} declared war on ${defender.name}.`),attacker.id,defender.id);
     }
-    case 'military/assault': return resolveCombatRound(state, command.warId);
+    case 'military/assault': { const w=state.wars[command.warId];if(!w||![w.attackerId,w.defenderId].includes(state.playerCountryId))return state;return w.tactical?resolveTacticalRound(state,w.id,chooseTacticalOrders(state,w.id,playerSide(state,w)),w.tactical.round):resolveCombatRound(state,w.id); }
     case 'military/setAutoAssault': {
       const war = state.wars[command.warId];
-      if (!war || war.status !== 'active') return state;
+      if (!war || war.status !== 'active' || ![war.attackerId,war.defenderId].includes(state.playerCountryId)) return state;
       return note({ ...state, wars: { ...state.wars, [war.id]: { ...war, autoAssault: command.enabled } } }, `WAR // Auto assault ${command.enabled ? 'ENGAGED' : 'HALTED'}.`);
     }
 
@@ -235,10 +239,12 @@ function executeGameCommand(state: GameState, command: GameCommand): GameState {
     case 'event/resolve': return resolveEvent(state, command.optionId);
     case 'military/withdraw': {
       const war = state.wars[command.warId];
-      if (!war || war.status !== 'active') return state;
-      let next = { ...state, wars: { ...state.wars, [war.id]: { ...war, status: 'withdrawn' as const, autoAssault: false, lastReport: 'Attacker withdrew from the theatre.' } } };
+      if (!war || war.status !== 'active' || ![war.attackerId,war.defenderId].includes(state.playerCountryId)) return state;
+      const defending=war.defenderId===state.playerCountryId;
+      let next:GameState = { ...state, wars: { ...state.wars, [war.id]: { ...war, status: defending?'victory':'withdrawn', autoAssault: false, lastReport: defending?'Defender withdrew and conceded control.':'Attacker withdrew from the theatre.' } } };
+      if(defending){const d=next.countries[war.defenderId];next={...next,countries:{...next.countries,[d.id]:{...d,controllerCountryId:war.attackerId,politics:{...d.politics,stability:clamp(d.politics.stability-15,0,100)}}}};}
       next = endWarRelation(next, war.attackerId, war.defenderId);
-      return note(next, 'WAR // Forces withdrew. Ceasefire established under hostile relations.');
+      return note(next, defending?'WAR // Defender withdrew and conceded control to the attacker.':'WAR // Forces withdrew. Ceasefire established under hostile relations.');
     }
   }
 }
@@ -246,6 +252,8 @@ function executeGameCommand(state: GameState, command: GameCommand): GameState {
 export interface CommandResult {state:GameState;status:'applied'|'unavailable'|'duplicate';message:string}
 export function executeCommandResult(state:GameState,command:GameCommand):CommandResult {
  if(command.commandId && state.world.commandIds?.includes(command.commandId))return {state,status:'duplicate',message:'This command has already been applied.'};
+ if(command.type==='tactical/start'){const reason=tacticalStartStatus(state,command.warId);if(reason)return {state,status:'unavailable',message:reason};}
+ if(command.type==='tactical/commit'){const reasons=tacticalCommandStatus(state,command.warId,command.expectedRound,command.orders);if(reasons.length)return {state,status:'unavailable',message:reasons.join(' ')};}
  if(command.type==='credit/post'){const status=creditOfferStatus(state,command.kind,command.principal,command.apr,command.days);if(!status.allowed)return {state,status:'unavailable',message:status.reasons.join(' ')};}
  const proposal=command.type==='diplomacy/request'?diplomaticProposalStatus(state,command.id,command.kind):command.type==='diplomacy/signTradePact'?diplomaticProposalStatus(state,command.targetCountryId,'trade_pact'):null;
  if(proposal&&!proposal.allowed)return {state,status:'unavailable',message:proposal.reason};

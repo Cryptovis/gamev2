@@ -72,7 +72,7 @@ const faq = [
   ],
   [
     "What happens when war starts?",
-    "The war command window compares both forces and shows supply, terrain and losses. Each side can fight once per day. HD War Experience is planned.",
+    "Tactical battles are available from HD War Experience inside an active war. Queue orders, review fuel, then commit. Use recon to reveal enemies and advance a campaign day between rounds.",
   ],
   [
     "How do national programs work?",
@@ -110,7 +110,7 @@ export function HelpPanel() {
       onClose={state.closeWorkspace}
     >
       <section className="game-notes">
-        <h3>The Real President · 0.82</h3>
+        <h3>The Real President · 0.83</h3>
         <p>
           <LocaleText value="203 sovereign profiles · economy · population · resource markets · diplomacy · research · military command." />
         </p>
@@ -243,7 +243,7 @@ export function HelpPanel() {
         <p>
           <LocaleText
             value={
-              "Planned: battlefield camera, terrain, animated units and combat playback synchronized with the strategy simulation. The current command window already uses the real combat engine."
+              "The first tactical battlefield is playable: force groups, terrain, recon, command budgets and saved combat results. More animation and rendering quality will follow after playtesting."
             }
           />
         </p>

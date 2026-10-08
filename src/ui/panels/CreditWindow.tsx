@@ -159,7 +159,7 @@ export function CreditWindow() {
               </div>
               <strong>{money(o.principal)}</strong>
               <span>
-                {o.apr}% APR · {o.days} <LocaleText value="days" />
+                {o.apr}% <LocaleText value="Annual interest" /> · {o.days} <LocaleText value="days" />
               </span>
               <button
                 onClick={() =>
