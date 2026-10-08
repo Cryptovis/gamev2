@@ -95,25 +95,32 @@ export function chooseTacticalOrders(s:GameState,id:string,side:TacticalSide):Ta
   }
   return orders;
 }
-function sideModifiers(s:GameState,w:WarState,side:TacticalSide,orders:TacticalOrder[],enemyOrders:TacticalOrder[]):CombatSideOrders {
+// Exported for regression tests.
+export function sideModifiers(s:GameState,w:WarState,side:TacticalSide,orders:TacticalOrder[],enemyOrders:TacticalOrder[]):CombatSideOrders {
   const b=w.tactical!,m=s.countries[countryId(w,side)].military,forces=emptyLosses();
   for(const u of b.units.filter(u=>u.side===side))forces[roleKey(u)]=Math.min(m[roleKey(u)],u.remaining);
   for(const key of ['fighters','bombers','warships'] as const)forces[key]=Math.floor(m[key]*.25);
   const count=(kind:TacticalOrderKind)=>orders.filter(o=>o.kind===kind).length;
-  const bombarded=enemyOrders.filter(o=>o.kind==='bombard').length;
+  // Only bombardments that land on a unit (after simultaneous movement) penalise this side.
+  const hits=enemyOrders.filter(o=>o.kind==='bombard').map(o=>b.units.find(u=>u.side===side&&u.remaining>0&&u.cell===o.target)).filter((u):u is TacticalUnit=>!!u);
+  const bombarded=hits.length;
   const lossByType:Partial<Record<keyof CasualtySnapshot,number>>={};
-  for(const order of enemyOrders.filter(o=>o.kind==='bombard')){const target=b.units.find(u=>u.side===side&&u.cell===order.target);if(target)lossByType[roleKey(target)]=.12;}
+  for(const target of hits)lossByType[roleKey(target)]=.12;
   const covered=orders.filter(o=>o.kind==='defend').filter(o=>b.terrain[b.units.find(u=>u.id===o.unitId)!.cell]!=='plains').length;
   const prepared=orders.filter(o=>['move','flank','bombard'].includes(o.kind)&&b.units.find(u=>u.id===o.unitId)?.prepared).length;
   const objective=b.units.some(u=>u.side===side&&u.remaining>0&&u.cell===b.objectiveCell);
   const surviving=b.units.filter(u=>u.side===side).reduce((n,u)=>n+u.remaining/Math.max(1,u.allocated),0)/Math.max(1,b.units.filter(u=>u.side===side).length);
   return {power:(.05+surviving*.95)*clamp(.85+surviving*.1+prepared*.04+count('flank')*.08+count('bombard')*.06+count('recon')*.02+covered*.025+(objective?.1:0)-count('reserve')*.025-bombarded*.04,.75,1.25),loss:clamp(1-count('defend')*.06-count('reserve')*.07+count('flank')*.08+bombarded*.06,.75,1.25),lossByType,fuel:orders.some(o=>['move','flank','bombard'].includes(o.kind))?.25:0,forces};
 }
+/** Shared gate for every player combat order (tactical or legacy assault). */
+export function combatAllowed(s:GameState):boolean {
+  return !(s.campaignStatus!=='active'||s.activeEvent||s.activeAdvisor||s.world.living?.advice.active||s.world.living?.notice||pendingVictory(s));
+}
 export function tacticalCommandStatus(s:GameState,id:string,expectedRound:number,orders:TacticalOrder[]):string[] {
   const w=s.wars[id];
   if(!w?.tactical)return ['Open the tactical battlefield first.'];
   if(![w.attackerId,w.defenderId].includes(s.playerCountryId))return ['Only participants can command this battle.'];
-  if(s.campaignStatus!=='active'||s.activeEvent||s.activeAdvisor||s.world.living?.advice.active||s.world.living?.notice||pendingVictory(s))return ['Resolve the pending campaign decision before giving combat orders.'];
+  if(!combatAllowed(s))return ['Resolve the pending campaign decision before giving combat orders.'];
   if(w.tactical.round!==expectedRound)return ['These orders belong to an earlier round. Review the current battlefield.'];
   if(w.lastCombatDay===s.day)return ['Orders already executed today. Advance one campaign day for the next round.'];
   return validateTacticalOrders(s,id,playerSide(s,w),orders);

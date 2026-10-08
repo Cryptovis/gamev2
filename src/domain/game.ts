@@ -107,6 +107,8 @@ export interface WarState {
   id: string; attackerId: string; defenderId: string; startedDay: number; progress: number; rounds: number; autoAssault: boolean; status: WarStatus;
   terrain: BattlefieldTerrain; attackerSupply: number; defenderSupply: number; airSuperiority: number; attackerExhaustion: number; defenderExhaustion: number; lastCombatDay: number;
   attackerLosses: CasualtySnapshot; defenderLosses: CasualtySnapshot; lastReport: string;
+  /** Personnel at declaration; the 8% collapse rule is measured against it. Absent in pre-0.84 saves. */
+  attackerStartPersonnel?: number; defenderStartPersonnel?: number;
 }
 
 export interface EventOption { id: string; label: string; consequenceHint: string; }
