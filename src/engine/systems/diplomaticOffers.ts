@@ -71,9 +71,9 @@ export function processIncomingDiplomaticOffers(state: GameState): GameState {
     };
   } else if (
     !hasTrade &&
-    (relationshipIndex(relation) >= 58 ||
+    (relationshipIndex(relation)>=20 && (relationshipIndex(relation) > 50 ||
       picked.country.resources.food < 25 ||
-      picked.country.resources.oil < 15) &&
+      picked.country.resources.oil < 15)) &&
     roll < 72
   ) {
     offer = {

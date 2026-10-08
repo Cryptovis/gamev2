@@ -1,3 +1,4 @@
+import {proposalAcceptanceChance} from './livingEconomy';
 import {activeCountries} from '../../domain/sovereignty';
 import {calculateSupplyNetwork} from './supplyNetwork';
 import type { GameState, TradeResource } from '../../domain/game';
@@ -51,10 +52,14 @@ export function strategicDecisionSpec(
   if(kind==='trade_pact'){
     return {...base,kicker:'TRADE NEGOTIATION',title:'Sign Trade Pact with '+target.name,summary:'Create a formal commercial framework that enables direct commodity imports and improves bilateral economic trust.',confirmLabel:'SIGN TRADE PACT',tone:'positive',impacts:[
       {label:'Cost if accepted',value:'-$5B',tone:'warning'},
+      {label:'Relations',value:`${relationshipIndex(relationFor(actor,target.id))}/100`},
+      {label:'Points to Good',value:String(Math.max(0,51-relationshipIndex(relationFor(actor,target.id))))},
+      {label:'Estimated acceptance',value:`${Math.round(proposalAcceptanceChance(state,actor.id,target.id,'trade_pact')*100)}%`},
       {label:'Relationship',value:'+4 raw',tone:'positive'},
       {label:'Rival exposure',value:rivals?String(rivals)+' states':'Low',tone:rivals?'warning':'neutral'},
     ],warnings:[
       'This sends a proposal. The partner replies in three days and can reject it. Costs are charged only on acceptance.',
+      'Above 50/100 is Good and makes trade acceptance easier. Trade proposals need at least 20/100. Missions or aid raise relations; acceptance is not guaranteed.',
       rivals?'Countries hostile to '+target.name+' may reduce their opinion of you.':'No major hostile-rival reaction is currently projected.',
     ]};
   }

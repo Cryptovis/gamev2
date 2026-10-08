@@ -54,11 +54,12 @@ export function DiplomacyPanel({selectedId}:{selectedId:string}){
   </div>
 
   <div className="relation-context">
-   <span><small><LocaleText value={"CURRENT STATUS"}/></small><strong><LocaleText value={relation.status.toUpperCase()}/></strong></span>
+   <span><small><LocaleText value={"CURRENT STATUS"}/></small><strong><LocaleText value={relation.status==='war'?'WAR':relationLabel}/></strong></span>
    <span><small><LocaleText value={"ACTIVE TREATIES"}/></small><strong><LocaleText value={relation.treaties.length?relation.treaties.map(humanize).join(' · '):'None'}/></strong></span>
    <span><small><LocaleText value={"EMBASSY"}/></small><strong><LocaleText value={embassy?`LEVEL ${embassy.level}`:'NONE'}/></strong></span>
   </div>
 
+  <aside className="proposal-assessment"><p><LocaleText value="Above 50/100 is Good and makes trade acceptance easier. Trade proposals need at least 20/100. Missions or aid raise relations; acceptance is not guaranteed."/></p><strong><LocaleText value="Points to trade eligibility"/>: {Math.max(0,20-relationScore)} · <LocaleText value="Points to Good"/>: {Math.max(0,51-relationScore)}</strong>{relation.tradeStrainSinceDay!==undefined&&<p><LocaleText value="Trade pact at risk. Restore relations to at least 20/100 before the grace period ends."/> · <LocaleText value="Days remaining"/>: {Math.max(0,14-(state.day-relation.tradeStrainSinceDay))}</p>}</aside>
   {(!embassyStatus.allowed||!tradeStatus.allowed)&&<aside className="proposal-status">{!embassyStatus.allowed&&<p><strong><LocaleText value="Embassy exchange"/>: </strong><LocaleText value={embassyStatus.reason}/></p>}{!tradeStatus.allowed&&<p><strong><LocaleText value="Trade framework"/>: </strong><LocaleText value={tradeStatus.reason}/></p>}<button onClick={()=>state.navigate('diplomacy-inbox',selected.id)}><LocaleText value="Help / track proposals"/></button></aside>}
   <div className="subhead"><LocaleText value={"DIPLOMATIC ACTIONS"}/></div>
   <div className="action-grid diplomacy-actions">

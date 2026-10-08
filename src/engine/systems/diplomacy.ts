@@ -49,6 +49,7 @@ export function addTreaty(state: GameState, aId: string, bId: string, treaty: Tr
   return updateBilateralRelation(state, aId, bId, (relation) => ({
     ...relation,
     treaties: relation.treaties.includes(treaty) ? relation.treaties : [...relation.treaties, treaty],
+    ...(treaty==='trade'?{tradeStrainSinceDay:undefined}:{}),
     status: treaty === 'alliance' ? 'ally' : relation.status,
     score: treaty === 'alliance' ? Math.max(70, relation.score) : relation.score,
   }));
@@ -63,7 +64,7 @@ export function endWarRelation(state: GameState, aId: string, bId: string): Game
 }
 
 
-export type RelationshipStance = 'HOSTILE' | 'TENSE' | 'COLD' | 'NEUTRAL' | 'WARM' | 'FRIENDLY' | 'STRATEGIC PARTNER';
+export type RelationshipStance = 'HOSTILE' | 'TENSE' | 'COLD' | 'NEUTRAL' | 'GOOD' | 'FRIENDLY' | 'STRATEGIC PARTNER';
 
 export function relationshipIndex(relation: DiplomaticRelation): number {
   if (relation.status === 'war') return 0;
@@ -73,10 +74,10 @@ export function relationshipIndex(relation: DiplomaticRelation): number {
 export function relationshipStance(relation: DiplomaticRelation): RelationshipStance {
   const index = relationshipIndex(relation);
   if (index < 10) return 'HOSTILE';
-  if (index < 25) return 'TENSE';
+  if (index < 20) return 'TENSE';
   if (index < 45) return 'COLD';
-  if (index < 60) return 'NEUTRAL';
-  if (index < 75) return 'WARM';
+  if (index <= 50) return 'NEUTRAL';
+  if (index < 75) return 'GOOD';
   if (index < 90) return 'FRIENDLY';
   return 'STRATEGIC PARTNER';
 }

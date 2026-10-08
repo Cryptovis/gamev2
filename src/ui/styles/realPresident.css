@@ -886,3 +886,7 @@ body:has(.tutorial-docked) .review-dialog > header { position: sticky; top: 0; b
 .campaign-wizard .wizard-stepper span:not(.active) b { background: #2d3025; color: #c9c3ad; }
 .country-search-empty { padding: 18px 10px; color: #d8d0b6; text-align: center; }
 .country-search-empty button { padding: 8px 12px; border: 1px solid; border-radius: 8px; cursor: pointer; }
+
+.credit-status,.proposal-assessment { margin: 12px 0; padding: 12px 14px; border: 1px solid #bfa36388; background: #233d4c; border-radius: 10px; line-height: 1.5; }
+.credit-status p,.proposal-assessment p { margin: 8px 0; }
+.credit-status button { padding: 8px 12px; border-radius: 7px; background: #f1ce80; color: #172b34; border: 1px solid #bfa363; cursor: pointer; }

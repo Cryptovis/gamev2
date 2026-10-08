@@ -63,7 +63,7 @@ test(`${viewport.width}px all ten tutorial lessons including funded construction
 for(const viewport of [{width:1440,height:900},{width:1280,height:720},{width:390,height:844}]){
  test(`${viewport.width}px stable setup and readable nation selection`,async({page})=>{
   await page.setViewportSize(viewport);await page.goto('/');
-  await expect(page.locator('.wizard-release')).toHaveText('0.82.0-playtest.5');
+  await expect(page.locator('.wizard-release')).toHaveText('0.82.0-playtest.6');
   const nextButton=page.locator('.wizard-next');
   const nextBounds=await nextButton.boundingBox(),footerBounds=await page.locator('.wizard-footer').boundingBox();
   expect(nextBounds!.y).toBeGreaterThanOrEqual(footerBounds!.y);
@@ -148,3 +148,27 @@ for(const viewport of [{width:1440,height:900},{width:390,height:844}]){
   await page.locator('.wizard-next').click();expect(await page.locator('.confirm-leader-card').evaluate(el=>getComputedStyle(el).backgroundImage)).toContain('rgb(48, 50, 41)');
  });
 }
+
+
+test('credit review explains unaffordable lending and publishes valid terms',async({page})=>{
+ await start(page);await skip(page);await page.locator('[data-guide="rail-market"]').click();
+ await page.getByRole('button',{name:'Ülkeler Arası Kredi ve Para Fonu',exact:true}).click();
+ await page.locator('[aria-label="Credit offer type"]').selectOption('lend');await page.locator('[aria-label="Credit principal millions"]').fill('1000000');
+ await page.getByRole('button',{name:'Kredi teklifini incele',exact:true}).click();await expect(page.locator('[data-guide="review-confirm"]')).toBeDisabled();
+ await expect(page.locator('.review-notes')).toContainText('hazine yetersiz');await expect(page.locator('.review-metrics')).toContainText('Hazine açığı');await page.screenshot({path:'test-results/credit-feedback.png',fullPage:true});
+ await page.locator('[data-guide="review-dismiss"]').first().click();await page.locator('[aria-label="Credit principal millions"]').fill('1000');
+ await page.getByRole('button',{name:'Kredi teklifini incele',exact:true}).click();await page.locator('[data-guide="review-confirm"]').click();await expect(page.locator('.review-dialog h2')).toContainText('Karar uygulandı');
+ await page.locator('[data-guide="review-dismiss"]').first().click();await expect(page.locator('.credit-board')).toContainText('Türkiye');
+});
+
+test('country trade proposal preserves sent receipt and market labels use consistent case',async({page})=>{
+ await start(page);await skip(page);await page.locator('[data-guide="rail-diplo"]').click();await page.locator('.letter-compose select').nth(1).selectOption('embassy');
+ await expect(page.locator('.proposal-assessment')).toContainText('İyi seviye');
+ await page.locator('.letter-compose button').click();await page.locator('[data-guide="review-confirm"]').click();await page.locator('[data-guide="review-dismiss"]').first().click();
+ await page.locator('.letter-list article[data-status="pending"] > button').click();
+ await page.locator('[data-action="trade"]').click();await expect(page.locator('.strategic-decision-modal')).toBeVisible();await page.locator('.strategic-decision-modal .confirm').click();
+ await expect(page.locator('.review-dialog h2')).toContainText('Karar uygulandı');await expect(page.locator('.review-dialog')).not.toContainText('Conditions changed');
+ await page.locator('[data-guide="review-dismiss"]').first().click();await page.locator('[data-guide="close-workspace"]').click();
+ await page.locator('[data-guide="rail-market"]').click();await expect(page.locator('.exchange-filters')).toBeVisible();
+ await expect(page.locator('.exchange-filters button').first()).toHaveText('Gıda');
+});

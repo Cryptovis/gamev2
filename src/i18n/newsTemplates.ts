@@ -1,5 +1,7 @@
 // Keep stored messages language-independent. Translate at render time, including historical reports.
 export const NEWS_TEMPLATES: Record<string, string> = {
+ "DIPLOMACY // Trade pact with {0} at risk: relations below 20/100. Restore at least 20/100 within 14 days.":"DİPLOMASİ // {0} ile ticaret anlaşması riskte: ilişki 20/100 altında. 14 gün içinde en az 20/100 seviyesine çıkar.",
+ "DIPLOMACY // Trade pact with {0} ended after 14 days below 20/100. Bilateral shipments cancelled.":"DİPLOMASİ // {0} ile ticaret anlaşması, 14 gün boyunca 20/100 altında kalınca sona erdi. İkili sevkiyatlar iptal edildi.",
  "Saved Day {0}":"Gün {0} kaydedildi",
  "Loaded Day {0}":"Gün {0} kaydı yüklendi",
  "RESEARCH // {0} started by {1}; estimated {2} days.":"ARAŞTIRMA // {1}, {0} projesini başlattı; tahmini süre {2} gün.",

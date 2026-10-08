@@ -33,7 +33,7 @@ export interface PoliticsState { approval: number; stability: number; regime: Re
 export interface SocietyState { dominantReligion: ReligionType; ideology: IdeologyType; cohesion: number; secularization: number; influencePressure: { ideology: number; religion: number }; }
 export interface MilitaryAssessment { gfpRank: number | null; gfpIndex: number | null; capability: number; dataConfidence: 'gfp-2026' | 'estimated'; }
 export interface MilitaryState { personnel: number; tanks: number; artillery: number; fighters: number; bombers: number; warships: number; readiness: number; morale: number; logistics: number; technology: number; assessment: MilitaryAssessment; }
-export interface DiplomaticRelation { score: number; status: RelationStatus; treaties: TreatyType[]; sanctions: boolean; }
+export interface DiplomaticRelation { score: number; status: RelationStatus; treaties: TreatyType[]; sanctions: boolean; tradeStrainSinceDay?: number; }
 export interface DiplomacyState { relations: Record<string, DiplomaticRelation>; reputation: number; }
 export interface IntelligenceState { networkStrength: number; counterIntelligence: number; intelConfidence: number; }
 export interface MinistryState { allocations: Record<MinistryKey, number>; efficiency: Record<MinistryKey, number>; }

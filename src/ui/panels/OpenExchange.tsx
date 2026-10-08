@@ -1,7 +1,7 @@
 import {useWorldView} from '../../store/useWorldView';
 import { useState } from "react";
 import { useGameStore } from "../../store/gameStore";
-import { LocaleText } from "../../i18n/localeText";
+import { LocaleText,translateLive } from "../../i18n/localeText";
 import {
   EXCHANGE_GOODS,
   living,
@@ -18,7 +18,7 @@ import { ReviewDialog, type ReviewContent } from "./ReviewDialog";
 import { tankDomesticCost } from "../../engine/systems/industrialMarket";
 import { GOLD_SOURCE } from "../../data/preciousMetals";
 const label = (g: ExchangeGood) =>
-  g in GOODS ? GOODS[g as keyof typeof GOODS].label : g.toUpperCase();
+  g in GOODS ? GOODS[g as keyof typeof GOODS].label : g.charAt(0).toUpperCase()+g.slice(1).replaceAll('_',' ');
 export function OpenExchange() {
   const s = useWorldView(),
     l = living(s),
@@ -44,6 +44,7 @@ export function OpenExchange() {
     own = l.listings.filter((x) => x.sellerId === p.id && x.status === "open"),
     vault = l.bankGold[p.id];
   const money=(value:number)=>formatMoney(value,s.playerProfile.language);
+  const displayLabel=(g:ExchangeGood)=>{const text=translateLive(label(g));return text.charAt(0).toLocaleUpperCase(s.playerProfile.language)+text.slice(1).toLocaleLowerCase(s.playerProfile.language);};
   return (
     <section className="open-exchange">
       <header>
@@ -65,7 +66,7 @@ export function OpenExchange() {
             }}
           >
             <AssetThumbnail asset={g} size={32} />
-            <LocaleText value={label(g)} />
+            <span>{displayLabel(g)}</span>
           </button>
         ))}
       </div>

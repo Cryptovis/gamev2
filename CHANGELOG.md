@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.82.0-playtest.6 — Credit feedback and trade trust
+- Unified market filter labels; credit reviews now share engine validation, show cash/GDP/offer limits and quantified shortfall, and offer an affordable lending amount.
+- Stopped strategic confirmation from overwriting command receipts or treating a posted diplomatic letter as a failed action.
+- Above 50/100 relations now read Good; eligible trade acceptance rises at that threshold. Trade requests below 20/100 explain the missing trust and missions/aid needed to improve it.
+- Active pacts below 20/100 receive a saved 14-day recovery period, player warnings and bilateral shipment cancellation if trust stays low. Restoring 20 clears the risk.
+- Added acceptance estimates, points-to-Good, clearer rejection reasons and Turkish feedback/news coverage.
+- Updated the HD War roadmap for a bounded turn-based tactical slice; the battlefield is not enabled and no rendering dependency is added.
+
 ## 0.82.0-playtest.5 — Nation setup polish
 - Matched nation preview, statistics, opening profile, confirmation cards and inactive steps to the charcoal/gold onboarding palette.
 - Added localized, accent-insensitive country search with English names and country-code aliases, localized sorting, empty-result feedback and clear search.

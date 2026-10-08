@@ -6,6 +6,7 @@ import {
   arrears,
   riskRate,
   loanTotal,
+  creditOfferStatus,
 } from "../../engine/systems/sovereignCredit";
 import { CommandWindow } from "./CommandWindow";
 import { ReviewDialog, type ReviewContent } from "./ReviewDialog";
@@ -23,6 +24,7 @@ export function CreditWindow() {
       (ReviewContent & { execute: (commandId:string) => void; allowed?: boolean }) | null
     >(null);
   const principal = millions / 1000;
+  const status=creditOfferStatus(s,kind,principal,apr,days);
   const money=(value:number)=>formatMoney(value,s.playerProfile.language);
   return (
     <CommandWindow
@@ -54,10 +56,12 @@ export function CreditWindow() {
       <p>
         <LocaleText value="APR is annual interest, prorated by term. At maturity, cash is collected first, then vault gold, precious metals and resources at conservative market prices. Unpaid debt creates arrears and compulsory taxes until settled." />
       </p>
+      <aside className="credit-status" role="status"><p><LocaleText value="Amounts are entered in USD millions. Lending reserves cash immediately; a posted offer waits for a counterparty and is not a completed loan."/></p><strong><LocaleText value="Principal"/>: {money(principal)} · <LocaleText value="Spendable treasury"/>: {money(status.treasury)} · <LocaleText value="Maximum principal"/>: {money(status.maxPrincipal)}</strong>{status.reasons.map(reason=><p key={reason}><LocaleText value={reason}/></p>)}{status.shortfall>0&&<p><LocaleText value="Treasury shortfall"/>: {money(status.shortfall)}</p>}{kind==='lend'&&Math.min(status.maxPrincipal,status.treasury)>=.001&&<button onClick={()=>setMillions(Math.floor(Math.min(status.maxPrincipal,status.treasury)*1000))}><LocaleText value="Use maximum affordable lending"/></button>}</aside>
       <div className="credit-compose">
         <label>
           <LocaleText value="Offer type" />
           <select
+            aria-label="Credit offer type"
             value={kind}
             onChange={(e) => setKind(e.target.value as typeof kind)}
           >
@@ -113,6 +117,10 @@ export function CreditWindow() {
                 "Posting these exact terms authorizes a matching country to fund the request or borrow the reserved money. An unmatched offer can be cancelled.",
               metrics: [
                 ["Principal", money(principal)],
+                ["Spendable treasury",money(status.treasury)],
+                ["Treasury shortfall",money(status.shortfall)],
+                ["Maximum principal",money(status.maxPrincipal)],
+                ["Open offers",`${status.openOffers} / 3`],
                 [
                   "Repayment at maturity",
                   money(loanTotal(principal, apr, days)),
@@ -120,13 +128,8 @@ export function CreditWindow() {
                 ["Annual interest", `${apr}%`],
                 ["Term", `${days} days`],
               ],
-              allowed:
-                Number.isFinite(principal) &&
-                principal >= 0.001 &&
-                apr >= 0 &&
-                apr <= 30 &&
-                arrears(s, p.id) === 0 &&
-                (kind === "borrow" || p.economy.treasury >= principal),
+              allowed:status.allowed,
+              warnings:status.reasons,
               execute: (commandId) => s.postCredit(kind, principal, apr, days, commandId),
             })
           }
@@ -143,7 +146,7 @@ export function CreditWindow() {
           .map((o) => (
             <article key={o.id}>
               <div>
-                <b>{s.countries[o.countryId].name}</b>
+                <b><LocaleText value={s.countries[o.countryId].name}/></b>
                 <span>
                   <LocaleText
                     value={

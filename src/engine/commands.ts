@@ -1,7 +1,7 @@
 import {buildPlant,togglePlant,cancelPowerProject} from './systems/energy';
 import {buildFacility} from './systems/industrialEconomy';
 import {placeIndustrialOrder} from './systems/industrialMarket';
-import {postCredit,acceptCredit,cancelCredit} from './systems/sovereignCredit';
+import {creditOfferStatus,postCredit,acceptCredit,cancelCredit} from './systems/sovereignCredit';
 import {prepareIntegration,beginIntegration} from './systems/integration';
 import {postListing,buyListing,cancelListing,moveBankGold,startActivity,recruitPersonnel,resolveIncomingLetter} from './systems/livingEconomy';
 import {buildCampus,hirePilots,manageOccupation,fundPoliticalCampaign,acceptElectionOffer} from './systems/governance';
@@ -246,6 +246,7 @@ function executeGameCommand(state: GameState, command: GameCommand): GameState {
 export interface CommandResult {state:GameState;status:'applied'|'unavailable'|'duplicate';message:string}
 export function executeCommandResult(state:GameState,command:GameCommand):CommandResult {
  if(command.commandId && state.world.commandIds?.includes(command.commandId))return {state,status:'duplicate',message:'This command has already been applied.'};
+ if(command.type==='credit/post'){const status=creditOfferStatus(state,command.kind,command.principal,command.apr,command.days);if(!status.allowed)return {state,status:'unavailable',message:status.reasons.join(' ')};}
  const proposal=command.type==='diplomacy/request'?diplomaticProposalStatus(state,command.id,command.kind):command.type==='diplomacy/signTradePact'?diplomaticProposalStatus(state,command.targetCountryId,'trade_pact'):null;
  if(proposal&&!proposal.allowed)return {state,status:'unavailable',message:proposal.reason};
  const next=executeGameCommand(state,command);

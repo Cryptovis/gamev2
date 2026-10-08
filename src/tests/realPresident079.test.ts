@@ -361,9 +361,9 @@ describe("retained diplomatic correspondence", () => {
   });
   it("stores rejection without charges or access and prevents immediate retry", () => {
     let s = makeInitialState();
-    s = changeRelations(s, "TUR", "BRA", -100);
+    s = changeRelations(s, "TUR", "BRA", -60);
     const n = requestDiplomacy(s, "BRA", "trade_pact"),
-      done = processLetters({ ...n, day: 4, simulationSeed: 1 });
+      done = processLetters({ ...n, day: 4, simulationSeed: 1000 });
     expect(living(done).letters[0].status).toBe("rejected");
     expect(done.countries.TUR.economy.treasury).toBe(
       s.countries.TUR.economy.treasury,
