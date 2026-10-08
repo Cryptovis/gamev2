@@ -15,7 +15,7 @@ export function InvestmentWindow() {
     a = academyFor(s, c.id),
     [count, setCount] = useState(50),
     [review, setReview] = useState<
-      (ReviewContent & { execute: () => void; allowed: boolean }) | null
+      (ReviewContent & { execute: (commandId:string) => void; allowed: boolean }) | null
     >(null);
   const bonuses = a.buildings.university * 0.05 + a.buildings.institute * 0.06,
     rate =
@@ -101,7 +101,7 @@ export function InvestmentWindow() {
                       ],
                     ],
                     allowed: true,
-                    execute: () => s.buildCampus(kind),
+                    execute: (commandId) => s.buildCampus(kind, commandId),
                   })
                 }
               >
@@ -164,7 +164,7 @@ export function InvestmentWindow() {
                   a.training.reduce((n, t) => n + t.count, 0) +
                   count <=
                   Math.floor(c.military.personnel * 0.05),
-              execute: () => s.hirePilots(count),
+              execute: (commandId) => s.hirePilots(count, commandId),
             })
           }
         >
@@ -182,8 +182,8 @@ export function InvestmentWindow() {
         <ReviewDialog
           {...review}
           onCancel={() => setReview(null)}
-          onConfirm={() => {
-            review.execute();
+          onConfirm={(commandId) => {
+            review.execute(commandId);
             setReview(null);
           }}
         />

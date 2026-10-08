@@ -249,7 +249,8 @@ export function consolidateTerritory(
       warships: p.military.warships + c.military.warships,
     },
     technology: {
-      researchPoints: p.technology.researchPoints + c.technology.researchPoints,
+      ...p.technology,
+      researchPoints: p.technology.researchPoints + c.technology.researchPoints + (c.technology.project ? c.technology.project.cost*.8*(1-c.technology.project.workDone/c.technology.project.requiredWork) : 0),
       unlocked: [
         ...new Set([...p.technology.unlocked, ...c.technology.unlocked]),
       ],
@@ -286,7 +287,7 @@ export function consolidateTerritory(
       bombers: 0,
       warships: 0,
     },
-    technology: { ...c.technology, researchPoints: 0 },
+    technology: { ...c.technology, researchPoints: 0,project:null },
   };
   let n: GameState = {
     ...s,

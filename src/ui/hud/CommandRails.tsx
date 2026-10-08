@@ -1,9 +1,10 @@
+import {useWorldView} from '../../store/useWorldView';
 const CreditWindow=lazy(()=>import('../panels/CreditWindow').then(m=>({default:m.CreditWindow})));
 import {activeCountries} from '../../domain/sovereignty';
 import {money} from '../formatMoney';
 import {GuideBriefing} from '../panels/GuideBriefing';
-import {DomesticWindow} from '../panels/DomesticWindow';
-import {DiplomaticPost} from '../panels/DiplomaticPost';
+const DomesticWindow=lazy(()=>import('../panels/DomesticWindow').then(m=>({default:m.DomesticWindow})));
+const DiplomaticPost=lazy(()=>import('../panels/DiplomaticPost').then(m=>({default:m.DiplomaticPost})));
 import {living} from '../../engine/systems/livingEconomy';
 import {CivicArt} from '../icons/CivicArt';
 import {CommandArt} from '../icons/CommandArt';
@@ -11,7 +12,7 @@ import {LocaleText,translateLive} from '../../i18n/localeText';
 const ResearchWindow=lazy(()=>import('../panels/ResearchWindow').then(m=>({default:m.ResearchWindow})));
 const InvestmentWindow=lazy(()=>import('../panels/InvestmentWindow').then(m=>({default:m.InvestmentWindow})));
 const GovernanceWindow=lazy(()=>import('../panels/GovernanceWindow').then(m=>({default:m.GovernanceWindow})));
-import {HelpPanel} from '../panels/HelpPanel';
+const HelpPanel=lazy(()=>import('../panels/HelpPanel').then(m=>({default:m.HelpPanel})));
 import {NavigationArt} from '../icons/NavigationArt';
 import {lazy,Suspense,useEffect, useMemo, useState, type ReactNode } from 'react';
 import { MARKET_RESOURCES, getMarketBoard, resourceReserveDays, resourceStrategicStatus } from '../../store/marketSelectors';
@@ -19,8 +20,8 @@ import { useGameStore } from '../../store/gameStore';
 import { BlocIcon, CouncilIcon, DiplomacyIcon, EmbassyIcon, IntelligenceIcon, ResourceIcon, TreasuryIcon, WorldIcon } from '../icons/GameIcons';
 import { DraggableWindow } from '../windows/DraggableWindow';
 import { MapModeBar } from './MapModeBar';
-import {IndustrialMarketPanel} from '../panels/IndustrialMarketPanel';
-import { ResourceCommandWindow } from '../panels/ResourceCommandWindow';
+const IndustrialMarketPanel=lazy(()=>import('../panels/IndustrialMarketPanel').then(m=>({default:m.IndustrialMarketPanel})));
+const ResourceCommandWindow=lazy(()=>import('../panels/ResourceCommandWindow').then(m=>({default:m.ResourceCommandWindow})));
 
 type ToolId='objectives'|'market'|'pulse'|'map'|'resources'|'sitrep'|'alerts'|'diplomacy';
 
@@ -29,10 +30,10 @@ function RailButton({active,badge,label,children,onClick}:{active:boolean;badge?
 }
 
 export function CommandRails(){
- const state=useGameStore();
+ const state=useWorldView();
  const open=new Set(state.activeTool?[state.activeTool]:[]);
  const player=state.countries[state.playerCountryId];
- const board=getMarketBoard(state);
+ const board=useMemo(()=>getMarketBoard(state),[state.countries,state.tradeDeals]);
  const activeWars=Object.values(state.wars).filter(w=>w.status==='active');
  const activeTrades=Object.values(state.tradeDeals).filter(d=>d.active);
  const activeOps=Object.values(state.intelOperations).filter(o=>o.status==='active');
@@ -52,21 +53,23 @@ export function CommandRails(){
  const close=(_id:ToolId)=>state.closeWorkspace();
  const done=objectives.filter(x=>x.done).length;
 
- return <>
+ return <Suspense fallback={<div className="loading-popup"><LocaleText value="Loading command…"/></div>}>
   <nav className="command-rail command-rail-left" aria-label={translateLive("World command tools")}>
-   <RailButton active={open.has('objectives')} badge={`${done}/6`} label="GOALS" onClick={()=>toggle('objectives')}><NavigationArt kind="objectives"/></RailButton>
    <RailButton active={open.has('market')} badge={activeTrades.length} label="MARKET" onClick={()=>toggle('market')}><NavigationArt kind="market"/></RailButton>
    <RailButton active={open.has('pulse')} badge={activeWars.length} label="WORLD" onClick={()=>toggle('pulse')}><NavigationArt kind="world"/></RailButton>
-   <RailButton active={open.has('map')} label="MAP" onClick={()=>toggle('map')}><NavigationArt kind="map"/></RailButton>
-   <RailButton active={open.has('resources')} badge={critical.length} label="SUPPLY" onClick={()=>toggle('resources')}><ResourceIcon resource={critical[0]?.resource??'oil'} size={20}/></RailButton>
-   <button className="tutorial-replay" data-guide="rail-help" onClick={()=>state.openTool(state.activeTool==='help'?null:'help')}><NavigationArt kind="help" size={28}/><LocaleText value={"HELP"}/></button>
+   <RailButton active={open.has('resources')} badge={critical.length} label="SUPPLY" onClick={()=>toggle('resources')}><NavigationArt kind="alerts"/></RailButton>
   </nav>
   <nav className={`command-rail command-rail-right ${state.selectedCountryId?'country-open':'country-closed'}`} aria-label={translateLive("Information tools")}>
+   <RailButton active={open.has('objectives')} badge={`${done}/6`} label="GOALS" onClick={()=>toggle('objectives')}><NavigationArt kind="objectives"/></RailButton>
    <RailButton active={open.has('diplomacy')} badge={living(state).letters.filter(m=>!m.read).length+state.leadership.messages.filter(m=>!m.read).length} label="DIPLO" onClick={()=>toggle('diplomacy')}><NavigationArt kind="diplomacy"/></RailButton>
-   <RailButton active={open.has('alerts')} badge={critical.length} label="ALERTS" onClick={()=>toggle('alerts')}><ResourceIcon resource={critical[0]?.resource??'oil'} size={20}/></RailButton>
-   <RailButton active={open.has('sitrep')} badge={state.sitrep.length} label="LOG" onClick={()=>toggle('sitrep')}><NavigationArt kind="intel"/></RailButton>
+   <RailButton active={open.has('alerts')} badge={critical.length} label="ALERTS" onClick={()=>toggle('alerts')}><NavigationArt kind="alerts"/></RailButton>
+   <RailButton active={open.has('sitrep')} badge={state.sitrep.length} label="NEWS" onClick={()=>toggle('sitrep')}><NavigationArt kind="intel"/></RailButton>
   </nav>
 
+  <nav className="command-rail map-help-cluster" aria-label={translateLive("Map and help tools")}>
+   <RailButton active={open.has('map')} label="MAP" onClick={()=>toggle('map')}><NavigationArt kind="map"/></RailButton>
+   <RailButton active={open.has('help')} label="HELP" onClick={()=>state.openTool(state.activeTool==='help'?null:'help')}><NavigationArt kind="help"/></RailButton>
+  </nav>
   <Suspense fallback={<div className="loading-popup"><LocaleText value="Loading command…"/></div>}>
   {open.has('research')&&<ResearchWindow/>}
   {open.has('investment')&&<InvestmentWindow/>}
@@ -74,7 +77,7 @@ export function CommandRails(){
   </Suspense>
   {open.has('society')&&<DomesticWindow/>}
   {open.has('credit')&&<Suspense fallback={null}><CreditWindow/></Suspense>}{open.has('help')&&<HelpPanel/>}
-  {open.has('map')&&<div className="left-command-dock map-command-dock"><button className="map-close" data-guide="close-workspace" onClick={state.closeWorkspace} aria-label={translateLive("Close map command")}><LocaleText value={"×"}/></button><GuideBriefing/><MapModeBar/></div>}
+  {open.has('map')&&<div className="left-command-dock map-command-dock"><header className="map-dock-header"><strong><LocaleText value="MAP COMMAND"/></strong><button className="map-close" data-guide="close-workspace" onClick={state.closeWorkspace} aria-label={translateLive("Close map command")}><LocaleText value={"×"}/></button></header><div className="map-dock-body"><GuideBriefing/><MapModeBar/></div></div>}
   {open.has('resources')&&<ResourceCommandWindow onClose={()=>close('resources')}/>}
 
   {open.has('objectives')&&<DraggableWindow id="objectives-window" kicker="CAMPAIGN / GUIDANCE" title={translateLive("Strategic Objectives")} initialX={88} initialY={170} width={470} onClose={()=>close('objectives')}>
@@ -103,8 +106,8 @@ export function CommandRails(){
    <div className="resource-alert-list">{MARKET_RESOURCES.map(resource=>{const status=resourceStrategicStatus(player,resource),days=resourceReserveDays(player,resource);return <div key={resource} className={status==='CRITICAL'?'critical':''}><ResourceIcon resource={resource} size={22}/><span><strong><LocaleText value={resource.toUpperCase()}/></strong><small><LocaleText value={status}/></small></span><em><LocaleText value={days>365?'365+':Math.max(0,days).toFixed(0)}/><LocaleText value={" DAYS"}/></em></div>})}</div>
   </DraggableWindow>}
 
-  {open.has('sitrep')&&<DraggableWindow id="sitrep-window" kicker="COMMAND CHANNEL" title={translateLive("SITREP Archive")} initialX={window.innerWidth-600} initialY={220} width={540} onClose={()=>close('sitrep')}>
-   <div className="sitrep-archive">{state.sitrep.map((line,i)=><div key={`${i}-${line}`}><b><LocaleText value={String(i+1).padStart(2,'0')}/></b><span><LocaleText value={line}/></span></div>)}</div>
+  {open.has('sitrep')&&<DraggableWindow id="sitrep-window" kicker="COMMAND CHANNEL" title={translateLive("News Archive")} initialX={window.innerWidth-600} initialY={220} width={540} onClose={()=>close('sitrep')}>
+   <div className="sitrep-archive">{(state.world.journal??state.sitrep.map((message,i)=>({id:String(i),message,day:state.day}))).map(entry=><div key={entry.id}><b><LocaleText value="Day"/> {entry.day}</b><span><LocaleText value={entry.message}/></span></div>)}</div>
   </DraggableWindow>}
- </>;
+ </Suspense>;
 }

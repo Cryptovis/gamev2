@@ -51,7 +51,7 @@ World map → national economy/resources → diplomacy → bilateral commodity f
 
 ## Next development candidates
 - HD War Experience remains planned in ROADMAP-HD-WAR.md: first record deterministic combat events, then build a renderer that cannot change outcomes.
-- Timed research projects and researcher staffing; current unlocks remain immediate after confirmation.
+- Specialized researcher staffing; 0.82 adds funded multi-day projects and campus capacity.
 - AI campus investment and pilot recruitment policies, with upkeep and reserve constraints.
 - Territory taxation, autonomous administration and peace settlements; current control governs occupation consequences without merging sovereign economies.
 - Multiple connection badges on country hover, richer trade route visualization and logistics bottlenecks.
@@ -66,7 +66,7 @@ Next candidates:
 - Calibrate legacy strategic resource lots into explicit physical units and retune factory capital/upkeep against a consistent game time scale.
 - Negotiated commodity-price offers, counteroffers and treaty duration renewals in the post office.
 - More nuanced migration permission, skills, housing capacity and return migration; demographic cohorts.
-- Longer research projects, specialized crew readiness and sanctions-driven production substitutions.
+- Specialized crew readiness and sanctions-driven production substitutions; multi-day research delivered in 0.82.
 - Worker-based simulation and more lazy UI modules as the existing main bundle grows.
 - HD War Experience camera/terrain/animation/playback work remains in ROADMAP-HD-WAR.md.
 
@@ -81,3 +81,9 @@ Follow-up candidates: counteroffers and loan restructuring, early repayment, bro
 Delivered: tutorial read/acknowledge/close phases, lighter spotlight shading and cancellation recovery; Turkish UI/news template coverage with historical rendering; profile/history/session tabs; production-based resource map imagery; six fuel-backed or renewable power plant types, commissioned construction/refunds, power demand/shortfalls, AI energy investment/research, save continuity and annexation transfers.
 
 Next energy work: regional grid capacity and transmission loss, paid electrical interconnectors, safety inspections/civil nuclear incidents, forecasts with uncertainty, additional language translations and further bundle splitting. HD War Experience remains a separate future project.
+
+## 0.82 — Reliable Command
+
+Delivered: save compatibility/fallback/retry, bounded command deduplication, funded tutorial identity, timed research, dated NEWS archive, resource popup consolidation, home camera, right-side Goals and bottom-right Map/Help. Added lazy windows and production Chromium regression tests. See PLAYTEST-082.md.
+
+Next priorities: long-campaign profiling and balance; deep legacy save validation; durable autosave scheduling; structured per-system events; full dynamic localization. Preserve current completed systems. V3 remains conditional on measured performance constraints or an authoritative multiplayer requirement, not on interface rearrangement.

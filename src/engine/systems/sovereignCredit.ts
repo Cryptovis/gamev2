@@ -63,6 +63,21 @@ function validPair(s: GameState, a: string, b: string) {
     !relationFor(x, b).sanctions
   );
 }
+export function creditOfferStatus(s:GameState,kind:CreditOffer['kind'],principal:number,apr:number,days:CreditOffer['days'],countryId=s.playerCountryId){
+ const c=s.countries[countryId],e=expansion(s),reasons:string[]=[];
+ const maxPrincipal=c?Math.max(1,c.economy.gdp*.5):0;
+ const openOffers=e.creditOffers.filter(o=>o.countryId===countryId&&o.status==='open').length;
+ if(!c||c.annexedBy||c.controllerCountryId)reasons.push('Only an independent country can publish credit.');
+ if(!['lend','borrow'].includes(kind))reasons.push('Choose lending or borrowing.');
+ if(!Number.isFinite(principal)||principal<.001)reasons.push('Principal must be at least $1M.');
+ if(principal>maxPrincipal)reasons.push('Principal exceeds the national limit: 50% of GDP, with a $1B minimum limit.');
+ if(!Number.isFinite(apr)||apr<0||apr>30)reasons.push('Annual interest must be between 0% and 30%.');
+ if(![90,180,365].includes(days))reasons.push('Choose a 90, 180 or 365 day term.');
+ if(arrears(s,countryId)>0)reasons.push('Settle outstanding arrears before publishing new credit.');
+ if(openOffers>=3)reasons.push('Three open offers already exist. Cancel one or wait for a match.');
+ if(c&&kind==='lend'&&Number.isFinite(principal)&&principal>c.economy.treasury)reasons.push('Insufficient spendable treasury to reserve this lending amount. Reduce the principal or increase treasury.');
+ return {allowed:reasons.length===0,reasons,maxPrincipal,openOffers,treasury:c?.economy.treasury??0,shortfall:kind==='lend'&&Number.isFinite(principal)?Math.max(0,principal-(c?.economy.treasury??0)):0};
+}
 export function postCredit(
   s: GameState,
   kind: CreditOffer["kind"],
@@ -73,25 +88,7 @@ export function postCredit(
 ): GameState {
   const e = expansion(s),
     c = s.countries[countryId];
-  if (
-    !c ||
-    c.annexedBy ||
-    c.controllerCountryId ||
-    !["lend", "borrow"].includes(kind) ||
-    !Number.isFinite(principal) ||
-    principal < 0.001 ||
-    principal > Math.max(1, c.economy.gdp * 0.5) ||
-    !Number.isFinite(apr) ||
-    apr < 0 ||
-    apr > 30 ||
-    ![90, 180, 365].includes(days) ||
-    arrears(s, countryId) > 0 ||
-    e.creditOffers.filter(
-      (o) => o.countryId === countryId && o.status === "open",
-    ).length >= 3 ||
-    (kind === "lend" && c.economy.treasury < principal)
-  )
-    return s;
+  if(!creditOfferStatus(s,kind,principal,apr,days,countryId).allowed)return s;
   let suffix = e.creditOffers.length;
   const prefix = `credit-${countryId}-${s.day}-`;
   while (

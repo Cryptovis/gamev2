@@ -1,13 +1,14 @@
+import {useWorldView} from '../../store/useWorldView';
 import { useState } from "react";
 import { CommandWindow } from "./CommandWindow";
 import { ReviewDialog } from "./ReviewDialog";
 import { LocaleText } from "../../i18n/localeText";
 import { TECHNOLOGY_TREE, technologyById } from "../../data/technologyTree";
-import { canUnlockTechnology } from "../../engine/systems/technology";
+import { canUnlockTechnology,researchCapacity,researchDuration } from "../../engine/systems/technology";
 import { useGameStore } from "../../store/gameStore";
 import type { TechnologyCategory } from "../../domain/game";
 export function ResearchWindow() {
-  const s = useGameStore(),
+  const s = useWorldView(),
     c = s.countries[s.playerCountryId],
     [branch, setBranch] = useState<TechnologyCategory>("industry"),
     [review, setReview] = useState<string | null>(null);
@@ -33,6 +34,8 @@ export function ResearchWindow() {
     height = Math.max(...Array.from(rows.values())) * 230;
   const width = Math.max(...nodes.map((n) => n.tier)) * 300 - 20;
   const selected = review ? technologyById[review] : null;
+  const project=c.technology.project;
+  const [cancel,setCancel]=useState(false);
   return (
     <CommandWindow
       wide
@@ -41,6 +44,7 @@ export function ResearchWindow() {
       subtitle={`${c.technology.researchPoints.toFixed(2)} RP`}
       onClose={s.closeWorkspace}
     >
+      <section className="research-progress"><strong><LocaleText value="Research capacity / day"/>: {researchCapacity(s,c.id).toFixed(2)}</strong><p><LocaleText value="One national team runs one project at a time. Universities and institutes increase research capacity. Points are paid once; capabilities unlock on completion."/></p>{project&&<><h3><LocaleText value={technologyById[project.technologyId].name}/></h3><progress aria-label="Research progress" max={project.requiredWork} value={project.workDone}/><p>{Math.ceil((project.requiredWork-project.workDone)/researchCapacity(s,c.id))} <LocaleText value="days remaining"/></p><button onClick={()=>setCancel(true)}><LocaleText value="Cancel research / refund"/></button></>}</section>
       <div className="tree-branches">
         {categories.map(([id, label]) => (
           <button
@@ -90,7 +94,7 @@ export function ResearchWindow() {
                 <small>
                   <LocaleText
                     value={
-                      complete ? "COMPLETE" : ready ? "AVAILABLE" : "LOCKED"
+                      complete ? "COMPLETE" : project?.technologyId===n.id ? "RESEARCH IN PROGRESS" : ready ? "AVAILABLE" : "LOCKED"
                     }
                   />{" "}
                   · {n.cost} RP
@@ -115,7 +119,7 @@ export function ResearchWindow() {
                 </div>
                 <button disabled={!ready} onClick={() => setReview(n.id)}>
                   <LocaleText
-                    value={complete ? "RESEARCH COMPLETE" : "Review research"}
+                    value={complete ? "RESEARCH COMPLETE" : project?.technologyId===n.id ? "RESEARCH IN PROGRESS" : "Review research"}
                   />
                 </button>
               </article>
@@ -129,19 +133,23 @@ export function ResearchWindow() {
           summary={selected.description}
           metrics={[
             ["Research cost", `${selected.cost} RP`],
+            ["Estimated duration",`${researchDuration(s,c.id,selected.id)} days`],
+            ["Research capacity / day",researchCapacity(s,c.id).toFixed(2)],
             [
               "Points after",
               `${(c.technology.researchPoints - selected.cost).toFixed(2)} RP`,
             ],
           ]}
+          warnings={["Research points are paid upfront. Cancellation refunds 80% of unfinished work; completed research cannot be cancelled."]}
           allowed={canUnlockTechnology(c, selected.id)}
           onCancel={() => setReview(null)}
-          onConfirm={() => {
-            s.unlockTechnology(selected.id);
+          onConfirm={(commandId) => {
+            s.unlockTechnology(selected.id, commandId);
             setReview(null);
           }}
         />
       )}
+      {cancel&&project&&<ReviewDialog title="Cancel research?" summary="Research points are paid upfront. Cancellation refunds 80% of unfinished work; completed research cannot be cancelled." metrics={[["Refund",`${(project.cost*.8*(1-project.workDone/project.requiredWork)).toFixed(2)} RP`]]} onCancel={()=>setCancel(false)} onConfirm={(commandId)=>{s.cancelResearch(commandId);setCancel(false)}}/>}
     </CommandWindow>
   );
 }

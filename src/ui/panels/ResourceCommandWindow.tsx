@@ -1,4 +1,5 @@
-import {money} from '../formatMoney';
+import {useWorldView} from '../../store/useWorldView';
+import {money as formatMoney} from '../formatMoney';
 import {LocaleText,translateLive} from '../../i18n/localeText';
 import {ReviewDialog} from './ReviewDialog';
 import {getTradeQuote} from '../../engine/systems/trade';
@@ -13,11 +14,13 @@ import { StrategicDecisionModal } from './StrategicDecisionModal';
 import { ResourceIcon } from '../icons/GameIcons';
 import { DraggableWindow } from '../windows/DraggableWindow';
 
-export function ResourceCommandWindow({onClose}:{onClose:()=>void}){
- const state=useGameStore();
+export function ResourceCommandWindow({onClose,resource:initialResource}:{onClose:()=>void;resource?:TradeResource}){
+ const state=useWorldView();
+ const [selectedResource,setSelectedResource]=useState<TradeResource|null>(initialResource??null);
  const [blocked,setBlocked]=useState<string|null>(null),[importReview,setImportReview]=useState<{id:string;resource:TradeResource}|null>(null);
  const [pendingDecision,setPendingDecision]=useState<{spec:StrategicDecisionSpec;execute:()=>void}|null>(null);
  const player=state.countries[state.playerCountryId];
+  const money=(value:number)=>formatMoney(value,state.playerProfile.language);
  return <DraggableWindow id="resource-command-window" kicker="NATIONAL ECONOMY" title={translateLive("Strategic Resources")} initialX={92} initialY={150} width={650} onClose={onClose}>
   <div className="resource-command-summary">
    <span><small><LocaleText value={"FUEL"}/></small><strong><LocaleText value={player.processedResources.fuel.toFixed(1)}/></strong></span>
@@ -25,8 +28,9 @@ export function ResourceCommandWindow({onClose}:{onClose:()=>void}){
    <span><small><LocaleText value={"POWER"}/></small><strong><LocaleText value={player.processedResources.electricity.toFixed(1)}/></strong></span>
    <span><small><LocaleText value={"ACTIVE TRADE"}/></small><strong><LocaleText value={Object.values(state.tradeDeals).filter(d=>d.active&&(d.buyerId===player.id||d.sellerId===player.id)).length}/></strong></span>
   </div>
+  <nav className="resource-filter"><button className={!selectedResource?'active':''} onClick={()=>setSelectedResource(null)}><LocaleText value="All resources"/></button>{MARKET_RESOURCES.map(r=><button key={r} className={selectedResource===r?'active':''} onClick={()=>setSelectedResource(r)}><ResourceIcon resource={r} size={20}/><LocaleText value={r}/></button>)}</nav>
   <div className="resource-command-grid">
-   {MARKET_RESOURCES.map(resource=>{
+   {MARKET_RESOURCES.filter(r=>!selectedResource||r===selectedResource).map(resource=>{
     const status=resourceStrategicStatus(player,resource);
     const days=resourceReserveDays(player,resource);
     const self=resourceSelfSufficiency(player,resource);

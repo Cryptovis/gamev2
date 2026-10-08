@@ -1,4 +1,5 @@
 import {processEnergy,processEnergyAI} from './systems/energy';
+import {processResearch} from './systems/technology';
 import {processCredit} from './systems/sovereignCredit';
 import {processIntegration} from './systems/integration';
 import {pendingVictory} from './systems/victory';
@@ -21,7 +22,7 @@ import { processIntelOperations } from './systems/espionage';
 import { processInfluence } from './systems/influence';
 import { processStrategicGoals } from './systems/strategicGoals';
 import { processLivingEconomyAI } from './systems/livingEconomyAI';
-import { processWorldDiplomacy } from './systems/worldDynamics';
+import { processWorldDiplomacy,processTradeRelations } from './systems/worldDynamics';
 import { maybeCreateResourceAdvisor } from './systems/advisor';
 import { processIncomingDiplomaticOffers } from './systems/diplomaticOffers';
 import { processProduction, processProductionAI } from './systems/production';
@@ -79,6 +80,8 @@ export function tickGame(state: GameState): GameState {
   next = processWorldInstitutions(next);
   next = processPrograms(next);
   next = processGovernance(next);
+  next = processResearch(next);
+  next = processTradeRelations(next);
   next = processTradeDeals(next);
   next = processInfrastructure(next);
   next = processEnergy(next);

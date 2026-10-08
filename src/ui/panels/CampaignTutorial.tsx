@@ -28,7 +28,7 @@ const steps = [
   ],
   [
     "Research new capabilities",
-    "Open your nation and choose Technology. Read prerequisites before spending research points.",
+    "Open your nation and choose Technology. Research projects take several campaign days. One national team can run one project; campuses increase its capacity. Review duration and cost before confirming.",
     "nation",
     "technology",
   ],
@@ -122,9 +122,9 @@ export function CampaignTutorial() {
         `[data-guide="${target}"]`,
       );
       if (el) {
-        const b = el.getBoundingClientRect();
-        if (b.top < 0 || b.bottom > window.innerHeight)
-          el.scrollIntoView({ block: "nearest" });
+        // A target can be inside the viewport yet clipped by its scrolling window.
+        // Reveal it in every ancestor before positioning the interactive spotlight.
+        el.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "instant" });
         setRect(el.getBoundingClientRect());
       } else setRect(null);
     };
@@ -146,7 +146,7 @@ export function CampaignTutorial() {
               : "detail"
             : phase === "tab"
               ? practice
-                ? "build"
+                ? useGameStore.getState().world.tutorial.practiceProjectId ? "inspect" : "build"
                 : "detail"
               : phase === "detail"
                 ? "reading"
@@ -157,9 +157,7 @@ export function CampaignTutorial() {
                     : phase === "review"
                       ? "result"
                       : phase === "result"
-                        ? useGameStore.getState().industrialEconomy[
-                            state.playerCountryId
-                          ].projects.length > initialProjects.current
+                        ? !!useGameStore.getState().world.tutorial.practiceProjectId
                           ? "inspect"
                           : "build"
                         : "done",
@@ -188,8 +186,7 @@ export function CampaignTutorial() {
             ? "inspect"
             : phase === "review" || phase === "reviewReading"
               ? "build"
-              : useGameStore.getState().industrialEconomy[state.playerCountryId]
-                    .projects.length > initialProjects.current
+              : !!useGameStore.getState().world.tutorial.practiceProjectId
                 ? "inspect"
                 : "build",
       );
@@ -256,21 +253,8 @@ export function CampaignTutorial() {
         <div className="tutorial-shade" style={{ inset: 0 }} />
       )}
       <section
-        className={`tutorial-dialog guided-card ${(phase==='reading'||phase==='reviewReading')?'tutorial-reading':''}`}
-        style={
-          rect && window.innerWidth > 1100
-            ? {
-                left: rect.left > window.innerWidth / 2 ? 18 : undefined,
-                right: rect.left > window.innerWidth / 2 ? "auto" : 18,
-                top: 114,
-                bottom: "auto",
-                transform: "none",
-                width: 330,
-              }
-            : rect && rect.top > window.innerHeight * 0.55
-              ? { top: 16, bottom: "auto" }
-              : undefined
-        }
+        className={`tutorial-dialog guided-card ${(phase==='reading'||phase==='reviewReading')?'tutorial-reading':''} ${(phase!=='open'&&phase!=='done')?'tutorial-docked':''}`}
+        style={{left:'50%',right:'auto',top:phase==='open'&&rect&&rect.top>window.innerHeight*.55?18:'auto',bottom:phase==='open'&&rect&&rect.top>window.innerHeight*.55?'auto':18,transform:'translateX(-50%)'}}
         role="dialog"
         aria-label={translateLive("Campaign tutorial")}
       >

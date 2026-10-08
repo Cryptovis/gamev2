@@ -9,6 +9,7 @@ import {
 } from "../../engine/systems/nationalPrograms";
 import { translateText } from "../../i18n/localeText";
 const faq = [
+ ["Where are my proposals?","Open Diplomacy, then Proposal tracker and Sent proposals. Pending replies arrive after three campaign days; advance time to receive them. Sending again will not accelerate the answer. No fee is charged at submission; accepted outgoing proposals charge the stated fee once."],
  ["How does the energy grid work?","Open Production and National Energy Grid. Fuel plants consume coal, oil or uranium and operating funds. Renewable plants need no fuel. Review construction time, research and budget before investing. Power shortages slow production and reduce public confidence."],
 
  ["How do sovereign loans work?","Open Market and Sovereign Credit & Monetary Fund. Review annual interest, term and total repayment. At maturity, unpaid cash is recovered from collateral; remaining arrears enforce higher taxes until settled."],
@@ -109,7 +110,7 @@ export function HelpPanel() {
       onClose={state.closeWorkspace}
     >
       <section className="game-notes">
-        <h3>The Real President · 0.81</h3>
+        <h3>The Real President · 0.82</h3>
         <p>
           <LocaleText value="203 sovereign profiles · economy · population · resource markets · diplomacy · research · military command." />
         </p>
@@ -266,8 +267,8 @@ export function HelpPanel() {
             )
           }
           onCancel={() => setReview(null)}
-          onConfirm={() => {
-            state.startProgram(review);
+          onConfirm={(commandId) => {
+            state.startProgram(review, commandId);
             setReview(null);
           }}
         />

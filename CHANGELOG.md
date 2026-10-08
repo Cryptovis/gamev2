@@ -1,5 +1,48 @@
 # Changelog
 
+## 0.82.0-playtest.6 — Credit feedback and trade trust
+- Unified market filter labels; credit reviews now share engine validation, show cash/GDP/offer limits and quantified shortfall, and offer an affordable lending amount.
+- Stopped strategic confirmation from overwriting command receipts or treating a posted diplomatic letter as a failed action.
+- Tutorial spotlights reveal controls clipped by scrolling windows, including the World panel close button.
+- Above 50/100 relations now read Good; eligible trade acceptance rises at that threshold. Trade requests below 20/100 explain the missing trust and missions/aid needed to improve it.
+- Active pacts below 20/100 receive a saved 14-day recovery period, player warnings and bilateral shipment cancellation if trust stays low. Restoring 20 clears the risk.
+- Added acceptance estimates, points-to-Good, clearer rejection reasons and Turkish feedback/news coverage.
+- Updated the HD War roadmap for a bounded turn-based tactical slice; the battlefield is not enabled and no rendering dependency is added.
+
+## 0.82.0-playtest.5 — Nation setup polish
+- Matched nation preview, statistics, opening profile, confirmation cards and inactive steps to the charcoal/gold onboarding palette.
+- Added localized, accent-insensitive country search with English names and country-code aliases, localized sorting, empty-result feedback and clear search.
+- Added accessible search naming and selected-country button states.
+
+## 0.82.0-playtest.4 — Tutorial, proposal tracking and artwork hotfix
+- Reserved a compact bottom tutorial area; shortened open windows and review dialogs to keep close controls and content clear. Separated acknowledgement and navigation buttons.
+- Added sent/received proposal filters, pending/retry status and inline help. Both inbox and country diplomacy detect pending, incoming, active and cooldown proposals before reopening confirmation.
+- Shared proposal availability with engine command receipts; no repeated proposal or fee while pending. Clarified that outgoing fees apply only on acceptance.
+- Served the existing resource/civic/navigation atlas pixels as native WebP instead of nested SVG images; added a visible load-failure fallback.
+- Extended browser regressions for tutorial controls, proposal retries and loaded supply/world artwork.
+
+## 0.82.0-playtest.3 — UI hotfix
+- Reserved explicit setup navigation and save-tool rows so Continue cannot spill below the footer.
+- Put navigation rails behind national/floating windows, keeping tutorial construction targets clickable.
+- Rebuilt the map dock with an integrated close header and a bounded scrolling body.
+- Removed the forced profile footer background and let full campaign dates wrap.
+- Added browser checks for unclipped setup buttons, window hit-testing and plain profile footer surfaces.
+
+## 0.82.0-playtest.2 — Onboarding layout patch
+- Fixed the setup frame dimensions across steps and language changes.
+- Matched country-list scrollbars to portrait selection and bounded desktop list height.
+- Kept national summary information visible with a compact responsive layout.
+- Fixed selected nation secondary-text contrast and added a visible setup release identifier.
+
+## 0.82.0-playtest.1 — Reliable Command
+- Added validated schema-15 save migration, compatible-record fallback, retryable autosave and direct setup loading.
+- Routed reviewed commands through bounded persisted confirmation identities and retained tutorial construction identity.
+- Added daily research work, campus capacity, shared AI rules, completion effects and unfinished-work refunds.
+- Added 200 dated NEWS reports with Turkish historical rendering.
+- Added player-country location beside zoom, resource-specific supply popups and Buy actions; removed the duplicated national supply board.
+- Moved Goals right and grouped Map/Help bottom-right; fixed Help pressed state and added colored civic/diplomacy/world artwork.
+- Split heavy UI modules, narrowed panel subscriptions and added production-browser regression coverage. See docs/PLAYTEST-082.md for verification and remaining debt.
+
 ## 0.76.0-playtest.1 — Decisions & World Institutions
 - Added factory investment review, before/after capacity, input/power/upkeep previews and timed construction cancellation with an explicit partial refund.
 - Added advisor pact/contract review, locked-price monthly payment summaries, duplicate contract protection, diplomatic settlement checks and visible command receipts.

@@ -1,3 +1,4 @@
+import {useWorldView} from '../../store/useWorldView';
 import {LocaleText,translateLive} from '../../i18n/localeText';
 import {useState} from 'react';
 import {ReviewDialog} from './ReviewDialog';
@@ -12,7 +13,7 @@ import {IndustryIcon,ResourceIcon,TankIcon} from '../icons/GameIcons';
 
 export function IndustrialPanel({country}:{country:CountryState}){
  const [pending,setPending]=useState<FacilityKind|null>(null),[cancelId,setCancelId]=useState<string|null>(null);
- const state=useGameStore(),n=state.industrialEconomy[country.id],own=country.id===state.playerCountryId;
+ const state=useWorldView(),n=state.industrialEconomy[country.id],own=country.id===state.playerCountryId;
  if(!n)return null;
  return <section className="industrial-command">
   <header className="industrial-heading"><IndustryIcon size={30}/><div><small><LocaleText value={"REAL ECONOMY / INDUSTRIAL DEVELOPMENT"}/></small><h3><LocaleText value={"National Industry"}/></h3><p><LocaleText value={"Invest in extraction, turn raw materials into components, secure supply through trade."}/></p></div></header>
@@ -30,7 +31,7 @@ export function IndustrialPanel({country}:{country:CountryState}){
   })}</div>
   {n.projects.length>0&&<div className="construction-list">{n.projects.map(p=><div key={p.id}><strong><LocaleText value={FACILITIES[p.kind].label}/></strong><span><LocaleText value={Math.max(0,p.readyDay-state.day)}/><LocaleText value={" days to completion"}/></span>{own&&<button onClick={()=>setCancelId(p.id)}><LocaleText value={"CANCEL / REFUND"}/></button>}</div>)}</div>}
   <div className="assembly-card"><TankIcon size={30}/><div><strong><LocaleText value={"Armored Vehicle Assembly"}/></strong><p><LocaleText value={Object.entries(TANK_COMPONENTS).map(([good,amount])=>`${amount} ${GOODS[good as IndustrialGood].label}`).join(' + ')}/><LocaleText value={" → 1 vehicle"}/></p><small><LocaleText value={"Requires Armored Vehicle Assembly research plus assigned military factories, steel, fuel and power. Buy components if you cannot manufacture them locally."}/></small></div><b><LocaleText value={country.technology.unlocked.includes('mil-armor-assembly')?'RESEARCH READY':'TECH LOCKED'}/></b></div>
- {pending&&<ReviewDialog {...investmentReview(state,pending)} onCancel={()=>setPending(null)} onConfirm={()=>{state.buildFacility(pending);setPending(null)}} confirmLabel="CONFIRM CONSTRUCTION"/>}
- {cancelId&&<ReviewDialog title={translateLive("Cancel construction?")} summary="Refund is 80% of the remaining unbuilt investment. Completed construction cannot be cancelled." metrics={[["Refund",`$${constructionRefund(state,cancelId).toFixed(3)}B`]]} onCancel={()=>setCancelId(null)} onConfirm={()=>{state.cancelConstruction(cancelId);setCancelId(null)}} confirmLabel="CANCEL PROJECT"/>}
+ {pending&&<ReviewDialog {...investmentReview(state,pending)} onCancel={()=>setPending(null)} onConfirm={(commandId)=>{state.buildFacility(pending,commandId);setPending(null)}} confirmLabel="CONFIRM CONSTRUCTION"/>}
+ {cancelId&&<ReviewDialog title={translateLive("Cancel construction?")} summary="Refund is 80% of the remaining unbuilt investment. Completed construction cannot be cancelled." metrics={[["Refund",`$${constructionRefund(state,cancelId).toFixed(3)}B`]]} onCancel={()=>setCancelId(null)} onConfirm={(commandId)=>{state.cancelConstruction(cancelId,commandId);setCancelId(null)}} confirmLabel="CANCEL PROJECT"/>}
  </section>;
 }

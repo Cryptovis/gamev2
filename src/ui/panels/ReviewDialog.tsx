@@ -19,12 +19,13 @@ export function ReviewDialog({
   allowed = true,
 }: {
   onCancel: () => void;
-  onConfirm?: () => void;
+  onConfirm?: (commandId:string) => void;
   confirmLabel?: string;
   allowed?: boolean;
 } & ReviewContent) {
   const ref = useRef<HTMLElement>(null),
     submitted = useRef(false),
+    commandId=useRef(crypto.randomUUID()),
     cancel = useRef(onCancel);
   cancel.current = onCancel;
   useEffect(() => {
@@ -109,7 +110,7 @@ export function ReviewDialog({
               onClick={() => {
                 if (submitted.current) return;
                 submitted.current = true;
-                onConfirm();
+                onConfirm(commandId.current);
               }}
             >
               <LocaleText value={confirmLabel}/>
@@ -122,8 +123,7 @@ export function ReviewDialog({
   );
 }
 export function ActionReceipt() {
-  const state = useGameStore(),
-    receipt = state.actionReceipt;
+  const receipt=useGameStore(s=>s.actionReceipt),showReceipt=useGameStore(s=>s.showReceipt);
   if (!receipt) return null;
-  return <ReviewDialog {...receipt} onCancel={() => state.showReceipt(null)} />;
+  return <ReviewDialog {...receipt} onCancel={() => showReceipt(null)} />;
 }

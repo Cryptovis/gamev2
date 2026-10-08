@@ -1,3 +1,4 @@
+import {CivicArt} from '../icons/CivicArt';
 import { arrears } from "../../engine/systems/sovereignCredit";
 import { useState, useEffect } from "react";
 import type { CountryState } from "../../domain/game";
@@ -76,7 +77,7 @@ export function PopulationPanel({ country: c }: { country: CountryState }) {
             <LocaleText value="Review tax policy" />
           </button>
           <button onClick={() => s.openTool("society")}>
-            <LocaleText value="Public Events & Relief" />
+            <CivicArt kind="festival" size={34}/><LocaleText value="Public Events & Relief" />
           </button>
         </>
       )}
@@ -100,7 +101,7 @@ export function PopulationPanel({ country: c }: { country: CountryState }) {
             ],
           ]}
           onCancel={() => setReview(false)}
-          onConfirm={() => {
+          onConfirm={(commandId) => {
             s.setTaxRate(tax);
             setReview(false);
             s.showReceipt({
@@ -168,8 +169,8 @@ export function RecruitmentPanel() {
             c.economy.treasury >= cost && count <= civilianPopulation(c) * 0.01
           }
           onCancel={() => setReview(false)}
-          onConfirm={() => {
-            s.recruitPersonnel(count);
+          onConfirm={(commandId) => {
+            s.recruitPersonnel(count, commandId);
             setReview(false);
           }}
         />

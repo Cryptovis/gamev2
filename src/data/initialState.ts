@@ -9,7 +9,7 @@ import { createInitialInfrastructureMap } from '../engine/systems/infrastructure
 export const makeInitialState = (): GameState => {
   const countries=structuredClone(initialCountries);
   const state:GameState=({
-  schemaVersion: 14,
+  schemaVersion: 15,
   simulationSeed: 0xA17E5EED,
   day: 1,
   speed: 0,
@@ -20,7 +20,7 @@ export const makeInitialState = (): GameState => {
   selectedCountryId: 'TUR',
   mapMode: 'political',
   mapPresentation: 'political',
-  mapNotice: 'The Real President 0.81 — economy, people and diplomacy.',
+  mapNotice: 'The Real President 0.82 — economy, people and diplomacy.',
   countries,
   tradeDeals: {},
   wars: {},
@@ -40,11 +40,11 @@ export const makeInitialState = (): GameState => {
   industrialEconomy: createIndustrialMap(countries),
   industrialContracts: {},
   leadership:createLeadership(countries.TUR.economy.gdp),
-  world:createWorld(countries,'TUR'),
+  world:{...createWorld(countries,'TUR'),campaignId:'initial',commandIds:[],journal:[]},
   lastAiDay: 1,
   lastStrategicReviewDay: 1,
   sitrep: [
-    'The Real President 0.81 online.',
+    'The Real President 0.82 online.',
     'Strategic AI, covert operations and influence networks loaded alongside Strategic Command systems.',
   ],
   });

@@ -1,3 +1,4 @@
+import {useWorldView} from '../../store/useWorldView';
 import { useState } from "react";
 import { useGameStore } from "../../store/gameStore";
 import { LocaleText } from "../../i18n/localeText";
@@ -6,12 +7,13 @@ import type { ActivityKind } from "../../domain/living";
 import { CommandWindow } from "./CommandWindow";
 import { ReviewDialog } from "./ReviewDialog";
 import { CivicArt } from "../icons/CivicArt";
-import { money } from "../formatMoney";
+import {money as formatMoney} from '../formatMoney';
 export function DomesticWindow() {
-  const s = useGameStore(),
+  const s = useWorldView(),
     p = s.countries[s.playerCountryId],
     l = living(s),
     [review, setReview] = useState<ActivityKind | null>(null);
+  const money=(value:number)=>formatMoney(value,s.playerProfile.language);
   return (
     <CommandWindow
       title="Public Events & Relief"
@@ -106,8 +108,8 @@ export function DomesticWindow() {
             ...(review === "food_relief" ? [["Food reserves used", "20"]] : []),
           ]}
           onCancel={() => setReview(null)}
-          onConfirm={() => {
-            s.startActivity(review);
+          onConfirm={(commandId) => {
+            s.startActivity(review, commandId);
             setReview(null);
           }}
         />

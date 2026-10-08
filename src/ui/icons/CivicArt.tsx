@@ -1,3 +1,4 @@
+import {AtlasImage} from './AtlasImage';
 const tiles = [
   "festival",
   "sports",
@@ -23,18 +24,16 @@ export function CivicArt({
       role="img"
       aria-label={kind}
       style={{
+        display: "inline-block",
+        flexShrink: 0,
         width: size,
         height: size,
-        display: "inline-block",
         position: "relative",
         overflow: "hidden",
-        flexShrink: 0,
       }}
     >
-      <img
-        aria-hidden="true"
-        alt=""
-        src="/assets/command/civic-atlas-079.svg"
+      <AtlasImage
+        src="/assets/command/civic-atlas-079.webp"
         style={{
           position: "absolute",
           maxWidth: "none",

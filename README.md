@@ -1,6 +1,20 @@
-# AlpyX: Global Command — Strategic Command 0.40
+# The Real President — Reliable Command 0.82
 
 A browser-based grand-strategy prototype built with React, TypeScript, Zustand, D3 Geo, Dexie and Vitest.
+
+Current version: **0.82.0-playtest.6**, branch `dev/reliable-command-082`, save schema 15. Existing schemas 12–14 migrate automatically; incompatible records are skipped when loading previous progress.
+
+This release adds reliable reviewed commands, recoverable saves/tutorial practice, timed research, dated NEWS history and a more compact map/resource interface. See [0.82 playtest notes](docs/PLAYTEST-082.md) and [roadmap](docs/ROADMAP.md) for delivered scope and remaining debt. V3 remains a conditional architectural decision.
+
+```bash
+npm ci
+npm run dev
+npm run check
+npx playwright install chromium
+npm run test:e2e
+```
+
+## Historical 0.40 foundation
 
 ## Three-track release
 0.40 combines gameplay depth, a first authored visual pack and project-foundation work in one release candidate.

@@ -694,3 +694,199 @@ body:has(.guided-tutorial) .review-backdrop { background: rgb(7 23 33 / 16%); ba
 }
 .leader-nation-link { border: 0; padding: 2px 0; background: transparent; text-align: left; cursor: pointer; }
 .leader-nation-link:hover,.leader-nation-link:focus-visible { color: #ffdf9c; text-decoration: underline; }
+
+/* 0.82: compact, separated navigation and resource-based supply access. */
+.command-rail.map-help-cluster {top:auto!important;left:auto!important;right:16px!important;bottom:64px!important;transform:none!important;display:flex!important;gap:8px;padding:8px;background:#152b36e8;border:1px solid #637b86;border-radius:13px}
+.map-help-cluster .rail-button {width:62px;min-height:60px;display:grid;grid-template-rows:34px auto;place-items:center;padding:5px;border:1px solid transparent;border-radius:8px;background:#27404c;color:#e0e8ed;cursor:pointer}
+.map-help-cluster .rail-button>span {width:36px;height:36px}
+.map-help-cluster .rail-button.active {border-color:#f2d283;background:#3b4a49;color:#ffe2a0}
+.map-help-cluster .rail-button small {color:inherit!important}
+.resource-name {display:flex;align-items:center;gap:7px;border:0;background:transparent;color:#ffe6b0;padding:0;cursor:pointer;text-align:left;font:inherit}
+.resource-name:disabled {cursor:default;opacity:1}
+.resource-card-head {flex-wrap:wrap;gap:8px}
+.resource-buy {display:block;width:100%;margin:9px 0;padding:9px;border:1px solid #bda45e;border-radius:7px;background:#f0ce80;color:#152c38;font-weight:700;cursor:pointer}
+.resource-filter {display:flex;flex-wrap:wrap;gap:7px;margin:14px 0}
+.resource-filter button {display:flex;align-items:center;gap:6px;padding:9px;background:#274450;color:#e6edf0;border:1px solid #6c8791;border-radius:8px;cursor:pointer}
+.resource-filter .active {background:#f0ce80;color:#152c38;border-color:#ffdfa0}
+.resource-command-grid:has(>article:only-child) {grid-template-columns:1fr}
+.research-progress {padding:16px;margin-bottom:15px;border:1px solid #8e936a;border-radius:12px;background:#223d48;color:#e1edf1}
+.research-progress p {line-height:1.5}
+.research-progress progress {width:100%;accent-color:#e4c77e}
+.research-progress button {padding:10px;border:1px solid #d1b16e;background:#3e4237;border-radius:8px;color:#ffdfa3;cursor:pointer}
+.institution-mark {display:flex;align-items:center;gap:8px}
+.world-institutions h2 {display:flex;align-items:center;gap:10px}
+.diplomacy-actions button {align-items:center;gap:10px}
+:is(.activity-cards,.goodwill-card) .civic-art {display:inline-block;flex-shrink:0;margin-bottom:8px}
+.resource-card-flow {flex-wrap:wrap;gap:6px}
+@media(max-width:640px) {
+ .command-rail.map-help-cluster {right:8px!important;bottom:54px!important;padding:5px;gap:5px}
+ .map-help-cluster .rail-button {width:48px;min-width:48px;min-height:48px;grid-template-rows:28px auto}
+ .map-help-cluster .rail-button>span {width:28px;height:28px}
+ .map-help-cluster .navigation-art {transform:scale(.78);transform-origin:top left}
+ .map-camera-hud {bottom:120px!important}
+ .map-camera-hud button {min-width:32px}
+ .command-panel {bottom:120px!important}
+ .resource-filter button {font-size:12px;padding:7px}
+ .resource-command-summary {grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+/* 0.82.0-playtest.2: stable onboarding frame and bounded nation selection. */
+.campaign-wizard {
+  height: min(820px, 94dvh) !important;
+  min-height: 0 !important;
+  max-height: 94dvh !important;
+  grid-template-rows: 130px minmax(0, 1fr) 82px;
+}
+.campaign-wizard .wizard-header { min-height: 0; overflow: hidden; }
+.wizard-release { display: inline-block; margin-left: 10px; font: 10px monospace; letter-spacing: 0; color: #f4d48a; }
+.campaign-wizard .wizard-body { min-height: 0; }
+.wizard-country-stage { height: 100%; min-height: 0; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); }
+.wizard-country-list { display: grid; grid-template-rows: auto auto minmax(0, 1fr); min-height: 0; min-width: 0; }
+.wizard-country-scroll {
+  height: auto !important; min-height: 0; overflow-y: auto; overflow-x: hidden;
+  scrollbar-gutter: stable; scrollbar-width: thin; scrollbar-color: #b79a58 #202220;
+  padding: 3px 6px 3px 3px;
+}
+.wizard-country-scroll::-webkit-scrollbar { width: 6px; }
+.wizard-country-scroll::-webkit-scrollbar-track { background: #202220; }
+.wizard-country-scroll::-webkit-scrollbar-thumb { background: #b79a58; border-radius: 6px; }
+.campaign-wizard .country-choice-list button.active :is(strong, small, em) { color: #24291b !important; }
+.wizard-country-preview { min-width: 0; min-height: 0; overflow: visible; padding: 16px; }
+.wizard-country-preview .nation-flag-hero { font-size: 48px; line-height: 1.2; }
+.wizard-country-preview h2 { font-size: clamp(22px, 2.3vw, 32px); overflow-wrap: anywhere; }
+.wizard-country-preview .wizard-stat-grid { margin-top: 10px; }
+.wizard-country-preview .wizard-stat-grid span { padding: 8px; }
+.wizard-country-preview .opening-profile { padding: 9px; margin-top: 10px; }
+.wizard-country-preview .opening-profile p { font-size: 11px; overflow-wrap: anywhere; }
+.wizard-footer .load-previous { font-size: 11px; }
+@media (min-width: 901px) {
+  .wizard-body:has(.wizard-country-stage) { overflow: hidden; }
+}
+@media (max-width: 900px) {
+  .campaign-wizard { grid-template-rows: 80px 130px minmax(0, 1fr) 90px; }
+  .setup-cover { height: 80px; }
+  .wizard-country-stage { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(210px, 1fr); gap: 12px; }
+  .wizard-country-preview { grid-row: 1; padding: 10px; display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 4px 8px; text-align: left; justify-items: stretch; }
+  .wizard-country-preview .nation-flag-hero { grid-row: 1 / 4; font-size: 30px; }
+  .wizard-country-preview h2 { font-size: 20px; margin: 0; }
+  .wizard-country-preview .difficulty-chip { justify-self: start; padding: 3px 6px; }
+  .wizard-country-preview .wizard-stat-grid { grid-column: 1 / -1; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 4px; gap: 3px; }
+  .wizard-country-preview .wizard-stat-grid span { padding: 5px 3px; text-align: center; }
+  .wizard-country-preview .wizard-stat-grid b { font-size: 12px; }
+  .wizard-country-preview .wizard-stat-grid small { font-size: 8px; }
+  .wizard-country-preview .opening-profile { grid-column: 1 / -1; margin-top: 3px; padding: 5px 8px; }
+  .wizard-country-preview .opening-profile p { font-size: 10px; margin-top: 2px; }
+  .wizard-country-list .wizard-intro h2 { font-size: 23px; }
+}
+@media (max-width: 640px) {
+  .campaign-wizard { grid-template-rows: 60px 130px minmax(0, 1fr) 110px; }
+  .setup-cover { height: 60px; }
+  .wizard-header { padding: 12px 16px !important; }
+  .wizard-header h1 { font-size: 22px; }
+  .wizard-header p { font-size: 11px; }
+  .wizard-stepper { gap: 6px; }
+  .wizard-stepper span { padding: 4px; }
+}
+@media (max-width: 640px) {
+  .campaign-wizard { grid-template-rows: 60px 145px minmax(0, 1fr) 110px; }
+  .wizard-header { gap: 4px; align-content: start; }
+  .wizard-header h1 { margin: 3px 0; }
+  .wizard-stepper { flex-basis: 100%; }
+  .wizard-stepper > span { grid-template-columns: 22px; padding: 3px; }
+  .wizard-stepper > span b { width: 22px; height: 22px; font-size: 11px; }
+}
+@media (max-width: 640px) {
+  .wizard-release { display: block; margin: 3px 0 0; }
+}
+
+/* 0.82.0-playtest.3: persistent footer controls and explicit workspace layers. */
+.campaign-wizard .wizard-footer { display: flex; flex-direction: column; justify-content: center; gap: 5px; padding: 8px 20px !important; min-height: 0; }
+.wizard-save-tools { display: flex; align-items: center; gap: 10px; min-width: 0; width: 100%; }
+.wizard-save-tools:empty { display: none; }
+.wizard-save-tools .load-previous { min-height: 24px; padding: 3px 8px; font-size: 10px; }
+.wizard-save-tools small { font-size: 10px; line-height: 1.15; }
+.wizard-navigation { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 12px; align-items: center; width: 100%; min-width: 0; }
+.wizard-navigation > span { text-align: center; font-size: 10px; white-space: nowrap; }
+.wizard-navigation button { min-height: 34px; padding: 6px 10px; min-width: 0; }
+.command-rail { z-index: 20; }
+.command-panel { z-index: 60; }
+.floating-command-window { z-index: 70; }
+.left-command-dock.map-command-dock {
+  z-index: 70; padding: 0; display: flex; flex-direction: column;
+  width: 360px; max-height: calc(100dvh - 190px); overflow: hidden;
+  background: #203748; border: 1px solid #66869a; border-radius: 14px;
+  box-shadow: 0 15px 40px #06141d66;
+}
+.map-dock-header { display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; gap: 10px; padding: 10px 12px; background: #294657; border-bottom: 1px solid #66869a; }
+.map-dock-header strong { color: #edf7fc; font-size: 12px; letter-spacing: .08em; }
+.map-dock-header .map-close { position: static; width: 32px; height: 32px; border-radius: 7px; border: 1px solid #68889a; background: #142b38; color: #edf7fc; cursor: pointer; }
+.map-dock-body { min-height: 0; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; scrollbar-color: #65889d #203747; }
+.map-dock-body .guide-briefing { margin: 10px; }
+.left-command-dock.map-command-dock .map-mode-bar { width: 100% !important; border: 0; border-radius: 0; box-shadow: none; }
+.player-options-main > .player-options-footer { background: transparent; border: 0; padding: 0; }
+.player-options-footer button { min-height: 36px; }
+.campaign-status-grid strong { white-space: normal; overflow-wrap: anywhere; }
+@media (max-width: 760px) {
+  .left-command-dock.map-command-dock { width: calc(100vw - 104px); max-height: calc(100dvh - 238px); }
+  .map-dock-header { padding: 8px; }
+  .wizard-navigation { gap: 8px; }
+  .wizard-navigation button { font-size: 11px; }
+}
+@media (max-height: 600px) and (min-width: 901px) {
+  .campaign-wizard { grid-template-rows: 100px minmax(0, 1fr) 82px; }
+  .wizard-header p { display: none; }
+}
+/* 0.82.0-playtest.4: tutorial owns a reserved bottom area, never a window corner. */
+.guided-tutorial .guided-card.tutorial-docked { width: min(680px, calc(100vw - 24px)); max-height: 190px; padding: 12px 16px; }
+.guided-card.tutorial-docked > :is(p,progress) { display: none; }
+.guided-card.tutorial-docked > small { display: block; font-size: 10px; }
+.guided-card.tutorial-docked h2 { display: block; font-size: 16px; margin: 3px 0; }
+.guided-card.tutorial-docked .tutorial-instruction { margin: 6px 0; font-size: 12px; }
+.guided-card .tutorial-read { display: block; margin: 10px 0 14px; padding: 9px 14px; }
+.guided-card footer { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.guided-card.tutorial-docked footer { margin-top: 6px; }
+.guided-card.tutorial-docked footer button { padding: 6px 10px; }
+body:has(.tutorial-docked) .floating-command-window { display: flex; flex-direction: column; max-height: calc(100dvh - 350px); }
+body:has(.tutorial-docked) .floating-command-header { flex-shrink: 0; }
+body:has(.tutorial-docked) .floating-command-body { min-height: 0; max-height: none; overflow: auto; }
+body:has(.tutorial-docked) .command-panel { bottom: 220px !important; max-height: calc(100dvh - 340px); }
+body:has(.tutorial-docked) .map-command-dock { top: 130px !important; transform: none !important; max-height: calc(100dvh - 350px); }
+body:has(.tutorial-docked) .review-backdrop { padding: 16px 16px 220px; }
+body:has(.tutorial-docked) .review-dialog { max-height: calc(100dvh - 260px); overflow: auto; }
+body:has(.tutorial-docked) .review-dialog > header { position: sticky; top: 0; background: #294657; z-index: 1; }
+.proposal-status { margin: 12px 0; padding: 14px; border: 1px solid #bfa363; background: #233d4c; border-radius: 10px; }
+.proposal-status p { margin: 8px 0; line-height: 1.5; }
+.proposal-status button,.proposal-filters button { padding: 8px 12px; margin: 4px; border-radius: 7px; background: #142b38; color: #f4dc9e; border: 1px solid #68889a; cursor: pointer; }
+.proposal-filters { display: flex; gap: 6px; flex-wrap: wrap; margin: 14px 0; }
+.proposal-filters button.active { background: #f1ce80; color: #172b34; }
+@media(max-width:760px) {
+ body:has(.tutorial-docked) .floating-command-window { max-height: calc(100dvh - 392px); }
+ .guided-card.tutorial-docked h2 { font-size: 14px; }
+}
+
+.guided-card.tutorial-docked.tutorial-reading > :is(h2,small) { display: none; }
+
+/* 0.82.0-playtest.5: carry the charcoal/gold setup palette through nation and confirmation. */
+.campaign-wizard .wizard-country-stage .wizard-country-preview,
+.campaign-wizard .wizard-confirm-stage .confirm-leader-card {
+ background: linear-gradient(145deg, #303229, #20231e);
+ border-color: #9c8449;
+ color: #f7e8be;
+}
+.campaign-wizard .wizard-stat-grid span,
+.campaign-wizard .confirm-summary-grid > span { background: #181c17; border-color: #85744788; }
+.campaign-wizard .wizard-stat-grid b { color: #f7e8be; }
+.campaign-wizard .wizard-country-preview > small,
+.campaign-wizard .wizard-stat-grid small,
+.campaign-wizard .confirm-summary-grid small { color: #c9c3ad; }
+.campaign-wizard .difficulty-chip { background: #454735; color: #f7e8be; border: 1px solid #9c844977; }
+.campaign-wizard .opening-profile { background: #1c211a; border-left-color: #d9b763; }
+.campaign-wizard .opening-profile :is(small,p) { color: #d8d0b6; }
+.campaign-wizard .country-choice-list button:not(.active) :is(small,em) { color: #c9c3ad; }
+.campaign-wizard .wizard-stepper span:not(.active) b { background: #2d3025; color: #c9c3ad; }
+.country-search-empty { padding: 18px 10px; color: #d8d0b6; text-align: center; }
+.country-search-empty button { padding: 8px 12px; border: 1px solid; border-radius: 8px; cursor: pointer; }
+
+.credit-status,.proposal-assessment { margin: 12px 0; padding: 12px 14px; border: 1px solid #bfa36388; background: #233d4c; border-radius: 10px; line-height: 1.5; }
+.credit-status p,.proposal-assessment p { margin: 8px 0; }
+.credit-status button { padding: 8px 12px; border-radius: 7px; background: #f1ce80; color: #172b34; border: 1px solid #bfa363; cursor: pointer; }

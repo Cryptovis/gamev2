@@ -23,7 +23,7 @@ export function GovernanceWindow() {
     ),
     [recipient, setRecipient] = useState(""),
     [review, setReview] = useState<
-      (ReviewContent & { execute: () => void; allowed: boolean }) | null
+      (ReviewContent & { execute: (commandId:string) => void; allowed: boolean }) | null
     >(null),
     p = s.countries[s.playerCountryId],
     c = s.countries[selected] ?? p,
@@ -37,7 +37,7 @@ export function GovernanceWindow() {
       title: string,
       summary: string,
       cost: number,
-      execute: () => void,
+      execute: (commandId:string) => void,
       allowed = true,
     ) =>
       setReview({
@@ -122,7 +122,7 @@ export function GovernanceWindow() {
                   "Civil relief",
                   "Transfer 20 food and 5 oil; reduce unrest by 12 and improve stability by 3. Seven-day policy cooldown.",
                   1,
-                  () => s.manageOccupation(c.id, "relief"),
+                  (commandId) => s.manageOccupation(c.id, "relief", commandId),
                 )
               }
             >
@@ -139,7 +139,7 @@ export function GovernanceWindow() {
                   "Military suppression",
                   "Reduce unrest by 20. Lose 5 readiness, 5 reputation and 5 local cohesion. Long-term resentment rises.",
                   2,
-                  () => s.manageOccupation(c.id, "suppress"),
+                  (commandId) => s.manageOccupation(c.id, "suppress", commandId),
                 )
               }
             >
@@ -152,7 +152,7 @@ export function GovernanceWindow() {
                   "Grant freedom through elections",
                   "Start a 21-day election. Control returns to an independent government when voting ends. Supporting a candidate improves their chance but cannot guarantee victory.",
                   3,
-                  () => s.manageOccupation(c.id, "election"),
+                  (commandId) => s.manageOccupation(c.id, "election", commandId),
                 )
               }
             >
@@ -194,7 +194,7 @@ export function GovernanceWindow() {
                   "Transfer control",
                   "This transfers administration to the selected country and raises unrest by 10. The territory no longer belongs to your administration.",
                   0,
-                  () => s.manageOccupation(c.id, "transfer", recipient),
+                  (commandId) => s.manageOccupation(c.id, "transfer", recipient, commandId),
                 )
               }
             >
@@ -278,7 +278,7 @@ export function GovernanceWindow() {
                 "Political influence campaign",
                 "Support a fictional civil opposition coalition. Failure worsens relations. Conditions are checked again on completion; military strength and public opinion can recover.",
                 5,
-                () => s.fundPoliticalCampaign(c.id),
+                (commandId) => s.fundPoliticalCampaign(c.id, commandId),
               )
             }
           >
@@ -323,7 +323,7 @@ export function GovernanceWindow() {
                 "Accept government offer",
                 "Accept the elected government’s treaty. The country remains independent.",
                 0,
-                () => s.acceptElectionOffer(c.id),
+                (commandId) => s.acceptElectionOffer(c.id, commandId),
               )
             }
           >
@@ -339,8 +339,8 @@ export function GovernanceWindow() {
         <ReviewDialog
           {...review}
           onCancel={() => setReview(null)}
-          onConfirm={() => {
-            review.execute();
+          onConfirm={(commandId) => {
+            review.execute(commandId);
             setReview(null);
           }}
         />

@@ -12,7 +12,7 @@ export function IntegrationPanel({ countryId }: { countryId: string }) {
   const s = useGameStore(),
     [open, setOpen] = useState(false),
     [review, setReview] = useState<
-      (ReviewContent & { execute: () => void; allowed?: boolean }) | null
+      (ReviewContent & { execute: (commandId:string) => void; allowed?: boolean }) | null
     >(null),
     req = integrationRequirements(s, countryId),
     project = expansion(s).integrations[countryId],
@@ -34,7 +34,7 @@ export function IntegrationPanel({ countryId }: { countryId: string }) {
         s.day - (expansion(s).preparation[countryId]?.lastActionDay ?? -14) >=
           7 &&
         project?.status !== "active",
-      execute: () => s.prepareIntegration(countryId, kind),
+      execute: (commandId) => s.prepareIntegration(countryId, kind, commandId),
     });
   return (
     <section className="integration-card">
@@ -116,10 +116,11 @@ export function IntegrationPanel({ countryId }: { countryId: string }) {
                     ],
                     allowed:
                       s.countries[s.playerCountryId].economy.treasury >= 2,
-                    execute: () =>
+                    execute: (commandId) =>
                       s.startOutreach(
                         countryId,
                         s.countries[s.playerCountryId].society.dominantReligion,
+                        commandId,
                       ),
                   })
                 }
@@ -149,7 +150,7 @@ export function IntegrationPanel({ countryId }: { countryId: string }) {
                   allowed:
                     s.countries[s.playerCountryId].economy.treasury >=
                     integrationCost(s, countryId),
-                  execute: () => s.beginIntegration(countryId),
+                  execute: (commandId) => s.beginIntegration(countryId, commandId),
                 })
               }
             >
@@ -162,8 +163,8 @@ export function IntegrationPanel({ countryId }: { countryId: string }) {
         <ReviewDialog
           {...review}
           onCancel={() => setReview(null)}
-          onConfirm={() => {
-            review.execute();
+          onConfirm={(commandId) => {
+            review.execute(commandId);
             setReview(null);
             setOpen(false);
           }}

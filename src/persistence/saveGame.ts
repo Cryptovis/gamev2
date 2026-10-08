@@ -16,9 +16,14 @@ export async function loadSave(id: string) {
 
 export async function loadMostRecentSave() {
   const records = await db.saves.orderBy('updatedAt').reverse().toArray();
-  return migrateSave(records[0]?.state);
+  return selectMostRecentCompatibleSave(records);
 }
 
 export async function listSaves() {
   return db.saves.orderBy('updatedAt').reverse().toArray();
+}
+
+export function selectMostRecentCompatibleSave(records:Pick<SaveRecord,'state'>[]) {
+ for(const record of records){const state=migrateSave(record.state);if(state)return state;}
+ return null;
 }

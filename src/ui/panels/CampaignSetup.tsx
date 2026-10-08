@@ -1,4 +1,5 @@
-import {LocaleText,translateLive} from '../../i18n/localeText';
+import {version} from '../../../package.json';
+import {LocaleText,translateLive,translateText} from '../../i18n/localeText';
 import { useEffect, useMemo, useState, type CSSProperties } from 'react';
 import type { GameLanguage } from '../../domain/game';
 import { LeaderStyleFilter } from '../profile/LeaderStyleFilter';
@@ -23,6 +24,7 @@ export function CampaignSetup(){
  const profile=useGameStore(s=>s.playerProfile);
  const countries=useGameStore(s=>s.countries);
  const start=useGameStore(s=>s.startCampaign);
+ const load=useGameStore(s=>s.loadLatest),saveMessage=useGameStore(s=>s.saveMessage);
  const [step,setStep]=useState<SetupStep>(1);
  const [language,setLanguage]=useState<GameLanguage>(profile.language);
  const [name,setName]=useState(profile.commanderName==='Commander'?'':profile.commanderName);
@@ -34,7 +36,12 @@ export function CampaignSetup(){
  const [query,setQuery]=useState('');
  const [loadingStep,setLoadingStep]=useState(0);
 
- const list=useMemo(()=>Object.values(countries).filter(c=>c.name.toLowerCase().includes(query.toLowerCase())||c.iso2.toLowerCase().includes(query.toLowerCase())).sort((a,b)=>a.name.localeCompare(b.name)),[countries,query]);
+ const list=useMemo(()=>{
+  const fold=(text:string)=>text.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replaceAll('ı','i').trim();
+  const search=fold(query);
+  const all=Object.values(countries),byCode=all.filter(c=>fold(c.iso2)===search||fold(c.id)===search);
+  return (byCode.length?byCode:all.filter(c=>[c.name,translateText(language,c.name)].some(name=>fold(name).includes(search)))).sort((a,b)=>translateText(language,a.name).localeCompare(translateText(language,b.name),language));
+ },[countries,query,language]);
  const selected=countries[countryId]??countries.TUR;
  const theme=countryThemeFor(selected.iso2);
  const topResources=useMemo(()=>Object.entries(selected.resourceProduction).sort((a,b)=>b[1]-a[1]).slice(0,2),[selected]);
@@ -77,7 +84,7 @@ export function CampaignSetup(){
 
  return <div className="campaign-setup-backdrop campaign-wizard-backdrop" style={{'--setup-primary':theme.primary,'--setup-accent':theme.accent} as CSSProperties}>
   <section className="campaign-wizard"><aside className="setup-cover"><img src="/assets/command/real-president-cover-079.svg" alt="The Real President"/></aside>
-   <header className="wizard-header"><div><small><LocaleText value={"THE REAL PRESIDENT"}/></small><h1><LocaleText value={stepTitle}/></h1><p><LocaleText value={tr(language,'setup_sub')}/></p></div><div className="wizard-stepper">{[1,2,3,4].map(n=><span key={n} className={typeof step==='number'&&step>=n?'active':''}><b><LocaleText value={n}/></b><small><LocaleText value={n===1?'IDENTITY':n===2?'PORTRAIT':n===3?'NATION':'CONFIRM'}/></small></span>)}</div></header>
+   <header className="wizard-header"><div><small><LocaleText value={"THE REAL PRESIDENT"}/><span className="wizard-release">{version}</span></small><h1><LocaleText value={stepTitle}/></h1><p><LocaleText value={tr(language,'setup_sub')}/></p></div><div className="wizard-stepper">{[1,2,3,4].map(n=><span key={n} className={typeof step==='number'&&step>=n?'active':''}><b><LocaleText value={n}/></b><small><LocaleText value={n===1?'IDENTITY':n===2?'PORTRAIT':n===3?'NATION':'CONFIRM'}/></small></span>)}</div></header>
 
    <div className="wizard-body">
     {step===1&&<div className="wizard-single-column">
@@ -93,7 +100,7 @@ export function CampaignSetup(){
     </div>}
 
     {step===3&&<div className="wizard-country-stage">
-      <div className="wizard-country-list"><div className="wizard-intro compact"><span className="wizard-kicker"><LocaleText value={"STEP 03 / SOVEREIGN COMMAND"}/></span><h2><LocaleText value={tr(language,'country')}/></h2></div><input className="country-search" value={query} onChange={e=>setQuery(e.target.value)} placeholder={translateLive(tr(language,'search_country'))}/><div className="country-choice-list wizard-country-scroll">{list.map(c=><button key={c.id} className={countryId===c.id?'active':''} onClick={()=>setCountryId(c.id)}><b><LocaleText value={flagEmoji(c.iso2)}/></b><span><strong><LocaleText value={c.name}/></strong><small><LocaleText value={c.region}/><LocaleText value={" · "}/><LocaleText value={c.politics.regime}/></small></span><em><LocaleText value={c.military.assessment.capability.toFixed(0)}/></em></button>)}</div></div>
+      <div className="wizard-country-list"><div className="wizard-intro compact"><span className="wizard-kicker"><LocaleText value={"STEP 03 / SOVEREIGN COMMAND"}/></span><h2><LocaleText value={tr(language,'country')}/></h2></div><input aria-label={translateLive(tr(language,'search_country'))} className="country-search" value={query} onChange={e=>setQuery(e.target.value)} placeholder={translateLive(tr(language,'search_country'))}/><div className="country-choice-list wizard-country-scroll">{list.map(c=><button key={c.id} aria-pressed={countryId===c.id} className={countryId===c.id?'active':''} onClick={()=>setCountryId(c.id)}><b><LocaleText value={flagEmoji(c.iso2)}/></b><span><strong><LocaleText value={c.name}/></strong><small><LocaleText value={c.region}/><LocaleText value={" · "}/><LocaleText value={c.politics.regime}/></small></span><em><LocaleText value={c.military.assessment.capability.toFixed(0)}/></em></button>)}{!list.length&&<div className="country-search-empty" role="status"><p><LocaleText value="No countries match your search."/></p><button onClick={()=>setQuery('')}><LocaleText value="Clear search"/></button></div>}</div></div>
       <aside className="wizard-country-preview"><div className="nation-flag-hero"><LocaleText value={flagEmoji(selected.iso2)}/></div><small><LocaleText value={selected.region.toUpperCase()}/></small><h2><LocaleText value={selected.name}/></h2><strong className="difficulty-chip"><LocaleText value={countryDifficulty(selected.military.assessment.capability,selected.economy.gdp)}/></strong><div className="wizard-stat-grid"><span><small><LocaleText value={"GDP"}/></small><b><LocaleText value={"$"}/><LocaleText value={selected.economy.gdp.toFixed(0)}/><LocaleText value={"B"}/></b></span><span><small><LocaleText value={"POPULATION"}/></small><b><LocaleText value={(selected.demographics.population/1e6).toFixed(1)}/><LocaleText value={"M"}/></b></span><span><small><LocaleText value={"MILITARY"}/></small><b><LocaleText value={selected.military.assessment.capability.toFixed(0)}/></b></span><span><small><LocaleText value={"STABILITY"}/></small><b><LocaleText value={selected.politics.stability.toFixed(0)}/><LocaleText value={"%"}/></b></span></div><div className="opening-profile"><small><LocaleText value={"OPENING PROFILE"}/></small><p><LocaleText value={selected.politics.regime.replaceAll('_',' ')}/><LocaleText value={" · "}/><LocaleText value={selected.society.ideology.replaceAll('_',' ')}/><LocaleText value={" · "}/><LocaleText value={selected.society.dominantReligion.replaceAll('_',' ')}/></p><p><LocaleText value={"Strongest production: "}/><LocaleText value={topResources.map(([r,v])=>`${r.toUpperCase()} ${Number(v).toFixed(1)}`).join(' · ')}/></p></div></aside>
     </div>}
 
@@ -103,7 +110,7 @@ export function CampaignSetup(){
     </div>}
    </div>
 
-   <footer className="wizard-footer"><button className="wizard-back" disabled={step===1} onClick={()=>setStep(s=>typeof s==='number'&&s>1?(s-1) as SetupStep:s)}><LocaleText value={tr(language,'back','BACK')}/></button><span><LocaleText value={"STEP "}/><LocaleText value={step}/><LocaleText value={" / 4"}/></span>{step!==4?<button className="wizard-next" disabled={step===1&&(!name.trim()||Boolean(birthDate&&!validBirthDate(birthDate)))} onClick={()=>setStep(s=>typeof s==='number'&&s<4?(s+1) as SetupStep:s)}><LocaleText value={tr(language,'continue','CONTINUE')}/></button>:<button className="wizard-next confirm" onClick={()=>{setLoadingStep(0);setStep('loading')}}><LocaleText value={tr(language,'confirm_begin','CONFIRM & BEGIN')}/></button>}</footer>
+   <footer className="wizard-footer"><div className="wizard-save-tools">{step===1&&<button className="load-previous" onClick={()=>void load()}><LocaleText value="Load previous progress"/></button>}{step===1&&saveMessage&&<small role="status"><LocaleText value={saveMessage}/></small>}</div><div className="wizard-navigation"><button className="wizard-back" disabled={step===1} onClick={()=>setStep(s=>typeof s==='number'&&s>1?(s-1) as SetupStep:s)}><LocaleText value={tr(language,'back','BACK')}/></button><span><LocaleText value={"STEP "}/><LocaleText value={step}/><LocaleText value={" / 4"}/></span>{step!==4?<button className="wizard-next" disabled={step===1&&(!name.trim()||Boolean(birthDate&&!validBirthDate(birthDate)))} onClick={()=>setStep(s=>typeof s==='number'&&s<4?(s+1) as SetupStep:s)}><LocaleText value={tr(language,'continue','CONTINUE')}/></button>:<button className="wizard-next confirm" onClick={()=>{setLoadingStep(0);setStep('loading')}}><LocaleText value={tr(language,'confirm_begin','CONFIRM & BEGIN')}/></button>}</div></footer>
   </section>
  </div>;
 }

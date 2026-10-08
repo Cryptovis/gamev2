@@ -269,10 +269,10 @@ export function WorldMap() {
     else changeFlatZoom(camera.current.flatZoom*factor);
   };
 
-  const focusSelected=()=>{
-    if(!selectedCountry||!geojson)return;
-    const feature=geojson.features.find(f=>String(f.properties?.iso_a3??'')===selectedCountry.id);
-    const anchor=countryMapAnchor(selectedCountry.id,feature);
+  const focusCountry=(country=selectedCountry)=>{
+    if(!country||!geojson)return;
+    const feature=geojson.features.find(f=>String(f.properties?.iso_a3??'')===country.id);
+    const anchor=countryMapAnchor(country.id,feature);
     if(!anchor)return;
     const [lon,lat]=anchor;
     if(projectionMode==='globe'){setRotation([-lon,-lat,0]);setGlobeZoom(z=>Math.max(1.55,z));}
@@ -287,7 +287,8 @@ export function WorldMap() {
     if(!mapControlCommand)return;
     if(mapControlCommand.action==='zoomIn')zoomBy(1.18);
     else if(mapControlCommand.action==='zoomOut')zoomBy(1/1.18);
-    else if(mapControlCommand.action==='focus')focusSelected();
+    else if(mapControlCommand.action==='focus')focusCountry();
+    else if(mapControlCommand.action==='home')focusCountry(countries[playerCountryId]);
     else if(mapControlCommand.action==='reset')resetView();
   },[mapControlCommand?.nonce]);
 
@@ -405,6 +406,7 @@ export function WorldMap() {
       <button aria-label={translateLive("Zoom out")} disabled={mapZoom<=(projectionMode==='flat'?1:.72)} onClick={()=>zoomBy(1/1.18)}><LocaleText value={"−"}/></button>
       <output aria-label={translateLive("Map zoom level")}><LocaleText value={Math.round(mapZoom*100)}/><LocaleText value={"%"}/></output>
       <button aria-label={translateLive("Zoom in")} disabled={mapZoom>=(projectionMode==='flat'?12:6)} onClick={()=>zoomBy(1.18)}><LocaleText value={"+"}/></button>
+      <button className="camera-home" aria-label={translateLive("Return to your nation")} title={translateLive("Return to your nation")} onClick={()=>focusCountry(countries[playerCountryId])}><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-7 7-12a7 7 0 1 0-14 0c0 5 7 12 7 12Z" fill="#f2d283"/><circle cx="12" cy="9" r="3" fill="#243e4a"/></svg></button>
       <i/>
       <button className="camera-reset" onClick={resetView} title={translateLive("Reset camera")}><LocaleText value={"RESET"}/></button>
     </div>

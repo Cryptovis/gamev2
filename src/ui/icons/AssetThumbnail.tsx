@@ -1,3 +1,4 @@
+import {AtlasImage} from './AtlasImage';
 import {CivicArt} from './CivicArt';
 import {LocaleText,translateLive} from '../../i18n/localeText';
 const assets = [
@@ -42,10 +43,12 @@ export function AssetThumbnail({
       role="img"
       aria-label={translateLive(asset.replaceAll("_", " "))}
       style={{
+        display: "inline-block",
+        flexShrink: 0,
         width: size,
         height: size,
         position:'relative',overflow:'hidden',
       }}
-    ><img alt="" aria-hidden="true" src="/assets/command/resource-atlas.svg" style={{position:'absolute',maxWidth:'none',width:size*5,height:size*5,left:-(i%5)*size,top:-Math.floor(i/5)*size}}/></span>
+    ><AtlasImage src="/assets/command/resource-atlas.webp" style={{position:'absolute',maxWidth:'none',width:size*5,height:size*5,left:-(i%5)*size,top:-Math.floor(i/5)*size}}/></span>
   );
 }

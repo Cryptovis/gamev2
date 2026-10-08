@@ -7,7 +7,7 @@
 5. Saves are schema-versioned and store only serializable GameState.
 6. AI uses the same simulation state and relation model as the player.
 7. New systems must add regression tests before being considered stable.
-8. Step 10 is a feature freeze: Fix 1 prioritizes stability over scope.
+8. Release scope is recorded in versioned playtest notes; new architecture requires measured evidence and a save compatibility plan.
 
 ## 0.40 strategic systems boundary
 
@@ -23,3 +23,11 @@ New 0.40 systems:
 - `systems/council.ts` owns deterministic Global Council voting and resolution effects.
 
 The UI may display forecasts and invoke commands, but may not calculate or directly mutate simulation outcomes.
+
+## 0.82 command, persistence and research boundaries
+
+Reviewed actions carry a UI confirmation ID into the typed command boundary. Only successful state changes retain that ID, bounded to 512 receipts. Dialog submission guards complement engine deduplication. Journal capture records observable reports at command/tick boundaries, capped at 200 entries.
+
+Research costs are paid at project start; daily work and effects are engine-owned. Existing discoveries survive migration. Autosave success is recorded only after IndexedDB completes; failed writes remain retryable. Campaign IDs are UI persistence metadata, not simulation randomness.
+
+Save validation currently checks critical campaign/country/research fields and finite values, but not every nested legacy subsystem. The simulation worker, full event journal and deeper schema validation remain future work.
