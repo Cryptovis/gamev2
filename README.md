@@ -1,4 +1,4 @@
-# The Real President — 0.83.0-playtest.3
+# The Real President — 0.84.0-playtest.1
 
 A browser-based grand-strategy prototype built with React, TypeScript, Zustand, D3 Geo and Dexie. Lead a country through its economy, resources, diplomacy, development and military conflicts. Chart.js provides economic charts; Vitest and Playwright verify gameplay and browser flows.
 
@@ -6,10 +6,10 @@ A browser-based grand-strategy prototype built with React, TypeScript, Zustand, 
 
 | Item | Current state |
 |---|---|
-| Version | **0.83.0-playtest.3 — Guided Play** |
-| Development branch | `dev/tactical-command-083` |
-| Save schema | 16; schemas 12–15 migrate automatically |
-| Local validation | 300 tests, 30 browser scenarios, TypeScript and production build passed |
+| Version | **0.84.0-playtest.1 — Stable Command** |
+| Development branch | `dev/audit-fixes-084` |
+| Save schema | 16 (0.84 adds optional fields only); schemas 12–15 migrate automatically |
+| Validation | Engine unit and 365-day invariant suites pass locally; TypeScript, production build and browser scenarios are verified by CI on push |
 | V3 | Reserved for the complete-playability milestone; no rewrite is required for 0.83 |
 
 These details describe this development branch. Another branch, including `main`, can contain an older release. Check `package.json` and your checked-out branch when comparing previews.
@@ -34,6 +34,14 @@ npm run test:e2e
 `check` runs tests, TypeScript checks and the production build. Browser tests run separately against the production preview.
 
 ## Recent changelog
+
+### 0.84.0-playtest.1 — Stable Command
+
+- Rebalanced world oil, food and upkeep so the world no longer collapses within two years. One oil import keeps a default campaign healthy, while a passive player still loses.
+- Stability follows approval; events are varied and weighted; Council sanctions expire; AI trades and taxes follow the player's rules more closely.
+- Closed the hold-still war victory and the round-one collapse of small militaries, and blocked wars on controlled states.
+- Autosaves are per campaign and validated before writing; a new campaign no longer overwrites the previous one.
+- Faster ticks and fewer re-renders, the integration review lock fixed, translation artefacts removed. Full findings and the phased plan are in the [0.83 audit](docs/AUDIT-0.83.md).
 
 ### 0.83.0-playtest.3 — Guided Play
 
@@ -65,6 +73,7 @@ Delivered milestones are retained here when new releases are added. This table s
 
 | Milestone | Delivered foundation | Record |
 |---|---|---|
+| 0.84 — Stable Command | Audit-driven world balance, war exploit fixes, per-campaign validated autosaves and performance | [Audit 0.83](docs/AUDIT-0.83.md), [Playtest 0.84](docs/PLAYTEST-084.md) |
 | 0.83 — Tactical Command / Clear Command / Guided Play | Playable tactical battles, combat replay, economic charts, diplomatic history, local demo entry and guided turns | [Playtest 0.83](docs/PLAYTEST-083.md) |
 | 0.82 — Reliable Command | Compatible-save recovery, command deduplication, timed research, NEWS archive, home camera and command layout | [Playtest 0.82](docs/PLAYTEST-082.md) |
 | 0.81 — Powered World | Power plants, grid demand, fuel-backed generation, energy construction and tutorial recovery | [Playtest 0.81](docs/PLAYTEST-081.md) |
@@ -84,6 +93,7 @@ Delivered milestones are retained here when new releases are added. This table s
 ## Development records
 
 - [Roadmap and remaining work](docs/ROADMAP.md)
+- [0.83 full audit and phased plan](docs/AUDIT-0.83.md)
 - [HD War roadmap](docs/ROADMAP-HD-WAR.md)
 - [Architecture](docs/ARCHITECTURE.md)
 - [Release documentation checklist](docs/RELEASING.md)

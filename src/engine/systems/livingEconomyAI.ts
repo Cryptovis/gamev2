@@ -80,6 +80,8 @@ export function processLivingEconomyAI(state: GameState): GameState {
     if (!deal) continue;
 
     next = { ...next, tradeDeals: { ...next.tradeDeals, [deal.id]: deal } };
+    // Consume the supplier's weekly export capacity so later buyers spread across sellers instead of all signing with one.
+    exportCapacity[supplier.candidate.id][need.resource] = Math.max(0, exportCapacity[supplier.candidate.id][need.resource] - deal.quantityPerDay);
     notices.push(`AI TRADE // ${buyer.name} secured ${need.resource.toUpperCase()} imports from ${supplier.candidate.name}.`);
   }
 

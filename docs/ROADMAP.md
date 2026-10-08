@@ -93,3 +93,11 @@ V3 is reserved for the release where the whole game is ready for complete playab
 
 ## 0.83 Guided Play follow-up
 Delivered in playtest.3: local demo entry, per-account local saves, guided combat results/next-turn flow and shared image recovery. Real online accounts need a backend, verified email and server authorization; the local demo form is not that service. Keep simultaneous combat and one-round-per-day accounting. Next: native wording review, deployment/cache observability, extended turn-flow balance and per-language loading.
+
+## 0.84 Stable Command and the phased plan
+Delivered: Phase 1 of the [0.83 audit](AUDIT-0.83.md), covering world oil/food/upkeep balance, stability and events, AI rule parity fixes, war exploit fixes, per-campaign validated autosaves, tick performance and translation clean-up.
+
+Next, in order:
+- **Phase 2, living world and politics:** tax/activity/debt pressure (C4), unified price scale and AI market demand (C10–C12), treaty rule parity (D8), AI-declared wars, factions, legislature, coups for every regime, data-driven event chains, win conditions, and store actions routed through typed commands (A5).
+- **Phase 3, HD War:** a grid abstraction, TacticalBattle v2 (schema 17), unit-level engagements, an action timeline, a per-battle RNG stream, seeded terrain, a 10×8 board and contested objectives (B5, B8, B9).
+- **Phase 4, technical debt:** a single translation catalog per language with lazy loading, CSS layers and a z-index scale, a shared modal hook, engine preview functions for UI forecasts, WebP map texture, and a regenerated npm lockfile.

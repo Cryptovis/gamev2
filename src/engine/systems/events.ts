@@ -1,5 +1,6 @@
 import type { ActiveGameEvent, EventKind, GameState } from '../../domain/game';
 import { nextRandom } from '../rng';
+import { foodReserveDays, SHORTAGE_RESERVE_DAYS } from './resources';
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 
@@ -33,7 +34,8 @@ function makeEvent(state: GameState): { event: ActiveGameEvent | null; seed: num
   const roll = nextRandom(state.simulationSeed);
 
   // Strategic emergencies bypass the slower public-agenda cadence.
-  if (player.resources.food < player.demographics.population/1_000_000*FOOD_CRISIS_PER_MILLION) return {seed:roll.seed,event:candidate('food_crisis',100,state,'Strategic Food Reserve Crisis','National food reserves have fallen below the emergency threshold. Supply chains are beginning to strain.',[{id:'imports',label:'Emergency Imports',consequenceHint:'-$10B, +120 food'},{id:'ration',label:'Introduce Rationing',consequenceHint:'Approval -2, stability -1, +35 food'}]).event};
+  // Fires ahead of the resources.ts shortage (reserve days < SHORTAGE_RESERVE_DAYS) or when the per-capita stock is critically thin.
+  if (foodReserveDays(player) < SHORTAGE_RESERVE_DAYS*2 || player.resources.food < player.demographics.population/1_000_000*FOOD_CRISIS_PER_MILLION) return {seed:roll.seed,event:candidate('food_crisis',100,state,'Strategic Food Reserve Crisis','National food reserves have fallen below the emergency threshold. Supply chains are beginning to strain.',[{id:'imports',label:'Emergency Imports',consequenceHint:'-$10B, +120 food'},{id:'ration',label:'Introduce Rationing',consequenceHint:'Approval -2, stability -1, +35 food'}]).event};
   if (player.processedResources.fuel < 12 && player.military.readiness > 55) return {seed:roll.seed,event:candidate('fuel_crisis',100,state,'National Fuel Emergency','Military and industrial fuel reserves have fallen to operationally dangerous levels. Refinery output cannot meet current demand.',[{id:'fuel_imports',label:'Emergency Fuel Purchases',consequenceHint:'-$9B, +35 fuel'},{id:'priority',label:'Prioritize Military Allocation',consequenceHint:'Fuel +12, industry utilization -5'}]).event};
 
   const compromisedOps=Object.values(state.intelOperations).filter(op=>op.status==='compromised'&&op.sourceCountryId===player.id&&state.day-op.completeDay<=5).length;
