@@ -1,25 +1,32 @@
 import {demoOwner} from '../session/demoAccounts';
 import {useEffect,useRef} from 'react';
 import {useGameStore} from '../store/gameStore';
-import {AutosaveCoordinator} from '../persistence/autosaveCoordinator';
+import {AutosaveCoordinator,startAutosave} from '../persistence/autosaveCoordinator';
+import type {GameState} from '../domain/game';
+// Capture the intended campaign/day, not whichever state is current after async import.
+const autosaveWrite=(snapshot:GameState,owner:string)=>async()=>{
+ const {saveGame,autosaveId}=await import('../persistence/saveGame');
+ if(useGameStore.getState().world.campaignId!==snapshot.world.campaignId)throw new Error('Autosave checkpoint superseded');
+ await saveGame(snapshot,autosaveId(snapshot.world.campaignId),`Autosave · Day ${snapshot.day}`,owner);
+};
 export function useAutosave(enabled=true) {
  const day=useGameStore(s=>s.day),campaignStatus=useGameStore(s=>s.campaignStatus),campaignId=useGameStore(s=>s.world.campaignId);
- const coordinator=useRef(new AutosaveCoordinator());
+ const ref=useRef<AutosaveCoordinator|null>(null),coordinator=ref.current??=new AutosaveCoordinator();
  useEffect(()=>{
   if(!enabled||campaignStatus!=='active'||day<5||day%5!==0)return;
-  let cancelled=false,timer=0,attempt=0;
-  const run=async()=>{
-   const ok=await coordinator.current.save(`${campaignId}:${day}`,async()=>{
-    const {saveGame}=await import('../persistence/saveGame');
-    // Capture the intended campaign/day, not whichever state is current after async import.
-    if(cancelled||useGameStore.getState().world.campaignId!==snapshot.world.campaignId)throw new Error('Autosave checkpoint superseded');
-    await saveGame(snapshot,'autosave',`Autosave · Day ${day}`,owner);
-   });
-   if(cancelled)return;
-   useGameStore.getState().setSaveMessage(ok?`Autosaved Day ${day}`:'Autosave failed; retrying');
-   if(!ok)timer=window.setTimeout(run,Math.min(30000,3000*2**attempt++));
+  const snapshot=useGameStore.getState();
+  return startAutosave(coordinator,`${campaignId}:${day}`,autosaveWrite(snapshot,demoOwner()),ok=>useGameStore.getState().setSaveMessage(ok?`Autosaved Day ${day}`:'Autosave failed; retrying'));
+ },[enabled,campaignStatus,day,campaignId,coordinator]);
+ // Best-effort flush when the tab is hidden or closed; skipped when the current day is already saved.
+ useEffect(()=>{
+  if(!enabled)return;
+  const flush=()=>{
+   const s=useGameStore.getState(),key=`${s.world.campaignId}:${s.day}`;
+   if(s.campaignStatus!=='active'||coordinator.isSaved(key))return;
+   void coordinator.save(key,autosaveWrite(s,demoOwner()));
   };
-  const snapshot=useGameStore.getState(),owner=demoOwner();void run();
-  return ()=>{cancelled=true;if(timer)window.clearTimeout(timer);};
- },[enabled,campaignStatus,day,campaignId]);
+  const onVisibility=()=>{if(document.visibilityState==='hidden')flush();};
+  window.addEventListener('pagehide',flush);document.addEventListener('visibilitychange',onVisibility);
+  return ()=>{window.removeEventListener('pagehide',flush);document.removeEventListener('visibilitychange',onVisibility);};
+ },[enabled,coordinator]);
 }

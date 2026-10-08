@@ -19,7 +19,7 @@ export function migrateSave(input:GameState|null|undefined):GameState|null {
   const industrialEconomy=Object.fromEntries(Object.entries(state.industrialEconomy).map(([id,n])=>[id,{...n,stock:{...defaults[id]?.stock,...n.stock},facilities:{...defaults[id]?.facilities,...n.facilities},enabled:{...defaults[id]?.enabled,...n.enabled},potential:{...defaults[id]?.potential,...n.potential},deposits:{...defaults[id]?.deposits,...n.deposits}}]));
   const g=governance(state);
   return {...(state.world.economicHistory?state:recordEconomicHistory(state)),industrialEconomy,world:{...state.world,economicHistory:state.world.economicHistory??recordEconomicHistory(state).world.economicHistory,living:state.world.living??createLiving(state.countries),governance:{...g,academies:{...createGovernance(state.countries).academies,...g.academies}}}};
- }catch{return null;}
+ }catch(error){console.warn('Save migration failed:',error);return null;}
 }
 export function canLoadSave(state:GameState|null|undefined):state is GameState {
  return !!state&&state.schemaVersion===CURRENT_SCHEMA_VERSION&&validSaveShape(state);

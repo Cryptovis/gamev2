@@ -1380,7 +1380,6 @@
   "Papua New Guinea": "Папуа — Новая Гвинея",
   "Paraguay": "Парагвай",
   "Pending proposals": "Предложения, ожидающие рассмотрения",
-  "Pep Guardiola": "Пеп Гвардиола",
   "Perseverance & Spirit have done Wonders in all Ages.": "Упорство и дух сотворили чудеса во все века.",
   "Peru": "Перу",
   "Philippines": "Филиппины",
@@ -1538,7 +1537,6 @@
   "Turkey": "Турция",
   "Turkmenistan": "Туркменистан",
   "Tuvalu": "Тувалу",
-  "USD B": "USD B B",
   "Uganda": "Уганда",
   "Ukraine": "Украина",
   "United Arab Emirates": "Объединенные Арабские Эмираты",
@@ -1576,7 +1574,6 @@
   "leader-country leader-nation-link": "Лидер-страна-лидер-нация-связь",
   "may reduce their opinion of you.": "Это может уменьшить их мнение о вас.",
   "missed: insufficient stock or liquidity": "Недостаточный запас или ликвидность",
-  "muted tiny": "приглушенный крохотный",
   "no measurable change": "Никаких измеримых изменений",
   "primary tutorial-read": "Основное учебное пособие",
   "public support grants +12% agricultural and industrial output for seven days": "Государственная поддержка грантов +12% сельскохозяйственной и промышленной продукции за семь дней",
@@ -1594,5 +1591,7 @@
   "{0} · {1} · population {2}M": "{0} · {1} · население {2}M",
   "{0}-year {1} contract": "{0}-летний контракт {1}",
   "{0}: improve bilateral trust before signing a trade pact.": "{0}: Улучшение двустороннего доверия до подписания торгового пакта.",
-  "| FUEL CRISIS": "КРИЗИС ПОЛЬШЕСТВА"
+  "| FUEL CRISIS": "ТОПЛИВНЫЙ КРИЗИС",
+  "WORLD GEOMETRY FAILED TO LOAD": "НЕ УДАЛОСЬ ЗАГРУЗИТЬ ГЕОМЕТРИЮ МИРА",
+  "RETRY": "ПОВТОРИТЬ"
 }
