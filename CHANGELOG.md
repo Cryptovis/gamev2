@@ -3,6 +3,7 @@
 ## 0.82.0-playtest.6 — Credit feedback and trade trust
 - Unified market filter labels; credit reviews now share engine validation, show cash/GDP/offer limits and quantified shortfall, and offer an affordable lending amount.
 - Stopped strategic confirmation from overwriting command receipts or treating a posted diplomatic letter as a failed action.
+- Tutorial spotlights reveal controls clipped by scrolling windows, including the World panel close button.
 - Above 50/100 relations now read Good; eligible trade acceptance rises at that threshold. Trade requests below 20/100 explain the missing trust and missions/aid needed to improve it.
 - Active pacts below 20/100 receive a saved 14-day recovery period, player warnings and bilateral shipment cancellation if trust stays low. Restoring 20 clears the risk.
 - Added acceptance estimates, points-to-Good, clearer rejection reasons and Turkish feedback/news coverage.

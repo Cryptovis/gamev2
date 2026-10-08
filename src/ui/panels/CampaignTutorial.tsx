@@ -122,9 +122,9 @@ export function CampaignTutorial() {
         `[data-guide="${target}"]`,
       );
       if (el) {
-        const b = el.getBoundingClientRect();
-        if (b.top < 0 || b.bottom > window.innerHeight)
-          el.scrollIntoView({ block: "nearest" });
+        // A target can be inside the viewport yet clipped by its scrolling window.
+        // Reveal it in every ancestor before positioning the interactive spotlight.
+        el.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "instant" });
         setRect(el.getBoundingClientRect());
       } else setRect(null);
     };

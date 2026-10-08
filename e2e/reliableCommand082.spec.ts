@@ -50,6 +50,7 @@ test(`${viewport.width}px all ten tutorial lessons including funded construction
    await page.locator('.tutorial-read').click();
    await page.locator('[data-guide="review-dismiss"]').first().click();
   }
+  if(i===8)await page.locator('.command-panel').evaluate(el=>{el.scrollTop=el.scrollHeight;});
   const close=page.locator('[data-guide="close-workspace"]');
   const card=await page.locator('.guided-card').boundingBox(),closeBox=await close.boundingBox();
   expect(card!.y).toBeGreaterThanOrEqual(closeBox!.y+closeBox!.height);
