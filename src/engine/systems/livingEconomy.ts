@@ -558,6 +558,17 @@ export function processWellbeing(s: GameState): GameState {
   return n;
 }
 export const LETTER_COST = { embassy: 3, trade_pact: 5, closure: 0 };
+export function diplomaticProposalStatus(s:GameState,targetId:string,kind:'embassy'|'trade_pact') {
+ const p=s.countries[s.playerCountryId],t=s.countries[targetId];
+ if(!t||p.id===targetId)return {allowed:false,reason:'Choose another country.'};
+ const relation=relationFor(p,targetId);
+ if(kind==='embassy'?!!embassyFor(s,p.id,targetId):relation.treaties.includes('trade'))return {allowed:false,reason:'This agreement is already active. Open partner diplomacy to inspect it.'};
+ const letter=living(s).letters.find(x=>x.kind===kind&&(x.incoming?x.senderId===targetId&&x.receiverId===p.id&&x.status==='pending':x.senderId===p.id&&x.receiverId===targetId&&(x.status==='pending'||s.day<x.replyDay+14)));
+ if(letter)return {allowed:false,letter,reason:letter.incoming?'An incoming proposal is waiting. Review Received proposals instead of sending another.':letter.status==='pending'?'Proposal already sent. Wait for the reply; repeating it will not speed up the answer or charge another fee.':'A recent proposal is still on cooldown. Check its result in the proposal tracker.',retryDay:letter.replyDay+14};
+ if(relation.status==='war'||p.globalSanctions||t.globalSanctions||relation.sanctions)return {allowed:false,reason:'War or sanctions prevent this proposal. Open partner diplomacy to inspect access.'};
+ if(p.economy.treasury<LETTER_COST[kind])return {allowed:false,reason:'Insufficient treasury for the fee if accepted.'};
+ return {allowed:true,reason:'The reply arrives after three campaign days. Payment is charged only if accepted.'};
+}
 export function requestDiplomacy(
   s: GameState,
   targetId: string,
@@ -567,6 +578,8 @@ export function requestDiplomacy(
   const p = s.countries[s.playerCountryId],
     t = s.countries[targetId],
     l = living(s);
+  const status=diplomaticProposalStatus(s,targetId,kind);
+  if(!status.allowed)return s;
   if (
     !t ||
     p.id === t.id ||

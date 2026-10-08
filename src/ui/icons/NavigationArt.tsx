@@ -1,3 +1,4 @@
+import {AtlasImage} from './AtlasImage';
 import { LocaleText, translateLive } from "../../i18n/localeText";
 const items = [
   "objectives",
@@ -32,10 +33,8 @@ export function NavigationArt({
         overflow: "hidden",
       }}
     >
-      <img
-        alt=""
-        aria-hidden="true"
-        src="/assets/command/navigation-atlas.svg"
+      <AtlasImage
+        src="/assets/command/navigation-atlas.webp"
         style={{
           position: "absolute",
           maxWidth: "none",

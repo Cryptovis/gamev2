@@ -1,3 +1,4 @@
+import {diplomaticProposalStatus,requestDiplomacy,living} from '../engine/systems/livingEconomy';
 import {describe,it,expect} from 'vitest';
 import {makeInitialState} from '../data/initialState';
 import {applyGameCommand,executeCommandResult} from '../engine/commands';
@@ -127,4 +128,29 @@ describe('0.82 news and Turkish commands',()=>{
   expect(migrateSave(snapshotGame(s))!.world.journal).toEqual(s.world.journal);
  });
  it.each(['Loaded Day 10','Saved Day 10','RESEARCH // Integrated Logistics started by Turkey; estimated 23 days.','RESEARCH // Project cancelled; 12.00 RP refunded.','Buy / supply options','Return to your nation','News Archive'])('translates %s',message=>expect(translateText('tr',message)).not.toBe(message));
+});
+
+describe('proposal retry guidance',()=>{
+ it('reports a pending request without creating or charging a duplicate',()=>{
+  const s=prepared(),n=requestDiplomacy(s,'BRA','embassy');const status=diplomaticProposalStatus(n,'BRA','embassy');
+  expect(status.allowed).toBe(false);expect(status.reason).toContain('already sent');expect(status.letter!.replyDay).toBe(n.day+3);
+  expect(requestDiplomacy(n,'BRA','embassy')).toBe(n);expect(living(n).letters).toHaveLength(1);expect(n.countries.TUR.economy.treasury).toBe(s.countries.TUR.economy.treasury);
+ });
+ it('routes an incoming pending request to Received proposals',()=>{
+  const s=requestDiplomacy(prepared(),'BRA','embassy');const letter=living(s).letters[0];letter.incoming=true;letter.senderId='BRA';letter.receiverId='TUR';
+  expect(diplomaticProposalStatus(s,'BRA','embassy').reason).toContain('Received proposals');expect(requestDiplomacy(s,'BRA','embassy')).toBe(s);
+ });
+});
+
+it('explains rejected command retries with the same proposal availability reason',()=>{
+ const s=requestDiplomacy(prepared(),'BRA','embassy');
+ const result=executeCommandResult(s,{type:'diplomacy/request',id:'BRA',kind:'embassy',years:1});
+ expect(result.status).toBe('unavailable');expect(result.message).toContain('already sent');expect(result.state).toBe(s);
+});
+
+it('keeps rejected proposals on cooldown until the exact retry day',()=>{
+ const s=requestDiplomacy(prepared(),'BRA','embassy');const letter=living(s).letters[0];letter.status='rejected';
+ const before={...s,day:letter.replyDay+13},ready={...s,day:letter.replyDay+14};
+ expect(diplomaticProposalStatus(before,'BRA','embassy').reason).toContain('cooldown');expect(requestDiplomacy(before,'BRA','embassy')).toBe(before);
+ expect(diplomaticProposalStatus(ready,'BRA','embassy').allowed).toBe(true);expect(living(requestDiplomacy(ready,'BRA','embassy')).letters).toHaveLength(2);
 });

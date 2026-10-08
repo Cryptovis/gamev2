@@ -12,7 +12,7 @@ import {cancelResearch} from './systems/technology';
 import {recordReports} from './journal';
 import {arrears} from './systems/sovereignCredit';
 import {pendingVictory} from './systems/victory';
-import {requestDiplomacy} from './systems/livingEconomy';
+import {requestDiplomacy,diplomaticProposalStatus} from './systems/livingEconomy';
 import {applyWarCondemnation} from './systems/worldInstitutions';
 import type { GameCommand } from '../domain/commands';
 import type { GameState, TradeResource, WarState } from '../domain/game';
@@ -246,6 +246,8 @@ function executeGameCommand(state: GameState, command: GameCommand): GameState {
 export interface CommandResult {state:GameState;status:'applied'|'unavailable'|'duplicate';message:string}
 export function executeCommandResult(state:GameState,command:GameCommand):CommandResult {
  if(command.commandId && state.world.commandIds?.includes(command.commandId))return {state,status:'duplicate',message:'This command has already been applied.'};
+ const proposal=command.type==='diplomacy/request'?diplomaticProposalStatus(state,command.id,command.kind):command.type==='diplomacy/signTradePact'?diplomaticProposalStatus(state,command.targetCountryId,'trade_pact'):null;
+ if(proposal&&!proposal.allowed)return {state,status:'unavailable',message:proposal.reason};
  const next=executeGameCommand(state,command);
  const changed=next.countries!==state.countries||next.tradeDeals!==state.tradeDeals||next.world!==state.world||next.wars!==state.wars||next.production!==state.production||next.infrastructure!==state.infrastructure||next.intelOperations!==state.intelOperations||next.council!==state.council||next.day!==state.day||next.speed!==state.speed;
  let recorded=recordReports(state,next,command.type==='time/advanceDay'?'world':'command');

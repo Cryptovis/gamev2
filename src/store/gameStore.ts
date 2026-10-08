@@ -5,7 +5,7 @@ import {postCredit,acceptCredit,cancelCredit,expansion} from '../engine/systems/
 import {beginIntegration,prepareIntegration} from '../engine/systems/integration';
 import {dismissVictory} from '../engine/systems/victory';
 import {activeCountries} from '../domain/sovereignty';
-import {processExchange,postListing,buyListing,cancelListing,moveBankGold,startActivity,recruitPersonnel,dismissAdvice,restoreAdvice,withLiving,living,requestDiplomacy,resolveIncomingLetter} from '../engine/systems/livingEconomy';
+import {processExchange,postListing,buyListing,cancelListing,moveBankGold,startActivity,recruitPersonnel,dismissAdvice,restoreAdvice,withLiving,living,requestDiplomacy,diplomaticProposalStatus,resolveIncomingLetter} from '../engine/systems/livingEconomy';
 import type {ExchangeGood,ActivityKind,AdviceKind} from '../domain/living';
 import type {InstitutionId,VoteChoice} from '../domain/world';
 import type {ReligionType} from '../domain/game';
@@ -236,7 +236,7 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
   improveRelations: (targetCountryId) => set((state) => commandWithReceipt(state, { type: 'diplomacy/improveRelations', targetCountryId })),
   giftTreasury: (targetCountryId,amountB) => set((state)=>commandWithReceipt(state,{type:'diplomacy/giftTreasury',targetCountryId,amountB})),
   giftResource: (targetCountryId,resource) => set((state)=>commandWithReceipt(state,{type:'diplomacy/giftResource',targetCountryId,resource})),
-  openEmbassyWith: (targetCountryId) => set(s=>{const n=requestDiplomacy(s,targetCountryId,'embassy');return {...n,actionReceipt:{title:n===s?'Proposal unavailable':'Proposal sent',summary:n===s?'Check access, budget or an existing proposal.':'The partner will reply in three days. Read the reply in Diplomatic Inbox.'}};}),
+  openEmbassyWith: (targetCountryId) => set(s=>{const n=requestDiplomacy(s,targetCountryId,'embassy');return {...n,actionReceipt:{title:n===s?'Proposal unavailable':'Proposal sent',summary:n===s?diplomaticProposalStatus(s,targetCountryId,'embassy').reason:'The reply arrives after three campaign days. Payment is charged only if accepted.'}};}),
   resolveDiplomaticOffer: (offerId,accept) => set((state)=>resolveDiplomaticOffer(state,offerId,accept)),
   signTradePact: (targetCountryId) => get().requestDiplomacy(targetCountryId,'trade_pact',1),
   signNonAggression: (targetCountryId) => set((state) => commandWithReceipt(state, { type: 'diplomacy/signNonAggression', targetCountryId })),

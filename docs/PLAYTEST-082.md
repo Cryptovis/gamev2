@@ -31,3 +31,11 @@ Setup now shows the exact package version. The cover/frame keeps fixed dimension
 ## UI hotfix — 0.82.0-playtest.3
 
 The identity footer's fourth item previously wrapped Continue into a clipped second row. Save utilities and navigation now have separate bounded rows. Rails sit behind national and floating windows, so the Map/Help cluster cannot cover a tutorial investment. The map dock has a close header outside its scrolling body; the profile return footer is transparent and campaign dates wrap instead of truncating. Production browser checks additionally verify footer button geometry/hit-testing, map close hit-testing, overlapping panel priority and profile footer background.
+
+
+## Tutorial and diplomacy hotfix — 0.82.0-playtest.4
+The active tutorial reserves the bottom 220px and bounds open windows/reviews above it; only their bodies scroll, with close controls available. Acknowledgement has its own margin above navigation. Browser coverage walks all ten lessons and checks close-control hit-testing.
+
+Diplomacy now includes Proposal tracker with sent/received filters and inline help. Pending outgoing offers, pending incoming offers, active agreements, sanctions, insufficient funds and the existing 14-day cooldown explain why another request is unavailable. The country diplomacy entry uses the same check before showing another confirmation; legacy command receipts also receive specific proposal reasons. Requests cost nothing at submission; outgoing fees are charged once if accepted (existing engine behavior). Replies take three campaign days, so advance time to receive them. Repeat clicks do not speed up replies.
+
+Existing atlas pixels are served directly as native WebP with a decorative fallback on load failure. Production browser checks assert successful image decoding in Supply and World and that retrying a pending embassy creates no confirmation or second letter. This improves the proposal workflow; other legacy commands still need a broader audit of prerequisite messages and localization.

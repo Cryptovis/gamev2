@@ -253,21 +253,8 @@ export function CampaignTutorial() {
         <div className="tutorial-shade" style={{ inset: 0 }} />
       )}
       <section
-        className={`tutorial-dialog guided-card ${(phase==='reading'||phase==='reviewReading')?'tutorial-reading':''}`}
-        style={
-          rect && window.innerWidth > 1100
-            ? {
-                left: rect.left > window.innerWidth / 2 ? 18 : undefined,
-                right: rect.left > window.innerWidth / 2 ? "auto" : 18,
-                top: 114,
-                bottom: "auto",
-                transform: "none",
-                width: 330,
-              }
-            : rect && rect.top > window.innerHeight * 0.55
-              ? { top: 16, bottom: "auto" }
-              : undefined
-        }
+        className={`tutorial-dialog guided-card ${(phase==='reading'||phase==='reviewReading')?'tutorial-reading':''} ${(phase!=='open'&&phase!=='done')?'tutorial-docked':''}`}
+        style={{left:'50%',right:'auto',top:phase==='open'&&rect&&rect.top>window.innerHeight*.55?18:'auto',bottom:phase==='open'&&rect&&rect.top>window.innerHeight*.55?'auto':18,transform:'translateX(-50%)'}}
         role="dialog"
         aria-label={translateLive("Campaign tutorial")}
       >

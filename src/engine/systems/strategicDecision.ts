@@ -42,15 +42,15 @@ export function strategicDecisionSpec(
     ],warnings:['Goodwill gains are stronger when an embassy is already operating.']};
   }
   if(kind==='embassy'){
-    return {...base,kicker:'DIPLOMATIC PRESENCE',title:'Open Embassy in '+target.name,summary:'Establish a permanent diplomatic mission. Embassies accelerate future goodwill and reduce bilateral trade friction.',confirmLabel:'OPEN EMBASSY',tone:'positive',impacts:[
-      {label:'Establishment',value:'-$3B',tone:'warning'},
+    return {...base,kicker:'DIPLOMATIC PRESENCE',title:'Open Embassy in '+target.name,summary:'Send an embassy exchange proposal. The partner replies after three campaign days. A permanent mission opens only if accepted.',confirmLabel:'OPEN EMBASSY',tone:'positive',impacts:[
+      {label:'Cost if accepted',value:'-$3B',tone:'warning'},
       {label:'Relationship',value:'+6 raw',tone:'positive'},
       {label:'Trade friction',value:'Reduced',tone:'positive'},
     ],warnings:['An embassy increases diplomatic access but may later become exposed to bilateral crises or intelligence incidents.']};
   }
   if(kind==='trade_pact'){
     return {...base,kicker:'TRADE NEGOTIATION',title:'Sign Trade Pact with '+target.name,summary:'Create a formal commercial framework that enables direct commodity imports and improves bilateral economic trust.',confirmLabel:'SIGN TRADE PACT',tone:'positive',impacts:[
-      {label:'Mission cost',value:'-$5B',tone:'warning'},
+      {label:'Cost if accepted',value:'-$5B',tone:'warning'},
       {label:'Relationship',value:'+4 raw',tone:'positive'},
       {label:'Rival exposure',value:rivals?String(rivals)+' states':'Low',tone:rivals?'warning':'neutral'},
     ],warnings:[

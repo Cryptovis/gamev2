@@ -1,3 +1,4 @@
+import {diplomaticProposalStatus} from '../../engine/systems/livingEconomy';
 import {CivicArt} from '../icons/CivicArt';
 import {AssetThumbnail} from '../icons/AssetThumbnail';
 import {LocaleText,translateLive} from '../../i18n/localeText';
@@ -29,6 +30,7 @@ export function DiplomacyPanel({selectedId}:{selectedId:string}){
  const relationLabel=relationshipStance(relation);
  const playerBloc=blocForCountry(state,player.id);
  const embassy=embassyFor(state,player.id,selected.id);
+ const embassyStatus=diplomaticProposalStatus(state,selected.id,'embassy'),tradeStatus=diplomaticProposalStatus(state,selected.id,'trade_pact');
  const tradeDeals=Object.values(state.tradeDeals).filter(d=>d.active&&((d.sellerId===selected.id&&d.buyerId===player.id)||(d.buyerId===selected.id&&d.sellerId===player.id)));
  const hasTrade=relation.treaties.includes('trade');
  const hasNonAggression=relation.treaties.includes('nonAggression');
@@ -37,6 +39,7 @@ export function DiplomacyPanel({selectedId}:{selectedId:string}){
  const blocRequirement=playerBloc?'requires alliance · REL 80/100':'requires alliance · REL 83/100 · $20B';
  const canAlign=!blocMember&&hasAlliance&&relation.status!=='war'&&relation.score>=(playerBloc?60:65)&&(Boolean(playerBloc)||player.economy.treasury>=20);
  const requestDecision=(kind:StrategicActionKind,execute:()=>void,context:StrategicDecisionContext={})=>{
+  if((kind==='embassy'&&!embassyStatus.allowed)||(kind==='trade_pact'&&!tradeStatus.allowed)){state.navigate('diplomacy-inbox',selected.id);return;}
   if(!shouldConfirmAction(kind,state.confirmationSkips)){execute();return;}
   const spec=strategicDecisionSpec(state,kind,selected.id,context);
   if(!spec)return;
@@ -56,11 +59,12 @@ export function DiplomacyPanel({selectedId}:{selectedId:string}){
    <span><small><LocaleText value={"EMBASSY"}/></small><strong><LocaleText value={embassy?`LEVEL ${embassy.level}`:'NONE'}/></strong></span>
   </div>
 
+  {(!embassyStatus.allowed||!tradeStatus.allowed)&&<aside className="proposal-status">{!embassyStatus.allowed&&<p><strong><LocaleText value="Embassy exchange"/>: </strong><LocaleText value={embassyStatus.reason}/></p>}{!tradeStatus.allowed&&<p><strong><LocaleText value="Trade framework"/>: </strong><LocaleText value={tradeStatus.reason}/></p>}<button onClick={()=>state.navigate('diplomacy-inbox',selected.id)}><LocaleText value="Help / track proposals"/></button></aside>}
   <div className="subhead"><LocaleText value={"DIPLOMATIC ACTIONS"}/></div>
   <div className="action-grid diplomacy-actions">
    <button data-action="mission" disabled={player.economy.treasury<2||relation.status==='war'} onClick={()=>requestDecision('diplomatic_mission',()=>state.improveRelations(selected.id))}><CivicArt kind="letter" size={34}/><span><LocaleText value={"Diplomatic Mission "}/><small><LocaleText value={"-$2B · gradual goodwill"}/></small></span></button>
-   <button data-action="embassy" disabled={Boolean(embassy)||player.economy.treasury<3||relation.status==='war'} onClick={()=>requestDecision('embassy',()=>state.openEmbassyWith(selected.id))}><AssetThumbnail asset="embassy" size={34}/><span><LocaleText value={embassy?'Embassy Established':'Open Embassy'}/> <small><LocaleText value={embassy?'relations & trade boosted':'-$3B · diplomatic booster'}/></small></span></button>
-   <button data-action="trade" disabled={hasTrade||player.economy.treasury<5||relation.status==='war'||relation.score<15} onClick={()=>requestDecision('trade_pact',()=>state.signTradePact(selected.id))}><CivicArt kind="letter" size={34}/><span><LocaleText value={hasTrade?'Trade Pact Active':'Trade Pact'}/> <small><LocaleText value={hasTrade?'commercial framework active':relation.score<15?'requires REL 58/100':'-$5B · improves commerce'}/></small></span></button>
+   <button data-action="embassy"  onClick={()=>requestDecision('embassy',()=>state.openEmbassyWith(selected.id))}><AssetThumbnail asset="embassy" size={34}/><span><LocaleText value={!embassyStatus.allowed?'Track proposal / status':'Open Embassy'}/> <small><LocaleText value={embassy?'relations & trade boosted':'$3B if accepted · reply in 3 days'}/></small></span></button>
+   <button data-action="trade"  onClick={()=>requestDecision('trade_pact',()=>state.signTradePact(selected.id))}><CivicArt kind="letter" size={34}/><span><LocaleText value={!tradeStatus.allowed?'Track proposal / status':'Trade Pact'}/> <small><LocaleText value={hasTrade?'commercial framework active':'$5B if accepted · reply in 3 days'}/></small></span></button>
    <button data-action="nonaggression" disabled={hasNonAggression||relation.status==='war'||player.economy.treasury<4||relation.score<25} onClick={()=>requestDecision('non_aggression',()=>state.signNonAggression(selected.id))}><CivicArt kind="letter" size={34}/><span><LocaleText value={hasNonAggression?'Non-Aggression Active':'Non-Aggression'}/> <small><LocaleText value={hasNonAggression?'mutual restraint active':relation.score<25?'requires REL 63/100':'-$4B · mutual restraint'}/></small></span></button>
    <button data-action="alliance" disabled={hasAlliance||relation.status==='war'||player.economy.treasury<10||relation.score<60} onClick={()=>requestDecision('alliance',()=>state.signAlliance(selected.id))}><CivicArt kind="bloc" size={34}/><span><LocaleText value={hasAlliance?'Alliance Active':'Alliance'}/> <small><LocaleText value={hasAlliance?'strategic alignment active':relation.score<60?'requires REL 80/100':'-$10B · high trust'}/></small></span></button>
    <button data-action="embargo" className={relation.sanctions?'danger active':'danger'} disabled={relation.status==='war'} onClick={()=>requestDecision('embargo',()=>state.toggleEmbargo(selected.id))}><CivicArt kind="war" size={34}/><span><LocaleText value={relation.sanctions?'Lift Embargo':'Impose Embargo'}/> <small><LocaleText value={relation.sanctions?'restore access':'trade cancelled · relations fall'}/></small></span></button>

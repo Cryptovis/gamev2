@@ -50,7 +50,7 @@ export function ResourceMapBadge({
           overflow="hidden"
         >
           <image
-            href="/assets/command/resource-atlas.svg"
+            href="/assets/command/resource-atlas.webp"
             width="1254"
             height="1254"
           />

@@ -1,4 +1,17 @@
 const rows:Record<string,string>={
+ '$3B if accepted · reply in 3 days':'Kabulde $3B · yanıt 3 gün sonra',
+ '$5B if accepted · reply in 3 days':'Kabulde $5B · yanıt 3 gün sonra',
+ 'An incoming proposal is waiting. Review Received proposals instead of sending another.':'Gelen bir teklif yanıt bekliyor. Yeniden göndermek yerine Gelen teklifler bölümünden incele.',
+ 'Track proposal / status':'Teklifi takip et / durum','Proposal tracker':'Teklif takibi','Proposal status':'Teklif durumu','Help / track proposals':'Yardım / teklifleri takip et','Where are my proposals?':'Tekliflerimi nereden görebilirim?','All correspondence':'Tüm yazışmalar','Sent proposals':'Gönderilen teklifler','Received proposals':'Gelen teklifler','Pending':'Bekliyor','Retry day':'Yeniden deneme günü',
+ 'Choose another country.':'Başka bir ülke seç.',
+ 'This agreement is already active. Open partner diplomacy to inspect it.':'Bu anlaşma zaten yürürlükte. İncelemek için ülkenin diplomasi ekranını aç.',
+ 'Proposal already sent. Wait for the reply; repeating it will not speed up the answer or charge another fee.':'Teklif zaten gönderildi. Yanıtı bekle; yeniden denemek yanıtı hızlandırmaz ve yeni ücret alınmaz.',
+ 'A recent proposal is still on cooldown. Check its result in the proposal tracker.':'Yakın tarihli teklif için bekleme süresi devam ediyor. Sonucu teklif takibinden kontrol et.',
+ 'War or sanctions prevent this proposal. Open partner diplomacy to inspect access.':'Savaş veya yaptırımlar bu teklifi engelliyor. Erişimi incelemek için ülkenin diplomasi ekranını aç.',
+ 'Insufficient treasury for the fee if accepted.':'Kabul edilirse ödenecek ücret için hazine yetersiz.',
+ 'The reply arrives after three campaign days. Payment is charged only if accepted.':'Yanıt üç oyun günü sonra gelir. Ücret yalnızca kabul edilirse alınır.',
+ 'Open Diplomacy, then Proposal tracker and Sent proposals. Pending replies arrive after three campaign days; advance time to receive them. Sending again will not accelerate the answer. No fee is charged at submission; accepted outgoing proposals charge the stated fee once.':'Diplomasi → Teklif takibi → Gönderilen teklifler bölümünü aç. Yanıt üç oyun günü sonra gelir; almak için zamanı ilerlet. Yeniden göndermek yanıtı hızlandırmaz. Gönderimde ücret alınmaz; kabul edilen gönderilmiş teklifin belirtilen ücreti bir kez alınır.',
+
  'Command completed':'Karar uygulandı','Close review':'İncelemeyi kapat','NEWS':'HABERLER','NEWS //':'HABERLER //','News Archive':'Haber Arşivi','Map and help tools':'Harita ve yardım araçları',
  'Return to your nation':'Ülkene dön','My nation':'Ülkem','Buy / supply options':'Satın al','All resources':'Tüm kaynaklar',
  'Research capacity / day':'Günlük araştırma kapasitesi','Research progress':'Araştırma ilerlemesi','RESEARCH IN PROGRESS':'ARAŞTIRMA SÜRÜYOR','Estimated duration':'Tahmini süre',

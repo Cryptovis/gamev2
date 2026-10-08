@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.82.0-playtest.4 — Tutorial, proposal tracking and artwork hotfix
+- Reserved a compact bottom tutorial area; shortened open windows and review dialogs to keep close controls and content clear. Separated acknowledgement and navigation buttons.
+- Added sent/received proposal filters, pending/retry status and inline help. Both inbox and country diplomacy detect pending, incoming, active and cooldown proposals before reopening confirmation.
+- Shared proposal availability with engine command receipts; no repeated proposal or fee while pending. Clarified that outgoing fees apply only on acceptance.
+- Served the existing resource/civic/navigation atlas pixels as native WebP instead of nested SVG images; added a visible load-failure fallback.
+- Extended browser regressions for tutorial controls, proposal retries and loaded supply/world artwork.
+
 ## 0.82.0-playtest.3 — UI hotfix
 - Reserved explicit setup navigation and save-tool rows so Continue cannot spill below the footer.
 - Put navigation rails behind national/floating windows, keeping tutorial construction targets clickable.

@@ -3,18 +3,23 @@ import {activeCountries} from '../../domain/sovereignty';
 import { useState } from "react";
 import { useGameStore } from "../../store/gameStore";
 import { LocaleText } from "../../i18n/localeText";
-import { living, LETTER_COST } from "../../engine/systems/livingEconomy";
+import { living, LETTER_COST, diplomaticProposalStatus } from "../../engine/systems/livingEconomy";
 import { CivicArt } from "../icons/CivicArt";
 import { ReviewDialog, type ReviewContent } from "./ReviewDialog";
 import { money } from "../formatMoney";
 export function DiplomaticPost() {
   const s = useWorldView(),
     l = living(s),
-    [target, setTarget] = useState("BRA"),
+    [target, setTarget] = useState(()=>{const nav=useGameStore.getState().navigation;return nav?.panel==='diplomacy-inbox'&&nav.countryId!==s.playerCountryId?nav.countryId:"BRA";}),
     [kind, setKind] = useState<"embassy" | "trade_pact">("embassy"),
+    [filter,setFilter]=useState<'all'|'outgoing'|'incoming'>('all'),
+    [help,setHelp]=useState(false),
     [review, setReview] = useState<
       (ReviewContent & { execute: (commandId:string) => void; allowed?: boolean }) | null
     >(null);
+  const status=diplomaticProposalStatus(s,target,kind);
+  const visibleLetters=l.letters.filter(x=>filter==='all'||(filter==='incoming'?x.incoming:!x.incoming));
+  const track=()=>{setFilter(status.letter?.incoming?'incoming':'outgoing');setHelp(true);window.setTimeout(()=>document.getElementById('proposal-tracker')?.scrollIntoView({block:'nearest'}),0);};
   return (
     <section className="diplomatic-post">
       <header>
@@ -59,7 +64,8 @@ export function DiplomaticPost() {
           </option>
         </select>
         <button
-          onClick={() =>
+          onClick={() => {
+            if(!status.allowed){track();return;}
             setReview({
               title: "Send diplomatic proposal",
               summary:
@@ -69,24 +75,26 @@ export function DiplomaticPost() {
                 ["Cost if accepted", money(LETTER_COST[kind])],
                 ["Reply day", String(s.day + 3)],
               ],
-              allowed:
-                s.countries[s.playerCountryId].economy.treasury >=
-                LETTER_COST[kind],
+              allowed: status.allowed,
               execute: (commandId) => s.requestDiplomacy(target, kind, 1, commandId),
-            })
-          }
+            });
+          }}
         >
-          <LocaleText value="Review proposal" />
+          <LocaleText value={status.allowed?"Review proposal":"Track proposal / status"} />
         </button>
       </div>
+      {!status.allowed&&<aside className="proposal-status" role="status"><strong><LocaleText value="Proposal status"/></strong><p><LocaleText value={status.reason}/></p>{status.letter&&<small><LocaleText value="Reply day"/>: {status.letter.replyDay}{status.letter.status!=='pending'&&<> · <LocaleText value="Retry day"/>: {status.retryDay}</>}</small>}<div><button onClick={track}><LocaleText value="Help / track proposals"/></button><button onClick={()=>s.navigate('diplomacy',target)}><LocaleText value="Open partner diplomacy"/></button></div></aside>}
+      {help&&<aside className="proposal-status"><strong><LocaleText value="Where are my proposals?"/></strong><p><LocaleText value="Open Diplomacy, then Proposal tracker and Sent proposals. Pending replies arrive after three campaign days; advance time to receive them. Sending again will not accelerate the answer. No fee is charged at submission; accepted outgoing proposals charge the stated fee once."/></p></aside>}
+      <h4 id="proposal-tracker"><LocaleText value="Proposal tracker"/> · <LocaleText value="Pending"/>: {l.letters.filter(x=>x.status==='pending').length}</h4>
+      <nav className="proposal-filters" aria-label="Proposal tracker filters">{(['all','outgoing','incoming'] as const).map(f=><button key={f} className={filter===f?'active':''} aria-pressed={filter===f} onClick={()=>setFilter(f)}><LocaleText value={f==='all'?'All correspondence':f==='outgoing'?'Sent proposals':'Received proposals'}/></button>)}</nav>
       <div className="letter-list">
-        {l.letters.map((x) => {
+        {visibleLetters.map((x) => {
           const other =
               x.senderId === s.playerCountryId ? x.receiverId : x.senderId,
             pending =
               x.incoming && x.status === "pending" && x.expiresDay >= s.day;
           return (
-            <article key={x.id} className={x.read ? "" : "unread"}>
+            <article key={x.id} data-letter-id={x.id} data-status={x.status} className={x.read ? "" : "unread"}>
               <CivicArt kind="letter" size={44} />
               <div>
                 <small>
@@ -163,7 +171,7 @@ export function DiplomaticPost() {
           );
         })}
       </div>
-      {!l.letters.length && (
+      {!visibleLetters.length && (
         <p>
           <LocaleText value="No letters yet. Send your first proposal or wait for a government to contact you." />
         </p>

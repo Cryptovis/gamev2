@@ -836,3 +836,32 @@ body:has(.guided-tutorial) .review-backdrop { background: rgb(7 23 33 / 16%); ba
   .campaign-wizard { grid-template-rows: 100px minmax(0, 1fr) 82px; }
   .wizard-header p { display: none; }
 }
+/* 0.82.0-playtest.4: tutorial owns a reserved bottom area, never a window corner. */
+.guided-tutorial .guided-card.tutorial-docked { width: min(680px, calc(100vw - 24px)); max-height: 190px; padding: 12px 16px; }
+.guided-card.tutorial-docked > :is(p,progress) { display: none; }
+.guided-card.tutorial-docked > small { display: block; font-size: 10px; }
+.guided-card.tutorial-docked h2 { display: block; font-size: 16px; margin: 3px 0; }
+.guided-card.tutorial-docked .tutorial-instruction { margin: 6px 0; font-size: 12px; }
+.guided-card .tutorial-read { display: block; margin: 10px 0 14px; padding: 9px 14px; }
+.guided-card footer { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.guided-card.tutorial-docked footer { margin-top: 6px; }
+.guided-card.tutorial-docked footer button { padding: 6px 10px; }
+body:has(.tutorial-docked) .floating-command-window { display: flex; flex-direction: column; max-height: calc(100dvh - 350px); }
+body:has(.tutorial-docked) .floating-command-header { flex-shrink: 0; }
+body:has(.tutorial-docked) .floating-command-body { min-height: 0; max-height: none; overflow: auto; }
+body:has(.tutorial-docked) .command-panel { bottom: 220px !important; max-height: calc(100dvh - 340px); }
+body:has(.tutorial-docked) .map-command-dock { top: 130px !important; transform: none !important; max-height: calc(100dvh - 350px); }
+body:has(.tutorial-docked) .review-backdrop { padding: 16px 16px 220px; }
+body:has(.tutorial-docked) .review-dialog { max-height: calc(100dvh - 260px); overflow: auto; }
+body:has(.tutorial-docked) .review-dialog > header { position: sticky; top: 0; background: #294657; z-index: 1; }
+.proposal-status { margin: 12px 0; padding: 14px; border: 1px solid #bfa363; background: #233d4c; border-radius: 10px; }
+.proposal-status p { margin: 8px 0; line-height: 1.5; }
+.proposal-status button,.proposal-filters button { padding: 8px 12px; margin: 4px; border-radius: 7px; background: #142b38; color: #f4dc9e; border: 1px solid #68889a; cursor: pointer; }
+.proposal-filters { display: flex; gap: 6px; flex-wrap: wrap; margin: 14px 0; }
+.proposal-filters button.active { background: #f1ce80; color: #172b34; }
+@media(max-width:760px) {
+ body:has(.tutorial-docked) .floating-command-window { max-height: calc(100dvh - 392px); }
+ .guided-card.tutorial-docked h2 { font-size: 14px; }
+}
+
+.guided-card.tutorial-docked.tutorial-reading > :is(h2,small) { display: none; }
