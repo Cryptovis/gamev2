@@ -1,3 +1,4 @@
+import {arrears} from '../../engine/systems/sovereignCredit';
 import {CommandArt} from '../icons/CommandArt';
 import {academyFor} from '../../engine/systems/governance';
 import {LocaleText,translateLive} from '../../i18n/localeText';
@@ -48,7 +49,7 @@ export function TopBar(){
   </div>
 
   <div className="metrics governance-metrics" aria-label={translateLive("National command indicators")}>
-   <Metric icon={<CommandArt kind="treasury" size={30}/>} label={tr(lang,'treasury')} value={'$'+player.economy.treasury.toFixed(1)+'B'}/>
+   <Metric icon={<CommandArt kind="treasury" size={30}/>} label={arrears(useGameStore.getState(),player.id)>0?translateLive('Fiscal balance'):tr(lang,'treasury')} value={'$'+(player.economy.treasury-arrears(useGameStore.getState(),player.id)).toFixed(1)+'B'}/>
    <Metric icon={<CommandArt kind="budget" size={30}/>} label="BUDGET / DAY" value={(strategicDailyBalance>=0?'+':'')+'$'+strategicDailyBalance.toFixed(3)+'B'} tone={strategicDailyBalance>=0?'good':'warning'}/>
    <Metric icon={<CommandArt kind="approval" size={30}/>} label={tr(lang,'approval')} value={player.politics.approval.toFixed(0)+'%'} tone={player.politics.approval>=60?'good':player.politics.approval<40?'warning':'neutral'}/>
    <Metric icon={<CommandArt kind="stability" size={30}/>} label="STABILITY" value={player.politics.stability.toFixed(0)+'%'} tone={player.politics.stability>=65?'good':player.politics.stability<40?'warning':'neutral'}/>

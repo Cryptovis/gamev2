@@ -1,3 +1,5 @@
+import {arrears} from './systems/sovereignCredit';
+import {pendingVictory} from './systems/victory';
 import {requestDiplomacy} from './systems/livingEconomy';
 import {applyWarCondemnation} from './systems/worldInstitutions';
 import type { GameCommand } from '../domain/commands';
@@ -39,7 +41,7 @@ export function applyGameCommand(state: GameState, command: GameCommand): GameSt
     case 'time/advanceDay': return tickGame(state);
     case 'clock/setSpeed': {
       const preferredSpeed = command.speed === 0 ? state.preferredSpeed : command.speed;
-      if (state.activeEvent || state.activeAdvisor || state.world.living?.advice.active || state.world.living?.notice || state.campaignStatus !== 'active') return { ...state, preferredSpeed, speed: 0 };
+      if (pendingVictory(state) || state.activeEvent || state.activeAdvisor || state.world.living?.advice.active || state.world.living?.notice || state.campaignStatus !== 'active') return { ...state, preferredSpeed, speed: 0 };
       return { ...state, speed: command.speed, preferredSpeed };
     }
     case 'production/setMilitaryShare': return setMilitaryFactoryShare(state,state.playerCountryId,command.share);
@@ -49,7 +51,7 @@ export function applyGameCommand(state: GameState, command: GameCommand): GameSt
     case 'economy/setTaxRate': {
       const player = state.countries[state.playerCountryId];
       if (!player) return state;
-      return { ...state, countries: { ...state.countries, [player.id]: { ...player, economy: { ...player.economy, taxRate: clamp(command.rate, 0, 60) } } } };
+      return { ...state, countries: { ...state.countries, [player.id]: { ...player, economy: { ...player.economy, taxRate: clamp(command.rate, arrears(state,player.id)>0?45:0, 60) } } } };
     }
     case 'diplomacy/improveRelations': {
       const player = state.countries[state.playerCountryId];

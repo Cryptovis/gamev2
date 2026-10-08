@@ -69,3 +69,9 @@ Next candidates:
 - Longer research projects, specialized crew readiness and sanctions-driven production substitutions.
 - Worker-based simulation and more lazy UI modules as the existing main bundle grows.
 - HD War Experience camera/terrain/animation/playback work remains in ROADMAP-HD-WAR.md.
+
+## After Sovereign Horizons 0.80
+
+Delivered: sourced victory parchment, reviewed 90-day territorial integration with welfare failure, asset/liability consolidation, annual-rate sovereign credit offers and requests, maturity collateral transfers, arrears/tax restoration, charcoal/gold setup and worker-based geographic projection.
+
+Follow-up candidates: counteroffers and loan restructuring, early repayment, broader reserve data, nuanced language/civic cohorts, housing/migration capacity, cached or GPU satellite projection, separate simulation worker, and the existing HD War Experience roadmap.

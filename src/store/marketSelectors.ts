@@ -1,3 +1,4 @@
+import {activeCountries} from '../domain/sovereignty';
 import type { CountryState, GameState, TradeResource } from '../domain/game';
 import { simulateResources } from '../engine/systems/resources';
 import { getGlobalMarketPrice, getTradeQuote } from '../engine/systems/trade';
@@ -30,7 +31,7 @@ export function findBestSuppliers(state: GameState, buyerId: string, resource: T
   const buyer = state.countries[buyerId];
   if (!buyer) return [];
   const marketPrice = getGlobalMarketPrice(state, resource);
-  return Object.values(state.countries)
+  return activeCountries(state.countries)
     .filter((seller) => seller.id !== buyerId)
     .map((seller) => {
       const relation = buyer.diplomacy.relations[seller.id];

@@ -1,3 +1,4 @@
+import {activeCountries} from '../../domain/sovereignty';
 import {GOLD_PRODUCERS,SILVER_PRODUCERS} from '../../data/preciousMetals';
 import {occupationFor} from './governance';
 import type {CountryState,GameState} from '../../domain/game';
@@ -43,6 +44,7 @@ export function buildFacility(state:GameState,id:string,kind:FacilityKind):GameS
 export function processIndustrialEconomy(state:GameState):GameState {
  let next=state;
  for(const id of Object.keys(state.countries)){
+ if(state.countries[id].annexedBy)continue;
   let c=next.countries[id];let n={...next.industrialEconomy[id],stock:{...next.industrialEconomy[id].stock},facilities:{...next.industrialEconomy[id].facilities},deposits:{...next.industrialEconomy[id].deposits},lastOutput:{},bottlenecks:{},lastCosts:0} as NationalIndustrialEconomy;
   for(const p of n.projects.filter(p=>p.readyDay<=state.day)){
    n.facilities[p.kind]++;
@@ -75,7 +77,7 @@ export function processIndustrialEconomy(state:GameState):GameState {
 export function processIndustrialAI(state:GameState):GameState {
  if(state.day%30!==0)return state;
  let next=state;
- for(const c of Object.values(state.countries)){
+ for(const c of activeCountries(state.countries)){
   if(c.id===state.playerCountryId)continue;
   const research=['energy-water','ind-metallurgy','mil-command','mil-armor-assembly','ind-extraction','ind-engines','ind-electronics','ind-automation'].find(id=>canUnlockTechnology(next.countries[c.id],id));
   if(research){const reports=next.sitrep;next=unlockTechnology(next,c.id,research);next={...next,sitrep:reports};}

@@ -1,3 +1,4 @@
+import {activeCountries} from '../../domain/sovereignty';
 import {money} from '../formatMoney';
 import {GuideBriefing} from './GuideBriefing';
 import {PopulationPanel,RecruitmentPanel} from './PopulationPanel';
@@ -52,7 +53,7 @@ export function CountryPanel(){
   const player=state.countries[state.playerCountryId];
   const isPlayer=selected.id===state.playerCountryId;
   const resourceFlow=calculateDailyResourceFlow(selected); const economy=calculateEconomyForecast(selected); const relation=player.diplomacy.relations[selected.id];
-  const countryList=useMemo(()=>Object.values(state.countries).sort((a,b)=>a.name.localeCompare(b.name)),[state.countries]);
+  const countryList=useMemo(()=>activeCountries(state.countries).sort((a,b)=>a.name.localeCompare(b.name)),[state.countries]);
   const activeWar=useMemo(()=>Object.values(state.wars).find((war)=>war.status==='active'&&(war.attackerId===selected.id||war.defenderId===selected.id)&&(war.attackerId===player.id||war.defenderId===player.id)),[player.id,selected.id,state.wars]);
   const tradeDeals=Object.values(state.tradeDeals).filter((deal)=>deal.active&&(deal.sellerId===selected.id||deal.buyerId===selected.id));
   const suppliers=useMemo(()=>Object.fromEntries(MARKET_RESOURCES.map((r)=>[r,findBestSuppliers(state,player.id,r,3)])),[state,player.id]);

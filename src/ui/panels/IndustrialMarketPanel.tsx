@@ -1,3 +1,4 @@
+import {activeCountries} from '../../domain/sovereignty';
 import {OpenExchange} from './OpenExchange';
 import {money} from '../formatMoney';
 import {LocaleText,translateLive} from '../../i18n/localeText';
@@ -15,7 +16,7 @@ export function IndustrialMarketPanel(){
  const [cancelId,setCancelId]=useState<string|null>(null);
  const state=useGameStore(),player=state.countries[state.playerCountryId];
  const [good,setGood]=useState<IndustrialGood>('water'),[partner,setPartner]=useState(''),[direction,setDirection]=useState<'buy'|'sell'>('buy'),[quantity,setQuantity]=useState(5),[years,setYears]=useState<0|1|3|5|10>(0),[review,setReview]=useState(false);
- const eligible=Object.values(state.countries).filter(c=>canTradeIndustrial(state,direction==='buy'?c.id:player.id,direction==='buy'?player.id:c.id,good));
+ const eligible=activeCountries(state.countries).filter(c=>canTradeIndustrial(state,direction==='buy'?c.id:player.id,direction==='buy'?player.id:c.id,good));
  const target=eligible.find(c=>c.id===partner)??eligible[0];
  const sellerId=direction==='buy'?target?.id??'':player.id,buyerId=direction==='buy'?player.id:target?.id??'';
  const quote=industrialQuote(state,sellerId,buyerId,good,quantity);

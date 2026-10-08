@@ -1,3 +1,4 @@
+import {activeCountries} from '../../domain/sovereignty';
 import type { CouncilResolution, CouncilResolutionType, GameState } from '../../domain/game';
 import { endWarRelation } from './diplomacy';
 
@@ -6,7 +7,7 @@ const clamp=(v:number,min:number,max:number)=>Math.min(max,Math.max(min,v));
 function supportFor(state:GameState,targetId:string,type:CouncilResolutionType){
   const target=state.countries[targetId]; if(!target)return 0;
   let yes=0,total=0;
-  for(const country of Object.values(state.countries)){
+  for(const country of activeCountries(state.countries)){
     if(country.id===targetId)continue;
     const weight=Math.max(1,Math.sqrt(Math.max(1,country.economy.gdp)));
     const relation=country.diplomacy.relations[targetId]?.score??0;

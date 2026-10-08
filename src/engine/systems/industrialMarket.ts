@@ -1,3 +1,4 @@
+import {activeCountries} from '../../domain/sovereignty';
 import {EQUIPMENT_CATALOG} from '../../data/equipmentCatalog';
 import {TANK_COMPONENTS} from '../../data/industrialCatalog';
 import type {GameState} from '../../domain/game';
@@ -7,9 +8,9 @@ import {changeGoodStock,goodStock} from './industrialEconomy';
 import {changeRelations,relationFor} from './diplomacy';
 const clamp=(n:number,a:number,b:number)=>Math.max(a,Math.min(b,n));
 export function industrialPrice(state:GameState,good:IndustrialGood){
- const stock=Object.keys(state.countries).reduce((sum,id)=>sum+goodStock(state,id,good),0);
+ const stock=Object.keys(state.countries).filter(id=>!state.countries[id].annexedBy).reduce((sum,id)=>sum+goodStock(state,id,good),0);
  const listed=(state.world.living?.listings??[]).filter(x=>x.good===good&&x.status==='open').reduce((a,x)=>a+x.remaining,0);
- const demand=Object.keys(state.countries).length*GOODS[good].reserve*3;
+ const demand=Object.keys(state.countries).filter(id=>!state.countries[id].annexedBy).length*GOODS[good].reserve*3;
  const warPremium=(good==='gold'||good==='silver')?1+Math.min(.6,Object.values(state.wars).filter(w=>w.status==='active').length*.06):1;
  return GOODS[good].price*clamp(demand/Math.max(1,stock+listed),.65,2.5)*warPremium;
 }
@@ -59,11 +60,11 @@ export function processIndustrialContracts(state:GameState):GameState {
 export function processIndustrialMarketAI(state:GameState):GameState {
  if(state.day%14!==0)return state;
  let next=state;
- for(const buyer of Object.values(state.countries)){
+ for(const buyer of activeCountries(state.countries)){
   if(buyer.id===state.playerCountryId)continue;
   for(const good of ['water','engines','electronics','armor_plate'] as IndustrialGood[]){
    if(goodStock(next,buyer.id,good)>=GOODS[good].reserve)continue;
-   const seller=Object.values(next.countries).filter(s=>canTradeIndustrial(next,s.id,buyer.id,good)&&goodStock(next,s.id,good)>GOODS[good].reserve*2).sort((a,b)=>goodStock(next,b.id,good)-goodStock(next,a.id,good)||a.id.localeCompare(b.id))[0];
+   const seller=activeCountries(next.countries).filter(s=>canTradeIndustrial(next,s.id,buyer.id,good)&&goodStock(next,s.id,good)>GOODS[good].reserve*2).sort((a,b)=>goodStock(next,b.id,good)-goodStock(next,a.id,good)||a.id.localeCompare(b.id))[0];
    if(seller)next=settleIndustrialTrade(next,seller.id,buyer.id,good,Math.min(5,GOODS[good].reserve));
   }
  }

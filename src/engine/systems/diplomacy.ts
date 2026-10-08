@@ -1,3 +1,4 @@
+import {activeCountries} from '../../domain/sovereignty';
 import type { CountryState, DiplomaticRelation, EmbassyLevel, EmbassyMission, GameState, TradeResource, TreatyType } from '../../domain/game';
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
@@ -120,7 +121,7 @@ export function sendResourceGift(state: GameState, fromId: string, toId: string,
 
 export function applyThirdPartyTradeReaction(state: GameState, actorId: string, partnerId: string): GameState {
   let next = state;
-  for (const observer of Object.values(state.countries)) {
+  for (const observer of activeCountries(state.countries)) {
     if (observer.id === actorId || observer.id === partnerId) continue;
     const observerToPartner = relationFor(observer, partnerId);
     const observerToActor = relationFor(observer, actorId);

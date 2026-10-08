@@ -1,3 +1,4 @@
+import {activeCountries} from '../../domain/sovereignty';
 import type { CountryState, GameState } from '../../domain/game';
 import { addTreaty, changeRelations, embassyFor, openEmbassy, relationFor } from './diplomacy';
 
@@ -20,7 +21,7 @@ export function processWorldDiplomacy(state:GameState):GameState{
  if(state.day%14!==0)return state;
  let next=state;
  const notes:string[]=[];
- const countries=Object.values(state.countries).filter((c)=>!c.controllerCountryId);
+ const countries=activeCountries(state.countries).filter((c)=>!c.controllerCountryId);
  for(const source0 of countries){
   if(source0.id===state.playerCountryId)continue;
   if(stableHash(`${source0.id}-${state.day}`)%4!==0)continue;

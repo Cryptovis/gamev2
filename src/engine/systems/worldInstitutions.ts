@@ -1,3 +1,4 @@
+import {activeCountries} from '../../domain/sovereignty';
 import {createLiving} from './livingEconomy';
 import {createGovernance} from './governance';
 import type { CountryState, GameState, ReligionType } from "../../domain/game";
@@ -359,7 +360,7 @@ export function processWorldInstitutions(state: GameState): GameState {
   world.ballots = world.ballots.map((b) => {
     if (b.status !== "open" || b.closesDay > state.day) return b;
     const { yes, no } = ballotCount(b);
-    const passed = yes > no && yes > 0;
+    const passed = yes > no && yes > 0 && !state.countries[b.proposerId]?.annexedBy && !state.countries[b.targetId]?.annexedBy;
     if (passed && b.kind === "membership")
       world.members[b.institution] = Array.from(
         new Set([...world.members[b.institution], b.proposerId]),
@@ -478,7 +479,7 @@ function condemnBallot(state: GameState, b: WorldBallot): GameState {
   let next = state;
   const attackerId = b.proposerId,
     targetId = b.targetId;
-  for (const c of Object.values(next.countries)) {
+  for (const c of activeCountries(next.countries)) {
     if (c.id === attackerId) continue;
     if (
       b.votes[c.id] === "no" ||

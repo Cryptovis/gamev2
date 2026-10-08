@@ -6,7 +6,7 @@ export function populationForecast(c: CountryState, flow: ResourceFlow) {
   const income = (c.economy.gdp * 1e9) / Math.max(1, c.demographics.population);
   const foodDays = flow.next.food / Math.max(0.01, flow.consumption.food);
   const welfare = clamp(
-    38 +
+    38 + (c.demographics.publicServicesBoost ?? 0) +
       Math.min(24, income / 2000) +
       Math.min(18, foodDays / 3) +
       c.politics.stability * 0.15 -

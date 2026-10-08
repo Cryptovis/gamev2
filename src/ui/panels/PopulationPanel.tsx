@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { arrears } from "../../engine/systems/sovereignCredit";
+import { useState, useEffect } from "react";
 import type { CountryState } from "../../domain/game";
 import { useGameStore } from "../../store/gameStore";
 import { LocaleText } from "../../i18n/localeText";
@@ -17,6 +18,7 @@ export function PopulationPanel({ country: c }: { country: CountryState }) {
     forecast = populationForecast(c, simulateResources(c)),
     next = { ...c, economy: { ...c.economy, taxRate: tax } },
     after = populationForecast(next, simulateResources(next));
+  useEffect(() => setTax(c.economy.taxRate), [c.id, c.economy.taxRate]);
   return (
     <section className="population-panel">
       <h3>
@@ -61,7 +63,7 @@ export function PopulationPanel({ country: c }: { country: CountryState }) {
             <input
               aria-label="Proposed tax rate"
               type="range"
-              min="0"
+              min={arrears(s, c.id) > 0 ? 45 : 0}
               max="60"
               value={tax}
               onChange={(e) => setTax(Number(e.target.value))}

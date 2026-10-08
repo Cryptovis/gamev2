@@ -1,3 +1,4 @@
+import type {ExpansionState} from './expansion';
 import type {LivingWorld} from './living';
 import type {GovernanceState} from "./governance";
 import type { ReligionType } from "./game";
@@ -26,6 +27,7 @@ export interface OutreachMission {
   effect: number;
 }
 export interface WorldState {
+ expansion?:ExpansionState;
  living?:LivingWorld;
  governance?:GovernanceState;
  programs?:Array<{id:string;kind:'jobs'|'education'|'health';readyDay:number;status:'active'|'completed'}>;

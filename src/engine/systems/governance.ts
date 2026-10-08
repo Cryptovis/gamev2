@@ -1,3 +1,4 @@
+import {activeCountries} from '../../domain/sovereignty';
 import type { GameState, CountryState } from "../../domain/game";
 import type {
   CampusKind,
@@ -526,7 +527,7 @@ export function processGovernance(s: GameState): GameState {
     foreignLeaders = { ...g.foreignLeaders };
   for (const [id, a] of Object.entries(academies)) {
     let c = next.countries[id];
-    if (!c) continue;
+    if (!c || c.annexedBy) continue;
     const buildings = { ...a.buildings },
       projects = a.projects.filter((p) => {
         if (p.readyDay > next.day) return true;
@@ -581,7 +582,7 @@ export function processGovernance(s: GameState): GameState {
     };
     next = { ...next, countries: { ...next.countries, [id]: c } };
   }
-  for (const c of Object.values(next.countries)) {
+  for (const c of activeCountries(next.countries)) {
     let o = occupationFor(
       { ...next, world: { ...next.world, governance: { ...g, occupations } } },
       c.id,

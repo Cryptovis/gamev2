@@ -1,3 +1,4 @@
+import {activeCountries} from '../../domain/sovereignty';
 import type { CountryState, GameState, TradeResource } from "../../domain/game";
 import type {
   ActivityKind,
@@ -245,7 +246,7 @@ export function processExchange(s: GameState, seed = false): GameState {
     if (x.status === "open" && x.expiresDay < n.day)
       n = cancelListing(n, x.id, true);
   if (n.day % 7 === 0 || seed) {
-    const countries = Object.values(n.countries).filter(
+    const countries = activeCountries(n.countries).filter(
         (c) => c.id !== s.playerCountryId && !c.globalSanctions,
       ),
       offset = Math.floor(n.day / 7) * 28;
@@ -285,7 +286,7 @@ export function processExchange(s: GameState, seed = false): GameState {
     }
   }
   if (!seed && n.day % 7 === 0) {
-    for (const c of Object.values(n.countries)) {
+    for (const c of activeCountries(n.countries)) {
       if (c.id === s.playerCountryId) continue;
       for (const good of [
         "food",

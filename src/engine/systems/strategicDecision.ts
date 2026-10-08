@@ -1,3 +1,4 @@
+import {activeCountries} from '../../domain/sovereignty';
 import {calculateSupplyNetwork} from './supplyNetwork';
 import type { GameState, TradeResource } from '../../domain/game';
 import type { StrategicActionKind, StrategicDecisionSpec } from '../../domain/interaction';
@@ -10,7 +11,7 @@ export type StrategicDecisionContext={
 };
 
 function rivalReactionCount(state:GameState,actorId:string,targetId:string){
-  return Object.values(state.countries).filter(observer=>{
+  return activeCountries(state.countries).filter(observer=>{
     if(observer.id===actorId||observer.id===targetId)return false;
     const toTarget=relationFor(observer,targetId);
     const toActor=relationFor(observer,actorId);

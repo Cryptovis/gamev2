@@ -9,6 +9,8 @@ import {
 } from "../../engine/systems/nationalPrograms";
 import { translateText } from "../../i18n/localeText";
 const faq = [
+ ["How do sovereign loans work?","Open Market and Sovereign Credit & Monetary Fund. Review annual interest, term and total repayment. At maturity, unpaid cash is recovered from collateral; remaining arrears enforce higher taxes until settled."],
+ ["How do I integrate a controlled territory?","Open Territories and Assimilate / Integrate territory. Meet the live conditions, fund preparation and review the 90-day investment. Keep wellbeing at least 80%; losing control or wellbeing fails the process."],
   [
     "Why is population falling?",
     "Food shortages, high taxes, inflation and weak income reduce wellbeing and birth rates. Emigrants move to stable countries when a safe destination is available. Recruitment transfers civilians into military service without deleting total population.",
@@ -105,7 +107,7 @@ export function HelpPanel() {
       onClose={state.closeWorkspace}
     >
       <section className="game-notes">
-        <h3>The Real President · 0.79</h3>
+        <h3>The Real President · 0.80</h3>
         <p>
           <LocaleText value="203 sovereign profiles · economy · population · resource markets · diplomacy · research · military command." />
         </p>

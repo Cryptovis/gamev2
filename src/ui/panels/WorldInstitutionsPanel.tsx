@@ -1,3 +1,4 @@
+import {activeCountries} from '../../domain/sovereignty';
 import {LocaleText,translateLive} from '../../i18n/localeText';
 import { useState } from "react";
 import type { InstitutionId, VoteChoice } from "../../domain/world";
@@ -37,7 +38,7 @@ export function WorldInstitutionsPanel() {
   const [review, setReview] = useState<
     (ReviewContent & { execute: () => void }) | null
   >(null);
-  const foreign = Object.values(state.countries)
+  const foreign = activeCountries(state.countries)
     .filter((c) => c.id !== player.id)
     .sort((a, b) => a.name.localeCompare(b.name));
   const chosen = foreign.find((c) => c.id === target) ?? foreign[0];
