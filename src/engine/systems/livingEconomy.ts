@@ -246,6 +246,13 @@ export function processExchange(s: GameState, seed = false): GameState {
   for (const x of living(n).listings)
     if (x.status === "open" && x.expiresDay < n.day)
       n = cancelListing(n, x.id, true);
+  // Listing and buying only move stock between sellers, listings and buyers (and treasury), which leaves
+  // reference prices unchanged, so each good is priced once per call instead of once per listing.
+  const prices = new Map<ExchangeGood, number>();
+  const priceOf = (good: ExchangeGood) => {
+    if (!prices.has(good)) prices.set(good, exchangePrice(n, good));
+    return prices.get(good)!;
+  };
   if (n.day % 7 === 0 || seed) {
     const countries = activeCountries(n.countries).filter(
         (c) => c.id !== s.playerCountryId && !c.globalSanctions,
@@ -274,7 +281,7 @@ export function processExchange(s: GameState, seed = false): GameState {
             good === "gold" ? 0.2 : good === "tanks" ? 10 : 20,
           ),
           Math.max(
-            exchangePrice(n, good) * modifier,
+            priceOf(good) * modifier,
             good === "tanks" ? tankDomesticCost(n, c.id) * 1.35 : 0,
           ),
           c.id,
@@ -310,7 +317,7 @@ export function processExchange(s: GameState, seed = false): GameState {
               x.good === good &&
               x.status === "open" &&
               exchangeAccess(n, x.sellerId, c.id, good) &&
-              x.unitPrice <= exchangePrice(n, good) * 1.15,
+              x.unitPrice <= priceOf(good) * 1.15,
           )
           .sort(
             (a, b) => a.unitPrice - b.unitPrice || a.id.localeCompare(b.id),

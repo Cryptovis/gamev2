@@ -138,7 +138,7 @@ export function processNationalProduction(country:CountryState,production:Nation
     weightedPotential+=potential;
     weightedActual+=output;
 
-    const nextEfficiency=clamp(efficiency+(ratio>=.85?.30:-.65),20,100);
+    const nextEfficiency=assigned>0?clamp(efficiency+(ratio>=.85?.30:-.65),20,100):efficiency;
     lines[type]={...prev,efficiency:nextEfficiency,lastOutput:output};
   }
 

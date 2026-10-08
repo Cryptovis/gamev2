@@ -23,7 +23,9 @@ export function simulateEconomy(country: CountryState, resources: ResourceFlow):
   const productiveGrowth = utilization * productivity * 0.00016;
   const inflationDrag = Math.max(0, economy.inflation - 4) * 0.000004;
   const unemploymentDrag = Math.max(0, economy.unemployment - 6) * 0.000002;
-  const electricityPressure = country.processedResources.electricity < Math.max(8, country.industry.factories * 1.2);
+  // Stored electricity is capped (1500) by energy.ts, so compare it with daily civil demand: pressure means the buffer no longer covers generation shortfalls.
+  const civilElectricityDemand = country.industry.factories * 0.012 * utilization + (country.demographics.population / 1_000_000) * 0.004;
+  const electricityPressure = country.processedResources.electricity < Math.max(8, civilElectricityDemand * 10);
   const shortageDrag = (resources.foodShortage ? 0.00018 : 0) + (resources.oilShortage ? 0.00012 : 0) + (electricityPressure ? 0.00009 : 0);
   const dailyGrowthRate = productiveGrowth - inflationDrag - unemploymentDrag - shortageDrag;
 
