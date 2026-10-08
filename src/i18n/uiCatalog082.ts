@@ -1,4 +1,6 @@
 const rows:Record<string,string>={
+ 'No countries match your search.':'Aramana uygun ülke bulunamadı.',
+ 'Clear search':'Aramayı temizle',
  '$3B if accepted · reply in 3 days':'Kabulde $3B · yanıt 3 gün sonra',
  '$5B if accepted · reply in 3 days':'Kabulde $5B · yanıt 3 gün sonra',
  'An incoming proposal is waiting. Review Received proposals instead of sending another.':'Gelen bir teklif yanıt bekliyor. Yeniden göndermek yerine Gelen teklifler bölümünden incele.',

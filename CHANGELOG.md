@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.82.0-playtest.5 — Nation setup polish
+- Matched nation preview, statistics, opening profile, confirmation cards and inactive steps to the charcoal/gold onboarding palette.
+- Added localized, accent-insensitive country search with English names and country-code aliases, localized sorting, empty-result feedback and clear search.
+- Added accessible search naming and selected-country button states.
+
 ## 0.82.0-playtest.4 — Tutorial, proposal tracking and artwork hotfix
 - Reserved a compact bottom tutorial area; shortened open windows and review dialogs to keep close controls and content clear. Separated acknowledgement and navigation buttons.
 - Added sent/received proposal filters, pending/retry status and inline help. Both inbox and country diplomacy detect pending, incoming, active and cooldown proposals before reopening confirmation.

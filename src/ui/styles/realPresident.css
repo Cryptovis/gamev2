@@ -865,3 +865,24 @@ body:has(.tutorial-docked) .review-dialog > header { position: sticky; top: 0; b
 }
 
 .guided-card.tutorial-docked.tutorial-reading > :is(h2,small) { display: none; }
+
+/* 0.82.0-playtest.5: carry the charcoal/gold setup palette through nation and confirmation. */
+.campaign-wizard .wizard-country-stage .wizard-country-preview,
+.campaign-wizard .wizard-confirm-stage .confirm-leader-card {
+ background: linear-gradient(145deg, #303229, #20231e);
+ border-color: #9c8449;
+ color: #f7e8be;
+}
+.campaign-wizard .wizard-stat-grid span,
+.campaign-wizard .confirm-summary-grid > span { background: #181c17; border-color: #85744788; }
+.campaign-wizard .wizard-stat-grid b { color: #f7e8be; }
+.campaign-wizard .wizard-country-preview > small,
+.campaign-wizard .wizard-stat-grid small,
+.campaign-wizard .confirm-summary-grid small { color: #c9c3ad; }
+.campaign-wizard .difficulty-chip { background: #454735; color: #f7e8be; border: 1px solid #9c844977; }
+.campaign-wizard .opening-profile { background: #1c211a; border-left-color: #d9b763; }
+.campaign-wizard .opening-profile :is(small,p) { color: #d8d0b6; }
+.campaign-wizard .country-choice-list button:not(.active) :is(small,em) { color: #c9c3ad; }
+.campaign-wizard .wizard-stepper span:not(.active) b { background: #2d3025; color: #c9c3ad; }
+.country-search-empty { padding: 18px 10px; color: #d8d0b6; text-align: center; }
+.country-search-empty button { padding: 8px 12px; border: 1px solid; border-radius: 8px; cursor: pointer; }
