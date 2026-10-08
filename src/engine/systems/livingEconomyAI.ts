@@ -49,7 +49,8 @@ export function processLivingEconomyAI(state: GameState): GameState {
     if (Object.values(next.tradeDeals).some((deal) => deal.active && deal.buyerId === buyer.id && deal.resource === need.resource)) continue;
 
     const supplier = countryList
-      .filter((candidate) => candidate.id !== buyer.id && exportCapacity[candidate.id][need.resource] > 0.05)
+      // The player is never auto-signed as a supplier: pacts with the player need its consent (letters/offers).
+      .filter((candidate) => candidate.id !== buyer.id && candidate.id !== next.playerCountryId && exportCapacity[candidate.id][need.resource] > 0.05)
       .map((candidate) => {
         const relation = relationFor(next.countries[buyer.id], candidate.id);
         const score = exportCapacity[candidate.id][need.resource] * 24

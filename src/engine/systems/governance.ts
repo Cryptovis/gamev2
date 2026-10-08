@@ -228,7 +228,8 @@ export function occupationFor(s: GameState, id: string): Occupation | null {
   const c = s.countries[id];
   if (!c?.controllerCountryId) return null;
   const stored = governance(s).occupations[id];
-  return stored?.controllerId === c.controllerCountryId
+  // A record whose election already resolved belongs to an occupation that ended (audit D10).
+  return stored?.controllerId === c.controllerCountryId && !stored.election?.resolved
     ? stored
     : {
         controllerId: c.controllerCountryId,
@@ -582,6 +583,10 @@ export function processGovernance(s: GameState): GameState {
     };
     next = { ...next, countries: { ...next.countries, [id]: c } };
   }
+  // Occupation records end with control (audit D10); only a pending post-election offer outlives it.
+  for (const [id, o] of Object.entries(occupations))
+    if (!next.countries[id]?.controllerCountryId && !(o.election?.resolved && !o.election.offerAccepted))
+      delete occupations[id];
   for (const c of activeCountries(next.countries)) {
     let o = occupationFor(
       { ...next, world: { ...next.world, governance: { ...g, occupations } } },
@@ -662,6 +667,8 @@ export function processGovernance(s: GameState): GameState {
           -35,
         );
         next = note(next, `REBELLION // ${c.name} regained independence.`);
+        delete occupations[c.id];
+        continue;
       }
     }
     occupations[c.id] = o;

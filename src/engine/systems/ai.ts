@@ -2,6 +2,7 @@ import {activeCountries} from '../../domain/sovereignty';
 import type { CountryState, GameState } from '../../domain/game';
 import { nextRandom } from '../rng';
 import { changeRelations, relationFor } from './diplomacy';
+import { processCouncilSanctions } from './council';
 
 const clamp = (value:number,min:number,max:number)=>Math.min(max,Math.max(min,value));
 
@@ -9,12 +10,11 @@ function updateCountry(state: GameState, country: CountryState, seed: number) {
   const r1 = nextRandom(seed);
   const r2 = nextRandom(r1.seed);
   const relation = relationFor(country, state.playerCountryId);
-  const taxDelta = r1.value > .72 ? 1 : r1.value < .28 ? -1 : 0;
   const readinessTarget = relation.status === 'hostile' || relation.status === 'war' ? 78 : 64;
   const readinessDelta = Math.sign(readinessTarget - country.military.readiness) * Math.min(.4, Math.abs(readinessTarget-country.military.readiness));
+  // Tax policy is goal-directed only (strategicGoals.ts); the old weekly random walk fought it (audit D9).
   const nextCountry: CountryState = {
     ...country,
-    economy:{...country.economy,taxRate:clamp(country.economy.taxRate+taxDelta,8,45)},
     military:{...country.military,readiness:clamp(country.military.readiness+readinessDelta,0,100)},
   };
   let next: GameState = { ...state, simulationSeed:r2.seed, countries:{...state.countries,[country.id]:nextCountry} };
@@ -26,7 +26,9 @@ function updateCountry(state: GameState, country: CountryState, seed: number) {
   return next;
 }
 
-export function processCountryAI(state: GameState): GameState {
+export function processCountryAI(input: GameState): GameState {
+  // Council sanctions expiry is checked daily alongside the world's policy cycle (no separate tick hook).
+  const state = processCouncilSanctions(input);
   if (state.day - state.lastAiDay < 7) return state;
   let next = state;
   for (const country of activeCountries(next.countries)) {

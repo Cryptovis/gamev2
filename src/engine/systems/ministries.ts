@@ -2,6 +2,8 @@ import type { CountryState, MinistryKey } from '../../domain/game';
 
 const KEYS: MinistryKey[] = ['economy','defense','science','intelligence','interior','society'];
 const clamp=(v:number,min:number,max:number)=>Math.min(max,Math.max(min,v));
+/** Single productivity cap shared by ministries and national programs (audit C14). */
+export const MAX_PRODUCTIVITY = 100;
 
 export function normalizedMinistryShare(country: CountryState, key: MinistryKey) {
   const total = KEYS.reduce((sum,k)=>sum+country.ministries.allocations[k],0) || 1;
@@ -19,12 +21,17 @@ export function setMinistryAllocation(country: CountryState, key: MinistryKey, v
   return { ...country, ministries: { ...country.ministries, allocations } };
 }
 
+/** Points the interior and society ministries add to the stability target (see politics.ts stabilityTarget). */
+export function ministryStabilitySupport(country: CountryState) {
+  const efficiency = country.ministries.efficiency;
+  return clamp(normalizedMinistryShare(country,'interior') * efficiency.interior * 0.3 + normalizedMinistryShare(country,'society') * efficiency.society * 0.15, 0, 15);
+}
+
 export function processMinistries(country: CountryState): CountryState {
   const economy = normalizedMinistryShare(country,'economy');
   const defense = normalizedMinistryShare(country,'defense');
   const science = normalizedMinistryShare(country,'science');
   const intelligence = normalizedMinistryShare(country,'intelligence');
-  const interior = normalizedMinistryShare(country,'interior');
   const society = normalizedMinistryShare(country,'society');
 
   const efficiency = country.ministries.efficiency;
@@ -32,7 +39,7 @@ export function processMinistries(country: CountryState): CountryState {
     ...country,
     economy: {
       ...country.economy,
-      productivity: clamp(country.economy.productivity + economy * efficiency.economy * 0.0008, 1, 100),
+      productivity: clamp(country.economy.productivity + economy * efficiency.economy * 0.0008, 1, MAX_PRODUCTIVITY),
     },
     industry: {
       ...country.industry,
@@ -47,10 +54,6 @@ export function processMinistries(country: CountryState): CountryState {
       ...country.intelligence,
       networkStrength: clamp(country.intelligence.networkStrength + intelligence * efficiency.intelligence * 0.0008, 0, 100),
       counterIntelligence: clamp(country.intelligence.counterIntelligence + intelligence * efficiency.intelligence * 0.0007, 0, 100),
-    },
-    politics: {
-      ...country.politics,
-      stability: clamp(country.politics.stability + interior * efficiency.interior * 0.00055 + society * efficiency.society * 0.00028, 0, 100),
     },
     society: {
       ...country.society,

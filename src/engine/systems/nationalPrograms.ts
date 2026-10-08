@@ -1,4 +1,5 @@
 import type { GameState } from "../../domain/game";
+import { MAX_PRODUCTIVITY } from "./ministries";
 export const PROGRAMS = {
   jobs: {
     title: "Employment Initiative",
@@ -76,7 +77,7 @@ export function processPrograms(state: GameState): GameState {
         ...c,
         economy: {
           ...c.economy,
-          productivity: Math.min(150, c.economy.productivity + 1),
+          productivity: Math.min(MAX_PRODUCTIVITY, c.economy.productivity + 1),
         },
         technology: {
           ...c.technology,
