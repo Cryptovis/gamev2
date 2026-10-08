@@ -1,3 +1,4 @@
+import {requestDiplomacy} from './systems/livingEconomy';
 import {applyWarCondemnation} from './systems/worldInstitutions';
 import type { GameCommand } from '../domain/commands';
 import type { GameState, TradeResource, WarState } from '../domain/game';
@@ -38,7 +39,7 @@ export function applyGameCommand(state: GameState, command: GameCommand): GameSt
     case 'time/advanceDay': return tickGame(state);
     case 'clock/setSpeed': {
       const preferredSpeed = command.speed === 0 ? state.preferredSpeed : command.speed;
-      if (state.activeEvent || state.activeAdvisor || state.campaignStatus !== 'active') return { ...state, preferredSpeed, speed: 0 };
+      if (state.activeEvent || state.activeAdvisor || state.world.living?.advice.active || state.world.living?.notice || state.campaignStatus !== 'active') return { ...state, preferredSpeed, speed: 0 };
       return { ...state, speed: command.speed, preferredSpeed };
     }
     case 'production/setMilitaryShare': return setMilitaryFactoryShare(state,state.playerCountryId,command.share);
@@ -80,20 +81,7 @@ export function applyGameCommand(state: GameState, command: GameCommand): GameSt
       if (sent <= 0) return note(state,`DIPLOMACY // No ${command.resource.toUpperCase()} package is available for aid.`);
       return note(next,`DIPLOMACY // Humanitarian ${command.resource.toUpperCase()} shipment sent to ${target.name} (${sent.toFixed(1)} units).`);
     }
-    case 'diplomacy/signTradePact': {
-      const player = state.countries[state.playerCountryId];
-      const target = state.countries[command.targetCountryId];
-      if (!player || !target) return state;
-      const relation = relationFor(player, target.id);
-      if (player.id === target.id || relation.treaties.includes('trade')) return state;
-      if (relation.status === 'war' || relation.score < 15) return note(state, `DIPLOMACY // ${target.name} requires relations of at least +15 for a trade pact.`);
-      if (player.economy.treasury < 5) return note(state, 'DIPLOMACY // Trade mission requires $5B.');
-      let next: GameState = { ...state, countries: { ...state.countries, [player.id]: { ...player, economy: { ...player.economy, treasury: player.economy.treasury - 5 } } } };
-      next = addTreaty(next, player.id, target.id, 'trade');
-      next = changeRelations(next, player.id, target.id, 4);
-      next = applyThirdPartyTradeReaction(next, player.id, target.id);
-      return note(next, `DIPLOMACY // Trade pact signed with ${target.name}. Partner relations improved; hostile rivals may react negatively.`);
-    }
+    case 'diplomacy/signTradePact': return requestDiplomacy(state,command.targetCountryId,'trade_pact');
     case 'diplomacy/signNonAggression': {
       const player = state.countries[state.playerCountryId];
       const target = state.countries[command.targetCountryId];

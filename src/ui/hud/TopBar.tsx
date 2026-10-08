@@ -44,7 +44,7 @@ export function TopBar(){
  return <header className="topbar">
   <div className="command-overview-island"><div className="leader-brand">
    <button className="leader-avatar-button" onClick={()=>{useGameStore.getState().closeWorkspace();setOptionsOpen(true)}} title={translateLive("Open commander options")}><AvatarPortrait id={profile.avatarId} size={52}/><span><LocaleText value={"⋯"}/></span></button>
-   <div className="brand-block"><div className="eyebrow"><LocaleText value={"ALPYX · GLOBAL COMMAND"}/></div><div className="brand-line"><strong><LocaleText value={profile.commanderName}/></strong><span className="day-chip"><LocaleText value={tr(lang,'day')}/> <LocaleText value={day}/></span></div><small className="leader-country"><LocaleText value={player.name}/><LocaleText value={" · "}/><LocaleText value={player.politics.regime.toUpperCase()}/></small></div>
+   <div className="brand-block"><div className="eyebrow"><LocaleText value={"THE REAL PRESIDENT"}/></div><div className="brand-line"><strong><LocaleText value={profile.commanderName}/></strong><span className="day-chip"><LocaleText value={tr(lang,'day')}/> <LocaleText value={day}/></span></div><small className="leader-country"><LocaleText value={player.name}/><LocaleText value={" · "}/><LocaleText value={player.politics.regime.toUpperCase()}/></small></div>
   </div>
 
   <div className="metrics governance-metrics" aria-label={translateLive("National command indicators")}>

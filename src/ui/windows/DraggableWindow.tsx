@@ -1,3 +1,4 @@
+import {GuideBriefing} from '../panels/GuideBriefing';
 import {LocaleText,translateLive} from '../../i18n/localeText';
 import { useRef, useState, type ReactNode } from 'react';
 
@@ -21,6 +22,6 @@ export function DraggableWindow({
    <header className="floating-command-header" onPointerDown={onPointerDown}>
     <span><small><LocaleText value={kicker}/></small><strong><LocaleText value={title}/></strong></span><div><em><LocaleText value={"DRAG"}/></em><button data-guide="close-workspace" onClick={onClose} aria-label={translateLive(`Close ${title}`)}><LocaleText value={"×"}/></button></div>
    </header>
-   <div className="floating-command-body"><LocaleText value={children}/></div>
+   <div className="floating-command-body"><GuideBriefing/><LocaleText value={children}/></div>
   </section>;
 }

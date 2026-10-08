@@ -1,3 +1,4 @@
+import {createLiving} from '../engine/systems/livingEconomy';
 import {createGovernance,academyFor,governance} from '../engine/systems/governance';
 import type { GameState } from '../domain/game';
 
@@ -12,7 +13,8 @@ export function migrateSave(state:GameState|null|undefined):GameState|null {
  }
  if(state.schemaVersion===13)state={...state,schemaVersion:14,world:createWorld(state.countries,state.playerCountryId)};
  if(!canLoadSave(state))return null;
- const g=governance(state);return {...state,world:{...state.world,governance:{...g,academies:{...createGovernance(state.countries).academies,...g.academies}}}};
+ const defaults=createIndustrialMap(state.countries);const industrialEconomy=Object.fromEntries(Object.entries(state.industrialEconomy).map(([id,n])=>[id,{...n,stock:{...defaults[id].stock,...n.stock},facilities:{...defaults[id].facilities,...n.facilities},enabled:{...defaults[id].enabled,...n.enabled},potential:{...defaults[id].potential,...n.potential},deposits:{...defaults[id].deposits,...n.deposits}}]));
+ const g=governance(state);return {...state,industrialEconomy,world:{...state.world,living:state.world.living??createLiving(state.countries),governance:{...g,academies:{...createGovernance(state.countries).academies,...g.academies}}}};
 }
 
 export function canLoadSave(state: GameState | null | undefined): state is GameState {

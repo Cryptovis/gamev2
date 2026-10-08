@@ -1,3 +1,4 @@
+import {requestDiplomacy} from './livingEconomy';
 import type { GameState, TradeResource } from '../../domain/game';
 import { addTreaty, relationFor } from './diplomacy';
 import { getExportCapacity, makeLongTermImportContract } from './trade';
@@ -26,7 +27,7 @@ export function maybeCreateResourceAdvisor(state:GameState):GameState{
 
  const need=resources
   .map(resource=>({resource,days:reserveDays(state,resource)}))
-  .filter(x=>x.days<threshold(x.resource))
+  .filter(x=>x.days<threshold(x.resource)&&!state.world.living?.advice.suppressed.includes(x.resource==='oil'?'fuel':x.resource==='food'?'food':'inflation'))
   .sort((a,b)=>a.days-b.days)[0];
  if(!need)return {...state,advisorCooldownUntil:state.day+5};
 
@@ -70,9 +71,7 @@ export function acceptAdvisorTradePact(state:GameState):GameState{
  const relation=relationFor(player,supplier.id);
  if(relation.status==='war'||relation.sanctions||player.globalSanctions||supplier.globalSanctions||relation.score<15||player.economy.treasury<5)return {...dismissAdvisor(state),sitrep:[`ADVISOR // Trade pact with ${supplier.name} could not be completed.`,...state.sitrep].slice(0,12)};
  if(relation.treaties.includes('trade'))return {...state,activeAdvisor:{...prompt,stage:'contract'}};
- let next:GameState={...state,countries:{...state.countries,[player.id]:{...player,economy:{...player.economy,treasury:player.economy.treasury-5}}}};
- next=addTreaty(next,player.id,supplier.id,'trade');
- return {...next,activeAdvisor:{...prompt,stage:'contract',message:`Trade pact secured with ${supplier.name}. Choose the duration of the ${prompt.resource.toUpperCase()} supply contract.`},speed:0};
+ const next=requestDiplomacy(state,supplier.id,'trade_pact');return {...next,activeAdvisor:null,advisorCooldownUntil:state.day+7,speed:0};
 }
 
 export function acceptAdvisorContract(state:GameState,years:1|3|5|10):GameState{

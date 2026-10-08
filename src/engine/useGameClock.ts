@@ -17,6 +17,7 @@ export function useGameClock() {
     (s) =>
       !!s.activeEvent ||
       !!s.activeAdvisor ||
+      !!s.world.living?.advice.active || !!s.world.living?.notice ||
       !!s.actionReceipt ||
       s.campaignStatus !== "active",
   );

@@ -1,3 +1,4 @@
+import {calculateSupplyNetwork} from './supplyNetwork';
 import type { GameState, TradeResource } from '../../domain/game';
 import type { StrategicActionKind, StrategicDecisionSpec } from '../../domain/interaction';
 import { blocForCountry } from './blocs';
@@ -52,7 +53,7 @@ export function strategicDecisionSpec(
       {label:'Relationship',value:'+4 raw',tone:'positive'},
       {label:'Rival exposure',value:rivals?String(rivals)+' states':'Low',tone:rivals?'warning':'neutral'},
     ],warnings:[
-      'Cooperation improves bilateral relations and unlocks direct trade.',
+      'This sends a proposal. The partner replies in three days and can reject it. Costs are charged only on acceptance.',
       rivals?'Countries hostile to '+target.name+' may reduce their opinion of you.':'No major hostile-rival reaction is currently projected.',
     ]};
   }
@@ -115,7 +116,7 @@ export function strategicDecisionSpec(
       {label:'Reputation',value:rejected?'-18 (includes condemnation)':'-8',tone:'danger'},
       {label:'International mandate',value:rejected?'REJECTED':pending?'VOTE STILL OPEN':ballot?.status==='passed'?'SUPPORTED':'Not requested',tone:rejected?'danger':'warning'},
       {label:'Trade',value:'Cancelled',tone:'danger'},
-    ],warnings:[...(rejected?['The rejected resolution adds -10 reputation and -20 relations with opposing countries and target allies.']:pending?['The vote is still open. If it rejects your attack, condemnation will apply at closing.']:[]),'This action immediately creates an active war and cannot be undone with a simple cancel action.','Supply, fuel, infrastructure and equipment reserves will determine sustained combat effectiveness.']};
+    ],warnings:[...(rejected?['The rejected resolution adds -10 reputation and -20 relations with opposing countries and target allies.']:pending?['The vote is still open. If it rejects your attack, condemnation will apply at closing.']:[]),'This action immediately creates an active war and cannot be undone with a simple cancel action.',...(calculateSupplyNetwork(actor).fuelDays<14?['Fuel reserves cover fewer than fourteen operational days. Secure refined fuel before starting this operation.']:[]),'Supply, fuel, infrastructure and equipment reserves will determine sustained combat effectiveness.']};
   }
   return null;
 }

@@ -1,3 +1,4 @@
+import {GOLD_PRODUCERS,SILVER_PRODUCERS} from '../../data/preciousMetals';
 import {occupationFor} from './governance';
 import type {CountryState,GameState} from '../../domain/game';
 import type {FacilityKind,IndustrialGood,NationalIndustrialEconomy} from '../../domain/industrial';
@@ -9,14 +10,15 @@ const WATER_RICH=new Set(['BRA','CAN','RUS','NOR','SWE','FIN','COL','PER','IDN',
 const WATER_DRY=new Set(['SAU','QAT','ARE','BHR','KWT','OMN','DZA','EGY','LBY']);
 export function createIndustrialEconomy(c:CountryState):NationalIndustrialEconomy {
  const size=clamp(c.industry.mines/30,.15,8),manufacturing=clamp(Math.floor(c.industry.factories/60),0,8);
- const potential={water:WATER_RICH.has(c.id)?2.4:WATER_DRY.has(c.id)?.25:1,coal:size,copper:size*.7,silicon:Math.max(.4,size*.6),aluminum:size*.5,rare_earths:size*.2,rubber:c.region==='Asia'||c.region==='South America'?1.5:.6};
+ const potential={gold:GOLD_PRODUCERS[c.id]??.05,silver:SILVER_PRODUCERS[c.id]??.05,water:WATER_RICH.has(c.id)?2.4:WATER_DRY.has(c.id)?.25:1,coal:size,copper:size*.7,silicon:Math.max(.4,size*.6),aluminum:size*.5,rare_earths:size*.2,rubber:c.region==='Asia'||c.region==='South America'?1.5:.6};
  const facilities=Object.fromEntries(Object.keys(FACILITIES).map(k=>[k,0])) as NationalIndustrialEconomy['facilities'];
+ facilities.gold_mine=GOLD_PRODUCERS[c.id]?1:0;facilities.silver_mine=SILVER_PRODUCERS[c.id]?1:0;
  facilities.waterworks=Math.max(1,Math.ceil(c.demographics.population/30e6));
  facilities.coal_mine=Math.ceil(size);facilities.copper_mine=Math.ceil(size*.7);facilities.silicon_mine=Math.ceil(size*.5);facilities.bauxite_mine=Math.floor(size*.5);facilities.rare_earth_mine=Math.floor(size*.3);facilities.rubber_plant=Math.ceil(size*.4);
  facilities.armor_mill=manufacturing;facilities.engine_works=manufacturing;facilities.electronics_works=manufacturing;
  const stock=Object.fromEntries(Object.keys(GOODS).map(k=>[k,0])) as Record<IndustrialGood,number>;
- Object.assign(stock,{water:100*potential.water,coal:20*size,copper:15*size,silicon:15*size,aluminum:12*size,rare_earths:5*size,rubber:12*size,armor_plate:10*manufacturing,engines:6*manufacturing,electronics:10*manufacturing});
- return {stock,facilities,enabled:Object.fromEntries(Object.keys(FACILITIES).map(k=>[k,true])) as NationalIndustrialEconomy['enabled'],potential,deposits:Object.fromEntries(MINERALS.map(k=>[k,Math.max(100,potential[k]*2000)])) as NationalIndustrialEconomy['deposits'],lastOutput:{},lastCosts:0,lastTradeBalance:0,bottlenecks:{},projects:[]};
+ Object.assign(stock,{gold:Math.max(.03,potential.gold*.1),silver:Math.max(.3,potential.silver*2),water:100*potential.water,coal:20*size,copper:15*size,silicon:15*size,aluminum:12*size,rare_earths:5*size,rubber:12*size,armor_plate:10*manufacturing,engines:6*manufacturing,electronics:10*manufacturing});
+ return {stock,facilities,enabled:Object.fromEntries(Object.keys(FACILITIES).map(k=>[k,true])) as NationalIndustrialEconomy['enabled'],potential,deposits:Object.fromEntries(MINERALS.map(k=>[k,k==='gold'?potential[k]*80:k==='silver'?potential[k]*500:Math.max(100,potential[k]*2000)])) as NationalIndustrialEconomy['deposits'],lastOutput:{},lastCosts:0,lastTradeBalance:0,bottlenecks:{},projects:[]};
 }
 export function createIndustrialMap(countries:Record<string,CountryState>){return Object.fromEntries(Object.values(countries).map(c=>[c.id,createIndustrialEconomy(c)]));}
 export function goodStock(state:GameState,id:string,good:IndustrialGood):number {

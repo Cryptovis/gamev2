@@ -17,7 +17,7 @@ export function simulateEconomy(country: CountryState, resources: ResourceFlow):
   const productivity = economy.productivity / 100;
 
   const taxRevenue = (economy.gdp * (economy.taxRate / 100)) / 365;
-  const publicSpending = economy.gdp * 0.00035;
+  const publicSpending = economy.gdp * 0.00035 + country.military.personnel*.00000006;
   const dailyBalance = taxRevenue - publicSpending;
 
   const productiveGrowth = utilization * productivity * 0.00016;

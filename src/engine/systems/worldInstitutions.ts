@@ -1,3 +1,4 @@
+import {createLiving} from './livingEconomy';
 import {createGovernance} from './governance';
 import type { CountryState, GameState, ReligionType } from "../../domain/game";
 import type {
@@ -46,7 +47,7 @@ export function createWorld(
   playerId: string,
 ): WorldState {
   const ids = Object.keys(countries).filter((id) => id !== playerId);
-  return {governance:createGovernance(countries),
+  return {governance:createGovernance(countries),living:createLiving(countries),
     members: {
       un: ids,
       who: ids.filter((id) => countries[id].politics.stability >= 40),

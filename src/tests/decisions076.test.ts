@@ -292,15 +292,15 @@ describe("advisor contract integrity", () => {
     };
     return s;
   };
-  it("transitions from pact to term selection without charging again", () => {
+  it("sends a pending pact proposal without charging or opening access", () => {
     const s = supplier(),
       p = acceptAdvisorTradePact(s);
-    expect(p.countries.TUR.economy.treasury).toBe(195);
-    expect(p.activeAdvisor?.stage).toBe("contract");
+    expect(p.countries.TUR.economy.treasury).toBe(200);
+    expect(p.activeAdvisor).toBeNull();expect(p.world.living?.letters.some(x=>x.status==='pending')).toBe(true);
     expect(acceptAdvisorTradePact(p)).toBe(p);
   });
   it("opens a locked monthly contract with no immediate payment or stock transfer and blocks duplicates", () => {
-    const s = acceptAdvisorTradePact(supplier()),
+    const s = {...addTreaty(supplier(),'TUR','SAU','trade'),activeAdvisor:{...supplier().activeAdvisor!,stage:'contract' as const}},
       n = acceptAdvisorContract(s, 1),
       c = Object.values(n.tradeDeals)[0];
     expect(c.deliveryIntervalDays).toBe(30);
@@ -313,7 +313,7 @@ describe("advisor contract integrity", () => {
   it("rejects absent trade access and pauses settlement when access is lost", () => {
     const s = supplier();
     expect(makeLongTermImportContract(s, "TUR", "SAU", "oil", 1)).toBeNull();
-    let n = acceptAdvisorContract(acceptAdvisorTradePact(s), 1);
+    let n = acceptAdvisorContract({...addTreaty(s,'TUR','SAU','trade'),activeAdvisor:{...s.activeAdvisor!,stage:'contract' as const}}, 1);
     const c = Object.values(n.tradeDeals)[0];
     n.countries.TUR.diplomacy.relations.SAU.treaties = [];
     const result = processTradeDeals({ ...n, day: c.nextDeliveryDay! });

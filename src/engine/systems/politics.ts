@@ -12,7 +12,7 @@ export function simulatePolitics(
   let approvalDelta = 0;
   let stabilityDelta = 0;
 
-  if (country.economy.taxRate > 30) approvalDelta -= 0.04;
+  approvalDelta += Math.max(-.1,Math.min(.04,(22-country.economy.taxRate)*.0025));
   if (economy.next.inflation > 10) approvalDelta -= 0.035;
   if (economy.next.unemployment > 10) approvalDelta -= 0.025;
   if (economy.dailyGrowthRate > 0.00005) approvalDelta += 0.012;

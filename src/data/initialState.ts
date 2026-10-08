@@ -8,7 +8,7 @@ import { createInitialInfrastructureMap } from '../engine/systems/infrastructure
 
 export const makeInitialState = (): GameState => {
   const countries=structuredClone(initialCountries);
-  return ({
+  const state:GameState=({
   schemaVersion: 14,
   simulationSeed: 0xA17E5EED,
   day: 1,
@@ -20,7 +20,7 @@ export const makeInitialState = (): GameState => {
   selectedCountryId: 'TUR',
   mapMode: 'political',
   mapPresentation: 'political',
-  mapNotice: 'Decisions & World Institutions 0.76 online — review decisions and explore international affairs.',
+  mapNotice: 'The Real President 0.79 — economy, people and diplomacy.',
   countries,
   tradeDeals: {},
   wars: {},
@@ -44,8 +44,9 @@ export const makeInitialState = (): GameState => {
   lastAiDay: 1,
   lastStrategicReviewDay: 1,
   sitrep: [
-    'AlpyX Decisions & World Institutions 0.76 online.',
+    'The Real President 0.79 online.',
     'Strategic AI, covert operations and influence networks loaded alongside Strategic Command systems.',
   ],
   });
+ return state;
 };
