@@ -14,11 +14,11 @@
   bottom: 18px !important;
 }
 .setup-cover {
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 34%;
+  position: relative;
+  grid-column: 1;
+  grid-row: 1 / 4;
+  min-width: 0;
+  width: 100%;
   overflow: hidden;
   background: #284959;
 }
@@ -36,9 +36,62 @@
 }
 .campaign-wizard {
   position: relative;
-  padding-left: 34%;
-  width: min(1250px, 96vw) !important;
+  padding-left: 0;
+  grid-template-columns: minmax(0, 34fr) minmax(0, 66fr);
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  width: min(1190px, 100%) !important;
   overflow: hidden;
+}
+.campaign-wizard > :is(.wizard-header, .wizard-body, .wizard-footer) {
+  grid-column: 2;
+  min-width: 0;
+}
+.wizard-body {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+.wizard-avatar-layout {
+  grid-template-columns: minmax(0, 1fr) 180px;
+  gap: 16px;
+  min-width: 0;
+}
+.wizard-avatar-grid {
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  min-width: 0;
+  max-height: min(380px, 45vh);
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: #b79a58 #202220;
+  padding: 3px;
+}
+.wizard-avatar-grid button {
+  min-width: 0;
+}
+.wizard-avatar-grid button span {
+  overflow-wrap: anywhere;
+}
+.wizard-avatar-preview {
+  align-self: start;
+  background: #26281f;
+  border-color: #857247;
+}
+.wizard-footer {
+  grid-template-columns: minmax(0, 140px) minmax(0, 1fr) minmax(0, 170px);
+}
+@media (max-width: 640px) {
+  .wizard-footer {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 10px;
+  }
+  .wizard-footer > span {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+  .wizard-language > div {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 .wizard-header {
   gap: 12px;
@@ -493,24 +546,38 @@
 @media (max-width: 900px) {
   .campaign-wizard {
     padding-left: 0 !important;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: 140px auto minmax(0, 1fr) auto;
   }
   .setup-cover {
     position: relative;
+    grid-row: 1;
     width: 100%;
-    height: 180px;
+    height: 140px;
+  }
+  .campaign-wizard > :is(.wizard-header, .wizard-body, .wizard-footer) {
+    grid-column: 1;
   }
   .setup-cover img {
     object-position: center 22%;
   }
   .campaign-wizard {
     max-height: 96vh !important;
-    overflow: auto !important;
+    min-height: 0 !important;
+    height: 94vh;
+    overflow: hidden !important;
   }
   .wizard-body {
     padding: 18px;
   }
   .wizard-header {
     flex-wrap: wrap;
+  }
+  .wizard-avatar-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .wizard-avatar-preview {
+    display: none;
   }
   .exchange-filters {
     grid-template-columns: repeat(3, 1fr);
