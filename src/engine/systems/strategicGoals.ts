@@ -10,12 +10,13 @@ export function chooseStrategicGoal(c:CountryState):StrategicGoal{
  return 'expand_influence';
 }
 export function strategicGoalLabel(g:StrategicGoal){return ({stabilize:'Stabilize the State',grow_economy:'Accelerate Growth',rearm:'Rearm & Modernize',secure_resources:'Secure Strategic Resources',expand_influence:'Expand Regional Influence'} satisfies Record<StrategicGoal,string>)[g];}
+// Tax targets: stabilize stays under the approval-neutral 22% (politics.ts), so it eases instead of fighting approval.
 function rebalance(c:CountryState,g:StrategicGoal):CountryState{
  const a={...c.ministries.allocations}; const targets:Record<StrategicGoal,Partial<typeof a>>={stabilize:{interior:24,society:20,economy:20},grow_economy:{economy:30,science:22,defense:13},rearm:{defense:32,science:22,economy:18},secure_resources:{economy:28,defense:21,science:18},expand_influence:{intelligence:22,society:19,economy:20}};
  for(const [key,target] of Object.entries(targets[g])){const k=key as keyof typeof a;a[k]=clamp(a[k]+Math.sign(Number(target)-a[k])*Math.min(2,Math.abs(Number(target)-a[k])),5,45);}
  const total=Object.values(a).reduce((x,y)=>x+y,0); if(total>0)for(const k of Object.keys(a) as Array<keyof typeof a>)a[k]=a[k]/total*100;
  const rt=g==='rearm'?78:g==='secure_resources'?70:64; const readiness=clamp(c.military.readiness+Math.sign(rt-c.military.readiness)*Math.min(.65,Math.abs(rt-c.military.readiness)),0,100);
- const tt=g==='grow_economy'?19:g==='stabilize'?24:c.economy.taxRate; const taxRate=clamp(c.economy.taxRate+Math.sign(tt-c.economy.taxRate)*Math.min(1,Math.abs(tt-c.economy.taxRate)),8,45);
+ const tt=g==='grow_economy'?19:g==='stabilize'?20:c.economy.taxRate; const taxRate=clamp(c.economy.taxRate+Math.sign(tt-c.economy.taxRate)*Math.min(1,Math.abs(tt-c.economy.taxRate)),8,45);
  return {...c,ministries:{...c.ministries,allocations:a},military:{...c.military,readiness},economy:{...c.economy,taxRate}};
 }
 export function processStrategicGoals(state:GameState):GameState{

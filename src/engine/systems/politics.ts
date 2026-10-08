@@ -1,8 +1,21 @@
 import type { CountryState, PoliticsState } from '../../domain/game';
 import type { EconomyFlow } from './economy';
 import type { ResourceFlow } from './resources';
+import { ministryStabilitySupport } from './ministries';
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
+
+/** Share of the gap between stability and its target closed per day (half-life ≈ 170 days). */
+export const STABILITY_DRIFT = 0.004;
+
+/**
+ * Long-run stability a government settles toward: mostly public approval, partly social cohesion,
+ * plus the interior/society ministry contribution. Ministries raise the target; they no longer add
+ * an unbounded daily climb, so stability falls when approval collapses (audit D1).
+ */
+export function stabilityTarget(country: CountryState) {
+  return clamp(country.politics.approval * 0.55 + country.society.cohesion * 0.45 + ministryStabilitySupport(country), 0, 100);
+}
 
 export function simulatePolitics(
   country: CountryState,
@@ -22,7 +35,7 @@ export function simulatePolitics(
     stabilityDelta -= 0.2;
   }
   if (resources.oilShortage) approvalDelta -= 0.08;
-  if (country.politics.approval < 30) stabilityDelta -= 0.03;
+  stabilityDelta += (stabilityTarget(country) - country.politics.stability) * STABILITY_DRIFT;
 
   return {
     ...country.politics,

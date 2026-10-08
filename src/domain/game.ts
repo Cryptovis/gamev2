@@ -81,6 +81,10 @@ export interface CountryState {
   subregion: string;
   controllerCountryId: string | null;
   globalSanctions: boolean;
+  /** Day the Global Council sanctions lapse (absent on legacy saves; set on first council review). */
+  globalSanctionsUntil?: number;
+  /** Player-only memory of the last day each event kind fired, for per-kind cooldowns. */
+  eventLastFired?: Partial<Record<EventKind, number>>;
   demographics: DemographicsState;
   economy: EconomyState;
   resources: ResourceStockpile;

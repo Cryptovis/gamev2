@@ -1,6 +1,7 @@
 import {activeCountries} from '../../domain/sovereignty';
 import {requestDiplomacy} from './livingEconomy';
 import type { GameState, TradeResource } from '../../domain/game';
+import type { AdviceKind } from '../../domain/living';
 import { addTreaty, relationFor } from './diplomacy';
 import { getExportCapacity, makeLongTermImportContract } from './trade';
 import { simulateResources } from './resources';
@@ -12,6 +13,16 @@ function reserveDays(state:GameState,resource:TradeResource){
  const flow=simulateResources(player);
  const daily=Math.max(.0001,flow.consumption[resource]);
  return player.resources[resource]/daily;
+}
+
+/** Suppression key for each resource advice; iron/uranium have no player toggle yet, so they are never silenced by another kind. */
+function adviceKey(resource:TradeResource):AdviceKind|null{
+ return resource==='oil'?'fuel':resource==='food'?'food':null;
+}
+
+function isSuppressed(state:GameState,resource:TradeResource){
+ const key=adviceKey(resource);
+ return key!==null&&!!state.world.living?.advice.suppressed.includes(key);
 }
 
 function threshold(resource:TradeResource){
@@ -28,7 +39,7 @@ export function maybeCreateResourceAdvisor(state:GameState):GameState{
 
  const need=resources
   .map(resource=>({resource,days:reserveDays(state,resource)}))
-  .filter(x=>x.days<threshold(x.resource)&&!state.world.living?.advice.suppressed.includes(x.resource==='oil'?'fuel':x.resource==='food'?'food':'inflation'))
+  .filter(x=>x.days<threshold(x.resource)&&!isSuppressed(state,x.resource))
   .sort((a,b)=>a.days-b.days)[0];
  if(!need)return {...state,advisorCooldownUntil:state.day+5};
 
