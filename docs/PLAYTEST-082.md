@@ -23,3 +23,7 @@ Base: `dev/powered-world-081` at `fc9bcb2`. Release branch: `dev/reliable-comman
 ## Remaining debt and V3 decision
 
 Continue on this repository. V3 is not justified by these changes: the existing deterministic engine, migration path and map already support them. Reconsider a major architecture migration only after a measured simulation/frame-time budget fails under sustained play, or authoritative multiplayer requirements change the state model. Next work: deep validation of all legacy subsystem records, broader transactional coverage and durable autosave scheduling, structured event capture inside ticks, complete localization, consistent economic units/balance and long-campaign profiling. HD War remains separately scoped.
+
+## Onboarding patch — 0.82.0-playtest.2
+
+Setup now shows the exact package version. The cover/frame keeps fixed dimensions across identity, portrait, nation, confirmation and language changes. Desktop nation selection confines scrolling to the list; its scrollbar matches the portrait list. The nation summary is compact, and mobile puts it above the list. Selected secondary text has dark contrast against the gold background. Browser layout checks cover 1440×900, 1280×720 and 390×844.

@@ -1,3 +1,4 @@
+import {version} from '../../../package.json';
 import {LocaleText,translateLive} from '../../i18n/localeText';
 import { useEffect, useMemo, useState, type CSSProperties } from 'react';
 import type { GameLanguage } from '../../domain/game';
@@ -78,7 +79,7 @@ export function CampaignSetup(){
 
  return <div className="campaign-setup-backdrop campaign-wizard-backdrop" style={{'--setup-primary':theme.primary,'--setup-accent':theme.accent} as CSSProperties}>
   <section className="campaign-wizard"><aside className="setup-cover"><img src="/assets/command/real-president-cover-079.svg" alt="The Real President"/></aside>
-   <header className="wizard-header"><div><small><LocaleText value={"THE REAL PRESIDENT"}/></small><h1><LocaleText value={stepTitle}/></h1><p><LocaleText value={tr(language,'setup_sub')}/></p></div><div className="wizard-stepper">{[1,2,3,4].map(n=><span key={n} className={typeof step==='number'&&step>=n?'active':''}><b><LocaleText value={n}/></b><small><LocaleText value={n===1?'IDENTITY':n===2?'PORTRAIT':n===3?'NATION':'CONFIRM'}/></small></span>)}</div></header>
+   <header className="wizard-header"><div><small><LocaleText value={"THE REAL PRESIDENT"}/><span className="wizard-release">{version}</span></small><h1><LocaleText value={stepTitle}/></h1><p><LocaleText value={tr(language,'setup_sub')}/></p></div><div className="wizard-stepper">{[1,2,3,4].map(n=><span key={n} className={typeof step==='number'&&step>=n?'active':''}><b><LocaleText value={n}/></b><small><LocaleText value={n===1?'IDENTITY':n===2?'PORTRAIT':n===3?'NATION':'CONFIRM'}/></small></span>)}</div></header>
 
    <div className="wizard-body">
     {step===1&&<div className="wizard-single-column">

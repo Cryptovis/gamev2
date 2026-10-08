@@ -49,3 +49,26 @@ test('all ten tutorial lessons including funded construction',async({page})=>{
  }
  await expect(page.locator('.guided-tutorial')).toHaveCount(0);
 });
+
+for(const viewport of [{width:1440,height:900},{width:1280,height:720},{width:390,height:844}]){
+ test(`${viewport.width}px stable setup and readable nation selection`,async({page})=>{
+  await page.setViewportSize(viewport);await page.goto('/');
+  await expect(page.locator('.wizard-release')).toHaveText('0.82.0-playtest.2');
+  const frame=await page.locator('.campaign-wizard').boundingBox();
+  await page.locator('.wizard-name-field input').fill('Layout test');
+  for(const language of ['Türkçe','English']){
+   await page.getByRole('button',{name:language,exact:true}).click();
+   const current=await page.locator('.campaign-wizard').boundingBox();expect(current!.height).toBeCloseTo(frame!.height,0);expect(current!.width).toBeCloseTo(frame!.width,0);
+  }
+  await page.locator('.wizard-next').click();await page.locator('.wizard-next').click();
+  const current=await page.locator('.campaign-wizard').boundingBox();expect(current!.height).toBeCloseTo(frame!.height,0);
+  await page.locator('.country-search').fill('Angola');await page.locator('.country-choice-list button').click();
+  const colors=await page.locator('.country-choice-list button.active').evaluate(el=>({small:getComputedStyle(el.querySelector('small')!).color,title:getComputedStyle(el.querySelector('strong')!).color}));expect(colors.small).toBe(colors.title);
+  const summary=await page.locator('.wizard-country-preview').boundingBox(),footer=await page.locator('.wizard-footer').boundingBox();expect(summary!.y+summary!.height).toBeLessThanOrEqual(footer!.y+1);
+  if(viewport.width>900){expect(await page.locator('.wizard-body').evaluate(el=>el.scrollHeight<=el.clientHeight+1)).toBe(true);}
+  await page.locator('.country-search').fill('');
+  expect(await page.locator('.wizard-country-scroll').evaluate(el=>el.scrollHeight>el.clientHeight)).toBe(true);
+  await page.screenshot({path:`test-results/setup-patch-${viewport.width}.png`,fullPage:true});
+  await page.locator('.wizard-next').click();const last=await page.locator('.campaign-wizard').boundingBox();expect(last!.height).toBeCloseTo(frame!.height,0);
+ });
+}

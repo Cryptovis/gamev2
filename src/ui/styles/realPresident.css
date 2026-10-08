@@ -729,3 +729,72 @@ body:has(.guided-tutorial) .review-backdrop { background: rgb(7 23 33 / 16%); ba
  .resource-filter button {font-size:12px;padding:7px}
  .resource-command-summary {grid-template-columns:repeat(2,minmax(0,1fr))}
 }
+
+/* 0.82.0-playtest.2: stable onboarding frame and bounded nation selection. */
+.campaign-wizard {
+  height: min(820px, 94dvh) !important;
+  min-height: 0 !important;
+  max-height: 94dvh !important;
+  grid-template-rows: 130px minmax(0, 1fr) 82px;
+}
+.campaign-wizard .wizard-header { min-height: 0; overflow: hidden; }
+.wizard-release { display: inline-block; margin-left: 10px; font: 10px monospace; letter-spacing: 0; color: #f4d48a; }
+.campaign-wizard .wizard-body { min-height: 0; }
+.wizard-country-stage { height: 100%; min-height: 0; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); }
+.wizard-country-list { display: grid; grid-template-rows: auto auto minmax(0, 1fr); min-height: 0; min-width: 0; }
+.wizard-country-scroll {
+  height: auto !important; min-height: 0; overflow-y: auto; overflow-x: hidden;
+  scrollbar-gutter: stable; scrollbar-width: thin; scrollbar-color: #b79a58 #202220;
+  padding: 3px 6px 3px 3px;
+}
+.wizard-country-scroll::-webkit-scrollbar { width: 6px; }
+.wizard-country-scroll::-webkit-scrollbar-track { background: #202220; }
+.wizard-country-scroll::-webkit-scrollbar-thumb { background: #b79a58; border-radius: 6px; }
+.campaign-wizard .country-choice-list button.active :is(strong, small, em) { color: #24291b !important; }
+.wizard-country-preview { min-width: 0; min-height: 0; overflow: visible; padding: 16px; }
+.wizard-country-preview .nation-flag-hero { font-size: 48px; line-height: 1.2; }
+.wizard-country-preview h2 { font-size: clamp(22px, 2.3vw, 32px); overflow-wrap: anywhere; }
+.wizard-country-preview .wizard-stat-grid { margin-top: 10px; }
+.wizard-country-preview .wizard-stat-grid span { padding: 8px; }
+.wizard-country-preview .opening-profile { padding: 9px; margin-top: 10px; }
+.wizard-country-preview .opening-profile p { font-size: 11px; overflow-wrap: anywhere; }
+.wizard-footer .load-previous { font-size: 11px; }
+@media (min-width: 901px) {
+  .wizard-body:has(.wizard-country-stage) { overflow: hidden; }
+}
+@media (max-width: 900px) {
+  .campaign-wizard { grid-template-rows: 80px 130px minmax(0, 1fr) 90px; }
+  .setup-cover { height: 80px; }
+  .wizard-country-stage { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(210px, 1fr); gap: 12px; }
+  .wizard-country-preview { grid-row: 1; padding: 10px; display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 4px 8px; text-align: left; justify-items: stretch; }
+  .wizard-country-preview .nation-flag-hero { grid-row: 1 / 4; font-size: 30px; }
+  .wizard-country-preview h2 { font-size: 20px; margin: 0; }
+  .wizard-country-preview .difficulty-chip { justify-self: start; padding: 3px 6px; }
+  .wizard-country-preview .wizard-stat-grid { grid-column: 1 / -1; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 4px; gap: 3px; }
+  .wizard-country-preview .wizard-stat-grid span { padding: 5px 3px; text-align: center; }
+  .wizard-country-preview .wizard-stat-grid b { font-size: 12px; }
+  .wizard-country-preview .wizard-stat-grid small { font-size: 8px; }
+  .wizard-country-preview .opening-profile { grid-column: 1 / -1; margin-top: 3px; padding: 5px 8px; }
+  .wizard-country-preview .opening-profile p { font-size: 10px; margin-top: 2px; }
+  .wizard-country-list .wizard-intro h2 { font-size: 23px; }
+}
+@media (max-width: 640px) {
+  .campaign-wizard { grid-template-rows: 60px 130px minmax(0, 1fr) 110px; }
+  .setup-cover { height: 60px; }
+  .wizard-header { padding: 12px 16px !important; }
+  .wizard-header h1 { font-size: 22px; }
+  .wizard-header p { font-size: 11px; }
+  .wizard-stepper { gap: 6px; }
+  .wizard-stepper span { padding: 4px; }
+}
+@media (max-width: 640px) {
+  .campaign-wizard { grid-template-rows: 60px 145px minmax(0, 1fr) 110px; }
+  .wizard-header { gap: 4px; align-content: start; }
+  .wizard-header h1 { margin: 3px 0; }
+  .wizard-stepper { flex-basis: 100%; }
+  .wizard-stepper > span { grid-template-columns: 22px; padding: 3px; }
+  .wizard-stepper > span b { width: 22px; height: 22px; font-size: 11px; }
+}
+@media (max-width: 640px) {
+  .wizard-release { display: block; margin: 3px 0 0; }
+}

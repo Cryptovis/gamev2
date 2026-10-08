@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.82.0-playtest.2 — Onboarding layout patch
+- Fixed the setup frame dimensions across steps and language changes.
+- Matched country-list scrollbars to portrait selection and bounded desktop list height.
+- Kept national summary information visible with a compact responsive layout.
+- Fixed selected nation secondary-text contrast and added a visible setup release identifier.
+
 ## 0.82.0-playtest.1 — Reliable Command
 - Added validated schema-15 save migration, compatible-record fallback, retryable autosave and direct setup loading.
 - Routed reviewed commands through bounded persisted confirmation identities and retained tutorial construction identity.
