@@ -1,5 +1,5 @@
 import { LocaleText, translateLive } from "../../i18n/localeText";
-import { useEffect, useState,useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useGameStore } from "../../store/gameStore";
 const steps = [
   [
@@ -63,28 +63,52 @@ const steps = [
     "world",
   ],
 ];
-type Phase = "open" | "tab" | "inspect" | "done" | "build" | "review" | "result" | "detail" | "reading";
+type Phase =
+  | "open"
+  | "tab"
+  | "inspect"
+  | "done"
+  | "build"
+  | "review"
+  | "result"
+  | "detail"
+  | "reading"
+  | "dismiss"
+  | "reviewReading";
 export function CampaignTutorial() {
   const state = useGameStore(),
     t = state.world.tutorial,
     [phase, setPhase] = useState<Phase>("open"),
     [rect, setRect] = useState<DOMRect | null>(null);
-  const initialProjects=useRef(0);
+  const initialProjects = useRef(0);
   const step = steps[Math.min(9, t.step)];
-  const practice=t.step===3;
-  const target = phase==='detail'?'tutorial-detail':phase==='reading'?'review-dismiss':phase==='build'?'learn-build':phase==='review'?'review-confirm':phase==='result'?'review-dismiss':
-    phase === "open"
-      ? step[2]
-      : phase === "tab"
-        ? "tab-" + step[3]
-        : phase === "inspect"
-          ? "close-workspace"
-          : "";
+  const practice = t.step === 3;
+  const target =
+    phase === "detail"
+      ? "tutorial-detail"
+      : phase === "dismiss"
+        ? "review-dismiss"
+        : phase === "reading" || phase === "reviewReading"
+          ? ""
+          : phase === "build"
+            ? "learn-build"
+            : phase === "review"
+              ? "review-confirm"
+              : phase === "result"
+                ? "review-dismiss"
+                : phase === "open"
+                  ? step[2]
+                  : phase === "tab"
+                    ? "tab-" + step[3]
+                    : phase === "inspect"
+                      ? "close-workspace"
+                      : "";
   useEffect(() => {
     if (t.active && state.playerProfile.setupComplete) {
       state.setSpeed(0);
       state.closeWorkspace();
-      initialProjects.current=state.industrialEconomy[state.playerCountryId].projects.length;
+      initialProjects.current =
+        state.industrialEconomy[state.playerCountryId].projects.length;
       setPhase(t.step === 0 ? "done" : "open");
     }
   }, [t.active, t.step, state.playerProfile.setupComplete]);
@@ -107,7 +131,13 @@ export function CampaignTutorial() {
     measure();
     const timer = window.setInterval(measure, 180);
     const click = (event: MouseEvent) => {
-      if(phase==='review'&&(event.target as Element).closest?.('[data-guide="review-dismiss"]')){setPhase('build');return;}
+      if (
+        phase === "review" &&
+        (event.target as Element).closest?.('[data-guide="review-dismiss"]')
+      ) {
+        setPhase("build");
+        return;
+      }
       if ((event.target as Element).closest?.(`[data-guide="${target}"]`))
         setPhase(
           phase === "open"
@@ -115,8 +145,24 @@ export function CampaignTutorial() {
               ? "tab"
               : "detail"
             : phase === "tab"
-              ? (practice?"build":"detail")
-              :phase==='detail'?'reading':phase==='reading'?'inspect':phase==='build'?'review':phase==='review'?'result':phase==='result'?(useGameStore.getState().industrialEconomy[state.playerCountryId].projects.length>initialProjects.current?'inspect':'build'):"done",
+              ? practice
+                ? "build"
+                : "detail"
+              : phase === "detail"
+                ? "reading"
+                : phase === "dismiss"
+                  ? "inspect"
+                  : phase === "build"
+                    ? "reviewReading"
+                    : phase === "review"
+                      ? "result"
+                      : phase === "result"
+                        ? useGameStore.getState().industrialEconomy[
+                            state.playerCountryId
+                          ].projects.length > initialProjects.current
+                          ? "inspect"
+                          : "build"
+                        : "done",
         );
     };
     document.addEventListener("click", click);
@@ -125,9 +171,38 @@ export function CampaignTutorial() {
       document.removeEventListener("click", click);
     };
   }, [t.active, target, phase, t.step]);
+  useEffect(() => {
+    if (
+      !t.active ||
+      !["reading", "dismiss", "reviewReading", "review", "result"].includes(
+        phase,
+      )
+    )
+      return;
+    const timer = window.setInterval(() => {
+      if (document.querySelector(".review-dialog")) return;
+      setPhase(
+        phase === "reading"
+          ? "detail"
+          : phase === "dismiss"
+            ? "inspect"
+            : phase === "review" || phase === "reviewReading"
+              ? "build"
+              : useGameStore.getState().industrialEconomy[state.playerCountryId]
+                    .projects.length > initialProjects.current
+                ? "inspect"
+                : "build",
+      );
+    }, 250);
+    return () => clearInterval(timer);
+  }, [t.active, phase, state.playerCountryId]);
   if (!t.active || !state.playerProfile.setupComplete) return null;
-  const content=phase==='inspect'?document.querySelector('.command-panel,.command-window,.floating-command-window,.map-command-dock')?.getBoundingClientRect():null;
-  const spotlight=(phase==='review'||phase==='result'||phase==='reading')?document.querySelector('.review-dialog')?.getBoundingClientRect()??rect:content??rect;
+  // Reading and closing are separate tasks. Only the requested control stays interactive.
+  const spotlight =
+    phase === "reading" || phase === "reviewReading"
+      ? (document.querySelector(".review-dialog")?.getBoundingClientRect() ??
+        null)
+      : rect;
   const hole = spotlight
     ? {
         x: Math.max(0, spotlight!.left - 6),
@@ -137,7 +212,18 @@ export function CampaignTutorial() {
       }
     : null;
   return (
-    <div className="guided-tutorial">{phase==='inspect'&&rect&&<div className="tutorial-target-ring" style={{left:rect.left-5,top:rect.top-5,width:rect.width+10,height:rect.height+10}}/>}
+    <div className="guided-tutorial">
+      {phase === "inspect" && rect && (
+        <div
+          className="tutorial-target-ring"
+          style={{
+            left: rect.left - 5,
+            top: rect.top - 5,
+            width: rect.width + 10,
+            height: rect.height + 10,
+          }}
+        />
+      )}
       {hole ? (
         <>
           <div
@@ -170,7 +256,21 @@ export function CampaignTutorial() {
         <div className="tutorial-shade" style={{ inset: 0 }} />
       )}
       <section
-        className="tutorial-dialog guided-card" style={rect&&rect.top>window.innerHeight*.55?{top:112,bottom:'auto'}:undefined}
+        className={`tutorial-dialog guided-card ${(phase==='reading'||phase==='reviewReading')?'tutorial-reading':''}`}
+        style={
+          rect && window.innerWidth > 1100
+            ? {
+                left: rect.left > window.innerWidth / 2 ? 18 : undefined,
+                right: rect.left > window.innerWidth / 2 ? "auto" : 18,
+                top: 114,
+                bottom: "auto",
+                transform: "none",
+                width: 330,
+              }
+            : rect && rect.top > window.innerHeight * 0.55
+              ? { top: 16, bottom: "auto" }
+              : undefined
+        }
         role="dialog"
         aria-label={translateLive("Campaign tutorial")}
       >
@@ -189,21 +289,47 @@ export function CampaignTutorial() {
         <strong className="tutorial-instruction">
           <LocaleText
             value={
-              phase==='detail'?'Open the highlighted briefing to inspect this system.':phase==='reading'?'Read the live figures and explanation, then close the briefing.':phase==='build'?'Choose your first facility. This is a real investment.':phase==='review'?'Compare cost, output and upkeep, then confirm construction.':phase==='result'?'Read the result and close the confirmation.':phase === "open"
-                ? "Click the highlighted menu"
-                : phase === "tab"
-                  ? "Click the highlighted tab"
-                  : phase === "inspect"
-                    ? "Read the window, then click the highlighted X"
-                    : "Step completed. Continue when ready."
+              phase === "detail"
+                ? "Open the highlighted briefing to inspect this system."
+                : phase === "reading"
+                  ? "Read the live figures and explanation. Press I have read it when ready."
+                  : phase === "dismiss"
+                    ? "Close this briefing with the highlighted X."
+                    : phase === "build"
+                      ? "Choose your first facility. This is a real investment."
+                      : phase === "review" || phase === "reviewReading"
+                        ? "Compare cost, output and upkeep, then confirm construction."
+                        : phase === "result"
+                          ? "Read the result and close the confirmation."
+                          : phase === "open"
+                            ? "Click the highlighted menu"
+                            : phase === "tab"
+                              ? "Click the highlighted tab"
+                              : phase === "inspect"
+                                ? "Read the window, then click the highlighted X"
+                                : "Step completed. Continue when ready."
             }
           />
         </strong>
+        {(phase === "reading" || phase === "reviewReading") && (
+          <button
+            className="primary tutorial-read"
+            onClick={() => setPhase(phase === "reading" ? "dismiss" : "review")}
+          >
+            <LocaleText value="I have read it" />
+          </button>
+        )}
+        {!rect && target && (
+          <p role="status">
+            <LocaleText value="Preparing the next highlighted control…" />
+          </p>
+        )}
         <footer>
           <button
             onClick={() => {
               state.closeWorkspace();
-      initialProjects.current=state.industrialEconomy[state.playerCountryId].projects.length;
+              initialProjects.current =
+                state.industrialEconomy[state.playerCountryId].projects.length;
               state.setTutorial(t.step, false);
             }}
           >

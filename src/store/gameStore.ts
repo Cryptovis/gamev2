@@ -1,3 +1,5 @@
+import {buildPlant,togglePlant,cancelPowerProject} from '../engine/systems/energy';
+import type {PlantKind} from '../domain/energy';
 import {sovereignId} from '../domain/sovereignty';
 import {postCredit,acceptCredit,cancelCredit,expansion} from '../engine/systems/sovereignCredit';
 import {beginIntegration,prepareIntegration} from '../engine/systems/integration';
@@ -31,6 +33,9 @@ import { embassyFor, openEmbassy } from '../engine/systems/diplomacy';
 import { resolveDiplomaticOffer } from '../engine/systems/diplomaticOffers';
 
 interface GameActions {
+ cancelPowerProject:(id:string)=>void;
+ buildPlant:(kind:PlantKind)=>void;
+ togglePlant:(kind:PlantKind)=>void;
  postCredit:(kind:'lend'|'borrow',principal:number,apr:number,days:90|180|365)=>void;
  acceptCredit:(id:string)=>void;cancelCredit:(id:string)=>void;
  prepareIntegration:(id:string,kind:'language'|'ideology'|'services')=>void;
@@ -143,6 +148,9 @@ function livingReceipt(s:GameState,n:GameState,title:string,summary:string){retu
 function governanceReceipt(s:GameState,n:GameState){return {...n,actionReceipt:{title:n===s?'Decision unavailable':'Decision executed',summary:n===s?'Requirements changed; check the budget, cooldown and ownership.':n.sitrep[0]}}}
 export const useGameStore = create<GameState & GameActions>((set, get) => ({
   ...makeInitialState(),
+  cancelPowerProject:(id)=>set(s=>livingReceipt(s,cancelPowerProject(s,s.playerCountryId,id),'Power construction cancelled','Refund is 80% of the remaining unbuilt investment. Completed construction cannot be cancelled.')),
+  buildPlant:(kind)=>set(s=>livingReceipt(s,buildPlant(s,s.playerCountryId,kind),'Power project funded','Construction has started. Generation begins on the completion day.')),
+  togglePlant:(kind)=>set(s=>togglePlant(s,s.playerCountryId,kind)),
   saveMessage: null,
   buildCampus:(kind)=>set(s=>governanceReceipt(s,buildCampus(s,kind))),
   hirePilots:(count)=>set(s=>governanceReceipt(s,hirePilots(s,count))),

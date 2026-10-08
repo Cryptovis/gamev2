@@ -75,3 +75,9 @@ Next candidates:
 Delivered: sourced victory parchment, reviewed 90-day territorial integration with welfare failure, asset/liability consolidation, annual-rate sovereign credit offers and requests, maturity collateral transfers, arrears/tax restoration, charcoal/gold setup and worker-based geographic projection.
 
 Follow-up candidates: counteroffers and loan restructuring, early repayment, broader reserve data, nuanced language/civic cohorts, housing/migration capacity, cached or GPU satellite projection, separate simulation worker, and the existing HD War Experience roadmap.
+
+## 0.81 — Powered World
+
+Delivered: tutorial read/acknowledge/close phases, lighter spotlight shading and cancellation recovery; Turkish UI/news template coverage with historical rendering; profile/history/session tabs; production-based resource map imagery; six fuel-backed or renewable power plant types, commissioned construction/refunds, power demand/shortfalls, AI energy investment/research, save continuity and annexation transfers.
+
+Next energy work: regional grid capacity and transmission loss, paid electrical interconnectors, safety inspections/civil nuclear incidents, forecasts with uncertainty, additional language translations and further bundle splitting. HD War Experience remains a separate future project.

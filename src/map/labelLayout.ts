@@ -7,6 +7,7 @@ export type ScreenLabelCandidate = {
   priority:number;
   force?:boolean;
   className?:string;
+  extraHeight?:number;
 };
 
 export type ScreenLabel = ScreenLabelCandidate & {
@@ -24,7 +25,7 @@ const overlaps=(a:ScreenLabel,b:ScreenLabel,padding:number)=>{
 
 export function approximateLabelBox(candidate:ScreenLabelCandidate):ScreenLabel{
   const width=Math.max(candidate.fontSize*2.2,candidate.text.length*candidate.fontSize*.76);
-  const height=candidate.fontSize*1.2;
+  const height=candidate.fontSize*1.2+(candidate.extraHeight??0);
   return {...candidate,width,height};
 }
 

@@ -651,3 +651,46 @@
 .resource-card.status-critical,.resource-card.status-import-dependent{background:#293f4b!important;border-color:#d4a579!important}.resource-card.status-critical em,.resource-card.status-critical>strong,.resource-card.status-import-dependent em{color:#ffe5c7!important;background:#493426;padding:3px 6px;border-radius:5px}.resource-card.status-critical small{color:#ffe5c7!important}
 
 @media(max-width:640px){.command-window-header{padding:16px!important;align-items:flex-start!important}.command-window-header h2{font-size:23px!important;line-height:1.2!important;margin:6px 0!important}.credit-compose input,.credit-compose select{width:100%;min-width:145px}.credit-compose label{width:100%}.campaign-wizard .wizard-body{padding:18px!important}}
+
+/* 0.81: one actionable tutorial target, readable labels and a complete energy workspace. */
+.guided-tutorial { z-index: 4100; }
+.guided-tutorial .tutorial-shade { background: rgb(5 12 18 / 46%); }
+.guided-tutorial .guided-card { z-index: 4101; max-height: calc(100dvh - 140px); overflow-y: auto; background: #203c4b; }
+.tutorial-read { padding: 10px 16px; border-radius: 8px; }
+:is(.rail-button small,.panel-tabs button span,.command-subtabs button) { word-break: normal; overflow-wrap: normal; white-space: nowrap; letter-spacing: 0; }
+.panel-tabs { grid-template-columns: repeat(auto-fit,minmax(98px,1fr)) !important; }
+.panel-tabs button { min-width: 0; padding-inline: 6px; }
+.panel-tabs button span { font-size: 10px; }
+.rail-button { min-width: 68px; }
+.rail-button small { font-size: 9px !important; }
+.profile-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+.profile-tabs button { padding: 10px 14px; border: 1px solid #6a8791; border-radius: 9px; background: #243e4a; color: #e9edf0; }
+.profile-tabs button.active { background: #f2d283; color: #182f3b; }
+.campaign-history li { margin-bottom: 12px; color: #e4edf0; line-height: 1.5; }
+.energy-command { margin-bottom: 24px; }
+.energy-command h3 { color: #f8df9d; }
+.energy-command p { font-size: 13px; line-height: 1.5; }
+.energy-summary { display: grid; grid-template-columns: repeat(auto-fit,minmax(95px,1fr)); gap: 8px; margin: 14px 0; }
+.energy-summary span { display: grid; gap: 6px; padding: 12px; background: #23404e; border-radius: 9px; }
+.energy-summary small { color: #d0e0e8; }
+.power-plant-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(210px,1fr)); gap: 12px; }
+.power-plant-grid article { padding: 14px; background: #203c4a; border: 1px solid #6c8690; border-radius: 12px; min-width: 0; }
+.power-plant-art { width: 100%; height: 110px; display: block; }
+.power-plant-grid h4 { color: #f6dfa4; margin: 12px 0 8px; }
+.power-plant-grid dl div { display: flex; justify-content: space-between; gap: 10px; margin: 8px 0; font-size: 12px; }
+.power-plant-grid dt { color: #ccdde6; }
+.power-plant-grid dd { margin: 0; color: #fff1c8; text-align: right; }
+.plant-actions { display: grid; gap: 8px; }
+.plant-actions button { padding: 10px; border: 1px solid #bc9f59; border-radius: 8px; background: #32414a; color: #ffdf9c; }
+.plant-actions button:disabled { opacity: .5; }
+.energy-warning { background: #553b2c; color: #ffe2b8 !important; padding: 12px; border: 1px solid #d9a276; border-radius: 9px; }
+.energy-projects p { border-left: 3px solid #ebc875; padding-left: 10px; }
+/* The tutorial itself supplies the dimming; avoid a second opaque, blurred layer. */
+body:has(.guided-tutorial) .review-backdrop { background: rgb(7 23 33 / 16%); backdrop-filter: none; }
+@media (max-width:640px) {
+  .guided-card.tutorial-reading > :is(h2,p,progress,small) { display: none; }
+  .guided-card.tutorial-reading { padding: 12px 16px; }
+  .guided-card.tutorial-reading .tutorial-instruction { margin-top: 0; }
+}
+.leader-nation-link { border: 0; padding: 2px 0; background: transparent; text-align: left; cursor: pointer; }
+.leader-nation-link:hover,.leader-nation-link:focus-visible { color: #ffdf9c; text-decoration: underline; }

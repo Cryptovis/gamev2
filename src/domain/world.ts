@@ -1,3 +1,4 @@
+import type {NationalEnergy} from './energy';
 import type {ExpansionState} from './expansion';
 import type {LivingWorld} from './living';
 import type {GovernanceState} from "./governance";
@@ -27,6 +28,7 @@ export interface OutreachMission {
   effect: number;
 }
 export interface WorldState {
+ energy?:Record<string,NationalEnergy>;
  expansion?:ExpansionState;
  living?:LivingWorld;
  governance?:GovernanceState;

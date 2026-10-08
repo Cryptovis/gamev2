@@ -1,6 +1,9 @@
-import {UI_CATALOG_080} from './uiCatalog080';
-import {UI_CATALOG_079} from './uiCatalog079';
-import {UI_CATALOG_078} from './uiCatalog078';
+import { TECHNOLOGY_TREE } from "../data/technologyTree";
+import { UI_CATALOG_081 } from "./uiCatalog081";
+import { translateNews } from "./newsTemplates";
+import { UI_CATALOG_080 } from "./uiCatalog080";
+import { UI_CATALOG_079 } from "./uiCatalog079";
+import { UI_CATALOG_078 } from "./uiCatalog078";
 import { type ReactNode, Fragment } from "react";
 import { UI_CATALOG } from "./uiCatalog";
 import { D } from "./gameI18n";
@@ -12,17 +15,40 @@ const catalogs = new Map<string, Map<string, string>>();
 for (const language of languages) {
   const index = languages.indexOf(language),
     entries = new Map<string, string>();
-  for (const [key, values] of Object.entries({...UI_CATALOG,...UI_CATALOG_078,...UI_CATALOG_079,...UI_CATALOG_080}))
-    entries.set(key.toLowerCase().replaceAll("_", " "), values[index]);
+  for (const catalog of [
+    UI_CATALOG,
+    UI_CATALOG_078,
+    UI_CATALOG_079,
+    UI_CATALOG_080,
+    UI_CATALOG_081,
+  ])
+    for (const [key, values] of Object.entries(catalog))
+      if (
+        values[index] &&
+        !(
+          values[index] === key &&
+          entries.has(key.trim().toLowerCase().replaceAll("_", " "))
+        )
+      )
+        entries.set(
+          key.trim().replace(/\s+/g, " ").toLowerCase().replaceAll("_", " "),
+          values[index].trim(),
+        );
   for (const [key, value] of Object.entries(D.en))
     if (D[language as keyof typeof D]?.[key])
       entries.set(value.toLowerCase(), D[language as keyof typeof D][key]);
   const countries = new Intl.DisplayNames([language], { type: "region" });
   for (const c of WORLD_COUNTRY_SEEDS)
     entries.set(c.name.toLowerCase(), countries.of(c.iso2) ?? c.name);
+  for (const node of TECHNOLOGY_TREE)
+    entries.set(node.id, entries.get(node.name.toLowerCase()) ?? node.name);
   catalogs.set(language, entries);
 }
-export function translateText(language: string, text: string): string {
+export function translateText(
+  language: string,
+  text: string,
+  depth = 0,
+): string {
   const entries = catalogs.get(language);
   if (!entries || !text.trim()) return text;
   const clean = text.trim().replace(/\s+/g, " "),
@@ -35,8 +61,14 @@ export function translateText(language: string, text: string): string {
         : exact;
     return text.replace(text.trim(), result);
   }
+  if (language === "tr" && depth < 3 && /[A-Za-z]{3}/.test(clean)) {
+    const news = translateNews(clean, (value) =>
+      translateText(language, value, depth + 1),
+    );
+    if (news) return text.replace(text.trim(), news);
+  }
   // Translate composed labels while preserving numbers, names and punctuation.
-  const parts = text.split(/(\s*[·|↔→]\s*|\s*\/\s*)/);
+  const parts = text.split(/(\s*[·|↔→]\s*|\s*\/\s*|\s+\+\s+)/);
   if (parts.length > 1)
     return parts
       .map((part, i) => (i % 2 ? part : translatePart(part, entries)))
