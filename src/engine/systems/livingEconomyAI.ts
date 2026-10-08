@@ -1,3 +1,4 @@
+import {activeCountries} from '../../domain/sovereignty';
 import type { GameState, TradeResource } from '../../domain/game';
 import { addTreaty, changeRelations, relationFor } from './diplomacy';
 import { getExportCapacity, getGlobalMarketPrice, makeBilateralImportDeal } from './trade';
@@ -8,7 +9,7 @@ const resources: TradeResource[] = ['food','oil','iron','uranium'];
 export function processLivingEconomyAI(state: GameState): GameState {
   if (state.day % 7 !== 0) return state;
 
-  const countryList = Object.values(state.countries);
+  const countryList = activeCountries(state.countries);
   const flows = Object.fromEntries(countryList.map((country) => [country.id, simulateResources(country)]));
   const marketPrices = Object.fromEntries(resources.map((resource) => [resource, getGlobalMarketPrice(state, resource)])) as Record<TradeResource, number>;
   const exportCapacity = Object.fromEntries(countryList.map((country) => [

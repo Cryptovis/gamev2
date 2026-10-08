@@ -1,3 +1,4 @@
+import {activeCountries} from '../../domain/sovereignty';
 import {requestDiplomacy} from './livingEconomy';
 import type { GameState, TradeResource } from '../../domain/game';
 import { addTreaty, relationFor } from './diplomacy';
@@ -34,7 +35,7 @@ export function maybeCreateResourceAdvisor(state:GameState):GameState{
  const hasContract=Object.values(state.tradeDeals).some(d=>d.active&&d.buyerId===player.id&&d.resource===need.resource&&d.contractType==='long_term');
  if(hasContract)return {...state,advisorCooldownUntil:state.day+10};
 
- const candidates=Object.values(state.countries)
+ const candidates=activeCountries(state.countries)
   .filter(c=>c.id!==player.id&&!c.globalSanctions&&getExportCapacity(c,need.resource)>.05)
   .map(c=>({country:c,relation:relationFor(player,c.id),capacity:getExportCapacity(c,need.resource)}))
   .filter(x=>x.relation.status!=='war'&&!x.relation.sanctions&&x.relation.score>=15)

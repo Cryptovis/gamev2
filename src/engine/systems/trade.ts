@@ -1,3 +1,4 @@
+import {activeCountries} from '../../domain/sovereignty';
 import type { CountryState, GameState, TradeDeal, TradeResource } from '../../domain/game';
 import { simulateResources } from './resources';
 import { changeRelations, embassyFor, embassyRelationBonus } from './diplomacy';
@@ -17,7 +18,7 @@ function reserveFloor(country: CountryState, resource: TradeResource) {
 export function getGlobalMarketPrice(state: GameState, resource: TradeResource): number {
   let production = 0;
   let consumption = 0;
-  for (const country of Object.values(state.countries)) {
+  for (const country of activeCountries(state.countries)) {
     const flow = simulateResources(country);
     production += flow.production[resource];
     consumption += flow.consumption[resource];

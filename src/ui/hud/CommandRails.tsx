@@ -1,3 +1,5 @@
+const CreditWindow=lazy(()=>import('../panels/CreditWindow').then(m=>({default:m.CreditWindow})));
+import {activeCountries} from '../../domain/sovereignty';
 import {money} from '../formatMoney';
 import {GuideBriefing} from '../panels/GuideBriefing';
 import {DomesticWindow} from '../panels/DomesticWindow';
@@ -34,7 +36,7 @@ export function CommandRails(){
  const activeWars=Object.values(state.wars).filter(w=>w.status==='active');
  const activeTrades=Object.values(state.tradeDeals).filter(d=>d.active);
  const activeOps=Object.values(state.intelOperations).filter(o=>o.status==='active');
- const sanctions=Object.values(state.countries).filter(c=>c.globalSanctions);
+ const sanctions=activeCountries(state.countries).filter(c=>c.globalSanctions);
  const offers=state.diplomaticOffers.filter(o=>o.expiresDay>=state.day);
  const embassies=Object.values(state.embassies).filter(e=>e.countryA===player.id||e.countryB===player.id);
  const objectives=useMemo(()=>[
@@ -71,7 +73,7 @@ export function CommandRails(){
   {open.has('governance')&&<GovernanceWindow/>}
   </Suspense>
   {open.has('society')&&<DomesticWindow/>}
-  {open.has('help')&&<HelpPanel/>}
+  {open.has('credit')&&<Suspense fallback={null}><CreditWindow/></Suspense>}{open.has('help')&&<HelpPanel/>}
   {open.has('map')&&<div className="left-command-dock map-command-dock"><button className="map-close" data-guide="close-workspace" onClick={state.closeWorkspace} aria-label={translateLive("Close map command")}><LocaleText value={"×"}/></button><GuideBriefing/><MapModeBar/></div>}
   {open.has('resources')&&<ResourceCommandWindow onClose={()=>close('resources')}/>}
 
@@ -82,7 +84,7 @@ export function CommandRails(){
 
   {open.has('market')&&<DraggableWindow id="market-window" kicker="GLOBAL ECONOMY" title={translateLive("Global Commodity & Industrial Market")} initialX={110} initialY={135} width={760} onClose={()=>close('market')}>
    <div className="floating-market">{board.map(item=><div key={item.resource}><ResourceIcon resource={item.resource} size={24}/><span><small><LocaleText value={item.resource.toUpperCase()}/></small><strong>{money(item.price)}</strong></span><em><LocaleText value={"WORLD PRICE"}/></em></div>)}</div>
-   <IndustrialMarketPanel/>
+   <button className="credit-market-entry" onClick={()=>state.openTool('credit')}><LocaleText value="Sovereign Credit & Monetary Fund"/></button><IndustrialMarketPanel/>
    <div className="floating-note"><LocaleText value={activeTrades.length}/><LocaleText value={" active global trade flows · prices react to world production and strategic scarcity."}/></div>
   </DraggableWindow>}
 

@@ -1,3 +1,4 @@
+import {activeCountries} from '../../domain/sovereignty';
 import type { CountryState, GameState } from '../../domain/game';
 import { nextRandom } from '../rng';
 import { changeRelations, relationFor } from './diplomacy';
@@ -28,7 +29,7 @@ function updateCountry(state: GameState, country: CountryState, seed: number) {
 export function processCountryAI(state: GameState): GameState {
   if (state.day - state.lastAiDay < 7) return state;
   let next = state;
-  for (const country of Object.values(next.countries)) {
+  for (const country of activeCountries(next.countries)) {
     if (country.id === next.playerCountryId || country.controllerCountryId) continue;
     next = updateCountry(next, country, next.simulationSeed);
   }

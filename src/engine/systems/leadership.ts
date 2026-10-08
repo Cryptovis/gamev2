@@ -1,3 +1,4 @@
+import {activeCountries} from '../../domain/sovereignty';
 import type {GameState} from '../../domain/game';
 import type {LeadershipState,DiplomaticMessage} from '../../domain/industrial';
 import {relationFor,relationshipIndex} from './diplomacy';
@@ -12,7 +13,7 @@ export function validBirthDate(value:string):boolean {
 export function createLeadership(gdp:number):LeadershipState {return {campaignStartDate:CAMPAIGN_START_DATE,lastBirthdayYear:null,celebrationUntilDay:0,lastAchievementDay:0,baselineGdp:gdp,messages:[]};}
 function messagesFor(state:GameState,kind:DiplomaticMessage['kind'],occasion:string){
  const player=state.countries[state.playerCountryId];
- const eligible=Object.values(state.countries).filter(c=>c.id!==player.id&&relationFor(player,c.id).status!=='war').map(c=>({c,index:relationshipIndex(relationFor(player,c.id))})).filter(x=>x.index>=85||x.index<=15).sort((a,b)=>a.c.id.localeCompare(b.c.id));
+ const eligible=activeCountries(state.countries).filter(c=>c.id!==player.id&&relationFor(player,c.id).status!=='war').map(c=>({c,index:relationshipIndex(relationFor(player,c.id))})).filter(x=>x.index>=85||x.index<=15).sort((a,b)=>a.c.id.localeCompare(b.c.id));
  const chosen=eligible.filter(x=>([...x.c.id].reduce((s,ch)=>s+ch.charCodeAt(0),0)+state.day+state.simulationSeed)%3===0).slice(0,5);
  return chosen.map(({c,index}):DiplomaticMessage=>({id:`${kind}-${state.day}-${c.id}`,senderId:c.id,day:state.day,kind,tone:index>=85?'warm':'rival',read:false,text:kind==='birthday'?(index>=85?`${c.name} sends warm birthday wishes to ${state.playerProfile.commanderName}. May our partnership prosper in the year ahead.`:`Happy birthday, ${state.playerProfile.commanderName}. Enjoy your celebrations; ${c.name} intends to set the pace this year.`):(index>=85?`${c.name} congratulates your government on ${occasion}. Your progress strengthens our confidence in this partnership.`:`Congratulations on ${occasion}. A respectable result — ${c.name} is aiming higher. Consider that a friendly challenge.`)}));
 }

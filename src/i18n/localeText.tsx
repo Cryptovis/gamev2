@@ -1,3 +1,4 @@
+import {UI_CATALOG_080} from './uiCatalog080';
 import {UI_CATALOG_079} from './uiCatalog079';
 import {UI_CATALOG_078} from './uiCatalog078';
 import { type ReactNode, Fragment } from "react";
@@ -11,7 +12,7 @@ const catalogs = new Map<string, Map<string, string>>();
 for (const language of languages) {
   const index = languages.indexOf(language),
     entries = new Map<string, string>();
-  for (const [key, values] of Object.entries({...UI_CATALOG,...UI_CATALOG_078,...UI_CATALOG_079}))
+  for (const [key, values] of Object.entries({...UI_CATALOG,...UI_CATALOG_078,...UI_CATALOG_079,...UI_CATALOG_080}))
     entries.set(key.toLowerCase().replaceAll("_", " "), values[index]);
   for (const [key, value] of Object.entries(D.en))
     if (D[language as keyof typeof D]?.[key])

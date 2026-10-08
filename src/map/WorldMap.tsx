@@ -1,8 +1,9 @@
+import {sovereignId} from '../domain/sovereignty';
 import {LocaleText,translateLive} from '../i18n/localeText';
 import {boundPan,clampZoom,wheelZoomFactor,zoomAtPoint} from './cameraControls';
 import {GeographicSurface} from './GeographicSurface';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { geoDistance, geoGraticule10, geoNaturalEarth1, geoOrthographic, geoPath } from 'd3-geo';
+import { geoArea, geoDistance, geoGraticule10, geoNaturalEarth1, geoOrthographic, geoPath } from 'd3-geo';
 import { countryMapAnchor, microstateVisible, nearestMapMarker, type MapPoint } from './mapCoordinates';
 import { findCountryAtGeoPoint } from './mapSelection';
 import { labelFontSize, labelRevealThreshold, layoutScreenLabels, maxCountryLabels, type ScreenLabelCandidate } from './labelLayout';
@@ -90,13 +91,12 @@ export function WorldMap() {
   }, [geojson, projectionMode, rotation, globeZoom]);
 
   const path = useMemo(() => projection ? geoPath(projection) : null, [projection]);
-  const featureMetrics = useMemo(() => geojson && path ? geojson.features.map(feature => ({
-    feature,
-    id: String(feature.properties?.iso_a3 ?? ''),
-    anchor: countryMapAnchor(String(feature.properties?.iso_a3 ?? ''), feature),
-    area: path.area(feature as any),
-    d: path(feature as any) ?? '',
-  })) : [], [geojson, path]);
+  const geographicMetrics=useMemo(()=>geojson?.features.map(feature=>{const id=String(feature.properties?.iso_a3??''),anchor=countryMapAnchor(id,feature);return {feature,id,anchor,sphericalArea:geoArea(feature as any)};})??[],[geojson]);
+  const featureMetrics = useMemo(() => path&&projection ? geographicMetrics.map(metric => ({
+    ...metric,
+    area: projectionMode==='flat'?path.area(metric.feature as any):metric.sphericalArea*projection.scale()**2*Math.max(.1,Math.cos(geoDistance(metric.anchor??[0,0],[-rotation[0],-rotation[1]]))),
+    d: path(metric.feature as any) ?? '',
+  })) : [], [geographicMetrics,path,projectionMode,projection]);
   const countryLabelMetrics = useMemo(() => {
     const largest = new Map<string, typeof featureMetrics[number]>();
     for (const metric of featureMetrics) {
@@ -108,7 +108,7 @@ export function WorldMap() {
   const player = countries[playerCountryId];
 
   const colorFor = (id: string) => {
-    const country = countries[id];
+    const country = countries[sovereignId(countries,id)];
     if (!country) return '#1d3240';
     const relation = player?.diplomacy.relations[country.id];
     const controlled = country.controllerCountryId === player?.id;
@@ -129,7 +129,7 @@ export function WorldMap() {
   };
 
   const photographic=mapPresentation==='geographic';
-  const hoveredCountry = hovered ? countries[hovered] : null;
+  const hoveredCountry = hovered ? countries[sovereignId(countries,hovered)] : null;
   const selectedCountry = selectedCountryId ? countries[selectedCountryId] : null;
   const flatTransform = `translate(${flatPan.x} ${flatPan.y}) translate(${W/2} ${H/2}) scale(${flatZoom}) translate(${-W/2} ${-H/2})`;
   const projectToScreen=(position:[number,number])=>{
@@ -141,7 +141,7 @@ export function WorldMap() {
   const mapZoom=projectionMode==='globe'?globeZoom:flatZoom;
   const globeCenter:MapPoint=[-rotation[0],-rotation[1]];
   const visibleMarkers=Object.entries(MICROSTATE_POINTS).flatMap(([id,position])=>{
-    if(!countries[id]||!microstateVisible(mapZoom,projectionMode==='flat',id===selectedCountryId,id===hovered,id===playerCountryId))return [];
+    if(!countries[id]||countries[id].annexedBy||!microstateVisible(mapZoom,projectionMode==='flat',id===selectedCountryId,id===hovered,id===playerCountryId))return [];
     if(projectionMode==='globe'&&geoDistance(position,globeCenter)>Math.PI/2)return [];
     const point=projectToScreen(position);
     if(!point||point[0]<0||point[0]>W||point[1]<0||point[1]>H)return [];
@@ -251,7 +251,7 @@ export function WorldMap() {
     const selectable=new Set(Object.keys(countries));
     const polygonId=findCountryAtGeoPoint(currentGeojson.features as any,selectable,geo as [number,number]);
     if (polygonId) {
-      const country=countries[polygonId];
+      const country=countries[sovereignId(countries,polygonId)];
       selectCountry(polygonId);
       setMapNotice(`${country.name} selected — sovereign territory acquired.`);
       return;
@@ -291,9 +291,9 @@ export function WorldMap() {
   if (!geojson || !projection || !path) return <div className="world-map political-map"><div className="map-loading"><LocaleText value={"INITIALIZING WORLD GEOMETRY…"}/></div></div>;
 
   const shapeLayer = featureMetrics.map(({feature,id,d},index) => {
-    const country = countries[id];
+    const country = countries[sovereignId(countries,id)];
     if (!d) return null;
-    const isSelected = id === selectedCountryId;
+    const isSelected = sovereignId(countries,id) === selectedCountryId;
     const isHovered = id === hovered;
     const terrain=country?terrainForCountry(country):'plains';
     const fill=mapPresentation==='geographic'&&mapMode==='political'?`url(#terrain-${terrain})`:colorFor(id);
@@ -305,8 +305,8 @@ export function WorldMap() {
   const revealThreshold=labelRevealThreshold(mapZoom,projectionMode==='flat');
 
   for(const {id,anchor:centroid,area:baseArea,d} of countryLabelMetrics){
-    const country=countries[id];
-    if(!country||MICROSTATE_POINTS[id as keyof typeof MICROSTATE_POINTS])continue;
+    const country=countries[sovereignId(countries,id)];
+    if(!country||countries[id]?.annexedBy||MICROSTATE_POINTS[id as keyof typeof MICROSTATE_POINTS])continue;
     if(!d||!centroid)continue;
     if(projectionMode==='globe'&&geoDistance(centroid,globeCenter)>Math.PI/2)continue;
     const p=projectToScreen(centroid);
@@ -390,7 +390,7 @@ export function WorldMap() {
       </>}
       {photographic&&<GeographicSurface projection={projection} flat={projectionMode==='flat'} pan={flatPan} zoom={flatZoom} onReady={()=>setSurfaceReady(true)}/>}
       <g key={viewportKey} className="map-viewport" transform={projectionMode === 'flat' ? flatTransform : undefined}>
-        <g className="country-layer"><LocaleText value={shapeLayer}/></g>
+        <g className="country-layer">{shapeLayer}</g>
       </g>
       <g className="screen-label-layer" pointerEvents="none">
         {screenLabels.map(label=><text key={label.id} x={label.x} y={label.y} className={label.className} style={{fontSize:label.fontSize}}><LocaleText value={label.text}/></text>)}

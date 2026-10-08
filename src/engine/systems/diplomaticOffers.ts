@@ -1,3 +1,4 @@
+import {activeCountries} from '../../domain/sovereignty';
 import { living, withLiving, resolveIncomingLetter } from "./livingEconomy";
 import type { DiplomaticOffer, GameState } from "../../domain/game";
 import {
@@ -30,7 +31,7 @@ export function processIncomingDiplomaticOffers(state: GameState): GameState {
     return state;
   const player = state.countries[state.playerCountryId];
   if (!player) return state;
-  const candidates = Object.values(state.countries)
+  const candidates = activeCountries(state.countries)
     .filter(
       (c) => c.id !== player.id && !c.controllerCountryId && !c.globalSanctions,
     )

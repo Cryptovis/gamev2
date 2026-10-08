@@ -1,3 +1,4 @@
+import {activeCountries} from '../../domain/sovereignty';
 import type { CountryState, EquipmentStockpile, EquipmentType, GameState, NationalProductionState, ProductionLine } from '../../domain/game';
 import type {NationalIndustrialEconomy} from '../../domain/industrial';
 import {TANK_COMPONENTS} from '../../data/industrialCatalog';
@@ -154,7 +155,7 @@ export function processProduction(state:GameState):GameState{
   const countries={...state.countries};
   const production={...state.production};
   const industrialEconomy={...state.industrialEconomy};
-  for(const country of Object.values(state.countries)){
+  for(const country of activeCountries(state.countries)){
     const current=production[country.id]??createInitialProduction(country);
     const result=processNationalProduction(countries[country.id],current,industrialEconomy[country.id],country.id===state.playerCountryId&&state.day<state.leadership.celebrationUntilDay?1.12:1);
     countries[country.id]=result.country;
@@ -241,7 +242,7 @@ const AI_WEIGHTS:Record<CountryState['ai']['strategicGoal'],Record<EquipmentType
 export function processProductionAI(state:GameState):GameState{
   if(state.day%14!==0)return state;
   const production={...state.production};
-  for(const country of Object.values(state.countries)){
+  for(const country of activeCountries(state.countries)){
     if(country.id===state.playerCountryId)continue;
     const current=production[country.id]??createInitialProduction(country);
     const share=country.ai.strategicGoal==='rearm'?66:country.ai.strategicGoal==='expand_influence'?60:country.ai.strategicGoal==='stabilize'?42:50;

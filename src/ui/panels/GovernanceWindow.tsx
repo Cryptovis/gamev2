@@ -1,3 +1,5 @@
+import {IntegrationPanel} from './IntegrationPanel';
+import {activeCountries} from '../../domain/sovereignty';
 import { useState } from "react";
 import { CommandWindow } from "./CommandWindow";
 import { ReviewDialog, type ReviewContent } from "./ReviewDialog";
@@ -15,7 +17,7 @@ export function GovernanceWindow() {
     [selected, setSelected] = useState(
       s.navigation?.countryId && s.navigation.countryId !== s.playerCountryId
         ? s.navigation.countryId
-        : (Object.values(s.countries).find(
+        : (activeCountries(s.countries).find(
             (c) => c.controllerCountryId === s.playerCountryId,
           )?.id ?? s.playerCountryId),
     ),
@@ -28,7 +30,7 @@ export function GovernanceWindow() {
     o = occupationFor(s, c.id),
     mine = o?.controllerId === p.id,
     history = g.occupations[c.id]?.election;
-  const territories = Object.values(s.countries).filter(
+  const territories = activeCountries(s.countries).filter(
       (c) => c.controllerCountryId === p.id,
     ),
     action = (
@@ -61,7 +63,7 @@ export function GovernanceWindow() {
           value={c.id}
           onChange={(e) => setSelected(e.target.value)}
         >
-          {Object.values(s.countries)
+          {activeCountries(s.countries)
             .sort((a, b) => a.name.localeCompare(b.name))
             .map((x) => (
               <option key={x.id} value={x.id}>
@@ -89,7 +91,7 @@ export function GovernanceWindow() {
       )}
       {mine && o ? (
         <>
-          <div className="occupation-summary">
+          <IntegrationPanel countryId={c.id}/><div className="occupation-summary">
             <span>
               <LocaleText value="Unrest" /> <b>{o.unrest.toFixed(1)}%</b>
               <progress max="100" value={o.unrest} />
@@ -169,7 +171,7 @@ export function GovernanceWindow() {
               <option value="">
                 <LocaleText value="Choose recipient" />
               </option>
-              {Object.values(s.countries)
+              {activeCountries(s.countries)
                 .filter(
                   (x) =>
                     x.id !== p.id && x.id !== c.id && !x.controllerCountryId,
@@ -249,7 +251,7 @@ export function GovernanceWindow() {
           <p>
             <LocaleText value="A campaign requires approval below 40%, stability below 50%, and either weak military readiness/logistics or strong ideological influence. It costs $5B, lasts 30 days and has a 90-day cooldown. Success is never guaranteed." />
           </p>
-          <div className="occupation-summary">
+          <IntegrationPanel countryId={c.id}/><div className="occupation-summary">
             <span>
               <LocaleText value="Approval" /> {c.politics.approval.toFixed(0)}%
             </span>

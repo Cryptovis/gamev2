@@ -1,3 +1,4 @@
+import {pendingVictory} from './systems/victory';
 import { useEffect } from "react";
 import { campaignInterval } from "./clock";
 import { useGameStore } from "../store/gameStore";
@@ -17,7 +18,7 @@ export function useGameClock() {
     (s) =>
       !!s.activeEvent ||
       !!s.activeAdvisor ||
-      !!s.world.living?.advice.active || !!s.world.living?.notice ||
+      !!s.world.living?.advice.active || !!s.world.living?.notice || !!pendingVictory(s) ||
       !!s.actionReceipt ||
       s.campaignStatus !== "active",
   );

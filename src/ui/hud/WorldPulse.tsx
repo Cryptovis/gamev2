@@ -1,3 +1,4 @@
+import {activeCountries} from '../../domain/sovereignty';
 import {LocaleText,translateLive} from '../../i18n/localeText';
 import { useGameStore } from '../../store/gameStore';
 import { BlocIcon, IntelligenceIcon } from '../icons/GameIcons';
@@ -7,7 +8,7 @@ export function WorldPulse(){
  const trades=useGameStore(s=>Object.values(s.tradeDeals).filter(d=>d.active).length);
  const intel=useGameStore(s=>Object.values(s.intelOperations).filter(o=>o.status==='active').length);
  const blocs=useGameStore(s=>Object.values(s.blocs).length);
- const sanctions=useGameStore(s=>Object.values(s.countries).filter(c=>c.globalSanctions).length);
+ const sanctions=useGameStore(s=>activeCountries(s.countries).filter(c=>c.globalSanctions).length);
  return <div className="world-pulse" aria-label={translateLive("Living world activity")}>
   <span className="world-pulse-title"><LocaleText value={"WORLD PULSE"}/></span>
   <span className={wars?'alert':''}><b><LocaleText value={wars}/></b><small><LocaleText value={"WARS"}/></small></span>

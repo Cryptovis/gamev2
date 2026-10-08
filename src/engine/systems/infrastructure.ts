@@ -1,3 +1,4 @@
+import {activeCountries} from '../../domain/sovereignty';
 import type { CountryState, GameState, InfrastructureAsset, NationalInfrastructureState } from '../../domain/game';
 
 const clamp=(v:number,min:number,max:number)=>Math.min(max,Math.max(min,v));
@@ -45,7 +46,7 @@ function calculateState(country:CountryState,infra:NationalInfrastructureState):
 export function processInfrastructure(state:GameState):GameState{
   const countries={...state.countries};
   const infrastructure={...state.infrastructure};
-  for(const country of Object.values(state.countries)){
+  for(const country of activeCountries(state.countries)){
     const infra=calculateState(country,infrastructure[country.id]??createInitialInfrastructure(country));
     const canMaintain=country.economy.treasury>=infra.maintenance;
     const degradation=canMaintain?0:.04;
@@ -86,7 +87,7 @@ export function investInfrastructure(state:GameState,countryId:string,asset:Infr
 export function processInfrastructureAI(state:GameState):GameState{
   if(state.day%30!==0)return state;
   let next=state;
-  for(const country of Object.values(state.countries)){
+  for(const country of activeCountries(state.countries)){
     if(country.id===state.playerCountryId)continue;
     const infra=next.infrastructure[country.id];
     const current=next.countries[country.id];

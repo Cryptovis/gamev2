@@ -1,3 +1,4 @@
+import {activeCountries} from '../../domain/sovereignty';
 import { useState } from "react";
 import { useGameStore } from "../../store/gameStore";
 import { LocaleText } from "../../i18n/localeText";
@@ -35,7 +36,7 @@ export function DiplomaticPost() {
           value={target}
           onChange={(e) => setTarget(e.target.value)}
         >
-          {Object.values(s.countries)
+          {activeCountries(s.countries)
             .filter((c) => c.id !== s.playerCountryId)
             .sort((a, b) => a.name.localeCompare(b.name))
             .map((c) => (
