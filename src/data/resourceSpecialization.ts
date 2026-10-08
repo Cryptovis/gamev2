@@ -15,6 +15,8 @@ export function applyStrategicSpecialization(country: CountryState): CountryStat
   if (FOOD.has(country.id)) { p.food = Math.max(p.food * 1.8, 1.5); r.food = Math.max(r.food, 220); }
   if (IRON.has(country.id)) { p.iron = Math.max(p.iron * 2.4, 1.25); r.iron = Math.max(r.iron, 190); industry.mines = Math.max(industry.mines, 2); }
   if (URANIUM.has(country.id)) { p.uranium = Math.max(p.uranium * 4, 0.08); r.uranium = Math.max(r.uranium, 18); }
+  // The catalog caps food output at 7/day; populous states would otherwise starve within a year (consumption is 0.035/M).
+  p.food = Math.max(p.food, (country.demographics.population / 1_000_000) * 0.04);
   if (INDUSTRY.has(country.id)) { industry.factories = Math.max(industry.factories, 5); industry.utilization = Math.min(92, industry.utilization + 4); country = { ...country, economy: { ...country.economy, productivity: Math.min(96, country.economy.productivity + 4) } }; }
 
   return { ...country, resourceProduction: p, resources: r, industry };

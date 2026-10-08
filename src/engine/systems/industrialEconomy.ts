@@ -41,38 +41,55 @@ export function buildFacility(state:GameState,id:string,kind:FacilityKind):GameS
  const project={id:`${id}-${kind}-${state.day}-${serial}`,kind,readyDay:state.day+d.days};
  return {...state,countries:{...state.countries,[id]:{...c,economy:{...c.economy,treasury:c.economy.treasury-d.cost}}},industrialEconomy:{...state.industrialEconomy,[id]:{...n,projects:[...n.projects,project]}},sitrep:id===state.playerCountryId?[`INDUSTRY // ${d.label} commissioned; ready Day ${project.readyDay}.`,...state.sitrep].slice(0,12):state.sitrep};
 }
+/** Facility running costs scale down below $400B GDP (floor 2%); flat catalog upkeep alone exceeded the whole fiscal surplus of small states. */
+export const facilityUpkeepScale=(c:CountryState)=>clamp(c.economy.gdp/400,.02,1);
 export function processIndustrialEconomy(state:GameState):GameState {
- let next=state;
+ // One mutable draft per country, written back once: avoids re-copying the 203-country maps on every facility step.
+ const countries={...state.countries},industrialEconomy={...state.industrialEconomy};let production=state.production;
  for(const id of Object.keys(state.countries)){
  if(state.countries[id].annexedBy)continue;
-  let c=next.countries[id];let n={...next.industrialEconomy[id],stock:{...next.industrialEconomy[id].stock},facilities:{...next.industrialEconomy[id].facilities},deposits:{...next.industrialEconomy[id].deposits},lastOutput:{},bottlenecks:{},lastCosts:0} as NationalIndustrialEconomy;
+  const src=industrialEconomy[id];
+  const c={...countries[id]};c.economy={...c.economy};c.processedResources={...c.processedResources};c.industry={...c.industry};
+  const n={...src,stock:{...src.stock},facilities:{...src.facilities},deposits:{...src.deposits},lastOutput:{},bottlenecks:{},lastCosts:0} as NationalIndustrialEconomy;
+  let armor=production[id]?.stockpile.armor,armorTouched=false;
+  const stockOf=(good:IndustrialGood)=>good==='steel'||good==='fuel'?c.processedResources[good]:good==='tanks'?armor??0:n.stock[good]??0;
+  const changeStock=(good:IndustrialGood,delta:number)=>{
+   const value=Math.max(0,stockOf(good)+delta);
+   if(good==='steel'||good==='fuel')c.processedResources[good]=value;
+   else if(good==='tanks'){armor=value;armorTouched=true;}
+   else n.stock[good]=value;
+  };
   for(const p of n.projects.filter(p=>p.readyDay<=state.day)){
    n.facilities[p.kind]++;
-   if(p.kind==='civil_factory')c={...c,industry:{...c.industry,factories:c.industry.factories+5,refineries:c.industry.refineries+1}};
+   if(p.kind==='civil_factory'){c.industry.factories+=5;c.industry.refineries+=1;}
   }
   n.projects=n.projects.filter(p=>p.readyDay>state.day);
-  next={...next,countries:{...next.countries,[id]:c},industrialEconomy:{...next.industrialEconomy,[id]:n}};
   const boost=(id===state.playerCountryId&&state.day<state.leadership.celebrationUntilDay?1.12:1)*((occupationFor(state,id)?.unrest??0)>=80?.7:1);
   for(const [kind,d] of Object.entries(FACILITIES) as Array<[FacilityKind,typeof FACILITIES[FacilityKind]]>){
    const count=n.facilities[kind];if(!count||!n.enabled[kind])continue;
    const potential=d.deposit?n.potential[d.deposit]:d.output==='water'?n.potential.water:d.output==='rubber'?n.potential.rubber:1;
    const output=d.yield*count*potential*(c.industry.utilization/100)*boost;
+   const upkeep=d.upkeep*count*facilityUpkeepScale(c);
    let ratio=1,reason='';
    const constrain=(available:number,needed:number,label:string)=>{if(needed>0&&available/needed<ratio){ratio=clamp(available/needed,0,1);reason=label;}};
-   constrain(Math.max(0,c.economy.treasury),d.upkeep*count,'treasury');constrain(c.processedResources.electricity,d.power*count,'electricity');
-   for(const [good,amount] of Object.entries(d.inputs))constrain(goodStock(next,id,good as IndustrialGood),(amount??0)*output,GOODS[good as IndustrialGood].label);
+   constrain(Math.max(0,c.economy.treasury),upkeep,'treasury');constrain(c.processedResources.electricity,d.power*count,'electricity');
+   for(const [good,amount] of Object.entries(d.inputs))constrain(stockOf(good as IndustrialGood),(amount??0)*output,GOODS[good as IndustrialGood].label);
    if(d.deposit)constrain(n.deposits[d.deposit],output,'deposit depleted');
    const actual=output*ratio;
-   c={...c,economy:{...c.economy,treasury:c.economy.treasury-d.upkeep*count*ratio},processedResources:{...c.processedResources,electricity:Math.max(0,c.processedResources.electricity-d.power*count*ratio)}};
-   next={...next,countries:{...next.countries,[id]:c}};
-   for(const [good,amount] of Object.entries(d.inputs))next=changeGoodStock(next,id,good as IndustrialGood,-(amount??0)*actual);
-   if(d.output)next=changeGoodStock(next,id,d.output,actual);
-   c=next.countries[id];n=next.industrialEconomy[id];n={...n,lastCosts:n.lastCosts+d.upkeep*count*ratio,lastOutput:{...n.lastOutput,...(d.output?{[d.output]:(n.lastOutput[d.output]??0)+actual}:{})},bottlenecks:{...n.bottlenecks,[kind]:ratio<.999?reason:'operational'},deposits:{...n.deposits,...(d.deposit?{[d.deposit]:Math.max(0,n.deposits[d.deposit]-actual)}:{})}};
-   next={...next,industrialEconomy:{...next.industrialEconomy,[id]:n}};
+   c.economy.treasury=c.economy.treasury-upkeep*ratio;
+   c.processedResources.electricity=Math.max(0,c.processedResources.electricity-d.power*count*ratio);
+   for(const [good,amount] of Object.entries(d.inputs))changeStock(good as IndustrialGood,-(amount??0)*actual);
+   if(d.output)changeStock(d.output,actual);
+   n.lastCosts=n.lastCosts+upkeep*ratio;
+   if(d.output)n.lastOutput={...n.lastOutput,[d.output]:(n.lastOutput[d.output]??0)+actual};
+   n.bottlenecks={...n.bottlenecks,[kind]:ratio<.999?reason:'operational'};
+   if(d.deposit)n.deposits[d.deposit]=Math.max(0,n.deposits[d.deposit]-actual);
   }
-  next=changeGoodStock(next,id,'water',-Math.max(.1,c.demographics.population/1e6*.04));
+  changeStock('water',-Math.max(.1,c.demographics.population/1e6*.04));
+  countries[id]=c;industrialEconomy[id]=n;
+  if(armorTouched){const p=production[id];production={...production,[id]:{...p,stockpile:{...p.stockpile,armor:armor??0}}};}
  }
- return next;
+ return {...state,countries,industrialEconomy,production};
 }
 export function processIndustrialAI(state:GameState):GameState {
  if(state.day%30!==0)return state;

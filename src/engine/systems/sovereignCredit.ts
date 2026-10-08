@@ -12,8 +12,23 @@ import {
   exchangeStock,
   changeExchangeStock,
   exchangePrice,
+  exportableStock,
 } from "./livingEconomy";
 import { relationFor } from "./diplomacy";
+// Defaults take bullion, then industrial goods and metals; food, oil and water go last and only above the national subsistence reserve.
+const SUBSISTENCE_GOODS: (typeof EXCHANGE_GOODS)[number][] = ["water", "food", "oil"];
+const COLLATERAL_ORDER: (typeof EXCHANGE_GOODS)[number][] = [
+  "gold",
+  "silver",
+  ...EXCHANGE_GOODS.filter(
+    (x) =>
+      !["gold", "silver", "iron", "uranium"].includes(x) &&
+      !SUBSISTENCE_GOODS.includes(x),
+  ),
+  "iron",
+  "uranium",
+  ...SUBSISTENCE_GOODS,
+];
 export const expansion = (s: GameState): ExpansionState =>
   s.world.expansion ?? {
     integrations: {},
@@ -301,24 +316,27 @@ export function processCredit(s: GameState, ai = true): GameState {
           bankGold: {
             ...lv.bankGold,
             [b.id]: { ...vault, tonnes: vault.tonnes - q },
-            [l.id]: { ...creditor, tonnes: creditor.tonnes + q },
+            [l.id]: {
+              ...(creditor ?? {
+                tonnes: 0,
+                confidence: "game-estimate",
+                asOf: "collateral transfer",
+              }),
+              tonnes: (creditor?.tonnes ?? 0) + q,
+            },
           },
         });
         loan.outstanding -= value;
         paid += value;
       }
     }
-    for (const good of [
-      "gold",
-      "silver",
-      ...EXCHANGE_GOODS.filter((x) => !["gold", "silver"].includes(x)),
-    ] as typeof EXCHANGE_GOODS) {
+    for (const good of COLLATERAL_ORDER) {
       if (loan.outstanding <= 1e-9) break;
-      const price = collateralPrice(n, good),
-        q = Math.min(
-          Math.max(0, exchangeStock(n, b.id, good)),
-          loan.outstanding / price,
-        );
+      const seizable = SUBSISTENCE_GOODS.includes(good)
+          ? exportableStock(n, b.id, good)
+          : exchangeStock(n, b.id, good),
+        price = collateralPrice(n, good),
+        q = Math.min(Math.max(0, seizable), loan.outstanding / price);
       if (q <= 0) continue;
       n = changeExchangeStock(
         changeExchangeStock(n, b.id, good, -q),

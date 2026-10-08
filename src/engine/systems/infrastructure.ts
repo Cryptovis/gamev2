@@ -8,13 +8,19 @@ function economicBase(country:CountryState){
   return clamp(country.economy.gdp/22 + country.industry.factories*1.4 + country.industry.utilization*.35 + country.military.logistics*.3,12,100);
 }
 
+/** Daily upkeep ($B): network size times a per-level cost proportional to GDP (~0.4-0.5% of GDP a year at typical levels), so micro-states are not bankrupted and large economies still pay. */
+export function infrastructureMaintenance(country:CountryState,infra:Pick<NationalInfrastructureState,'roads'|'rail'|'hubs'|'ports'>){
+  const levels=infra.roads+infra.rail+infra.hubs+infra.ports*.7;
+  return levels*Math.max(0,country.economy.gdp)*0.00000004;
+}
+
 export function createInitialInfrastructure(country:CountryState):NationalInfrastructureState{
   const base=economicBase(country);
   const roads=clamp(base*.88 + country.economy.productivity*.18,10,96);
   const rail=clamp(base*.72 + country.industry.factories*.45,5,94);
   const ports=LANDLOCKED.has(country.id)?0:clamp(base*.62 + country.economy.gdp/40,8,92);
   const hubs=clamp(base*.58 + country.military.logistics*.25,6,92);
-  const maintenance=(roads+rail+hubs+ports*.7)*0.00022;
+  const maintenance=infrastructureMaintenance(country,{roads,rail,hubs,ports});
   const throughput=clamp(roads*.28+rail*.28+hubs*.24+ports*.08+country.industry.utilization*.12,5,100);
   const scores:{id:NationalInfrastructureState['bottleneck'];value:number}[]=[
     {id:'roads',value:roads},{id:'rail',value:rail},{id:'hubs',value:hubs},
@@ -39,7 +45,7 @@ function calculateState(country:CountryState,infra:NationalInfrastructureState):
     {id:'power',value:powerFactor*100},{id:'fuel',value:fuelFactor*100},
   ];
   const weakest=candidates.sort((a,b)=>a.value-b.value)[0];
-  const maintenance=(infra.roads+infra.rail+infra.hubs+infra.ports*.7)*0.00022;
+  const maintenance=infrastructureMaintenance(country,infra);
   return {...infra,maintenance,throughput,bottleneck:weakest.value<45?weakest.id:'none'};
 }
 
