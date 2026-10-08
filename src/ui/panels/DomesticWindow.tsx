@@ -1,0 +1,117 @@
+import { useState } from "react";
+import { useGameStore } from "../../store/gameStore";
+import { LocaleText } from "../../i18n/localeText";
+import { ACTIVITIES, living } from "../../engine/systems/livingEconomy";
+import type { ActivityKind } from "../../domain/living";
+import { CommandWindow } from "./CommandWindow";
+import { ReviewDialog } from "./ReviewDialog";
+import { CivicArt } from "../icons/CivicArt";
+import { money } from "../formatMoney";
+export function DomesticWindow() {
+  const s = useGameStore(),
+    p = s.countries[s.playerCountryId],
+    l = living(s),
+    [review, setReview] = useState<ActivityKind | null>(null);
+  return (
+    <CommandWindow
+      title="Public Events & Relief"
+      kicker="NATIONAL WELLBEING"
+      wide
+      onClose={s.closeWorkspace}
+    >
+      <div className="market-facts">
+        <span>
+          <LocaleText value="Approval" />
+          <strong>{p.politics.approval.toFixed(1)}%</strong>
+        </span>
+        <span>
+          <LocaleText value="Cohesion" />
+          <strong>{p.society.cohesion.toFixed(1)}%</strong>
+        </span>
+        <span>
+          <LocaleText value="Treasury" />
+          <strong>{money(p.economy.treasury)}</strong>
+        </span>
+      </div>
+      <p>
+        <LocaleText value="Events improve morale over several days. They do not replace food supplies, economic reforms or security. Each has a thirty-day cooldown after it ends." />
+      </p>
+      <div className="activity-cards">
+        {(
+          Object.entries(ACTIVITIES) as Array<
+            [ActivityKind, (typeof ACTIVITIES)[ActivityKind]]
+          >
+        ).map(([kind, d]) => {
+          const active = l.activities.find(
+            (x) => x.kind === kind && s.day < x.endsDay + 30,
+          );
+          return (
+            <article key={kind}>
+              <CivicArt kind={kind} size={120} />
+              <h3>
+                <LocaleText value={d.title} />
+              </h3>
+              <strong>{money(d.cost)}</strong>
+              <p>
+                {d.days} <LocaleText value="days" /> · +
+                {(d.approval * d.days).toFixed(1)}{" "}
+                <LocaleText value="approval" />
+              </p>
+              {kind === "food_relief" && (
+                <p>
+                  <LocaleText value="Uses 20 food reserves" />
+                </p>
+              )}
+              <button
+                disabled={
+                  !!active ||
+                  p.economy.treasury < d.cost ||
+                  (kind === "food_relief" && p.resources.food < 20)
+                }
+                onClick={() => setReview(kind)}
+              >
+                <LocaleText
+                  value={active ? "Active / cooldown" : "Review event"}
+                />
+              </button>
+            </article>
+          );
+        })}
+      </div>
+      <div>
+        {l.activities.map((x) => (
+          <p key={x.id}>
+            <LocaleText value={ACTIVITIES[x.kind].title} /> ·{" "}
+            <LocaleText value={s.day <= x.endsDay ? "Active" : "Completed"} /> ·{" "}
+            {Math.max(0, x.endsDay - s.day)}{" "}
+            <LocaleText value="days remaining" />
+          </p>
+        ))}
+      </div>
+      {review && (
+        <ReviewDialog
+          title={ACTIVITIES[review].title}
+          summary="This public program is paid upfront and applies its effects once per day while active. A cooldown prevents repeated instant approval gains."
+          metrics={[
+            ["Cost", money(ACTIVITIES[review].cost)],
+            [
+              "Treasury after",
+              money(p.economy.treasury - ACTIVITIES[review].cost),
+            ],
+            ["Duration", `${ACTIVITIES[review].days} days`],
+            [
+              "Total approval gain",
+              `+${(ACTIVITIES[review].approval * ACTIVITIES[review].days).toFixed(1)}`,
+            ],
+            ...(review === "food_relief" ? [["Food reserves used", "20"]] : []),
+          ]}
+          onCancel={() => setReview(null)}
+          onConfirm={() => {
+            s.startActivity(review);
+            setReview(null);
+          }}
+        />
+      )}
+    </CommandWindow>
+  );
+}

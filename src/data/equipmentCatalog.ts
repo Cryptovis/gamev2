@@ -11,7 +11,7 @@ export interface EquipmentDefinition {
 }
 
 export const EQUIPMENT_CATALOG:Record<EquipmentType,EquipmentDefinition>={
-  infantry_equipment:{id:'infantry_equipment',label:'Infantry Equipment',shortLabel:'INF EQ.',description:'Small arms, communications and personal combat equipment.',baseOutput:18,inputs:{steel:.012,fuel:0,electricity:.010,treasury:.0015},deployPack:5000},
+  infantry_equipment:{id:'infantry_equipment',label:'Infantry Equipment',shortLabel:'INF EQ.',description:'Small arms, communications and personal combat equipment.',baseOutput:18,inputs:{steel:.012,fuel:0,electricity:.010,treasury:.00006},deployPack:5000},
   artillery:{id:'artillery',label:'Artillery Systems',shortLabel:'ARTILLERY',description:'Tube artillery, launchers and fire-support equipment.',baseOutput:1.4,inputs:{steel:.025,fuel:.003,electricity:.014,treasury:.0025},deployPack:20},
   armor:{id:'armor',label:'Armored Vehicles',shortLabel:'ARMOR',description:'Main battle tanks and armored fighting vehicles.',baseOutput:.55,inputs:{steel:.045,fuel:.015,electricity:.022,treasury:.0045},deployPack:10},
   fighters:{id:'fighters',label:'Combat Aircraft',shortLabel:'FIGHTERS',description:'Fighter aircraft, avionics and supporting airframes.',baseOutput:.22,inputs:{steel:.030,fuel:.020,electricity:.028,treasury:.006},deployPack:6},

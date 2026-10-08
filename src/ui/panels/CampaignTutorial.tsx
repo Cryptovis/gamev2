@@ -63,7 +63,7 @@ const steps = [
     "world",
   ],
 ];
-type Phase = "open" | "tab" | "inspect" | "done" | "build" | "review" | "result";
+type Phase = "open" | "tab" | "inspect" | "done" | "build" | "review" | "result" | "detail" | "reading";
 export function CampaignTutorial() {
   const state = useGameStore(),
     t = state.world.tutorial,
@@ -72,7 +72,7 @@ export function CampaignTutorial() {
   const initialProjects=useRef(0);
   const step = steps[Math.min(9, t.step)];
   const practice=t.step===3;
-  const target = phase==='build'?'learn-build':phase==='review'?'review-confirm':phase==='result'?'review-dismiss':
+  const target = phase==='detail'?'tutorial-detail':phase==='reading'?'review-dismiss':phase==='build'?'learn-build':phase==='review'?'review-confirm':phase==='result'?'review-dismiss':
     phase === "open"
       ? step[2]
       : phase === "tab"
@@ -113,10 +113,10 @@ export function CampaignTutorial() {
           phase === "open"
             ? step[3]
               ? "tab"
-              : "inspect"
+              : "detail"
             : phase === "tab"
-              ? (practice?"build":"inspect")
-              :phase==='build'?'review':phase==='review'?'result':phase==='result'?(useGameStore.getState().industrialEconomy[state.playerCountryId].projects.length>initialProjects.current?'inspect':'build'):"done",
+              ? (practice?"build":"detail")
+              :phase==='detail'?'reading':phase==='reading'?'inspect':phase==='build'?'review':phase==='review'?'result':phase==='result'?(useGameStore.getState().industrialEconomy[state.playerCountryId].projects.length>initialProjects.current?'inspect':'build'):"done",
         );
     };
     document.addEventListener("click", click);
@@ -126,7 +126,8 @@ export function CampaignTutorial() {
     };
   }, [t.active, target, phase, t.step]);
   if (!t.active || !state.playerProfile.setupComplete) return null;
-  const spotlight=(phase==='review'||phase==='result')?document.querySelector('.review-dialog')?.getBoundingClientRect()??rect:rect;
+  const content=phase==='inspect'?document.querySelector('.command-panel,.command-window,.floating-command-window,.map-command-dock')?.getBoundingClientRect():null;
+  const spotlight=(phase==='review'||phase==='result'||phase==='reading')?document.querySelector('.review-dialog')?.getBoundingClientRect()??rect:content??rect;
   const hole = spotlight
     ? {
         x: Math.max(0, spotlight!.left - 6),
@@ -136,7 +137,7 @@ export function CampaignTutorial() {
       }
     : null;
   return (
-    <div className="guided-tutorial">
+    <div className="guided-tutorial">{phase==='inspect'&&rect&&<div className="tutorial-target-ring" style={{left:rect.left-5,top:rect.top-5,width:rect.width+10,height:rect.height+10}}/>}
       {hole ? (
         <>
           <div
@@ -188,7 +189,7 @@ export function CampaignTutorial() {
         <strong className="tutorial-instruction">
           <LocaleText
             value={
-              phase==='build'?'Choose your first facility. This is a real investment.':phase==='review'?'Compare cost, output and upkeep, then confirm construction.':phase==='result'?'Read the result and close the confirmation.':phase === "open"
+              phase==='detail'?'Open the highlighted briefing to inspect this system.':phase==='reading'?'Read the live figures and explanation, then close the briefing.':phase==='build'?'Choose your first facility. This is a real investment.':phase==='review'?'Compare cost, output and upkeep, then confirm construction.':phase==='result'?'Read the result and close the confirmation.':phase === "open"
                 ? "Click the highlighted menu"
                 : phase === "tab"
                   ? "Click the highlighted tab"

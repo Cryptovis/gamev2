@@ -23,7 +23,7 @@ export type IntelOperationStatus = 'active' | 'success' | 'failed' | 'compromise
 export type EquipmentType = 'infantry_equipment' | 'artillery' | 'armor' | 'fighters' | 'logistics' | 'naval';
 export type InfrastructureAsset = 'roads' | 'rail' | 'ports' | 'hubs';
 
-export interface DemographicsState { population: number; workforce: number; growthRate: number; }
+export interface DemographicsState { population: number; workforce: number; growthRate: number; baseGrowthRate?:number; welfare?:number; birthsPerThousand?:number; deathsPerThousand?:number; netMigration?:number; lastNaturalChange?:number; }
 export interface ResourceStockpile { food: number; oil: number; iron: number; uranium: number; }
 export interface ResourceProduction { food: number; oil: number; iron: number; uranium: number; }
 export interface ProcessedResources { fuel: number; steel: number; electricity: number; }

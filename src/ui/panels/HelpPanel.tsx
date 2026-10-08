@@ -10,6 +10,22 @@ import {
 import { translateText } from "../../i18n/localeText";
 const faq = [
   [
+    "Why is population falling?",
+    "Food shortages, high taxes, inflation and weak income reduce wellbeing and birth rates. Emigrants move to stable countries when a safe destination is available. Recruitment transfers civilians into military service without deleting total population.",
+  ],
+  [
+    "When do market listings earn money?",
+    "Posting reserves the offered stock. You are paid only when another country buys it. An overpriced listing may remain unsold; cancel it to recover the remaining stock.",
+  ],
+  [
+    "How do diplomatic letters work?",
+    "Sent proposals receive a reply after three game days and can be rejected. Incoming proposals split setup costs equally between both governments. Agreements require consent before any payment.",
+  ],
+  [
+    "Is reserve gold the same as industrial gold?",
+    "Central-bank gold is a separate vault. Release tonnes to industry before selling or using them. Reported holdings show their date; other country profiles explicitly use game estimates.",
+  ],
+  [
     "How do I train pilots?",
     "Open Investments & Pilot Training. Recruit from your military personnel; training takes time, costs money and adds daily wages. Aircraft without enough funded pilots lose combat effectiveness.",
   ],
@@ -88,6 +104,27 @@ export function HelpPanel() {
       width={640}
       onClose={state.closeWorkspace}
     >
+      <section className="game-notes">
+        <h3>The Real President · 0.79</h3>
+        <p>
+          <LocaleText value="203 sovereign profiles · economy · population · resource markets · diplomacy · research · military command." />
+        </p>
+        <button
+          onClick={() => {
+            state.restoreAdvice();
+            state.showReceipt({
+              title: "Warnings restored",
+              summary:
+                "Cabinet recommendations are enabled again. They will appear when their conditions are met.",
+            });
+          }}
+        >
+          <LocaleText value="Restore all cabinet warnings" />
+        </button>
+        <p>
+          <LocaleText value="New screens use dollars, thousands (K), millions (M) and billions (B). Engine amounts remain in billions; strategic commodity units are game lots unless tonnes or vehicles are specified." />
+        </p>
+      </section>
       <section className="help-intro">
         <h3>
           <LocaleText value={"Your first days in office"} />

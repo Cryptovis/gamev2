@@ -64,7 +64,7 @@ export function CampaignSetup(){
   <div className="loading-world-orbit"><i/><i/><i/></div>
   <section className="loading-command-card">
    <div className="loading-identity"><AvatarPortrait id={avatar} size={124}/><div className="loading-flag"><LocaleText value={flagEmoji(selected.iso2)}/></div></div>
-   <small><LocaleText value={"ALPYX // COMMAND TRANSFER"}/></small>
+   <small><LocaleText value={"THE REAL PRESIDENT"}/></small>
    <h1><LocaleText value={name.trim()}/><LocaleText value={"'s first day in office begins."}/></h1>
    <p><LocaleText value={selected.name}/><LocaleText value={" is transferring executive command. Markets are opening, diplomats are waiting, and the cabinet is assembling for the first briefing."}/></p>
    <div className="loading-status"><span><LocaleText value={loadingMessages[Math.max(0,loadingStep-1)]??tr(language,'loading_1','Establishing national command…')}/></span><strong><LocaleText value={[8,28,54,78,100][loadingStep]}/><LocaleText value={"%"}/></strong></div>
@@ -76,8 +76,8 @@ export function CampaignSetup(){
  const stepTitle=step===1?tr(language,'step_name','Your identity'):step===2?tr(language,'step_portrait','Choose your portrait'):step===3?tr(language,'step_country','Choose your nation'):tr(language,'step_confirm','Confirm command');
 
  return <div className="campaign-setup-backdrop campaign-wizard-backdrop" style={{'--setup-primary':theme.primary,'--setup-accent':theme.accent} as CSSProperties}>
-  <section className="campaign-wizard">
-   <header className="wizard-header"><div><small><LocaleText value={"ALPYX // GLOBAL COMMAND"}/></small><h1><LocaleText value={stepTitle}/></h1><p><LocaleText value={tr(language,'setup_sub')}/></p></div><div className="wizard-stepper">{[1,2,3,4].map(n=><span key={n} className={typeof step==='number'&&step>=n?'active':''}><b><LocaleText value={n}/></b><small><LocaleText value={n===1?'IDENTITY':n===2?'PORTRAIT':n===3?'NATION':'CONFIRM'}/></small></span>)}</div></header>
+  <section className="campaign-wizard"><aside className="setup-cover"><img src="/assets/command/real-president-cover-079.svg" alt="The Real President"/></aside>
+   <header className="wizard-header"><div><small><LocaleText value={"THE REAL PRESIDENT"}/></small><h1><LocaleText value={stepTitle}/></h1><p><LocaleText value={tr(language,'setup_sub')}/></p></div><div className="wizard-stepper">{[1,2,3,4].map(n=><span key={n} className={typeof step==='number'&&step>=n?'active':''}><b><LocaleText value={n}/></b><small><LocaleText value={n===1?'IDENTITY':n===2?'PORTRAIT':n===3?'NATION':'CONFIRM'}/></small></span>)}</div></header>
 
    <div className="wizard-body">
     {step===1&&<div className="wizard-single-column">

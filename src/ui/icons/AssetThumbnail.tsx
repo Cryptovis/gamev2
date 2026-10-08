@@ -1,3 +1,4 @@
+import {CivicArt} from './CivicArt';
 import {LocaleText,translateLive} from '../../i18n/localeText';
 const assets = [
   "food",
@@ -33,6 +34,7 @@ export function AssetThumbnail({
   asset: string;
   size?: number;
 }) {
+  if(asset==='gold'||asset==='silver')return <CivicArt kind={asset} size={size}/>;
   const i = Math.max(0, assets.indexOf(asset === "armor" ? "tanks" : asset));
   return (
     <span

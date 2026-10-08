@@ -1,3 +1,5 @@
+import {EQUIPMENT_CATALOG} from '../../data/equipmentCatalog';
+import {TANK_COMPONENTS} from '../../data/industrialCatalog';
 import type {GameState} from '../../domain/game';
 import type {IndustrialGood,IndustrialContract} from '../../domain/industrial';
 import {GOODS} from '../../data/industrialCatalog';
@@ -6,18 +8,20 @@ import {changeRelations,relationFor} from './diplomacy';
 const clamp=(n:number,a:number,b:number)=>Math.max(a,Math.min(b,n));
 export function industrialPrice(state:GameState,good:IndustrialGood){
  const stock=Object.keys(state.countries).reduce((sum,id)=>sum+goodStock(state,id,good),0);
+ const listed=(state.world.living?.listings??[]).filter(x=>x.good===good&&x.status==='open').reduce((a,x)=>a+x.remaining,0);
  const demand=Object.keys(state.countries).length*GOODS[good].reserve*3;
- return GOODS[good].price*clamp(demand/Math.max(1,stock),.65,2.5);
+ const warPremium=(good==='gold'||good==='silver')?1+Math.min(.6,Object.values(state.wars).filter(w=>w.status==='active').length*.06):1;
+ return GOODS[good].price*clamp(demand/Math.max(1,stock+listed),.65,2.5)*warPremium;
 }
 export function canTradeIndustrial(state:GameState,sellerId:string,buyerId:string,good:IndustrialGood){
  const seller=state.countries[sellerId],buyer=state.countries[buyerId];if(!seller||!buyer||sellerId===buyerId)return false;
  const relation=relationFor(buyer,sellerId);
  if(seller.globalSanctions||buyer.globalSanctions||relation.status==='war'||relation.sanctions||!relation.treaties.includes('trade'))return false;
- return good!=='tanks'||relation.treaties.includes('alliance');
+ return relation.score>=10&&(good!=='tanks'||(relation.treaties.includes('alliance')&&relation.score>=60));
 }
 export function industrialQuote(state:GameState,sellerId:string,buyerId:string,good:IndustrialGood,quantity:number,lockedPrice?:number){
  const seller=state.countries[sellerId],buyer=state.countries[buyerId];
- const price=lockedPrice??industrialPrice(state,good);
+ const price=lockedPrice??Math.max(industrialPrice(state,good)*(seller?.economy.treasury<5?.85:1.08),good==='tanks'?tankDomesticCost(state,sellerId)*1.35:0);
  const available=Math.max(0,goodStock(state,sellerId,good)-GOODS[good].reserve);
  const error=!seller||!buyer||!Number.isFinite(quantity)||quantity<=0?'Invalid order':!canTradeIndustrial(state,sellerId,buyerId,good)?(good==='tanks'?'Trade pact and alliance required':'Trade pact required; sanctions and war block access'):available<quantity?'Supplier reserve protection':buyer.economy.treasury<price*quantity?'Buyer cannot afford shipment':null;
  return {price,available,cost:price*quantity,error};
@@ -65,3 +69,5 @@ export function processIndustrialMarketAI(state:GameState):GameState {
  }
  return next;
 }
+
+export function tankDomesticCost(s:GameState,id:string){const c=s.countries[id],line=s.production[id]?.lines.armor;if(!c)return 0;const tech=1+c.military.technology/500+(c.technology.unlocked.includes('ind-automation')?.08:0)+(c.technology.unlocked.includes('ind-metallurgy')?.06:0)+(c.technology.unlocked.includes('mil-modernization')?.08:0);const output=EQUIPMENT_CATALOG.armor.baseOutput*Math.max(.2,(line?.efficiency??70)/100)*tech;return EQUIPMENT_CATALOG.armor.inputs.treasury/output+Object.entries(TANK_COMPONENTS).reduce((v,[k,q])=>v+(q??0)*GOODS[k as IndustrialGood].price,0)+(EQUIPMENT_CATALOG.armor.inputs.steel*GOODS.steel.price+EQUIPMENT_CATALOG.armor.inputs.fuel*GOODS.fuel.price)/output;}

@@ -56,3 +56,16 @@ World map → national economy/resources → diplomacy → bilateral commodity f
 - Territory taxation, autonomous administration and peace settlements; current control governs occupation consequences without merging sovereign economies.
 - Multiple connection badges on country hover, richer trade route visualization and logistics bottlenecks.
 - Fully templated localization for dynamic reports and remaining legacy descriptions.
+
+## After The Real President 0.79
+
+Delivered: welfare-driven population, reviewed taxes, civilian recruitment, open-market escrow and asking prices, precious-metal inputs and separate vaults, diplomatic letters, shared incoming fees, public events, contextual advice and live tutorial briefings.
+
+Next candidates:
+- Expand verified official gold holdings with dated provenance once the complete workbook is obtainable; replace estimates only with source-backed observations.
+- Calibrate legacy strategic resource lots into explicit physical units and retune factory capital/upkeep against a consistent game time scale.
+- Negotiated commodity-price offers, counteroffers and treaty duration renewals in the post office.
+- More nuanced migration permission, skills, housing capacity and return migration; demographic cohorts.
+- Longer research projects, specialized crew readiness and sanctions-driven production substitutions.
+- Worker-based simulation and more lazy UI modules as the existing main bundle grows.
+- HD War Experience camera/terrain/animation/playback work remains in ROADMAP-HD-WAR.md.

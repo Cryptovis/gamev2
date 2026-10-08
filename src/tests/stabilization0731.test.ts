@@ -1,3 +1,4 @@
+import {processLetters} from '../engine/systems/livingEconomy';
 import { describe, expect, it } from 'vitest';
 import { makeInitialState } from '../data/initialState';
 import { applyGameCommand } from '../engine/commands';
@@ -24,7 +25,7 @@ describe('0.73.1 review safety', () => {
     player.economy.treasury=100;
     player.diplomacy.relations.GRC={...player.diplomacy.relations.GRC,score:90,treaties:[],status:'friendly'};
     const type=({trade:'diplomacy/signTradePact',nonAggression:'diplomacy/signNonAggression',alliance:'diplomacy/signAlliance'} as const)[treaty];
-    const next=applyGameCommand(state,{type,targetCountryId:'GRC'});
+    const sent=applyGameCommand(state,{type,targetCountryId:'GRC'});const next=treaty==='trade'?processLetters({...sent,day:4,simulationSeed:1}):sent;
     expect(next.countries[player.id].diplomacy.relations.GRC.treaties).toContain(treaty);
     expect(applyGameCommand(next,{type,targetCountryId:'GRC'})).toBe(next);
   });

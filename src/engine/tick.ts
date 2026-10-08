@@ -1,3 +1,5 @@
+import {processExchange,processWellbeing,processLetters} from './systems/livingEconomy';
+import {populationForecast,distributeMigration} from './systems/population';
 import {processGovernance,occupationFor} from './systems/governance';
 import {processPrograms} from './systems/nationalPrograms';
 import {processWorldInstitutions} from './systems/worldInstitutions';
@@ -31,7 +33,7 @@ export function tickCountry(country: CountryState,boost=1): CountryState {
   const politics = simulatePolitics(administered, economy, resources);
   const base: CountryState = {
     ...administered,
-    demographics: { ...administered.demographics, population: Math.max(1, administered.demographics.population * (1 + administered.demographics.growthRate / 100 / 365)) },
+    demographics: populationForecast(administered,resources),
     economy: economy.next,
     resources: resources.next,
     politics,
@@ -50,10 +52,10 @@ function processElection(state: GameState): GameState {
 }
 
 export function tickGame(state: GameState): GameState {
-  if (state.campaignStatus !== 'active' || state.activeEvent || state.activeAdvisor) return state;
+  if (state.campaignStatus !== 'active' || state.activeEvent || state.activeAdvisor || state.world.living?.advice.active || state.world.living?.notice) return state;
   const dated=processLeadership({...state,day:state.day+1});
   const boostActive=dated.day<dated.leadership.celebrationUntilDay;
-  const countries = Object.fromEntries(Object.entries(state.countries).map(([id, country]) => [id, tickCountry(country,(id===state.playerCountryId&&boostActive?1.12:1)*((occupationFor(dated,id)?.unrest??0)>=80?.7:1))]));
+  const countries = distributeMigration(Object.fromEntries(Object.entries(state.countries).map(([id, country]) => [id, tickCountry(country,(id===state.playerCountryId&&boostActive?1.12:1)*((occupationFor(dated,id)?.unrest??0)>=80?.7:1))])));
   const nextDay = state.day + 1;
   const player = countries[state.playerCountryId];
   const notices: string[] = [];
@@ -88,10 +90,13 @@ export function tickGame(state: GameState): GameState {
   next = processLivingEconomyAI(next);
   next = processWorldDiplomacy(next);
   next = processIncomingDiplomaticOffers(next);
+  next = processLetters(next);
+  next = processExchange(next);
   next = processCountryAI(next);
   next = processIndustrialAI(next);
   next = processIndustrialMarketAI(next);
   next = maybeTriggerEvent(next);
-  next = maybeCreateResourceAdvisor(next);
+  next = processWellbeing(next);
+  if(!next.world.living?.advice.active&&!next.world.living?.notice)next = maybeCreateResourceAdvisor(next);
   return next;
 }

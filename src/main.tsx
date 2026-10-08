@@ -13,3 +13,5 @@ createRoot(document.getElementById('root')!).render(
 
 import "./ui/styles/guidedCommand.css";
 import "./ui/styles/civicCommand.css";
+
+import "./ui/styles/realPresident.css";

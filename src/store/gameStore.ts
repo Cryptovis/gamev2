@@ -1,3 +1,5 @@
+import {processExchange,postListing,buyListing,cancelListing,moveBankGold,startActivity,recruitPersonnel,dismissAdvice,restoreAdvice,withLiving,living,requestDiplomacy,resolveIncomingLetter} from '../engine/systems/livingEconomy';
+import type {ExchangeGood,ActivityKind,AdviceKind} from '../domain/living';
 import type {InstitutionId,VoteChoice} from '../domain/world';
 import type {ReligionType} from '../domain/game';
 import {createWorld,applyMembership,proposeAttack,voteWorld,startOutreach} from '../engine/systems/worldInstitutions';
@@ -24,6 +26,19 @@ import { embassyFor, openEmbassy } from '../engine/systems/diplomacy';
 import { resolveDiplomaticOffer } from '../engine/systems/diplomaticOffers';
 
 interface GameActions {
+ postListing:(good:ExchangeGood,quantity:number,price:number)=>void;
+ buyListing:(id:string,quantity:number)=>void;
+ cancelListing:(id:string)=>void;
+ moveBankGold:(tonnes:number,direction:'release'|'deposit')=>void;
+ startActivity:(kind:ActivityKind)=>void;
+ recruitPersonnel:(count:number)=>void;
+ dismissAdvice:(kind:AdviceKind,disable?:boolean)=>void;
+ restoreAdvice:()=>void;
+ dismissLivingNotice:()=>void;
+ requestDiplomacy:(id:string,kind:'embassy'|'trade_pact',years:1|3|5|10)=>void;
+ resolveIncomingLetter:(id:string,accept:boolean)=>void;
+ readLetters:()=>void;
+
  buildCampus:(kind:CampusKind)=>void;
  hirePilots:(count:number)=>void;
  manageOccupation:(id:string,action:OccupationAction,value?:string)=>void;
@@ -114,7 +129,8 @@ interface GameActions {
   resetGame: () => void;
 }
 
-function commandWithReceipt(state:GameState,command:GameCommand):GameState & {actionReceipt:ReviewContent}{const next=applyGameCommand(state,command);const changed=next.countries!==state.countries||next.tradeDeals!==state.tradeDeals||next.production!==state.production||next.infrastructure!==state.infrastructure||next.wars!==state.wars||next.intelOperations!==state.intelOperations||next.council!==state.council;return {...next,actionReceipt:{title:changed?'Command completed':'Command unavailable',summary:next.sitrep[0]!==state.sitrep[0]?next.sitrep[0]:changed?'Your command has been applied.':'Review the requirements or existing orders before trying again.',metrics:[['Treasury',`$${next.countries[next.playerCountryId].economy.treasury.toFixed(3)}B`]]}};}
+function commandWithReceipt(state:GameState,command:GameCommand):GameState & {actionReceipt:ReviewContent}{const next=applyGameCommand(state,command);const changed=next.countries!==state.countries||next.tradeDeals!==state.tradeDeals||next.production!==state.production||next.infrastructure!==state.infrastructure||next.wars!==state.wars||next.intelOperations!==state.intelOperations||next.council!==state.council||next.world!==state.world;return {...next,actionReceipt:{title:changed?'Command completed':'Command unavailable',summary:next.sitrep[0]!==state.sitrep[0]?next.sitrep[0]:changed?'Your command has been applied.':'Review the requirements or existing orders before trying again.',metrics:[['Treasury',`$${next.countries[next.playerCountryId].economy.treasury.toFixed(3)}B`]]}};}
+function livingReceipt(s:GameState,n:GameState,title:string,summary:string){return {...n,actionReceipt:{title:n===s?'Decision unavailable':title,summary:n===s?'Check budget, stock, diplomatic access, limits and cooldown.':summary}};}
 function governanceReceipt(s:GameState,n:GameState){return {...n,actionReceipt:{title:n===s?'Decision unavailable':'Decision executed',summary:n===s?'Requirements changed; check the budget, cooldown and ownership.':n.sitrep[0]}}}
 export const useGameStore = create<GameState & GameActions>((set, get) => ({
   ...makeInitialState(),
@@ -127,9 +143,21 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
   startProgram:(kind)=>set(s=>{const next=startProgram(s,kind);return {...next,actionReceipt:{title:next===s?'Program unavailable':'Program started',summary:next===s?'Check budget or an active program.':'The program is funded. Its outcome will be applied on the completion day.'}}}),
   activeTool:null,warWindowId:null,openWarWindow:(warWindowId)=>set({warWindowId,selectedCountryId:null,activeTool:null}),
   closeWorkspace:()=>set({selectedCountryId:null,activeTool:null,warWindowId:null,navigation:null}),
+  postListing:(good,quantity,price)=>set(s=>livingReceipt(s,postListing(s,good,quantity,price),'Listing published','Stock is now reserved for sale. Revenue arrives only when purchased; cancel the listing to recover unsold goods.')),
+  buyListing:(id,q)=>set(s=>livingReceipt(s,buyListing(s,id,q),'Purchase settled','The purchased goods entered your reserves. The listed payment transferred to the seller.')),
+  cancelListing:(id)=>set(s=>livingReceipt(s,cancelListing(s,id),'Listing cancelled','Unsold goods returned to your stock. Completed sales remain settled.')),
+  moveBankGold:(q,d)=>set(s=>livingReceipt(s,moveBankGold(s,q,d),'Gold transferred','Gold moved between the central-bank vault and industrial inventory. No money was created.')),
+  startActivity:(kind)=>set(s=>livingReceipt(s,startActivity(s,kind),'Public event funded','Funding was paid upfront. Benefits apply once per day during the event; cooldown follows completion.')),
+  recruitPersonnel:(count)=>set(s=>livingReceipt(s,recruitPersonnel(s,count),'Recruitment completed','Civilians entered military service, reducing civilian workforce. Mobilization cost was paid; daily personnel upkeep applies.')),
+  dismissAdvice:(kind,disable=false)=>set(s=>dismissAdvice(s,kind,disable)),
+  restoreAdvice:()=>set(s=>restoreAdvice(s)),
+  dismissLivingNotice:()=>set(s=>withLiving(s,{...living(s),notice:null})),
+  requestDiplomacy:(id,kind,years)=>set(s=>{const n=requestDiplomacy(s,id,kind,years);return {...n,actionReceipt:{title:n===s?'Proposal unavailable':'Proposal sent',summary:n===s?'Check diplomatic access, budget, an existing agreement or the fourteen-day retry cooldown.':'The partner will reply in three days. Costs are charged only if accepted. Read the reply in Diplomatic Inbox.'}};}),
+  resolveIncomingLetter:(id,accept)=>set(s=>livingReceipt(s,resolveIncomingLetter(s,id,accept),accept?'Shared proposal accepted':'Proposal declined',accept?'The agreement is active. Both governments paid half the diplomatic fee.':'The proposal closed without spending funds.')),
+  readLetters:()=>set(s=>withLiving(s,{...living(s),letters:living(s).letters.map(x=>({...x,read:true}))})),
   openTool:(activeTool)=>set({activeTool,selectedCountryId:null,warWindowId:null,navigation:null}),
   actionReceipt:null,showReceipt:(actionReceipt)=>set({actionReceipt}),
-  navigation:null,navigate:(panel,countryId)=>set(s=>({activeTool:['objectives','market','pulse','map','resources','sitrep','alerts','diplomacy-inbox','help','research','investment','governance'].includes(panel)?(panel==='diplomacy-inbox'?'diplomacy':panel):null,warWindowId:null,selectedCountryId:['objectives','market','pulse','map','resources','sitrep','alerts','diplomacy-inbox','help','research','investment','governance'].includes(panel)?null:countryId??s.playerCountryId,navigation:{panel,countryId:countryId??s.playerCountryId,nonce:(s.navigation?.nonce??0)+1}})),
+  navigation:null,navigate:(panel,countryId)=>set(s=>({activeTool:['objectives','market','pulse','map','resources','sitrep','alerts','diplomacy-inbox','help','research','investment','governance','society'].includes(panel)?(panel==='diplomacy-inbox'?'diplomacy':panel):null,warWindowId:null,selectedCountryId:['objectives','market','pulse','map','resources','sitrep','alerts','diplomacy-inbox','help','research','investment','governance','society'].includes(panel)?null:countryId??s.playerCountryId,navigation:{panel,countryId:countryId??s.playerCountryId,nonce:(s.navigation?.nonce??0)+1},...(countryId?{mapControlCommand:{action:'focus' as const,nonce:(s.mapControlCommand?.nonce??0)+1}}:{})})),
   setTutorial:(step,active)=>set(s=>({world:{...s.world,tutorial:{step:Math.max(0,Math.min(9,step)),active,completed:!active}},speed:0})),
   cancelConstruction:(id)=>set(s=>{const n=cancelConstruction(s,id);return {...n,actionReceipt:{title:n===s?'Cancellation unavailable':'Construction cancelled',summary:n===s?'The project is already complete or unavailable.':n.sitrep[0]}};}),
   applyMembership:(id)=>set(s=>{const n=applyMembership(s,id);return {...n,actionReceipt:{title:n===s?'Application unavailable':'Application submitted',summary:n===s?'Check achievements, influence, an existing application or the 30-day retry cooldown.':'Voting closes in 5 days. Review country votes in World Institutions.'}};}),
@@ -152,7 +180,7 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
     const fresh=makeInitialState();
     const chosen=fresh.countries[countryId] ? countryId : 'TUR';
     const country=fresh.countries[chosen];
-    return {...fresh,actionReceipt:null,navigation:null,activeTool:null,warWindowId:null,world:{...createWorld(fresh.countries,chosen),governance:createGovernance(fresh.countries),tutorial:{active:true,step:0,completed:false}},mapProjection:'globe',mapControlCommand:null,confirmationSkips:{},playerCountryId:chosen,selectedCountryId:chosen,leadership:createLeadership(country.economy.gdp),playerProfile:{commanderName:commanderName.trim()||'Commander',avatarId,language,setupComplete:true,nationalityCountryId:fresh.countries[nationalityCountryId??'']?nationalityCountryId:chosen,birthDate:birthDate&&validBirthDate(birthDate)?birthDate:null},council:{influenceByCountry:{[chosen]:28},history:[]},intelligenceLedger:{[chosen]:100},mapNotice:`${country.name} command established.`,sitrep:[`${commanderName.trim()||'Commander'} assumed national command of ${country.name}.`,...fresh.sitrep],saveMessage:'Campaign initialized'};
+    const boot={...fresh,actionReceipt:null,navigation:null,activeTool:null,warWindowId:null,world:{...createWorld(fresh.countries,chosen),governance:createGovernance(fresh.countries),tutorial:{active:true,step:0,completed:false}},mapProjection:'globe',mapControlCommand:null,confirmationSkips:{},playerCountryId:chosen,selectedCountryId:chosen,leadership:createLeadership(country.economy.gdp),playerProfile:{commanderName:commanderName.trim()||'Commander',avatarId,language,setupComplete:true,nationalityCountryId:fresh.countries[nationalityCountryId??'']?nationalityCountryId:chosen,birthDate:birthDate&&validBirthDate(birthDate)?birthDate:null},council:{influenceByCountry:{[chosen]:28},history:[]},intelligenceLedger:{[chosen]:100},mapNotice:`${country.name} command established.`,sitrep:[`${commanderName.trim()||'Commander'} assumed national command of ${country.name}.`,...fresh.sitrep],saveMessage:'Campaign initialized'};return processExchange(boot,true);
   }),
   setLeaderIdentity:(nationalityCountryId,birthDate)=>set(state=>state.countries[nationalityCountryId]&&(!birthDate||validBirthDate(birthDate))?{playerProfile:{...state.playerProfile,nationalityCountryId,birthDate}}:{}),
   setPlayerAvatar: (avatarId) => set((state)=>({playerProfile:{...state.playerProfile,avatarId}})),
@@ -184,14 +212,9 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
   improveRelations: (targetCountryId) => set((state) => commandWithReceipt(state, { type: 'diplomacy/improveRelations', targetCountryId })),
   giftTreasury: (targetCountryId,amountB) => set((state)=>commandWithReceipt(state,{type:'diplomacy/giftTreasury',targetCountryId,amountB})),
   giftResource: (targetCountryId,resource) => set((state)=>commandWithReceipt(state,{type:'diplomacy/giftResource',targetCountryId,resource})),
-  openEmbassyWith: (targetCountryId) => set((state)=>{
-    const player=state.countries[state.playerCountryId],target=state.countries[targetCountryId];
-    if(!player||!target||embassyFor(state,player.id,target.id)||player.economy.treasury<3)return {};
-    const opened=openEmbassy(state,player.id,target.id,1);
-    return {...opened,countries:{...opened.countries,[player.id]:{...opened.countries[player.id],economy:{...opened.countries[player.id].economy,treasury:opened.countries[player.id].economy.treasury-3}}},sitrep:[`EMBASSY // Diplomatic mission opened with ${target.name}. Establishment cost $3B.`,...opened.sitrep].slice(0,12)};
-  }),
+  openEmbassyWith: (targetCountryId) => set(s=>{const n=requestDiplomacy(s,targetCountryId,'embassy');return {...n,actionReceipt:{title:n===s?'Proposal unavailable':'Proposal sent',summary:n===s?'Check access, budget or an existing proposal.':'The partner will reply in three days. Read the reply in Diplomatic Inbox.'}};}),
   resolveDiplomaticOffer: (offerId,accept) => set((state)=>resolveDiplomaticOffer(state,offerId,accept)),
-  signTradePact: (targetCountryId) => set((state) => commandWithReceipt(state, { type: 'diplomacy/signTradePact', targetCountryId })),
+  signTradePact: (targetCountryId) => get().requestDiplomacy(targetCountryId,'trade_pact',1),
   signNonAggression: (targetCountryId) => set((state) => commandWithReceipt(state, { type: 'diplomacy/signNonAggression', targetCountryId })),
   signAlliance: (targetCountryId) => set((state) => commandWithReceipt(state, { type: 'diplomacy/signAlliance', targetCountryId })),
   formBloc: (targetCountryId) => set((state) => commandWithReceipt(state, { type: 'diplomacy/formBloc', targetCountryId })),

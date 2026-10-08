@@ -1,3 +1,4 @@
+import {calculateSupplyNetwork} from '../../engine/systems/supplyNetwork';
 import {pilotCoverage,academyFor} from '../../engine/systems/governance';
 import { LocaleText, translateLive } from "../../i18n/localeText";
 import { useEffect, useRef, useState } from "react";
@@ -57,6 +58,7 @@ export function WarTheatreModal() {
   const a = s.countries[w.attackerId],
     d = s.countries[w.defenderId],
     p = getWarPreview({...a,military:{...a.military,fighters:a.military.fighters*pilotCoverage(s,a.id),bombers:a.military.bombers*pilotCoverage(s,a.id)}}, {...d,military:{...d.military,fighters:d.military.fighters*pilotCoverage(s,d.id),bombers:d.military.bombers*pilotCoverage(s,d.id)}}, s.infrastructure[a.id], s.infrastructure[d.id]);
+  const fuel=calculateSupplyNetwork(s.countries[s.playerCountryId]).fuelDays;
   const mine =
     w.attackerId === s.playerCountryId || w.defenderId === s.playerCountryId;
   return createPortal(
@@ -68,7 +70,7 @@ export function WarTheatreModal() {
         aria-modal="true"
         aria-label={translateLive("War command")}
       >
-        <header>
+        {mine&&fuel<14&&<div className="war-fuel-warning" role="alert"><strong><LocaleText value={fuel<3?'Critical fuel on the front':'Fuel reserves are insufficient for a sustained operation'}/></strong><p><LocaleText value="Fuel operational days"/>: {fuel.toFixed(1)}. <LocaleText value="Consider halting the assault, securing imports or withdrawing before supply and readiness collapse."/></p><button onClick={()=>s.navigate('resources')}><LocaleText value="Inspect fuel supply"/></button></div>}<header>
           <span>
             <small>
               <LocaleText value={"WAR COMMAND"} />
@@ -114,7 +116,7 @@ export function WarTheatreModal() {
                       <LocaleText value={Number(count).toLocaleString()} />
                     </strong>
                     <small>
-                      <LocaleText value={asset} />
+                      <LocaleText value={String(asset)==='infantry_equipment'?'Personnel':String(asset)==='tanks'?'Tanks':String(asset)==='fighters'?'Fighters':'Warships'} />
                     </small>
                   </span>
                 ))}
