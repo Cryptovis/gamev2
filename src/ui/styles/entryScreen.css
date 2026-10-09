@@ -1,0 +1,128 @@
+/* Entry screen (sign-in, demo hub). Scoped under .entry-backdrop so it overrides the older flowCommand.css rules without touching other screens. */
+
+.entry-backdrop{
+  background:
+    radial-gradient(1100px 620px at 18% 10%,rgba(232,197,112,.16),transparent 62%),
+    radial-gradient(900px 560px at 92% 100%,rgba(155,59,59,.18),transparent 60%),
+    #0a0f0e;
+}
+.entry-backdrop::before{
+  content:"";position:fixed;inset:0;pointer-events:none;opacity:.07;
+  background-image:linear-gradient(rgba(232,197,112,.9) 1px,transparent 1px),linear-gradient(90deg,rgba(232,197,112,.9) 1px,transparent 1px);
+  background-size:56px 56px;
+  mask-image:radial-gradient(ellipse at center,#000 30%,transparent 75%);
+}
+
+.entry-backdrop .entry-shell{
+  position:relative;
+  grid-template-columns:minmax(260px,.9fr) minmax(380px,1.1fr);
+  width:min(1040px,100%);
+  border:1px solid rgba(232,197,112,.38);
+  border-radius:20px;
+  background:linear-gradient(180deg,#1c2321,#141a18);
+  box-shadow:0 40px 120px rgba(0,0,0,.65),inset 0 1px 0 rgba(255,236,186,.08);
+  animation:entryRise .6s cubic-bezier(.2,.7,.2,1) both;
+}
+
+/* Left: cover art with a gradient that melts into the panel */
+.entry-backdrop .entry-art{position:relative;min-height:520px;padding:36px;justify-content:flex-end;background-position:center;background-size:cover}
+.entry-backdrop .entry-art::after{
+  content:"";position:absolute;inset:0;
+  background:
+    linear-gradient(180deg,rgba(10,15,14,.1) 35%,rgba(10,15,14,.92) 100%),
+    linear-gradient(90deg,transparent 62%,#141a18 100%);
+}
+.entry-backdrop .entry-art>*{position:relative;z-index:1}
+.entry-backdrop .entry-art>span{font-size:38px;line-height:1.02;font-weight:700;color:#f6d98f;letter-spacing:.02em;text-shadow:0 2px 18px rgba(0,0,0,.6)}
+.entry-backdrop .entry-art p{margin:12px 0 14px;font-size:17px;color:#f3ead2}
+.entry-backdrop .entry-art small{
+  align-self:flex-start;padding:4px 11px;border:1px solid rgba(232,197,112,.5);border-radius:999px;
+  background:rgba(10,15,14,.5);color:#f0d68f;font-size:11px;letter-spacing:.08em;
+}
+
+/* Right: content panel */
+.entry-backdrop .entry-content{padding:40px 44px;display:flex;flex-direction:column;justify-content:center}
+.entry-backdrop .entry-content header{position:relative;margin-bottom:4px}
+.entry-backdrop .entry-content header::before{content:"";display:block;width:56px;height:2px;margin-bottom:16px;background:linear-gradient(90deg,#e8c570,transparent)}
+.entry-backdrop .entry-content header>small{color:#e8c570;letter-spacing:.22em;font-size:11px;font-weight:600}
+.entry-backdrop .entry-content h1{font:700 40px/1.08 Georgia,serif;color:#fff3d6;margin:12px 0 0;letter-spacing:-.01em}
+
+.entry-backdrop .entry-languages{
+  display:inline-flex;flex-wrap:wrap;gap:2px;align-self:flex-start;margin:22px 0 28px;padding:4px;
+  border:1px solid rgba(232,197,112,.25);border-radius:999px;background:rgba(0,0,0,.28);
+}
+.entry-backdrop .entry-languages button{border:0;border-radius:999px;padding:7px 13px;background:transparent;color:#cfc6a8;font-size:13px;font-weight:600;cursor:pointer;transition:background .2s,color .2s}
+.entry-backdrop .entry-languages button:hover{color:#fff3d6;background:rgba(232,197,112,.1)}
+.entry-backdrop .entry-languages [aria-pressed=true]{background:linear-gradient(180deg,#f0d07e,#e0b65a);color:#17190f;box-shadow:0 4px 14px rgba(232,197,112,.25)}
+
+/* Game menu: numbered command cards */
+.entry-backdrop .entry-game-menu{gap:12px;margin-top:0;counter-reset:menu}
+.entry-backdrop .entry-game-menu>button{
+  counter-increment:menu;position:relative;display:grid;grid-template-columns:auto 1fr;column-gap:16px;row-gap:4px;align-items:center;
+  padding:18px 20px 18px 18px;font-size:19px;text-align:left;
+  border:1px solid rgba(232,197,112,.22);border-radius:14px;
+  background:linear-gradient(90deg,rgba(232,197,112,.1),rgba(255,255,255,.015) 70%),#1d2523;
+  transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease,background .22s ease;
+}
+.entry-backdrop .entry-game-menu>button::before{
+  content:counter(menu,decimal-leading-zero);grid-row:span 2;
+  font:600 13px ui-monospace,SFMono-Regular,Menlo,monospace;color:#e8c570;letter-spacing:.06em;
+  padding:6px 9px;border:1px solid rgba(232,197,112,.35);border-radius:8px;
+}
+.entry-backdrop .entry-game-menu>button small{margin:0;font-size:13px;color:#b9b49c;line-height:1.5}
+.entry-backdrop .entry-game-menu>button:not(:disabled):hover{transform:translateY(-2px);border-color:#e8c570;box-shadow:0 14px 40px rgba(232,197,112,.14)}
+.entry-backdrop .entry-game-menu>button:not(:disabled):focus-visible{outline:none;border-color:#ffe397;box-shadow:0 0 0 4px rgba(255,227,151,.25)}
+.entry-backdrop .entry-game-menu>button[data-entry="new-game"]{border-color:rgba(232,197,112,.6)}
+.entry-backdrop .entry-game-menu>button:last-child{padding:14px 20px 14px 18px;font-size:15px;background:transparent;color:#d9d1b4}
+.entry-backdrop .entry-game-menu>button:last-child::before{content:"←";font-size:13px;border-color:rgba(232,197,112,.2);color:#bfb691}
+
+/* Forms */
+.entry-backdrop .entry-form{gap:16px;margin-top:0}
+.entry-backdrop .entry-form label{gap:8px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#cdbf93;font-weight:600}
+.entry-backdrop .entry-form input{
+  min-height:48px;padding:12px 14px;border-radius:10px;letter-spacing:0;text-transform:none;font-size:16px;
+  border:1px solid rgba(232,197,112,.25);background:#0e1413;color:#fff3d6;transition:border-color .2s,box-shadow .2s;
+}
+.entry-backdrop .entry-form input:focus-visible{outline:none;border-color:#e8c570;box-shadow:0 0 0 4px rgba(232,197,112,.16)}
+
+/* Buttons */
+.entry-backdrop .entry-content button{border-radius:10px;border:1px solid rgba(232,197,112,.3);background:transparent;color:#eadfbf;font-weight:600;transition:background .2s,border-color .2s,transform .15s}
+.entry-backdrop .entry-content button:not(:disabled):hover{border-color:#e8c570;background:rgba(232,197,112,.07)}
+.entry-backdrop .entry-content button:not(:disabled):active{transform:scale(.99)}
+.entry-backdrop .entry-content button.primary{
+  margin-top:6px;padding:13px 16px;font-size:15px;border:0;
+  background:linear-gradient(180deg,#f0d07e,#dcb25a);color:#17190f;box-shadow:0 10px 28px rgba(232,197,112,.22);
+}
+.entry-backdrop .entry-content button.primary:not(:disabled):hover{background:linear-gradient(180deg,#f7dc91,#e6bd66);box-shadow:0 14px 34px rgba(232,197,112,.3)}
+.entry-backdrop .entry-form>button[type=button]{font-size:13px;color:#cfc6a8;border-color:transparent;background:transparent;padding:8px 6px;justify-self:start}
+.entry-backdrop .entry-form>button[data-entry="demo"]{justify-self:stretch;text-align:center;border:1px dashed rgba(232,197,112,.4);color:#e8d39a}
+.entry-backdrop .entry-content button:disabled{opacity:.45}
+.entry-backdrop .entry-content button:focus-visible{outline:3px solid #ffe397;outline-offset:3px}
+
+.entry-backdrop .entry-error{
+  margin:0;padding:10px 12px;border-radius:10px;font-size:13px;
+  border:1px solid rgba(232,110,90,.45);background:rgba(155,59,59,.22);color:#ffd2c2;
+}
+.entry-backdrop .entry-note{margin:22px 0 0;padding-top:16px;border-top:1px solid rgba(232,197,112,.14);font-size:12px;line-height:1.6;color:#aaa58c}
+
+/* Staggered entrance */
+.entry-backdrop .entry-game-menu>button:nth-child(1){animation:entryRise .5s .12s both}
+.entry-backdrop .entry-game-menu>button:nth-child(2){animation:entryRise .5s .2s both}
+.entry-backdrop .entry-game-menu>button:nth-child(3){animation:entryRise .5s .28s both}
+.entry-backdrop .entry-form{animation:entryRise .5s .15s both}
+.entry-backdrop .entry-languages{animation:entryRise .5s .08s both}
+
+@keyframes entryRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+@media (prefers-reduced-motion:reduce){
+  .entry-backdrop *,.entry-backdrop *::before,.entry-backdrop *::after{animation:none!important;transition:none!important}
+}
+
+@media (max-width:760px){
+  .entry-backdrop .entry-shell{grid-template-columns:1fr;border-radius:16px}
+  .entry-backdrop .entry-art{min-height:150px;padding:20px}
+  .entry-backdrop .entry-art>span{font-size:26px}
+  .entry-backdrop .entry-content{padding:22px}
+  .entry-backdrop .entry-content h1{font-size:30px}
+  .entry-backdrop .entry-game-menu>button{font-size:17px}
+}
