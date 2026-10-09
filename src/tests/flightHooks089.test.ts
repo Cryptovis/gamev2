@@ -75,7 +75,7 @@ describe('0.89 trade starts one cargo flight, not one per daily shipment', () =>
     const cargo = (x: GameState) => flights(x).filter((f) => f.kind === 'cargo' && f.fromId === 'AZE' && f.toId === 'TUR');
     expect(cargo(s)).toHaveLength(1);
     // Thirty consecutive days of the monthly rule add exactly one more flight for the deal.
-    let monthly = 0, t = { ...s, world: { ...s.world, flights: [] as Flight[] } };
+    let monthly = 0, t: GameState = { ...s, world: { ...s.world, flights: [] as Flight[] } };
     for (let i = 1; i <= TRADE_FLIGHT_INTERVAL_DAYS; i++) {
       const before = cargo(t).length;
       t = processTradeFlights({ ...t, day: s.day + i });
