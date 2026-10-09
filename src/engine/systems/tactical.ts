@@ -348,7 +348,7 @@ export function resolveTacticalRound(s: GameState, id: string, orders: TacticalO
     if (isMove(o)) actions.push({ kind: moves.has(o.unitId) ? 'move' : 'blocked', side, unitId: o.unitId, from, to: o.target });
     else if (o.kind === 'bombard') actions.push({ kind: 'bombard', side, unitId: o.unitId, target: o.target, hit: alive(units).some(u => u.side !== side && u.cell === o.target) });
     else if (o.kind === 'recon') actions.push({ kind: 'recon', side, unitId: o.unitId, target: o.target });
-    else actions.push({ kind: o.kind, side, unitId: o.unitId });
+    else if (o.kind === 'defend' || o.kind === 'reserve') actions.push({ kind: o.kind, side, unitId: o.unitId });
   }
 
   const stagedWar = { ...w, tactical: { ...b, units } };
