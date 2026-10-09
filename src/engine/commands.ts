@@ -16,9 +16,9 @@ import {pendingVictory} from './systems/victory';
 import {requestDiplomacy,diplomaticProposalStatus} from './systems/livingEconomy';
 import {applyWarCondemnation} from './systems/worldInstitutions';
 import type { GameCommand } from '../domain/commands';
-import type { GameState, TradeResource, WarState } from '../domain/game';
+import type { CountryState, GameState, TradeResource, WarState } from '../domain/game';
 import { tickGame } from './tick';
-import { addTreaty, applyThirdPartyTradeReaction, changeRelations, embassyRelationBonus, relationFor, sendResourceGift, sendTreasuryGift, setWarRelation, updateBilateralRelation, endWarRelation } from './systems/diplomacy';
+import { addTreaty, applyThirdPartyTradeReaction, changeRelations, relationFor, sendResourceGift, sendTreasuryGift, setWarRelation, updateBilateralRelation, endWarRelation } from './systems/diplomacy';
 import { makeImportDeal } from './systems/trade';
 import { emptyLosses, getWarPreview, resolveCombatRound } from './systems/warfare';
 import { resolveEvent } from './systems/events';
@@ -29,6 +29,7 @@ import { proposeCouncilResolution } from './systems/council';
 import { launchIntelOperation } from './systems/espionage';
 import { deployEquipment, setMilitaryFactoryShare, setProductionFactories } from './systems/production';
 import { investInfrastructure } from './systems/infrastructure';
+import { BASE_COST_B, actionCooldownDays, actionEffectMultiplier, diplomaticMissionStatus, formatCostB, publicGain, recordActionUse, scaledCostB, sendDiplomaticMission, type DomesticAction } from './systems/policyPressure';
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 const note = (state: GameState, message: string): GameState => ({ ...state, sitrep: [message, ...state.sitrep].slice(0, 12) });
@@ -47,6 +48,22 @@ function createImport(state: GameState, targetCountryId: string, resource: Trade
   const deal = makeImportDeal(state, targetCountryId, resource);
   if (!deal) return note(state, `TRADE // ${target.name} has no safe export surplus of ${resource.toUpperCase()}. Seek another supplier or change the strategic situation.`);
   return note({ ...state, tradeDeals: { ...state.tradeDeals, [deal.id]: deal } }, `TRADE // ${resource.toUpperCase()} import contract signed with ${target.name} at $${deal.pricePerUnit.toFixed(3)}/unit.`);
+}
+
+/**
+ * Instant domestic programmes (audit C4/C15): GDP-scaled cost, a cooldown, and effects multiplied by the repeat-fatigue
+ * multiplier so spamming the same lever yields less each time.
+ */
+function domesticAction(state: GameState, action: DomesticAction, baseCostB: number, costNote: string, doneNote: string, apply: (player: CountryState, multiplier: number) => CountryState): GameState {
+  const player = state.countries[state.playerCountryId];
+  if (!player) return state;
+  const cost = scaledCostB(player, baseCostB), wait = actionCooldownDays(state, player.id, action);
+  if (wait > 0) return note(state, `POLICY // This programme can be repeated in ${wait} days.`);
+  if (player.economy.treasury < cost) return note(state, costNote.replace('{0}', formatCostB(cost)));
+  const multiplier = actionEffectMultiplier(state, player.id, action);
+  const updated = apply({ ...player, economy: { ...player.economy, treasury: player.economy.treasury - cost } }, multiplier);
+  const next = recordActionUse({ ...state, countries: { ...state.countries, [player.id]: updated } }, player.id, action);
+  return note(next, multiplier < 0.995 ? `${doneNote} Repeat fatigue: ${Math.round(multiplier * 100)}% effect.` : doneNote);
 }
 
 function executeGameCommand(state: GameState, command: GameCommand): GameState {
@@ -103,13 +120,12 @@ function executeGameCommand(state: GameState, command: GameCommand): GameState {
       return { ...state, countries: { ...state.countries, [player.id]: { ...player, economy: { ...player.economy, taxRate: clamp(command.rate, arrears(state,player.id)>0?45:0, 60) } } } };
     }
     case 'diplomacy/improveRelations': {
-      const player = state.countries[state.playerCountryId];
+      // Audit C15: GDP-scaled fee, 30-day cooldown per target and fading goodwill on repeats (policyPressure.ts).
       const target = state.countries[command.targetCountryId];
-      if (!player || !target || player.economy.treasury < 2) return note(state, 'DIPLOMACY // Insufficient treasury for diplomatic mission.');
-      let next = { ...state, countries: { ...state.countries, [player.id]: { ...player, economy: { ...player.economy, treasury: player.economy.treasury - 2 } } } };
-      const gain=Math.round(10*embassyRelationBonus(next,player.id,target.id));
-      next = changeRelations(next, player.id, target.id, gain);
-      return note(next, `DIPLOMACY // Relations with ${target.name} improved (+${gain}).`);
+      const status = diplomaticMissionStatus(state, state.playerCountryId, command.targetCountryId);
+      if (!target) return state;
+      if (!status.allowed) return note(state, status.cooldownDays > 0 ? `DIPLOMACY // Next mission to ${target.name} possible in ${status.cooldownDays} days.` : status.reason === 'Insufficient treasury for diplomatic mission.' ? 'DIPLOMACY // Insufficient treasury for diplomatic mission.' : `DIPLOMACY // ${status.reason}`);
+      return note(sendDiplomaticMission(state, state.playerCountryId, target.id), `DIPLOMACY // Relations with ${target.name} improved (+${status.gain}).`);
     }
     case 'diplomacy/giftTreasury': {
       const player = state.countries[state.playerCountryId];
@@ -140,8 +156,9 @@ function executeGameCommand(state: GameState, command: GameCommand): GameState {
       const relation = relationFor(player, target.id);
       if (player.id === target.id || relation.treaties.includes('nonAggression')) return state;
       if (relation.status === 'war' || relation.score < 25) return note(state, `DIPLOMACY // ${target.name} requires relations of at least +25 for a non-aggression pact.`);
-      if (player.economy.treasury < 4) return note(state, 'DIPLOMACY // Non-aggression talks require $4B.');
-      let next: GameState = { ...state, countries: { ...state.countries, [player.id]: { ...player, economy: { ...player.economy, treasury: player.economy.treasury - 4 } } } };
+      const cost = scaledCostB(player, BASE_COST_B.nonAggression);
+      if (player.economy.treasury < cost) return note(state, `DIPLOMACY // Non-aggression talks require ${formatCostB(cost)}.`);
+      let next: GameState = { ...state, countries: { ...state.countries, [player.id]: { ...player, economy: { ...player.economy, treasury: player.economy.treasury - cost } } } };
       next = addTreaty(next, player.id, target.id, 'nonAggression');
       return note(next, `DIPLOMACY // Non-aggression pact signed with ${target.name}.`);
     }
@@ -152,8 +169,9 @@ function executeGameCommand(state: GameState, command: GameCommand): GameState {
       const relation = relationFor(player, target.id);
       if (player.id === target.id || relation.treaties.includes('alliance')) return state;
       if (relation.status === 'war' || relation.score < 60) return note(state, `DIPLOMACY // ${target.name} requires relations of at least +60 for an alliance.`);
-      if (player.economy.treasury < 10) return note(state, 'DIPLOMACY // Alliance summit requires $10B.');
-      let next: GameState = { ...state, countries: { ...state.countries, [player.id]: { ...player, economy: { ...player.economy, treasury: player.economy.treasury - 10 } } } };
+      const cost = scaledCostB(player, BASE_COST_B.alliance);
+      if (player.economy.treasury < cost) return note(state, `DIPLOMACY // Alliance summit requires ${formatCostB(cost)}.`);
+      let next: GameState = { ...state, countries: { ...state.countries, [player.id]: { ...player, economy: { ...player.economy, treasury: player.economy.treasury - cost } } } };
       next = addTreaty(next, player.id, target.id, 'alliance');
       next = changeRelations(next, player.id, target.id, 8);
       return note(next, `DIPLOMACY // Strategic alliance signed with ${target.name}.`);
@@ -198,36 +216,11 @@ function executeGameCommand(state: GameState, command: GameCommand): GameState {
       return note({ ...state, wars: { ...state.wars, [war.id]: { ...war, autoAssault: command.enabled } } }, `WAR // Auto assault ${command.enabled ? 'ENGAGED' : 'HALTED'}.`);
     }
 
-    case 'development/economicResearch': {
-      const player = state.countries[state.playerCountryId];
-      if (!player || player.economy.treasury < 8) return note(state, 'DEVELOPMENT // Economic research requires $8B.');
-      const updated = { ...player, economy: { ...player.economy, treasury: player.economy.treasury - 8, productivity: clamp(player.economy.productivity + 2.5, 1, 100) }, industry: { ...player.industry, utilization: clamp(player.industry.utilization + 1.5, 0, 100) } };
-      return note({ ...state, countries: { ...state.countries, [player.id]: updated } }, 'DEVELOPMENT // Economic modernization program completed. Productivity improved.');
-    }
-    case 'development/militaryResearch': {
-      const player = state.countries[state.playerCountryId];
-      if (!player || player.economy.treasury < 12) return note(state, 'DEVELOPMENT // Military R&D requires $12B.');
-      const updated = { ...player, economy: { ...player.economy, treasury: player.economy.treasury - 12 }, military: { ...player.military, technology: clamp(player.military.technology + 2.5, 0, 100), readiness: clamp(player.military.readiness + 1, 0, 100), assessment: { ...player.military.assessment, capability: clamp(player.military.assessment.capability + 1.2, 0, 100) } } };
-      return note({ ...state, countries: { ...state.countries, [player.id]: updated } }, 'DEVELOPMENT // Military technology program advanced.');
-    }
-    case 'development/intelligenceResearch': {
-      const player = state.countries[state.playerCountryId];
-      if (!player || player.economy.treasury < 7) return note(state, 'DEVELOPMENT // Intelligence modernization requires $7B.');
-      const updated = { ...player, economy: { ...player.economy, treasury: player.economy.treasury - 7 }, intelligence: { ...player.intelligence, networkStrength: clamp(player.intelligence.networkStrength + 4, 0, 100), counterIntelligence: clamp(player.intelligence.counterIntelligence + 3, 0, 100), intelConfidence: clamp(player.intelligence.intelConfidence + 3, 0, 100) } };
-      return note({ ...state, countries: { ...state.countries, [player.id]: updated } }, 'DEVELOPMENT // Intelligence network modernization completed.');
-    }
-    case 'society/religiousOutreach': {
-      const player = state.countries[state.playerCountryId];
-      if (!player || player.economy.treasury < 4) return note(state, 'SOCIETY // Outreach program requires $4B.');
-      const updated = { ...player, economy: { ...player.economy, treasury: player.economy.treasury - 4 }, society: { ...player.society, cohesion: clamp(player.society.cohesion + 2, 0, 100), secularization: clamp(player.society.secularization - 2, 0, 100) }, politics: { ...player.politics, approval: clamp(player.politics.approval + 0.5, 0, 100) } };
-      return note({ ...state, countries: { ...state.countries, [player.id]: updated } }, 'SOCIETY // Religious outreach strengthened social cohesion.');
-    }
-    case 'society/civicCampaign': {
-      const player = state.countries[state.playerCountryId];
-      if (!player || player.economy.treasury < 4) return note(state, 'SOCIETY // Civic program requires $4B.');
-      const updated = { ...player, economy: { ...player.economy, treasury: player.economy.treasury - 4 }, society: { ...player.society, cohesion: clamp(player.society.cohesion + 1.5, 0, 100), secularization: clamp(player.society.secularization + 2, 0, 100) }, politics: { ...player.politics, stability: clamp(player.politics.stability + 1, 0, 100) } };
-      return note({ ...state, countries: { ...state.countries, [player.id]: updated } }, 'SOCIETY // Civic campaign improved institutional cohesion.');
-    }
+    case 'development/economicResearch': return domesticAction(state, 'development/economicResearch', BASE_COST_B.economicResearch, 'DEVELOPMENT // Economic research requires {0}.', 'DEVELOPMENT // Economic modernization program completed. Productivity improved.', (p, m) => ({ ...p, economy: { ...p.economy, productivity: clamp(p.economy.productivity + 2.5 * m, 1, 100) }, industry: { ...p.industry, utilization: clamp(p.industry.utilization + 1.5 * m, 0, 100) } }));
+    case 'development/militaryResearch': return domesticAction(state, 'development/militaryResearch', BASE_COST_B.militaryResearch, 'DEVELOPMENT // Military R&D requires {0}.', 'DEVELOPMENT // Military technology program advanced.', (p, m) => ({ ...p, military: { ...p.military, technology: clamp(p.military.technology + 2.5 * m, 0, 100), readiness: clamp(p.military.readiness + 1 * m, 0, 100), assessment: { ...p.military.assessment, capability: clamp(p.military.assessment.capability + 1.2 * m, 0, 100) } } }));
+    case 'development/intelligenceResearch': return domesticAction(state, 'development/intelligenceResearch', BASE_COST_B.intelligenceResearch, 'DEVELOPMENT // Intelligence modernization requires {0}.', 'DEVELOPMENT // Intelligence network modernization completed.', (p, m) => ({ ...p, intelligence: { ...p.intelligence, networkStrength: clamp(p.intelligence.networkStrength + 4 * m, 0, 100), counterIntelligence: clamp(p.intelligence.counterIntelligence + 3 * m, 0, 100), intelConfidence: clamp(p.intelligence.intelConfidence + 3 * m, 0, 100) } }));
+    case 'society/religiousOutreach': return domesticAction(state, 'society/religiousOutreach', BASE_COST_B.religiousOutreach, 'SOCIETY // Outreach program requires {0}.', 'SOCIETY // Religious outreach strengthened social cohesion.', (p, m) => ({ ...p, society: { ...p.society, cohesion: publicGain(p.society.cohesion, 2, m), secularization: clamp(p.society.secularization - 2 * m, 0, 100) }, politics: { ...p.politics, approval: publicGain(p.politics.approval, 0.5, m) } }));
+    case 'society/civicCampaign': return domesticAction(state, 'society/civicCampaign', BASE_COST_B.civicCampaign, 'SOCIETY // Civic program requires {0}.', 'SOCIETY // Civic campaign improved institutional cohesion.', (p, m) => ({ ...p, society: { ...p.society, cohesion: publicGain(p.society.cohesion, 1.5, m), secularization: clamp(p.society.secularization + 2 * m, 0, 100) }, politics: { ...p.politics, stability: publicGain(p.politics.stability, 1, m) } }));
     case 'ministry/setAllocation': {
       const player = state.countries[state.playerCountryId];
       if (!player) return state;

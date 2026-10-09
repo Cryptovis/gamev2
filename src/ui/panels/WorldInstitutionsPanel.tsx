@@ -13,6 +13,7 @@ import {
   ballotCount,
 } from "../../engine/systems/worldInstitutions";
 import { relationFor } from "../../engine/systems/diplomacy";
+import { BASE_COST_B, formatCostB, scaledCostB } from "../../engine/systems/policyPressure";
 import { ReviewDialog, type ReviewContent } from "./ReviewDialog";
 import { AssetThumbnail } from "../icons/AssetThumbnail";
 const religions: ReligionType[] = [
@@ -47,8 +48,9 @@ export function WorldInstitutionsPanel() {
   const chosen = foreign.find((c) => c.id === target) ?? foreign[0];
   const missions = state.world.missions.filter((m) => m.targetId === chosen.id),
     latest = missions[0];
+  const outreachCost = scaledCostB(player, BASE_COST_B.worldOutreach);
   const outreachBlocked =
-    player.economy.treasury < 2 ||
+    player.economy.treasury < outreachCost ||
     relationFor(player, chosen.id).score < 0 ||
     Boolean(
       latest && (latest.status === "active" || state.day < latest.endsDay + 60),
@@ -283,7 +285,7 @@ export function WorldInstitutionsPanel() {
             ),
           )}
         </div>
-        <p><LocaleText value={"Cost $2B · 30 days · estimated success"}/><LocaleText value={(chance * 100).toFixed(0)}/><LocaleText value={"% · requires non-negative relations · 60-day cooldown after completion."}/></p>
+        <p><LocaleText value={`Cost ${formatCostB(outreachCost)} · 30 days · estimated success`}/><LocaleText value={(chance * 100).toFixed(0)}/><LocaleText value={"% · requires non-negative relations · 60-day cooldown after completion."}/></p>
         <button
           disabled={outreachBlocked}
           onClick={() =>
@@ -291,10 +293,10 @@ export function WorldInstitutionsPanel() {
               title: "Fund voluntary outreach",
               summary: `30-day ${religion.replaceAll("_", " ")} community exchange in ${chosen.name}.`,
               metrics: [
-                ["Cost", "$2B"],
+                ["Cost", formatCostB(outreachCost)],
                 [
                   "Treasury after",
-                  `$${(player.economy.treasury - 2).toFixed(3)}B`,
+                  `$${(player.economy.treasury - outreachCost).toFixed(3)}B`,
                 ],
                 ["Success estimate", `${(chance * 100).toFixed(0)}%`],
                 ["Possible change", "0.1–0.5 percentage points"],

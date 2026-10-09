@@ -25,9 +25,11 @@ import {
   requestDiplomacy,
   processLetters,
   resolveIncomingLetter,
+  letterCost,
   withLiving,
   exportableStock,
 } from "../engine/systems/livingEconomy";
+import { headroomFactor } from "../engine/systems/policyPressure";
 import {
   addTreaty,
   openEmbassy,
@@ -302,7 +304,8 @@ describe("public programs and cabinet consent", () => {
     );
     expect(startActivity(n, "festival")).toBe(n);
     const day = processWellbeing({ ...n, day: 2 });
-    expect(day.countries.TUR.politics.approval).toBe(p.politics.approval + 0.5);
+    // 0.87: paid mood gains are damped near the top of the scale (audit C4).
+    expect(day.countries.TUR.politics.approval).toBeCloseTo(p.politics.approval + 0.5 * headroomFactor(p.politics.approval));
     expect(processWellbeing(day).countries.TUR.politics.approval).toBe(
       day.countries.TUR.politics.approval,
     );
@@ -391,7 +394,8 @@ describe("retained diplomatic correspondence", () => {
       b = s.countries.BRA.economy.treasury,
       n = resolveIncomingLetter(s, "shared", true);
     expect(n.countries.TUR.economy.treasury).toBe(a - 1.5);
-    expect(n.countries.BRA.economy.treasury).toBe(b - 1.5);
+    // 0.87: each side pays half of its own GDP-scaled fee (audit C15).
+    expect(n.countries.BRA.economy.treasury).toBeCloseTo(b - letterCost(s, "BRA", "embassy") * 0.5);
     expect(resolveIncomingLetter(n, "shared", true)).toBe(n);
     expect(
       resolveIncomingLetter({ ...s, day: 31 }, "shared", true).countries,

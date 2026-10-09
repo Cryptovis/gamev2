@@ -32,9 +32,30 @@ function lossesReconcile(e:Battle['events'][number],allocated:Map<string,number>
   }
   return true;
 }
+// 0.87 repeat fatigue (policyPressure.ts) and per-programme effect strength; all optional, absent in older saves.
+// Plain checks (no zod) so the rule is exercised even where zod is stubbed.
+const isFiniteNumber=(v:unknown):v is number=>typeof v==='number'&&Number.isFinite(v);
+const validStrength=(item:unknown)=>{
+  if(!item||typeof item!=='object')return false;
+  const strength=(item as {strength?:unknown}).strength;
+  return strength===undefined||(isFiniteNumber(strength)&&strength>=0&&strength<=1);
+};
+const validStrengths=(list:unknown)=>list===undefined||(Array.isArray(list)&&list.every(validStrength));
+export function validPressureState(s:{day:number;world:{actionFatigue?:unknown;programs?:unknown;living?:{activities?:unknown}}}):boolean {
+  const f=s.world.actionFatigue;
+  if(f!==undefined){
+    if(!f||typeof f!=='object'||Array.isArray(f))return false;
+    for(const [key,r] of Object.entries(f as Record<string,unknown>)){
+      const rec=r as {value?:unknown;day?:unknown}|null;
+      if(!/^[^|]+\|.+$/.test(key)||!rec||typeof rec!=='object'||!isFiniteNumber(rec.value)||rec.value<0||!isFiniteNumber(rec.day)||!Number.isInteger(rec.day)||rec.day<0||rec.day>s.day)return false;
+    }
+  }
+  return validStrengths(s.world.programs)&&validStrengths(s.world.living?.activities);
+}
 const history=z.object({countryId:z.string(),points:z.array(z.object({day,gdp:finite.positive(),treasury:finite,inflation:finite,treasuryChange:finite})).min(1).max(180)});
 export function valid083State(value:unknown):boolean {
-  const s=value as {day:number;playerCountryId:string;countries:Record<string,unknown>;wars:Record<string,{id:string;attackerId:string;defenderId:string;rounds:number;lastCombatDay:number;tactical?:unknown;attackerStartPersonnel?:unknown;defenderStartPersonnel?:unknown}>;world:{economicHistory?:unknown}};
+  const s=value as {day:number;playerCountryId:string;countries:Record<string,unknown>;wars:Record<string,{id:string;attackerId:string;defenderId:string;rounds:number;lastCombatDay:number;tactical?:unknown;attackerStartPersonnel?:unknown;defenderStartPersonnel?:unknown}>;world:{economicHistory?:unknown;actionFatigue?:unknown;programs?:unknown;living?:{activities?:unknown}}};
+  if(!validPressureState(s))return false;
   if(s.world.economicHistory!==undefined){
     const h=history.safeParse(s.world.economicHistory);if(!h.success||h.data.countryId!==s.playerCountryId||h.data.points.some((p,i)=>p.day>s.day||(i>0&&p.day<=h.data.points[i-1].day)))return false;
   }

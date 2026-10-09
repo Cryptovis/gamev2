@@ -1,5 +1,5 @@
 import {activeCountries} from '../../domain/sovereignty';
-import {requestDiplomacy} from './livingEconomy';
+import {letterCost,requestDiplomacy} from './livingEconomy';
 import type { GameState, TradeResource } from '../../domain/game';
 import type { AdviceKind } from '../../domain/living';
 import { addTreaty, relationFor } from './diplomacy';
@@ -81,7 +81,7 @@ export function acceptAdvisorTradePact(state:GameState):GameState{
  const supplier=state.countries[prompt.supplierId];
  if(!player||!supplier)return dismissAdvisor(state);
  const relation=relationFor(player,supplier.id);
- if(relation.status==='war'||relation.sanctions||player.globalSanctions||supplier.globalSanctions||relation.score<15||player.economy.treasury<5)return {...dismissAdvisor(state),sitrep:[`ADVISOR // Trade pact with ${supplier.name} could not be completed.`,...state.sitrep].slice(0,12)};
+ if(relation.status==='war'||relation.sanctions||player.globalSanctions||supplier.globalSanctions||relation.score<15||player.economy.treasury<letterCost(state,player.id,'trade_pact'))return {...dismissAdvisor(state),sitrep:[`ADVISOR // Trade pact with ${supplier.name} could not be completed.`,...state.sitrep].slice(0,12)};
  if(relation.treaties.includes('trade'))return {...state,activeAdvisor:{...prompt,stage:'contract'}};
  const next=requestDiplomacy(state,supplier.id,'trade_pact');return {...next,activeAdvisor:null,advisorCooldownUntil:state.day+7,speed:0};
 }

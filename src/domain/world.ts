@@ -36,7 +36,9 @@ export interface WorldState {
  expansion?:ExpansionState;
  living?:LivingWorld;
  governance?:GovernanceState;
- programs?:Array<{id:string;kind:'jobs'|'education'|'health';readyDay:number;status:'active'|'completed'}>;
+ programs?:Array<{id:string;kind:'jobs'|'education'|'health';readyDay:number;status:'active'|'completed';strength?:number}>;
+ /** 0.87 repeat fatigue and cooldowns per `countryId|action` (policyPressure.ts); absent in older saves. */
+ actionFatigue?:Record<string,{value:number;day:number}>;
   members: Record<InstitutionId, string[]>;
   ballots: WorldBallot[];
   missions: OutreachMission[];

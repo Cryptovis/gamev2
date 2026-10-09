@@ -43,6 +43,8 @@ export interface LivingWorld {
     startedDay: number;
     endsDay: number;
     lastAppliedDay: number;
+    /** 0.87 share of the daily effect after repeat fatigue (1 when absent). */
+    strength?: number;
   }>;
   advice: {
     suppressed: AdviceKind[];

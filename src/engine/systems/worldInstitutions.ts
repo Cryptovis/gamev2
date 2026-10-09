@@ -9,6 +9,7 @@ import type {
   WorldBallot,
 } from "../../domain/world";
 import { relationFor, changeRelations } from "./diplomacy";
+import { BASE_COST_B, scaledCostB } from "./policyPressure";
 const clamp = (n: number, a: number, b: number) => Math.max(a, Math.min(b, n));
 function roll(seed: number, key: string) {
   let h = seed >>> 0;
@@ -302,11 +303,12 @@ export function startOutreach(
   religion: ReligionType,
 ): GameState {
   const player = state.countries[state.playerCountryId],
-    target = state.countries[targetId];
+    target = state.countries[targetId],
+    cost = scaledCostB(player, BASE_COST_B.worldOutreach);
   if (
     !target ||
     targetId === player.id ||
-    player.economy.treasury < 2 ||
+    player.economy.treasury < cost ||
     relationFor(player, targetId).score < 0 ||
     state.world.missions.some(
       (m) =>
@@ -328,7 +330,7 @@ export function startOutreach(
       ...state.countries,
       [player.id]: {
         ...player,
-        economy: { ...player.economy, treasury: player.economy.treasury - 2 },
+        economy: { ...player.economy, treasury: player.economy.treasury - cost },
       },
     },
     world: {

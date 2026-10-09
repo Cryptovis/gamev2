@@ -4,7 +4,8 @@ import {AssetThumbnail} from '../icons/AssetThumbnail';
 import { useMemo, useState, type CSSProperties } from 'react';
 import type { CountryState, InfrastructureAsset, WarState } from '../../domain/game';
 import { calculateSupplyNetwork } from '../../engine/systems/supplyNetwork';
-import { infrastructureInvestmentRule } from '../../engine/systems/infrastructure';
+import { infrastructureInvestmentCost, infrastructureInvestmentRule } from '../../engine/systems/infrastructure';
+import { formatCostB } from '../../engine/systems/policyPressure';
 import { useGameStore } from '../../store/gameStore';
 import { FuelIcon, FoodIcon, PowerIcon, SteelIcon } from '../icons/GameIcons';
 import { CommandWindow } from './CommandWindow';
@@ -59,13 +60,13 @@ export function SupplyCommandWindow({country,war,onClose}:{country:CountryState;
     ['ports','Port Capacity',infra?.ports??0],
     ['hubs','Supply Hubs',infra?.hubs??supply.logisticsEfficiency],
    ] as [InfrastructureAsset,string,number][]).map(([asset,label,value])=>{
-    const rule=infrastructureInvestmentRule(asset);
-    const disabled=!isPlayer||(asset==='ports'&&(infra?.ports??0)<=0)||country.economy.treasury<rule.cost||value>=100;
+    const rule=infrastructureInvestmentRule(asset),cost=infrastructureInvestmentCost(state,country.id,asset);
+    const disabled=!isPlayer||(asset==='ports'&&(infra?.ports??0)<=0)||country.economy.treasury<cost||value>=100;
     return <article key={asset}>
      <header><span><small><LocaleText value={label.toUpperCase()}/></small><strong><LocaleText value={value.toFixed(0)}/><LocaleText value={"%"}/></strong></span><em><LocaleText value={asset==='ports'&&(infra?.ports??0)<=0?'LANDLOCKED':'ACTIVE'}/></em></header>
      <i><b style={{width:pct(value)+'%'}}/></i>
      <p><LocaleText value={asset==='roads'?'Road quality affects domestic movement and last-mile supply.':asset==='rail'?'Rail capacity supports heavy strategic transport and wartime reinforcement.':asset==='ports'?'Ports support maritime logistics and overseas access.':'Supply hubs organize depots, reserves and front distribution.'}/></p>
-     {isPlayer&&<button disabled={disabled} onClick={()=>setInvestment(asset)}><LocaleText value={"INVEST +"}/><LocaleText value={rule.gain}/> <small><LocaleText value={'-$'+rule.cost+'B'}/></small></button>}
+     {isPlayer&&<button disabled={disabled} onClick={()=>setInvestment(asset)}><LocaleText value={"INVEST +"}/><LocaleText value={rule.gain}/> <small><LocaleText value={'-'+formatCostB(cost)}/></small></button>}
     </article>;
    })}</div>
    <p className="supply-investment-note"><LocaleText value={"Infrastructure consumes daily maintenance. Underfunded networks degrade slowly; AI states also invest in weak transport links during monthly strategic reviews."}/></p>
@@ -82,6 +83,6 @@ export function SupplyCommandWindow({country,war,onClose}:{country:CountryState;
    <div className="front-command-hero"><small><LocaleText value={war?'ACTIVE THEATRE':'MOBILIZATION READINESS'}/></small><strong><LocaleText value={war?terrain.toUpperCase():'NO ACTIVE FRONT'}/></strong><p><LocaleText value={war?'Front delivery compares strategic reserves, transport efficiency, terrain and current force demand.':'This is the supply capacity available if the country mobilizes under normal terrain assumptions.'}/></p></div>
    <div className="front-bars">{[['Front supply',frontSupply],['Logistics',supply.logisticsEfficiency],['Infrastructure',supply.infrastructure],['Reserve factor',supply.reserveFactor*100],['Demand pressure',supply.frontDemand]].map(([label,value])=><div key={String(label)}><span><LocaleText value={label}/></span><i><b className={Number(value)<40?'danger-bar':''} style={{width:pct(Number(value))+'%'}}/></i><strong><LocaleText value={Number(value).toFixed(0)}/><LocaleText value={"%"}/></strong></div>)}</div>
   </div>}
- {investment&&(()=>{const rule=infrastructureInvestmentRule(investment),before=infra[investment],after=Math.min(100,before+rule.gain),additional=(after-before)*.00022*(investment==='ports'?.7:1);return <ReviewDialog title={translateLive("Invest in "+rule.label)} summary="Improve national delivery capacity. Maintenance is charged daily." metrics={[["Investment",`$${rule.cost}B`],["Treasury after",`$${(country.economy.treasury-rule.cost).toFixed(3)}B`],["Capacity",`${before.toFixed(1)} → ${after.toFixed(1)}%`],["Additional daily maintenance",`$${additional.toFixed(4)}B`]]} onCancel={()=>setInvestment(null)} onConfirm={()=>{state.investInfrastructure(investment);setInvestment(null)}}/>;})()}
+ {investment&&(()=>{const rule=infrastructureInvestmentRule(investment),cost=infrastructureInvestmentCost(state,country.id,investment),before=infra[investment],after=Math.min(100,before+rule.gain),additional=(after-before)*.00022*(investment==='ports'?.7:1);return <ReviewDialog title={translateLive("Invest in "+rule.label)} summary="Improve national delivery capacity. Maintenance is charged daily." metrics={[["Investment",formatCostB(cost)],["Treasury after",`$${(country.economy.treasury-cost).toFixed(3)}B`],["Capacity",`${before.toFixed(1)} → ${after.toFixed(1)}%`],["Additional daily maintenance",`$${additional.toFixed(4)}B`]]} onCancel={()=>setInvestment(null)} onConfirm={()=>{state.investInfrastructure(investment);setInvestment(null)}}/>;})()}
  </CommandWindow>;
 }

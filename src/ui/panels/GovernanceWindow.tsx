@@ -11,6 +11,7 @@ import {
   occupationFor,
   politicalChance,
 } from "../../engine/systems/governance";
+import { BASE_COST_B, formatCostB, scaledCostB } from "../../engine/systems/policyPressure";
 export function GovernanceWindow() {
   const s = useGameStore(),
     g = governance(s),
@@ -29,7 +30,8 @@ export function GovernanceWindow() {
     c = s.countries[selected] ?? p,
     o = occupationFor(s, c.id),
     mine = o?.controllerId === p.id,
-    history = g.occupations[c.id]?.election;
+    history = g.occupations[c.id]?.election,
+    campaignCost = scaledCostB(p, BASE_COST_B.politicalCampaign);
   const territories = activeCountries(s.countries).filter(
       (c) => c.controllerCountryId === p.id,
     ),
@@ -44,7 +46,7 @@ export function GovernanceWindow() {
         title,
         summary,
         metrics: [
-          ["Cost", `$${cost}B`],
+          ["Cost", formatCostB(cost)],
           ["Treasury after", `$${(p.economy.treasury - cost).toFixed(3)}B`],
         ],
         allowed: p.economy.treasury >= cost && allowed,
@@ -249,7 +251,7 @@ export function GovernanceWindow() {
             <LocaleText value="Foreign political influence" />
           </h3>
           <p>
-            <LocaleText value="A campaign requires approval below 40%, stability below 50%, and either weak military readiness/logistics or strong ideological influence. It costs $5B, lasts 30 days and has a 90-day cooldown. Success is never guaranteed." />
+            <LocaleText value={`A campaign requires approval below 40%, stability below 50%, and either weak military readiness/logistics or strong ideological influence. It costs ${formatCostB(campaignCost)}, lasts 30 days and has a 90-day cooldown. Success is never guaranteed.`} />
           </p>
           <IntegrationPanel countryId={c.id}/><div className="occupation-summary">
             <span>
@@ -277,7 +279,7 @@ export function GovernanceWindow() {
               action(
                 "Political influence campaign",
                 "Support a fictional civil opposition coalition. Failure worsens relations. Conditions are checked again on completion; military strength and public opinion can recover.",
-                5,
+                campaignCost,
                 (commandId) => s.fundPoliticalCampaign(c.id, commandId),
               )
             }

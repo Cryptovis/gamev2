@@ -1,5 +1,6 @@
 import type { AllianceBloc, GameState } from '../../domain/game';
 import { relationFor } from './diplomacy';
+import { BASE_COST_B, formatCostB, scaledCostB } from './policyPressure';
 
 const clamp=(v:number,min:number,max:number)=>Math.min(max,Math.max(min,v));
 
@@ -8,11 +9,11 @@ export function blocForCountry(state:GameState,countryId:string){return Object.v
 export function formBloc(state:GameState,targetId:string):GameState{
   const player=state.countries[state.playerCountryId]; const target=state.countries[targetId];
   if(!player||!target||blocForCountry(state,player.id))return state;
-  const rel=relationFor(player,target.id);
-  if(!rel.treaties.includes('alliance')||rel.score<65||player.economy.treasury<20)return {...state,sitrep:[`BLOC // Strategic bloc requires an alliance, +65 relations and $20B.`,...state.sitrep].slice(0,12)};
+  const rel=relationFor(player,target.id),cost=scaledCostB(player,BASE_COST_B.strategicBloc);
+  if(!rel.treaties.includes('alliance')||rel.score<65||player.economy.treasury<cost)return {...state,sitrep:[`BLOC // Strategic bloc requires an alliance, +65 relations and ${formatCostB(cost)}.`,...state.sitrep].slice(0,12)};
   const id=`BLOC-${player.id}-${state.day}`;
   const bloc:AllianceBloc={id,name:`${player.name} Strategic Compact`,leaderId:player.id,memberIds:[player.id,target.id],cohesion:68,doctrine:'collective_security'};
-  const nextPlayer={...player,economy:{...player.economy,treasury:player.economy.treasury-20}};
+  const nextPlayer={...player,economy:{...player.economy,treasury:player.economy.treasury-cost}};
   return {...state,countries:{...state.countries,[player.id]:nextPlayer},blocs:{...state.blocs,[id]:bloc},sitrep:[`BLOC // ${bloc.name} formed with ${target.name}.`,...state.sitrep].slice(0,12)};
 }
 

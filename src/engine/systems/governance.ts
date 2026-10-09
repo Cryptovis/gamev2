@@ -9,6 +9,7 @@ import type {
 import { nextRandom } from "../rng";
 import { changeRelations, addTreaty } from "./diplomacy";
 import { normalizedMinistryShare } from "./ministries";
+import { BASE_COST_B, scaledCostB } from "./policyPressure";
 const clamp = (n: number, min = 0, max = 100) =>
   Math.min(max, Math.max(min, n));
 export const CAMPUSES = {
@@ -478,10 +479,11 @@ export function politicalChance(s: GameState, id: string) {
 export function fundPoliticalCampaign(s: GameState, id: string): GameState {
   const chance = politicalChance(s, id),
     g = governance(s),
-    p = s.countries[s.playerCountryId];
+    p = s.countries[s.playerCountryId],
+    cost = scaledCostB(p, BASE_COST_B.politicalCampaign);
   if (
     !chance ||
-    p.economy.treasury < 5 ||
+    p.economy.treasury < cost ||
     g.campaigns.some(
       (x) =>
         x.targetId === id && (x.status === "active" || s.day < x.endsDay + 90),
@@ -496,7 +498,7 @@ export function fundPoliticalCampaign(s: GameState, id: string): GameState {
           ...s.countries,
           [p.id]: {
             ...p,
-            economy: { ...p.economy, treasury: p.economy.treasury - 5 },
+            economy: { ...p.economy, treasury: p.economy.treasury - cost },
           },
         },
       },

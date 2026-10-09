@@ -5,8 +5,11 @@ import { DraggableWindow } from "../windows/DraggableWindow";
 import { ReviewDialog } from "./ReviewDialog";
 import {
   PROGRAMS,
+  programCost,
+  programPreview,
   type ProgramKind,
 } from "../../engine/systems/nationalPrograms";
+import { formatCostB } from "../../engine/systems/policyPressure";
 import { translateText } from "../../i18n/localeText";
 const faq = [
  ["Where are my proposals?","Open Diplomacy, then Proposal tracker and Sent proposals. Pending replies arrive after three campaign days; advance time to receive them. Sending again will not accelerate the answer. No fee is charged at submission; accepted outgoing proposals charge the stated fee once."],
@@ -175,6 +178,7 @@ export function HelpPanel() {
         <div className="program-grid">
           {(Object.keys(PROGRAMS) as ProgramKind[]).map((kind) => {
             const d = PROGRAMS[kind],
+              cost = programCost(state, kind),
               active = state.world.programs?.find(
                 (p) => p.kind === kind && p.status === "active",
               );
@@ -187,14 +191,13 @@ export function HelpPanel() {
                   <LocaleText value={d.description} />
                 </p>
                 <small>
-                  <LocaleText value={"$"} />
-                  <LocaleText value={d.cost} />
-                  <LocaleText value={"B · "} />
+                  {formatCostB(cost)}
+                  {" · "}
                   <LocaleText value={d.days} />
                   <LocaleText value={" days"} />
                 </small>
                 <button
-                  disabled={!!active || player.economy.treasury < d.cost}
+                  disabled={!!active || player.economy.treasury < cost}
                   onClick={() => setReview(kind)}
                 >
                   <LocaleText
@@ -248,20 +251,23 @@ export function HelpPanel() {
           />
         </p>
       </section>
-      {review && (
+      {review && (() => {
+        const preview = programPreview(state, review);
+        return (
         <ReviewDialog
           title={translateLive(PROGRAMS[review].title)}
           summary={PROGRAMS[review].description}
           metrics={[
-            ["Cost", `$${PROGRAMS[review].cost}B`],
+            ["Cost", formatCostB(preview.cost)],
             [
               "Treasury after",
-              `$${(player.economy.treasury - PROGRAMS[review].cost).toFixed(2)}B`,
+              `$${(player.economy.treasury - preview.cost).toFixed(2)}B`,
             ],
             ["Completion", `Day ${state.day + PROGRAMS[review].days}`],
+            ["Effect after repeat fatigue", `${Math.round(preview.multiplier * 100)}%`],
           ]}
           allowed={
-            player.economy.treasury >= PROGRAMS[review].cost &&
+            player.economy.treasury >= preview.cost &&
             !state.world.programs?.some(
               (p) => p.kind === review && p.status === "active",
             )
@@ -272,7 +278,8 @@ export function HelpPanel() {
             setReview(null);
           }}
         />
-      )}
+        );
+      })()}
     </DraggableWindow>
   );
 }

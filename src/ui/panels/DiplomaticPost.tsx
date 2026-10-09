@@ -1,10 +1,11 @@
-import {relationFor,relationshipIndex,embassyRelationBonus} from '../../engine/systems/diplomacy';
+import {relationFor,relationshipIndex} from '../../engine/systems/diplomacy';
+import {diplomaticMissionStatus} from '../../engine/systems/policyPressure';
 import {useWorldView} from '../../store/useWorldView';
 import {activeCountries} from '../../domain/sovereignty';
 import { useState } from "react";
 import { useGameStore } from "../../store/gameStore";
 import { LocaleText } from "../../i18n/localeText";
-import { living, LETTER_COST, diplomaticProposalStatus,proposalAcceptanceChance } from "../../engine/systems/livingEconomy";
+import { living, letterCost, diplomaticProposalStatus,proposalAcceptanceChance } from "../../engine/systems/livingEconomy";
 import { CivicArt } from "../icons/CivicArt";
 import { ReviewDialog, type ReviewContent } from "./ReviewDialog";
 import { money } from "../formatMoney";
@@ -74,7 +75,7 @@ export function DiplomaticPost() {
                 "The partner replies in three days. Relations, strategic needs and funding determine acceptance. A rejection creates no agreement and charges no fee.",
               metrics: [
                 ["Partner", s.countries[target].name],
-                ["Cost if accepted", money(LETTER_COST[kind])],
+                ["Cost if accepted", money(letterCost(s, s.playerCountryId, kind))],
                 ["Reply day", String(s.day + 3)],
                 ["Relations",`${index}/100`],
                 ["Points to trade eligibility",String(Math.max(0,20-index))],
@@ -89,7 +90,7 @@ export function DiplomaticPost() {
           <LocaleText value={status.allowed?"Review proposal":"Track proposal / status"} />
         </button>
       </div>
-      <aside className="proposal-assessment"><strong><LocaleText value="Relations"/>: {index}/100 · <LocaleText value="Points to trade eligibility"/>: {Math.max(0,20-index)} · <LocaleText value="Points to Good"/>: {Math.max(0,51-index)} · <LocaleText value="Mission gain"/>: +{Math.round(10*embassyRelationBonus(s,s.playerCountryId,target))/2}</strong><p><LocaleText value="Above 50/100 is Good and makes trade acceptance easier. Trade proposals need at least 20/100. Missions or aid raise relations; acceptance is not guaranteed."/></p>{status.allowed&&<p><LocaleText value="Estimated acceptance"/>: {Math.round(chance*100)}%</p>}</aside>
+      <aside className="proposal-assessment"><strong><LocaleText value="Relations"/>: {index}/100 · <LocaleText value="Points to trade eligibility"/>: {Math.max(0,20-index)} · <LocaleText value="Points to Good"/>: {Math.max(0,51-index)} · <LocaleText value="Mission gain"/>: +{diplomaticMissionStatus(s,s.playerCountryId,target).gain/2}</strong><p><LocaleText value="Above 50/100 is Good and makes trade acceptance easier. Trade proposals need at least 20/100. Missions or aid raise relations; acceptance is not guaranteed."/></p>{status.allowed&&<p><LocaleText value="Estimated acceptance"/>: {Math.round(chance*100)}%</p>}</aside>
       {!status.allowed&&<aside className="proposal-status" role="status"><strong><LocaleText value="Proposal status"/></strong><p><LocaleText value={status.reason}/></p>{status.letter&&<small><LocaleText value="Reply day"/>: {status.letter.replyDay}{status.letter.status!=='pending'&&<> · <LocaleText value="Retry day"/>: {status.retryDay}</>}</small>}<div><button onClick={track}><LocaleText value="Help / track proposals"/></button><button onClick={()=>s.navigate('diplomacy',target)}><LocaleText value="Open partner diplomacy"/></button></div></aside>}
       {help&&<aside className="proposal-status"><strong><LocaleText value="Where are my proposals?"/></strong><p><LocaleText value="Open Diplomacy, then Proposal tracker and Sent proposals. Pending replies arrive after three campaign days; advance time to receive them. Sending again will not accelerate the answer. No fee is charged at submission; accepted outgoing proposals charge the stated fee once."/></p></aside>}
       <h4 id="proposal-tracker"><LocaleText value="Proposal tracker"/> · <LocaleText value="Pending"/>: {l.letters.filter(x=>x.status==='pending').length}</h4>
@@ -147,22 +148,22 @@ export function DiplomaticPost() {
                           summary:
                             "Both countries pay half of the diplomatic setup fee. This opens the agreement; goods still require separate priced shipments.",
                           metrics: [
-                            ["Your share", money(LETTER_COST[x.kind] * 0.5)],
-                            ["Partner share", money(LETTER_COST[x.kind] * 0.5)],
+                            ["Your share", money(letterCost(s, s.playerCountryId, x.kind) * 0.5)],
+                            ["Partner share", money(letterCost(s, x.senderId, x.kind) * 0.5)],
                             [
                               "Treasury after",
                               money(
                                 s.countries[s.playerCountryId].economy
                                   .treasury -
-                                  LETTER_COST[x.kind] * 0.5,
+                                  letterCost(s, s.playerCountryId, x.kind) * 0.5,
                               ),
                             ],
                           ],
                           allowed:
                             s.countries[s.playerCountryId].economy.treasury >=
-                              LETTER_COST[x.kind] * 0.5 &&
+                              letterCost(s, s.playerCountryId, x.kind) * 0.5 &&
                             s.countries[x.senderId].economy.treasury >=
-                              LETTER_COST[x.kind] * 0.5,
+                              letterCost(s, x.senderId, x.kind) * 0.5,
                           execute: (commandId) => s.resolveIncomingLetter(x.id, true, commandId),
                         })
                       }
