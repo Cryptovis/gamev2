@@ -8,6 +8,7 @@ import { flagEmoji } from "../../data/countryThemes";
 import { getWarPreview } from "../../engine/systems/warfare";
 import { AssetThumbnail } from "../icons/AssetThumbnail";
 import {tacticalStartStatus} from '../../engine/systems/tactical';
+import {ErrorBoundary} from '../ErrorBoundary';
 const TacticalBattlefield=lazy(()=>import('./TacticalBattlefield').then(m=>({default:m.TacticalBattlefield})));
 export function WarTheatreModal() {
   const s = useGameStore(),
@@ -92,7 +93,7 @@ export function WarTheatreModal() {
           </button>
         </header>
         {mine&&fuel<14&&<div className="war-fuel-warning" role="alert"><strong><LocaleText value={fuel<3?'Critical fuel on the front':'Fuel reserves are insufficient for a sustained operation'}/></strong><p><LocaleText value="Fuel operational days"/>: {fuel.toFixed(1)}. <LocaleText value="Consider halting the assault, securing imports or withdrawing before supply and readiness collapse."/></p><button onClick={()=>s.navigate('resources')}><LocaleText value="Inspect fuel supply"/></button></div>}
-        {tacticalView&&w.tactical?<Suspense fallback={<p><LocaleText value="Preparing the battlefield…"/></p>}><TacticalBattlefield warId={w.id} onReturn={()=>setTacticalView(false)}/></Suspense>:<>
+        {tacticalView&&w.tactical?<ErrorBoundary title="The battlefield could not be displayed." actions={[{label:'Return to war command',onClick:()=>setTacticalView(false)}]}><Suspense fallback={<p><LocaleText value="Preparing the battlefield…"/></p>}><TacticalBattlefield warId={w.id} onReturn={()=>setTacticalView(false)}/></Suspense></ErrorBoundary>:<>
         <div className="war-sides">
           {[a, d].map((c, i) => (
             <article key={c.id}>

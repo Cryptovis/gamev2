@@ -1,4 +1,19 @@
 export const UI_CATALOG_FLOW:Record<string,string[]>={
+  // 0.85 HD War v2 and error boundaries.
+  "Secure the supply depots": ["İkmal depolarını ele geçir", "Asegura los depósitos de suministro", "夺取补给站", "Захватите склады снабжения"],
+  "Objectives are held only while no enemy is adjacent.": ["Hedefler yalnızca yanında düşman yokken tutulur.", "Los objetivos solo se mantienen mientras no haya enemigos adyacentes.", "只有在相邻格没有敌军时才能控制目标。", "Цель удерживается, только пока рядом нет противника."],
+  "Round log": ["Tur kaydı", "Registro del turno", "回合记录", "Журнал раунда"],
+  "Blocked": ["Engellendi", "Bloqueado", "受阻", "Заблокировано"],
+  "Hit": ["İsabet", "Impacto", "命中", "Попадание"],
+  "Miss": ["Iska", "Fallo", "未命中", "Промах"],
+  "Captured": ["Ele geçirildi", "Capturado", "已占领", "Захвачено"],
+  "Contested": ["Çekişmeli", "Disputado", "争夺中", "Оспаривается"],
+  "Group lost": ["Birlik kaybedildi", "Grupo perdido", "部队覆灭", "Группа потеряна"],
+  "The battlefield could not be displayed.": ["Muharebe sahası gösterilemedi.", "No se pudo mostrar el campo de batalla.", "无法显示战场。", "Не удалось отобразить поле боя."],
+  "The game hit an unexpected error.": ["Oyunda beklenmeyen bir hata oluştu.", "El juego encontró un error inesperado.", "游戏遇到了意外错误。", "В игре произошла непредвиденная ошибка."],
+  "Your saved progress is safe. Try again, or send this message to the developer:": ["Kayıtlı ilerlemen güvende. Tekrar dene ya da bu mesajı geliştiriciye gönder:", "Tu progreso guardado está a salvo. Inténtalo de nuevo o envía este mensaje al desarrollador:", "已保存的进度是安全的。请重试，或将此消息发送给开发者：", "Сохранённый прогресс в безопасности. Попробуйте снова или отправьте это сообщение разработчику:"],
+  "Try again": ["Tekrar dene", "Reintentar", "重试", "Повторить"],
+  "Reload the game": ["Oyunu yeniden yükle", "Recargar el juego", "重新加载游戏", "Перезагрузить игру"],
   "Round": ["Tur", "Turno", "回合", "Раунд"],
   // 0.84 Stable Command engine messages.
   "Enter a valid finite number.": ["Geçerli bir sayı girin.", "Introduce un número válido.", "请输入有效的数字。", "Введите допустимое число."],
