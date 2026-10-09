@@ -37,6 +37,7 @@ npm run test:e2e
 
 ### 0.89.0-playtest.1 — Trade & Markets
 
+- Entry/setup hotfix by Codex: language selection restored, mobile navigation stays visible, and the missing import that blocked the build is fixed.
 - Find trade partners fast: ranked supplier lists (who can sell to you now, who is one pact away) and a TRADE tab on every country.
 - A commodity exchange for food, oil, metals, gold and silver with moving prices, news-driven shocks, charts, realistic spreads, limits and storage costs.
 - Diplomatic jets and cargo planes fly across the map; travel time follows real distance, and mission goodwill arrives with the delegation.

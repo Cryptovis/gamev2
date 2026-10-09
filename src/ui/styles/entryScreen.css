@@ -66,7 +66,7 @@
   transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease,background .22s ease;
 }
 .entry-backdrop .entry-game-menu>button::before{
-  content:counter(menu,decimal-leading-zero);grid-row:span 2;
+  content:counter(menu,decimal-leading-zero) / "";grid-row:span 2;
   font:600 13px ui-monospace,SFMono-Regular,Menlo,monospace;color:#e8c570;letter-spacing:.06em;
   padding:6px 9px;border:1px solid rgba(232,197,112,.35);border-radius:8px;
 }
@@ -75,7 +75,7 @@
 .entry-backdrop .entry-game-menu>button:not(:disabled):focus-visible{outline:none;border-color:#ffe397;box-shadow:0 0 0 4px rgba(255,227,151,.25)}
 .entry-backdrop .entry-game-menu>button[data-entry="new-game"]{border-color:rgba(232,197,112,.6)}
 .entry-backdrop .entry-game-menu>button:last-child{padding:14px 20px 14px 18px;font-size:15px;background:transparent;color:#d9d1b4}
-.entry-backdrop .entry-game-menu>button:last-child::before{content:"←";font-size:13px;border-color:rgba(232,197,112,.2);color:#bfb691}
+.entry-backdrop .entry-game-menu>button:last-child::before{content:"←" / "";font-size:13px;border-color:rgba(232,197,112,.2);color:#bfb691}
 
 /* Forms */
 .entry-backdrop .entry-form{gap:16px;margin-top:0}

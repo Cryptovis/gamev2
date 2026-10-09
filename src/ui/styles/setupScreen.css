@@ -12,9 +12,10 @@
 @media (max-width:760px){
   .campaign-wizard-backdrop .campaign-wizard{
     width:100%!important;
-    height:auto!important;
-    min-height:calc(100dvh - 24px)!important;
-    grid-template-rows:auto auto minmax(0,1fr) auto!important;
+    height:calc(100dvh - 24px)!important;
+    min-height:0!important;
+    grid-template-rows:60px 145px minmax(0,1fr) 110px!important;
+    overflow:hidden!important;
     border-radius:16px!important;
   }
 }

@@ -5,7 +5,7 @@ import type { GameLanguage } from '../../domain/game';
 import { LeaderStyleFilter } from '../profile/LeaderStyleFilter';
 import { AVATAR_PRESETS, type LeaderStyle } from '../../data/avatarPresets';
 import { countryThemeFor, flagEmoji } from '../../data/countryThemes';
-import { tr } from '../../i18n/gameI18n';
+import { tr, LANGUAGE_OPTIONS } from '../../i18n/gameI18n';
 import { useGameStore } from '../../store/gameStore';
 import {validBirthDate,CAMPAIGN_START_DATE} from '../../engine/systems/leadership';
 import { AvatarPortrait } from '../profile/AvatarPortrait';
@@ -26,7 +26,7 @@ export function CampaignSetup(){
  const start=useGameStore(s=>s.startCampaign);
  const load=useGameStore(s=>s.loadLatest),saveMessage=useGameStore(s=>s.saveMessage);
  const [step,setStep]=useState<SetupStep>(1);
- const [language]=useState<GameLanguage>(profile.language);
+ const [language,setLanguage]=useState<GameLanguage>(profile.language);
  const [name,setName]=useState(profile.commanderName==='Commander'?'':profile.commanderName);
  const [avatar,setAvatar]=useState(profile.avatarId);
  const [portraitStyle,setPortraitStyle]=useState<LeaderStyle|'all'>('all');
@@ -91,6 +91,7 @@ export function CampaignSetup(){
       <div className="wizard-intro"><span className="wizard-kicker"><LocaleText value={"STEP 01 / LEADER IDENTITY"}/></span><h2><LocaleText value={"Every era begins with a leader."}/></h2><p><LocaleText value={"Choose the name that will appear in national briefings, diplomatic reports and your command profile."}/></p></div>
       <label className="wizard-name-field"><span><LocaleText value={tr(language,'commander')}/></span><input autoFocus value={name} maxLength={28} placeholder={translateLive("Commander")} onChange={e=>setName(e.target.value)}/></label>
       <div className="wizard-personal-fields"><label><span><LocaleText value={'CITIZENSHIP'}/></span><select aria-label={translateLive("Citizenship")} value={nationality} onChange={e=>setNationality(e.target.value)}>{Object.values(countries).sort((a,b)=>a.name.localeCompare(b.name)).map(c=><option key={c.id} value={c.id}><LocaleText value={c.name}/></option>)}</select><small><LocaleText value={'Your citizenship is independent of the country you choose to govern.'}/></small></label><label><span><LocaleText value={'DATE OF BIRTH'}/></span><input aria-label={translateLive("Date of birth")} type="date" min="1900-01-01" max={CAMPAIGN_START_DATE} value={birthDate} onChange={e=>setBirthDate(e.target.value)}/><small><LocaleText value={'Optional. Campaign calendar begins on 1 January 2026.'}/></small>{birthDate&&!validBirthDate(birthDate)&&<small className="negative"><LocaleText value={"Enter a valid date before the campaign starts."}/></small>}</label></div>
+      <div className="wizard-language"><span><LocaleText value={tr(language,'language')}/></span><div>{LANGUAGE_OPTIONS.map(l=><button key={l.id} className={language===l.id?'active':''} onClick={()=>{setLanguage(l.id);useGameStore.getState().setLanguage(l.id)}}><LocaleText value={l.label}/></button>)}</div></div>
     </div>}
 
     {step===2&&<div className="wizard-portrait-stage">

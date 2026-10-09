@@ -4,7 +4,7 @@ Bu dosya yeni bir konuşmanın ilk okuması içindir. Geçmiş konuşmayı taş�
 
 ## Durum
 - Sürüm: **0.89.0-playtest.1 "Trade & Markets"**
-- Dal: `dev/trade-markets-089` (CI yeşil, commit'ler push edildi)
+- Dal: `dev/trade-markets-089`. Son remote commit `5a1556e`; bu commit'in CI sonucu başarısız (kurulum ekranında eksik `LANGUAGE_OPTIONS` import'u).
 - `main`'e doğrudan push yok. Yeni işler `dev/<name>-0XX` dallarında yapılır.
 - Kapsam (0.89): ticaret ortağı seçimi ve ülke TRADE sekmesi, emtia borsası (spread, komisyon, günlük limit, pozisyon limiti, depolama, şoklar), diplomatik jet ve kargo uçakları (harita katmanı, mesafeye göre varış süresi).
 
@@ -14,6 +14,7 @@ Bu dosya yeni bir konuşmanın ilk okuması içindir. Geçmiş konuşmayı taş�
 3. **İsteğe bağlı:** Mac'te `rm -rf node_modules package-lock.json && npm install` ile lock dosyasını yeniden üretmek.
 
 ## Ortam notları
+- Aşağıdaki 403/stub notları önceki Claude ortamına aittir. Codex ortamında `npm ci --ignore-scripts`, TypeScript/build ve yerel Chromium ile Playwright çalışıyor; bu kısıtları başka ortamlara genelleme.
 - Sandbox'ta `npm install` 403 veriyor. Testler `bun test src/tests/<dosya>` ile yerelde çalıştırılır.
 - `tsc` ve Playwright yalnızca CI'da (`.github/workflows/ci.yml`) çalışır. CI log indirme 403 veriyor. Hata okumak için `gh api repos/.../check-runs/<id>/annotations` kullanılır.
 - Bilinen yerel stub hataları (CI'da yok): "rejects nonfinite, unordered and future history", "produces transparent space and correctly sampled globe pixels", "selects a country from a point inside its polygon", `react/jsx-runtime`.
@@ -30,3 +31,11 @@ Bu dosya yeni bir konuşmanın ilk okuması içindir. Geçmiş konuşmayı taş�
 
 ## Yeni konuşmada ilk adım
 Bu dosyayı oku, `git status` ve son commit'e bak, kullanıcıya bekleyen işlerden hangisiyle devam edeceğini sor.
+
+## Hazırlanan giriş/kurulum hotfix'i (Codex, 2026-10-09)
+- Eksik dil import'u düzeltildi; kurulumdaki dil seçici geri getirildi.
+- Mobil kurulum kartı ekran yüksekliğiyle sınırlandı; alt gezinme düğmeleri görünür kalıyor.
+- Menü numaraları ve geri oku, düğmelerin erişilebilir adlarına eklenmiyor.
+- Kurulum testi son onay adımını, sabit kart yüksekliğini ve onay düğmesinin ekranda kalmasını kontrol ediyor.
+- Doğrulama: 530 birim testi, TypeScript/üretim derlemesi ve 5 hedefli Playwright testi geçti (giriş: 1440/390 px; kurulum: 1440/1280/390 px). Mobil son onay ekranı görsel olarak kontrol edildi.
+- Kullanıcı Codex'e commit/push için sürekli yetki verdi; önceki "yalnızca istediğimde commit" kısıtı Codex için geçerli değil. Remote CI sonucu ayrıca kontrol edilmeli.

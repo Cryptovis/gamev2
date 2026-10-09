@@ -85,7 +85,12 @@ for(const viewport of [{width:1440,height:900},{width:1280,height:720},{width:39
   await page.locator('.country-search').fill('');
   expect(await page.locator('.wizard-country-scroll').evaluate(el=>el.scrollHeight>el.clientHeight)).toBe(true);
   await page.screenshot({path:`test-results/setup-patch-${viewport.width}.png`,fullPage:true});
-  await page.locator('.wizard-next').click();const last=await page.locator('.campaign-wizard').boundingBox();expect(last!.height).toBeCloseTo(frame!.height,0);
+  await page.locator('.wizard-next').click();
+  await expect(page.locator('.confirm-summary-grid').getByText('English',{exact:true})).toBeVisible();
+  const confirmation=await page.locator('.campaign-wizard').boundingBox();
+  expect(confirmation!.height).toBeCloseTo(frame!.height,0);
+  await expect(page.locator('.wizard-next.confirm')).toBeInViewport();
+  await page.screenshot({path:`test-results/setup-confirm-${viewport.width}.png`,fullPage:true});
  });
 }
 
