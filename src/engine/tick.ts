@@ -15,6 +15,7 @@ import { processCountryAI } from './systems/ai';
 import { simulateEconomy } from './systems/economy';
 import { maybeTriggerEvent } from './systems/events';
 import { simulatePolitics } from './systems/politics';
+import { processPoliticalLayer } from './systems/factions';
 import { simulateResources, type TradeInflow } from './systems/resources';
 import { processTradeDeals } from './systems/trade';
 import { processMinistries } from './systems/ministries';
@@ -61,14 +62,9 @@ function contractedTradeInflow(state: GameState): Record<string, TradeInflow> {
   return inflow;
 }
 
+/** Factions, contested elections and regime crises for every country (0.88, audit E2; see systems/factions.ts). */
 function processElection(state: GameState): GameState {
-  const player = state.countries[state.playerCountryId];
-  if (!player || player.politics.electionDaysRemaining > 0 || !['democracy','republic'].includes(player.politics.regime)) return state;
-  if (player.politics.approval >= 45) {
-    const nextPlayer = { ...player, politics:{...player.politics,electionDaysRemaining:1460,approval:Math.min(100,player.politics.approval+2)} };
-    return { ...state, countries:{...state.countries,[player.id]:nextPlayer}, sitrep:[`ELECTION // ${player.name} government re-elected with ${player.politics.approval.toFixed(1)}% approval.`,...state.sitrep].slice(0,12) };
-  }
-  return { ...state, campaignStatus:'lost', speed:0, sitrep:[`CAMPAIGN LOST // The government lost the election with ${player.politics.approval.toFixed(1)}% approval.`,...state.sitrep].slice(0,12) };
+  return processPoliticalLayer(state);
 }
 
 export function tickGame(state: GameState): GameState {

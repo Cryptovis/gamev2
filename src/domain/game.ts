@@ -29,7 +29,9 @@ export interface ResourceProduction { food: number; oil: number; iron: number; u
 export interface ProcessedResources { fuel: number; steel: number; electricity: number; }
 export interface EconomyState { gdp: number; treasury: number; debt: number; taxRate: number; inflation: number; unemployment: number; productivity: number; }
 export interface IndustryState { factories: number; refineries: number; mines: number; powerCapacity: number; utilization: number; }
-export interface PoliticsState { approval: number; stability: number; regime: RegimeType; electionDaysRemaining: number; }
+export interface PoliticsState { approval: number; stability: number; regime: RegimeType; electionDaysRemaining: number;
+  /** 0.88 factions, contested elections and regime pressure (audit E2). Absent in older saves; created on the first tick. */
+  factions?: import('./politics').FactionState; }
 export interface SocietyState { dominantReligion: ReligionType; ideology: IdeologyType; cohesion: number; secularization: number; influencePressure: { ideology: number; religion: number }; }
 export interface MilitaryAssessment { gfpRank: number | null; gfpIndex: number | null; capability: number; dataConfidence: 'gfp-2026' | 'estimated'; }
 export interface MilitaryState { personnel: number; tanks: number; artillery: number; fighters: number; bombers: number; warships: number; readiness: number; morale: number; logistics: number; technology: number; assessment: MilitaryAssessment; }

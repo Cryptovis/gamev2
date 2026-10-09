@@ -8,6 +8,7 @@ import { CommandWindow } from "./CommandWindow";
 import { ReviewDialog } from "./ReviewDialog";
 import { CivicArt } from "../icons/CivicArt";
 import {money as formatMoney} from '../formatMoney';
+import { PoliticsSection } from "./PoliticsSection";
 export function DomesticWindow() {
   const s = useWorldView(),
     p = s.countries[s.playerCountryId],
@@ -35,6 +36,7 @@ export function DomesticWindow() {
           <strong>{money(p.economy.treasury)}</strong>
         </span>
       </div>
+      <PoliticsSection />
       <p>
         <LocaleText value="Events improve morale over several days. They do not replace food supplies, economic reforms or security. Each has a thirty-day cooldown after it ends." />
       </p>

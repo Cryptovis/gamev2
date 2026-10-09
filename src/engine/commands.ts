@@ -8,6 +8,7 @@ import {prepareIntegration,beginIntegration} from './systems/integration';
 import {postListing,buyListing,cancelListing,moveBankGold,startActivity,recruitPersonnel,resolveIncomingLetter} from './systems/livingEconomy';
 import {buildCampus,hirePilots,manageOccupation,fundPoliticalCampaign,acceptElectionOffer} from './systems/governance';
 import {startProgram} from './systems/nationalPrograms';
+import {grantConcession,respondToCrisis,acknowledgeCrisis} from './systems/factions';
 import {cancelConstruction} from './systems/investmentReview';
 import {applyMembership,proposeAttack,voteWorld,startOutreach} from './systems/worldInstitutions';
 import {cancelResearch} from './systems/technology';
@@ -109,6 +110,9 @@ function executeGameCommand(state: GameState, command: GameCommand): GameState {
     case 'tutorial/set': return setTutorialStep(state,command.step,command.active);
     case 'inbox/read': return markInboxRead(state,command.scope);
     case 'living/dismissNotice': return dismissLivingNotice(state);
+    case 'politics/concession': return grantConcession(state,command.faction);
+    case 'politics/crisisResponse': return respondToCrisis(state,command.option);
+    case 'politics/acknowledgeCrisis': return acknowledgeCrisis(state);
     case 'world/outreach': return startOutreach(state,command.id,command.religion);
     case 'technology/cancel': return cancelResearch(state,state.playerCountryId);
     case 'time/advanceDay': return tickGame(state);
