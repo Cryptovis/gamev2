@@ -13,6 +13,14 @@
 
 Official implementation references: [PixiJS architecture](https://pixijs.com/8.x/guides/concepts/architecture), [Phaser documentation](https://docs.phaser.io/), [Chart.js modular integration](https://www.chartjs.org/docs/latest/getting-started/integration.html). Chart.js now draws retained GDP/inflation/treasury observations in National Economy; it does not implement tactics.
 
+## HD War v2 (0.85 delivered)
+
+- Board size is part of the saved battle; new battles use 10×8, migrated 0.83/0.84 battles keep 6×6.
+- Five force groups per side, two depots, seeded terrain mirrored through the board centre.
+- Depots are held only while no enemy is adjacent. Groups in contact fight at full strength and take the larger share of losses.
+- Each round records an ordered action timeline. The result panel lists it; playback will animate it without rerolling combat.
+- Auto-resolve commits the same force share as tactical battles.
+
 ## Subsequent visual development
 
 1. **Combat events:** extend the delivered deterministic round records with finer actions and effects. Rendering must never reroll casualties.

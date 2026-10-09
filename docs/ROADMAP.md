@@ -101,3 +101,11 @@ Next, in order:
 - **Phase 2, living world and politics:** tax/activity/debt pressure (C4), unified price scale and AI market demand (C10–C12), treaty rule parity (D8), AI-declared wars, factions, legislature, coups for every regime, data-driven event chains, win conditions, and store actions routed through typed commands (A5).
 - **Phase 3, HD War:** a grid abstraction, TacticalBattle v2 (schema 17), unit-level engagements, an action timeline, a per-battle RNG stream, seeded terrain, a 10×8 board and contested objectives (B5, B8, B9).
 - **Phase 4, technical debt:** a single translation catalog per language with lazy loading, CSS layers and a z-index scale, a shared modal hook, engine preview functions for UI forecasts, WebP map texture, and a regenerated npm lockfile.
+
+## 0.85 HD War v2
+Delivered: Phase 3 foundation from the [0.83 audit](AUDIT-0.83.md). A sized tactical grid (10×8 for new battles), TacticalBattle v2 with save schema 17, seeded point-symmetric terrain, five groups per side, two depots held only while uncontested (B5), contact-based power and loss distribution, a recorded action timeline, auto-resolve parity (B8) and error boundaries. Also the first C4 item: debt interest and tax friction on growth. Checks and limits: [Playtest 0.85](PLAYTEST-085.md).
+
+Next, in order:
+- **HD War playback:** animate rounds from the action timeline (movement, fire, losses, captures) with pause, speed and skip; a per-battle RNG stream for combat rolls; AI that coordinates groups; then measured rendering work (PixiJS only if needed).
+- **Phase 2 remainder:** activity repetition limits (rest of C4), unified price scale and AI market demand (C10–C12), GDP-scaled flat costs (C15), treaty rule parity (D8), espionage and alliance fixes (D12), AI-declared wars with the defender path (B9, E1), deeper politics and a victory condition (E2–E5), command-path and migration-table cleanup (A5, A6).
+- **Phase 4, technical debt:** unchanged from the 0.84 plan.

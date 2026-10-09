@@ -1,4 +1,4 @@
-# The Real President — 0.84.0-playtest.1
+# The Real President — 0.85.0-playtest.1
 
 A browser-based grand-strategy prototype built with React, TypeScript, Zustand, D3 Geo and Dexie. Lead a country through its economy, resources, diplomacy, development and military conflicts. Chart.js provides economic charts; Vitest and Playwright verify gameplay and browser flows.
 
@@ -6,10 +6,10 @@ A browser-based grand-strategy prototype built with React, TypeScript, Zustand, 
 
 | Item | Current state |
 |---|---|
-| Version | **0.84.0-playtest.1 — Stable Command** |
-| Development branch | `dev/audit-fixes-084` |
-| Save schema | 16 (0.84 adds optional fields only); schemas 12–15 migrate automatically |
-| Validation | Engine unit and 365-day invariant suites pass locally; TypeScript, production build and browser scenarios are verified by CI on push |
+| Version | **0.85.0-playtest.1 — HD War v2** |
+| Development branch | `dev/hd-war-085` |
+| Save schema | 17; schemas 12–16 migrate automatically, and open 0.83/0.84 tactical battles keep their 6×6 board |
+| Validation | CI passed for this release: unit tests, TypeScript, production build and Playwright browser scenarios (including 10×8 tactical orders, replay and save/load) |
 | V3 | Reserved for the complete-playability milestone; no rewrite is required for 0.83 |
 
 These details describe this development branch. Another branch, including `main`, can contain an older release. Check `package.json` and your checked-out branch when comparing previews.
@@ -34,6 +34,16 @@ npm run test:e2e
 `check` runs tests, TypeScript checks and the production build. Browser tests run separately against the production preview.
 
 ## Recent changelog
+
+### 0.85.0-playtest.1 — HD War v2
+
+- New tactical battles: 10×8 board, five groups per side, two supply depots, seeded terrain that is symmetric for both sides.
+- A depot counts only while no enemy is adjacent, so reaching it first no longer locks it. Groups in contact fight at full strength and take the larger share of losses.
+- Each round records an action log (moves, blocked moves, hits, losses, captures) for review now and animated playback later.
+- Auto-resolve uses the same force share as tactical battles. Debt carries interest and taxes above 25% slow growth.
+- Error boundaries replace blank-page crashes with an error message and recovery buttons. Save schema 17; 0.84 saves load automatically.
+
+See [CHANGELOG.md](CHANGELOG.md) for details and known limits.
 
 ### 0.84.0-playtest.1 — Stable Command
 
@@ -73,6 +83,7 @@ Delivered milestones are retained here when new releases are added. This table s
 
 | Milestone | Delivered foundation | Record |
 |---|---|---|
+| 0.85 — HD War v2 | 10×8 symmetric battlefield, contested depots, contact-based combat, action timeline, auto-resolve parity, error boundaries | [Playtest 0.85](docs/PLAYTEST-085.md) |
 | 0.84 — Stable Command | Audit-driven world balance, war exploit fixes, per-campaign validated autosaves and performance | [Audit 0.83](docs/AUDIT-0.83.md), [Playtest 0.84](docs/PLAYTEST-084.md) |
 | 0.83 — Tactical Command / Clear Command / Guided Play | Playable tactical battles, combat replay, economic charts, diplomatic history, local demo entry and guided turns | [Playtest 0.83](docs/PLAYTEST-083.md) |
 | 0.82 — Reliable Command | Compatible-save recovery, command deduplication, timed research, NEWS archive, home camera and command layout | [Playtest 0.82](docs/PLAYTEST-082.md) |
