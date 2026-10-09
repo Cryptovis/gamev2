@@ -3,13 +3,13 @@
 Bu dosya yeni bir konuşmanın ilk okuması içindir. Geçmiş konuşmayı taşımadan kaldığımız yerden devam etmeyi sağlar.
 
 ## Durum
-- Sürüm: **0.89.0-playtest.4 "Supply contracts & war readiness"**
-- Dal: `dev/trade-markets-089`. Önceki playtest.3 CI (`b7149f5`) geçti; bu patch'in CI sonucu push sonrası ayrıca kontrol edilmeli.
+- Sürüm: **0.89.0-playtest.5 "Research & readiness clarity"**
+- Dal: `dev/trade-markets-089`. Önceki playtest.4 CI (`ee02d58`) geçti; bu patch'in CI sonucu push sonrası ayrıca kontrol edilmeli.
 - `main`'e doğrudan push yok. Yeni işler `dev/<name>-0XX` dallarında yapılır.
 - Kapsam (0.89): ticaret ortağı seçimi ve ülke TRADE sekmesi, emtia borsası (spread, komisyon, günlük limit, pozisyon limiti, depolama, şoklar), diplomatik jet ve kargo uçakları (harita katmanı, mesafeye göre varış süresi).
 
 ## Bekleyen işler
-1. **Faz 4 (teknik borç):** tek çeviri kataloğu, CSS katmanları, z-index ölçeği, modal hook, motor önizleme fonksiyonları, harita dokusu, Prettier, docs arşivi, demo hesap hash'i. Kullanıcı onayı bekleniyor.
+1. **Faz 4 (teknik borç):** tek çeviri kataloğu, CSS katmanları, z-index ölçeği, modal hook, motor önizleme fonksiyonları, harita dokusu, Prettier, docs arşivi, demo hesap hash'i. Araştırma önizlemesi/iade hesabı bu patch’te birleştirildi; kalan kapsam ve kanıtlar: [audit ilerleme kaydı](AUDIT-PROGRESS-089.md).
 2. **Oyun testinden gelen denge hotfix'leri:** approval baseline, AI savaş çeşitliliği, demokrasilerde huzursuzluk, borsa fiyat düzeyi tutarlılığı. Kullanıcı geri bildirimi toplanıp tek bir hotfix sürümünde işlenecek.
 3. **İsteğe bağlı:** Mac'te `rm -rf node_modules package-lock.json && npm install` ile lock dosyasını yeniden üretmek.
 

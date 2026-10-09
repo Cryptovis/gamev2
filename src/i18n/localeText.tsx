@@ -8,6 +8,7 @@ import {UI_CATALOG_088_F} from './uiCatalog088F';
 import {UI_CATALOG_089_G} from './uiCatalog089G';
 import {UI_CATALOG_089_H} from './uiCatalog089H';
 import {UI_CATALOG_089_I} from './uiCatalog089I';
+import {UI_CATALOG_089_K} from './uiCatalog089K';
 import {UI_CATALOG_089_J} from './uiCatalog089J';
 import {UI_CATALOG_083} from './uiCatalog083';
 import {UI_CATALOG_COMPLETE} from './uiCatalogComplete';
@@ -62,6 +63,7 @@ for (const language of languages) {
   for(const [key,values] of Object.entries({...UI_CATALOG_088_D,...UI_CATALOG_088_E,...UI_CATALOG_088_F,...UI_CATALOG_089_G,...UI_CATALOG_089_H,...UI_CATALOG_089_I})){const k=key.trim().toLowerCase().replaceAll("_"," ");if(!entries.has(k)&&values[index])entries.set(k,values[index]);}
   // Reviewed supply/war wording also replaces old machine-translated contract notices.
   for(const [key,values] of Object.entries(UI_CATALOG_089_J))entries.set(catalogKey(key),values[index]);
+  for(const [key,values] of Object.entries(UI_CATALOG_089_K))entries.set(catalogKey(key),values[index]);
   const countries = new Intl.DisplayNames([language], { type: "region" });
   for (const c of WORLD_COUNTRY_SEEDS)
     entries.set(c.name.toLowerCase(), countries.of(c.iso2) ?? c.name);

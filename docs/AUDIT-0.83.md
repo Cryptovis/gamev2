@@ -1,5 +1,7 @@
 # AlpyX 0.83.0-playtest.3 — Tam Denetim ve Yapılacaklar
 
+> Güncel durum: [0.89 audit ilerleme kaydı](AUDIT-PROGRESS-089.md). Aşağıdaki bulgular 0.83 sürümünün tarihsel denetimidir.
+
 Tarih: 2026-10-09 · Dal: `dev/tactical-command-083` (54ec9e7) · Hazırlayan: Claude
 
 Kapsam: ~32.600 satır kaynak (`src/`), 44 birim testi, 4 e2e testi, `public/` (8,2 MB), CI, kilit dosyası.

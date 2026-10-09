@@ -17,6 +17,28 @@ export function researchDuration(s:GameState,id:string,technologyId:string) {
  const n=technologyById[technologyId];
  return n?Math.ceil((12+n.tier*6+n.cost*.2)/researchCapacity(s,id)):0;
 }
+/** Read-only view shared by research cards and confirmation dialogs. Work/day is not RP income. */
+export function researchPreview(s: GameState, countryId: string, technologyId: string) {
+ const country = s.countries[countryId], node = technologyById[technologyId];
+ if (!country || !node) return null;
+ const complete = country.technology.unlocked.includes(technologyId);
+ const project = country.technology.project;
+ const missingPrerequisites = node.prerequisites.filter(id => !country.technology.unlocked.includes(id));
+ const missingPoints = Math.max(0, node.cost - country.technology.researchPoints);
+ const reason = complete ? 'Research already complete.' : project ? 'Finish or cancel the current project first.' : missingPrerequisites.length ? 'Complete the required discoveries first.' : missingPoints > 0 ? 'Not enough research points.' : null;
+ return { allowed: canUnlockTechnology(country, technologyId), complete, reason, missingPrerequisites,
+  missingPoints, cost: node.cost, points: country.technology.researchPoints,
+  capacity: researchCapacity(s, countryId), duration: researchDuration(s, countryId, technologyId) };
+}
+export function researchRefund(project: NonNullable<CountryState['technology']['project']>) {
+ return project.cost * .8 * Math.max(0, 1 - project.workDone / project.requiredWork);
+}
+export function researchProjectPreview(s: GameState, countryId: string) {
+ const project = s.countries[countryId]?.technology.project;
+ if (!project) return null;
+ return { remainingDays: Math.ceil(Math.max(0, project.requiredWork - project.workDone) / researchCapacity(s, countryId)),
+  refund: researchRefund(project), progress: Math.min(100, 100 * project.workDone / project.requiredWork) };
+}
 export function unlockTechnology(s:GameState,id:string,technologyId:string):GameState {
  const c=s.countries[id],n=technologyById[technologyId];
  if(!c||!n||!canUnlockTechnology(c,technologyId))return s;
@@ -26,7 +48,7 @@ export function unlockTechnology(s:GameState,id:string,technologyId:string):Game
 export function cancelResearch(s:GameState,id:string):GameState {
  const c=s.countries[id],p=c?.technology.project;
  if(!p)return s;
- const refund=p.cost*.8*Math.max(0,1-p.workDone/p.requiredWork);
+ const refund=researchRefund(p);
  return {...s,countries:{...s.countries,[id]:{...c,technology:{...c.technology,project:null,researchPoints:c.technology.researchPoints+refund}}},sitrep:[`RESEARCH // Project cancelled; ${refund.toFixed(2)} RP refunded.`,...s.sitrep].slice(0,12)};
 }
 function applyDiscovery(c:CountryState,id:string):CountryState {
@@ -45,7 +67,7 @@ export function processResearch(s:GameState):GameState {
   const p=c.technology.project;
   if(p&&c.technology.unlocked.includes(p.technologyId)){
    // Integration may bring this discovery from another country; retain its effects once.
-   const refund=p.cost*.8*Math.max(0,1-p.workDone/p.requiredWork);
+   const refund=researchRefund(p);
    countries={...countries,[c.id]:{...c,technology:{...c.technology,project:null,researchPoints:c.technology.researchPoints+refund}}};
    continue;
   }

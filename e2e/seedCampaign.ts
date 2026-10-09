@@ -2,7 +2,7 @@ import type {Page} from '@playwright/test';
 import type {GameState} from '../src/domain/game';
 import {makeInitialState} from '../src/data/initialState';
 import {snapshotGame} from '../src/persistence/snapshot';
-export function campaignFixture(language:'en'|'tr'='tr'):GameState {
+export function campaignFixture(language:GameState['playerProfile']['language']='tr'):GameState {
  const s=makeInitialState();s.speed=0;s.playerProfile={...s.playerProfile,setupComplete:true,language,commanderName:'Browser playtest'};
  s.world.tutorial={...s.world.tutorial,active:false,completed:true};s.eventCooldownUntil=10000;s.advisorCooldownUntil=10000;
  return s;

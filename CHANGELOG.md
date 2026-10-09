@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.89.0-playtest.5 — Research & readiness clarity
+Implementation and validation: **Codex**. Branch: `dev/trade-markets-089`. Save schema stays 17.
+
+- War review puts the blocking reason at the top. Confirmation is visibly inactive with a dashed border, an unavailable label and an accessible link to the reason. Fuel, foreign-control and existing-war failures come from the same eligibility rules as the command.
+- Research uses responsive illustrated cards instead of a fixed-size canvas. Saved points, cost, missing points, prerequisites, duration and active-project progress are readable. Blocked discoveries remain inspectable; starting them is still disabled.
+- Research/refund previews are engine-owned. Cancellation, automatic duplicate-discovery cleanup and integration reuse one refund helper. Costs, throughput, effects and the 14-day war-fuel threshold are unchanged.
+- Reviewed technology names and new prompts in Turkish, Spanish, Chinese and Russian; country-specific war titles now translate too. This is a focused review, not a claim that every old game sentence is fully reviewed.
+- [Audit reconciliation](docs/AUDIT-PROGRESS-089.md) preserves Claude's original findings and identifies delivered Phases 1–3 and open Phase 4 work. No new dependencies or save migration.
+
+Validation: 554 unit tests, including the 365-day invariant, TypeScript and production build, and all 65 Playwright browser scenarios passed locally. All five languages were tested at 1440px and 390px; desktop/mobile research and blocked-war screenshots were inspected. GitHub CI runs separately on push.
+
 ## 0.89.0-playtest.4 — Supply contracts & war readiness
 Implementation and validation: **Codex**. Branch: `dev/trade-markets-089`. Save schema stays 17; existing campaigns load unchanged.
 

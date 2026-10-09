@@ -1,3 +1,4 @@
+import { researchRefund } from './technology';
 import {energyFor} from './energy';
 import type { GameState, CountryState } from "../../domain/game";
 import { expansion, updateExpansion } from "./sovereignCredit";
@@ -250,7 +251,7 @@ export function consolidateTerritory(
     },
     technology: {
       ...p.technology,
-      researchPoints: p.technology.researchPoints + c.technology.researchPoints + (c.technology.project ? c.technology.project.cost*.8*(1-c.technology.project.workDone/c.technology.project.requiredWork) : 0),
+      researchPoints: p.technology.researchPoints + c.technology.researchPoints + (c.technology.project ? researchRefund(c.technology.project) : 0),
       unlocked: [
         ...new Set([...p.technology.unlocked, ...c.technology.unlocked]),
       ],

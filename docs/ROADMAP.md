@@ -138,3 +138,6 @@ Next candidates:
 Delivered: supplier ranking and the country trade desk, the commodity exchange, diplomatic and cargo flights on the map, and related visual polish. Checks and limits: [Playtest 0.89](PLAYTEST-089.md).
 
 Next candidates: one price level for contracts, listings and the exchange; exchange balance (reversion speed, spreads); approval baseline pull and AI war variety from 0.88; Phase 4 technical debt.
+
+## 0.89.0-playtest.5 — Research & readiness clarity (Codex)
+Visible war block reasons and disabled styling; responsive research cards with branch art, saved/required/missing points, prerequisites and active-project progress; shared engine research/refund previews. Phase 4 is started, not complete. [Audit reconciliation and next scopes](AUDIT-PROGRESS-089.md) preserve the original 0.83 findings without repeating delivered Phases 1–3. Save schema stays 17; simulation balance is unchanged.

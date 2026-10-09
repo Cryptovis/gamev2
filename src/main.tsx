@@ -26,3 +26,5 @@ import "./ui/styles/flowCommand.css";
 import "./ui/styles/entryScreen.css";
 import "./ui/styles/setupScreen.css";
 import "./ui/styles/commodityExchange.css";
+
+import "./ui/styles/researchReadiness.css";

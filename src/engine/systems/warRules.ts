@@ -39,6 +39,17 @@ export function warFuelReadiness(state: GameState, attackerId: string) {
 }
 export const WAR_FUEL_MESSAGE = 'Build refined fuel reserves for at least 14 operational days before declaring war. Buy refined fuel in the market or refine oil in your factories.';
 
+/** Human-readable failures use the same eligibility order as the command. */
+export function warDeclarationReason(status: WarEligibility): string | undefined {
+ if (status.allowed) return undefined;
+ switch (status.block) {
+  case 'fuel': return WAR_FUEL_MESSAGE;
+  case 'active': return 'You are already at war with this country.';
+  case 'attacker_not_independent': return 'Your country must be independent to declare war.';
+  case 'target_not_independent': return 'This country is under foreign control. Choose an independent country.';
+  default: return 'Choose another independent country as the target.';
+ }
+}
 /** Hard rules for opening a war, identical for the player and the AI. */
 export function warDeclarationStatus(state: GameState, attackerId: string, defenderId: string): WarEligibility {
   const attacker = state.countries[attackerId], defender = state.countries[defenderId];
