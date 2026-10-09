@@ -17,6 +17,7 @@
   position:relative;
   grid-template-columns:minmax(260px,.9fr) minmax(380px,1.1fr);
   width:min(1040px,100%);
+  height:min(920px,calc(100dvh - 48px));
   border:1px solid rgba(232,197,112,.38);
   border-radius:20px;
   background:linear-gradient(180deg,#1c2321,#141a18);
@@ -119,7 +120,7 @@
 }
 
 @media (max-width:760px){
-  .entry-backdrop .entry-shell{grid-template-columns:1fr;border-radius:16px}
+  .entry-backdrop .entry-shell{grid-template-columns:1fr;border-radius:16px;height:auto;min-height:calc(100dvh - 24px)}
   .entry-backdrop .entry-art{min-height:150px;padding:20px}
   .entry-backdrop .entry-art>span{font-size:26px}
   .entry-backdrop .entry-content{padding:22px}

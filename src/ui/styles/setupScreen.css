@@ -1,0 +1,20 @@
+/* Setup wizard (identity, portrait, nation, confirm). Matches the entry card size so every screen keeps the same frame. Loaded after the older wizard rules and overrides them. */
+
+.campaign-wizard-backdrop .campaign-wizard{
+  width:min(1040px,calc(100vw - 48px))!important;
+  height:min(920px,calc(100dvh - 48px))!important;
+  min-height:0!important;
+  max-height:none!important;
+  grid-template-rows:auto minmax(0,1fr) auto!important;
+  border-radius:20px!important;
+}
+
+@media (max-width:760px){
+  .campaign-wizard-backdrop .campaign-wizard{
+    width:100%!important;
+    height:auto!important;
+    min-height:calc(100dvh - 24px)!important;
+    grid-template-rows:auto auto minmax(0,1fr) auto!important;
+    border-radius:16px!important;
+  }
+}
