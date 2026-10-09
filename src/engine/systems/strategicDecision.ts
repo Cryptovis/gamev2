@@ -1,4 +1,5 @@
 import {proposalAcceptanceChance} from './livingEconomy';
+import {agreementCost,formatBillions} from './treaties';
 import {activeCountries} from '../../domain/sovereignty';
 import {calculateSupplyNetwork} from './supplyNetwork';
 import type { GameState, TradeResource } from '../../domain/game';
@@ -44,14 +45,14 @@ export function strategicDecisionSpec(
   }
   if(kind==='embassy'){
     return {...base,kicker:'DIPLOMATIC PRESENCE',title:'Open Embassy in '+target.name,summary:'Send an embassy exchange proposal. The partner replies after three campaign days. A permanent mission opens only if accepted.',confirmLabel:'OPEN EMBASSY',tone:'positive',impacts:[
-      {label:'Cost if accepted',value:'-$3B',tone:'warning'},
+      {label:'Cost if accepted',value:`-$${formatBillions(agreementCost(state,actor.id,'embassy'))}B`,tone:'warning'},
       {label:'Relationship',value:'+6 raw',tone:'positive'},
       {label:'Trade friction',value:'Reduced',tone:'positive'},
     ],warnings:['An embassy increases diplomatic access but may later become exposed to bilateral crises or intelligence incidents.']};
   }
   if(kind==='trade_pact'){
     return {...base,kicker:'TRADE NEGOTIATION',title:'Sign Trade Pact with '+target.name,summary:'Create a formal commercial framework that enables direct commodity imports and improves bilateral economic trust.',confirmLabel:'SIGN TRADE PACT',tone:'positive',impacts:[
-      {label:'Cost if accepted',value:'-$5B',tone:'warning'},
+      {label:'Cost if accepted',value:`-$${formatBillions(agreementCost(state,actor.id,'trade'))}B`,tone:'warning'},
       {label:'Relations',value:`${relationshipIndex(relationFor(actor,target.id))}/100`},
       {label:'Points to Good',value:String(Math.max(0,51-relationshipIndex(relationFor(actor,target.id))))},
       {label:'Estimated acceptance',value:`${Math.round(proposalAcceptanceChance(state,actor.id,target.id,'trade_pact')*100)}%`},
@@ -65,14 +66,14 @@ export function strategicDecisionSpec(
   }
   if(kind==='non_aggression'){
     return {...base,kicker:'SECURITY GUARANTEE',title:'Non-Aggression Pact with '+target.name,summary:'Commit both governments to mutual restraint and reduce the immediate risk of bilateral escalation.',confirmLabel:'SIGN NON-AGGRESSION',tone:'neutral',impacts:[
-      {label:'Negotiation',value:'-$4B',tone:'warning'},
+      {label:'Negotiation',value:`-$${formatBillions(agreementCost(state,actor.id,'nonAggression'))}B`,tone:'warning'},
       {label:'Current index',value:currentIndex+'/100'},
       {label:'Strategic effect',value:'Mutual restraint',tone:'positive'},
     ],warnings:['This pact limits immediate hostility but does not create an alliance obligation.']};
   }
   if(kind==='alliance'){
     return {...base,kicker:'STRATEGIC ALIGNMENT',title:'Alliance with '+target.name,summary:'Enter a high-trust strategic alignment that changes how both countries are perceived by rivals and potential partners.',confirmLabel:'SIGN ALLIANCE',tone:'warning',impacts:[
-      {label:'Summit cost',value:'-$10B',tone:'warning'},
+      {label:'Summit cost',value:`-$${formatBillions(agreementCost(state,actor.id,'alliance'))}B`,tone:'warning'},
       {label:'Relationship',value:'+8 raw',tone:'positive'},
       {label:'Status',value:'ALLY',tone:'positive'},
     ],warnings:['Alliance commitments can reshape third-party diplomacy and future bloc politics.','This is a high-impact strategic decision.']};

@@ -17,15 +17,12 @@ import {
 } from "./industrialMarket";
 import { getGlobalMarketPrice } from "./trade";
 import {
-  addTreaty,
-  applyThirdPartyTradeReaction,
-  changeRelations,
   closeEmbassy,
   embassyFor,
-  openEmbassy,
   relationshipIndex,
   relationFor,
 } from "./diplomacy";
+import { AGREEMENT_BASE_COST, agreementAcceptanceChance, agreementCost, concludeAgreement, TRADE_MIN_INDEX } from "./treaties";
 import { nextRandom } from "../rng";
 import { calculateSupplyNetwork } from "./supplyNetwork";
 const clamp = (n: number, a: number, b: number) => Math.max(a, Math.min(b, n));
@@ -565,15 +562,11 @@ export function processWellbeing(s: GameState): GameState {
     );
   return n;
 }
-export const LETTER_COST = { embassy: 3, trade_pact: 5, closure: 0 };
+export const LETTER_COST = { embassy: AGREEMENT_BASE_COST.embassy, trade_pact: AGREEMENT_BASE_COST.trade, closure: 0 };
+/** Fee a country pays for a letter agreement: the shared GDP-scaled treaty fee (audit D8). */
+export const letterCost=(s:GameState,countryId:string,kind:DiplomaticLetter['kind'])=>kind==='closure'?0:agreementCost(s,countryId,kind==='trade_pact'?'trade':'embassy');
 export function proposalAcceptanceChance(s:GameState,senderId:string,targetId:string,kind:'embassy'|'trade_pact'){
- const p=s.countries[senderId],t=s.countries[targetId];if(!p||!t)return 0;
- const rel=relationFor(p,targetId),index=relationshipIndex(rel);
- if(rel.status==='war'||rel.sanctions||p.globalSanctions||t.globalSanctions||p.economy.treasury<LETTER_COST[kind]||(kind==='trade_pact'&&index<20))return 0;
- const need=t.resources.food<30||t.resources.oil<20;
- if(kind==='embassy')return clamp((rel.score+20)/100,.05,.95);
- const base=index>50?.75+(index-51)/49*.15:.1+index/50*.4;
- return clamp(base+(need?.1:0),.05,.95);
+ return agreementAcceptanceChance(s,senderId,targetId,kind==='trade_pact'?'trade':'embassy');
 }
 export function diplomaticProposalStatus(s:GameState,targetId:string,kind:'embassy'|'trade_pact') {
  const p=s.countries[s.playerCountryId],t=s.countries[targetId];
@@ -583,8 +576,8 @@ export function diplomaticProposalStatus(s:GameState,targetId:string,kind:'embas
  const letter=living(s).letters.find(x=>x.kind===kind&&(x.incoming?x.senderId===targetId&&x.receiverId===p.id&&x.status==='pending':x.senderId===p.id&&x.receiverId===targetId&&(x.status==='pending'||s.day<x.replyDay+14)));
  if(letter)return {allowed:false,letter,reason:letter.incoming?'An incoming proposal is waiting. Review Received proposals instead of sending another.':letter.status==='pending'?'Proposal already sent. Wait for the reply; repeating it will not speed up the answer or charge another fee.':'A recent proposal is still on cooldown. Check its result in the proposal tracker.',retryDay:letter.replyDay+14};
  if(relation.status==='war'||p.globalSanctions||t.globalSanctions||relation.sanctions)return {allowed:false,reason:'War or sanctions prevent this proposal. Open partner diplomacy to inspect access.'};
- if(kind==='trade_pact'&&relationshipIndex(relation)<20)return {allowed:false,reason:'Trade proposals require relations of at least 20/100. Improve relations through diplomatic missions or aid; above 50/100, acceptance becomes easier.'};
- if(p.economy.treasury<LETTER_COST[kind])return {allowed:false,reason:'Insufficient treasury for the fee if accepted.'};
+ if(kind==='trade_pact'&&relationshipIndex(relation)<TRADE_MIN_INDEX)return {allowed:false,reason:'Trade proposals require relations of at least 20/100. Improve relations through diplomatic missions or aid; above 50/100, acceptance becomes easier.'};
+ if(p.economy.treasury<letterCost(s,p.id,kind))return {allowed:false,reason:'Insufficient treasury for the fee if accepted.'};
  return {allowed:true,reason:'The reply arrives after three campaign days. Payment is charged only if accepted.'};
 }
 export function requestDiplomacy(
@@ -616,7 +609,7 @@ export function requestDiplomacy(
     (kind === "embassy"
       ? !!embassyFor(s, p.id, t.id)
       : relationFor(p, t.id).treaties.includes("trade")) ||
-    p.economy.treasury < LETTER_COST[kind]
+    p.economy.treasury < letterCost(s, p.id, kind)
   )
     return s;
   const x: DiplomaticLetter = {
@@ -641,53 +634,10 @@ function enactLetter(
   x: DiplomaticLetter,
   costShare: number,
 ): GameState {
-  const a = s.countries[x.senderId],
-    b = s.countries[x.receiverId],
-    cost = LETTER_COST[x.kind],
-    player = s.playerCountryId,
-    other = x.senderId === player ? x.receiverId : x.senderId;
-  if (
-    !a ||
-    !b ||
-    x.kind === "closure" ||
-    a.globalSanctions || b.globalSanctions || relationFor(a,b.id).status==='war' || relationFor(a,b.id).sanctions ||
-    (x.kind === "embassy" && embassyFor(s, a.id, b.id)) ||
-    (x.kind === "trade_pact" && (relationFor(a, b.id).treaties.includes("trade")||relationshipIndex(relationFor(a,b.id))<20))
-  )
-    return s;
-  if (
-    s.countries[player].economy.treasury < cost * costShare ||
-    (cost*(1-costShare)>0&&s.countries[other].economy.treasury < cost * (1 - costShare))
-  )
-    return s;
-  let n = {
-    ...s,
-    countries: {
-      ...s.countries,
-      [player]: {
-        ...s.countries[player],
-        economy: {
-          ...s.countries[player].economy,
-          treasury: s.countries[player].economy.treasury - cost * costShare,
-        },
-      },
-      [other]: {
-        ...s.countries[other],
-        economy: {
-          ...s.countries[other].economy,
-          treasury:
-            s.countries[other].economy.treasury - cost * (1 - costShare),
-        },
-      },
-    },
-  };
-  if (x.kind === "embassy") n = openEmbassy(n, a.id, b.id);
-  if (x.kind === "trade_pact") {
-    n = addTreaty(n, a.id, b.id, "trade");
-    n = changeRelations(n, a.id, b.id, 4);
-    n = applyThirdPartyTradeReaction(n, a.id, b.id);
-  }
-  return n;
+  // costShare is the player's part of the fee; the shared treaty rules check eligibility and both treasuries.
+  if (x.kind === "closure") return s;
+  const proposerShare = x.senderId === s.playerCountryId ? costShare : 1 - costShare;
+  return concludeAgreement(s, x.senderId, x.receiverId, x.kind === "trade_pact" ? "trade" : "embassy", proposerShare);
 }
 export function resolveIncomingLetter(
   s: GameState,
@@ -750,7 +700,7 @@ export function processLetters(s: GameState): GameState {
               status: accepted ? "accepted" : "rejected",
               message: accepted
                 ? "Proposal accepted. The agreement is now active; diplomatic costs have been paid."
-                : (rel.status==='war'||rel.sanctions||p.globalSanctions||t.globalSanctions?'Proposal declined because war or sanctions block diplomatic access.':p.economy.treasury<LETTER_COST[x.kind]?'Proposal declined because your treasury cannot pay the acceptance fee.':x.kind==='trade_pact'&&relationshipIndex(rel)<20?'Proposal declined because relations fell below 20/100. Improve relations through missions or aid.':'The partner declined on strategic interest. Improve relations above 50/100 for easier trade acceptance; approval remains probabilistic.'),
+                : (rel.status==='war'||rel.sanctions||p.globalSanctions||t.globalSanctions?'Proposal declined because war or sanctions block diplomatic access.':p.economy.treasury<letterCost(n,p.id,x.kind)?'Proposal declined because your treasury cannot pay the acceptance fee.':x.kind==='trade_pact'&&relationshipIndex(rel)<TRADE_MIN_INDEX?'Proposal declined because relations fell below 20/100. Improve relations through missions or aid.':'The partner declined on strategic interest. Improve relations above 50/100 for easier trade acceptance; approval remains probabilistic.'),
               read: false,
             }
           : v,

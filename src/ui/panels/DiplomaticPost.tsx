@@ -4,7 +4,7 @@ import {activeCountries} from '../../domain/sovereignty';
 import { useState } from "react";
 import { useGameStore } from "../../store/gameStore";
 import { LocaleText } from "../../i18n/localeText";
-import { living, LETTER_COST, diplomaticProposalStatus,proposalAcceptanceChance } from "../../engine/systems/livingEconomy";
+import { living, letterCost, diplomaticProposalStatus,proposalAcceptanceChance } from "../../engine/systems/livingEconomy";
 import { CivicArt } from "../icons/CivicArt";
 import { ReviewDialog, type ReviewContent } from "./ReviewDialog";
 import { money } from "../formatMoney";
@@ -74,7 +74,7 @@ export function DiplomaticPost() {
                 "The partner replies in three days. Relations, strategic needs and funding determine acceptance. A rejection creates no agreement and charges no fee.",
               metrics: [
                 ["Partner", s.countries[target].name],
-                ["Cost if accepted", money(LETTER_COST[kind])],
+                ["Cost if accepted", money(letterCost(s, s.playerCountryId, kind))],
                 ["Reply day", String(s.day + 3)],
                 ["Relations",`${index}/100`],
                 ["Points to trade eligibility",String(Math.max(0,20-index))],
@@ -147,22 +147,22 @@ export function DiplomaticPost() {
                           summary:
                             "Both countries pay half of the diplomatic setup fee. This opens the agreement; goods still require separate priced shipments.",
                           metrics: [
-                            ["Your share", money(LETTER_COST[x.kind] * 0.5)],
-                            ["Partner share", money(LETTER_COST[x.kind] * 0.5)],
+                            ["Your share", money(letterCost(s, s.playerCountryId, x.kind) * 0.5)],
+                            ["Partner share", money(letterCost(s, x.senderId, x.kind) * 0.5)],
                             [
                               "Treasury after",
                               money(
                                 s.countries[s.playerCountryId].economy
                                   .treasury -
-                                  LETTER_COST[x.kind] * 0.5,
+                                  letterCost(s, s.playerCountryId, x.kind) * 0.5,
                               ),
                             ],
                           ],
                           allowed:
                             s.countries[s.playerCountryId].economy.treasury >=
-                              LETTER_COST[x.kind] * 0.5 &&
+                              letterCost(s, s.playerCountryId, x.kind) * 0.5 &&
                             s.countries[x.senderId].economy.treasury >=
-                              LETTER_COST[x.kind] * 0.5,
+                              letterCost(s, x.senderId, x.kind) * 0.5,
                           execute: (commandId) => s.resolveIncomingLetter(x.id, true, commandId),
                         })
                       }

@@ -18,7 +18,7 @@ import {applyWarCondemnation} from './systems/worldInstitutions';
 import type { GameCommand } from '../domain/commands';
 import type { GameState, TradeResource, WarState } from '../domain/game';
 import { tickGame } from './tick';
-import { addTreaty, applyThirdPartyTradeReaction, changeRelations, embassyRelationBonus, relationFor, sendResourceGift, sendTreasuryGift, setWarRelation, updateBilateralRelation, endWarRelation } from './systems/diplomacy';
+import { applyThirdPartyTradeReaction, changeRelations, embassyRelationBonus, relationFor, sendResourceGift, sendTreasuryGift, setWarRelation, updateBilateralRelation, endWarRelation } from './systems/diplomacy';
 import { makeImportDeal } from './systems/trade';
 import { emptyLosses, getWarPreview, resolveCombatRound } from './systems/warfare';
 import { resolveEvent } from './systems/events';
@@ -27,6 +27,7 @@ import { unlockTechnology } from './systems/technology';
 import { formBloc, inviteToBloc } from './systems/blocs';
 import { proposeCouncilResolution } from './systems/council';
 import { launchIntelOperation } from './systems/espionage';
+import { agreementEligibility, concludeAgreement, formatBillions, ALLIANCE_MIN_SCORE, NON_AGGRESSION_MIN_SCORE } from './systems/treaties';
 import { deployEquipment, setMilitaryFactoryShare, setProductionFactories } from './systems/production';
 import { investInfrastructure } from './systems/infrastructure';
 
@@ -134,29 +135,22 @@ function executeGameCommand(state: GameState, command: GameCommand): GameState {
     }
     case 'diplomacy/signTradePact': return requestDiplomacy(state,command.targetCountryId,'trade_pact');
     case 'diplomacy/signNonAggression': {
-      const player = state.countries[state.playerCountryId];
       const target = state.countries[command.targetCountryId];
-      if (!player || !target) return state;
-      const relation = relationFor(player, target.id);
-      if (player.id === target.id || relation.treaties.includes('nonAggression')) return state;
-      if (relation.status === 'war' || relation.score < 25) return note(state, `DIPLOMACY // ${target.name} requires relations of at least +25 for a non-aggression pact.`);
-      if (player.economy.treasury < 4) return note(state, 'DIPLOMACY // Non-aggression talks require $4B.');
-      let next: GameState = { ...state, countries: { ...state.countries, [player.id]: { ...player, economy: { ...player.economy, treasury: player.economy.treasury - 4 } } } };
-      next = addTreaty(next, player.id, target.id, 'nonAggression');
-      return note(next, `DIPLOMACY // Non-aggression pact signed with ${target.name}.`);
+      const check = agreementEligibility(state, state.playerCountryId, command.targetCountryId, 'nonAggression');
+      if (!target || check.block === 'invalid' || check.block === 'active') return state;
+      if (check.block === 'war' || check.block === 'relations') return note(state, `DIPLOMACY // ${target.name} requires relations of at least +${NON_AGGRESSION_MIN_SCORE} for a non-aggression pact.`);
+      if (check.block === 'treasury') return note(state, `DIPLOMACY // Non-aggression talks require $${formatBillions(check.cost)}B.`);
+      const next = concludeAgreement(state, state.playerCountryId, target.id, 'nonAggression');
+      return next === state ? state : note(next, `DIPLOMACY // Non-aggression pact signed with ${target.name}.`);
     }
     case 'diplomacy/signAlliance': {
-      const player = state.countries[state.playerCountryId];
       const target = state.countries[command.targetCountryId];
-      if (!player || !target) return state;
-      const relation = relationFor(player, target.id);
-      if (player.id === target.id || relation.treaties.includes('alliance')) return state;
-      if (relation.status === 'war' || relation.score < 60) return note(state, `DIPLOMACY // ${target.name} requires relations of at least +60 for an alliance.`);
-      if (player.economy.treasury < 10) return note(state, 'DIPLOMACY // Alliance summit requires $10B.');
-      let next: GameState = { ...state, countries: { ...state.countries, [player.id]: { ...player, economy: { ...player.economy, treasury: player.economy.treasury - 10 } } } };
-      next = addTreaty(next, player.id, target.id, 'alliance');
-      next = changeRelations(next, player.id, target.id, 8);
-      return note(next, `DIPLOMACY // Strategic alliance signed with ${target.name}.`);
+      const check = agreementEligibility(state, state.playerCountryId, command.targetCountryId, 'alliance');
+      if (!target || check.block === 'invalid' || check.block === 'active') return state;
+      if (check.block === 'war' || check.block === 'relations') return note(state, `DIPLOMACY // ${target.name} requires relations of at least +${ALLIANCE_MIN_SCORE} for an alliance.`);
+      if (check.block === 'treasury') return note(state, `DIPLOMACY // Alliance summit requires $${formatBillions(check.cost)}B.`);
+      const next = concludeAgreement(state, state.playerCountryId, target.id, 'alliance');
+      return next === state ? state : note(next, `DIPLOMACY // Strategic alliance signed with ${target.name}.`);
     }
     case 'diplomacy/formBloc': return formBloc(state, command.targetCountryId);
     case 'diplomacy/inviteToBloc': return inviteToBloc(state, command.targetCountryId);

@@ -1,6 +1,7 @@
 import {activeCountries} from '../../domain/sovereignty';
 import type { GameState, TradeResource } from '../../domain/game';
-import { addTreaty, changeRelations, relationFor } from './diplomacy';
+import { changeRelations, relationFor } from './diplomacy';
+import { aiProposeAgreement } from './treaties';
 import { getExportCapacity, getGlobalMarketPrice, makeBilateralImportDeal } from './trade';
 import { simulateResources } from './resources';
 
@@ -77,7 +78,10 @@ export function processLivingEconomyAI(state: GameState): GameState {
         next = changeRelations(next, buyer.id, supplier.candidate.id, 2);
         continue;
       }
-      next = addTreaty(next, buyer.id, supplier.candidate.id, 'trade');
+      // Same rules as a player proposal: eligibility, GDP-scaled fee, the supplier's acceptance roll and retry cooldown (audit D8).
+      const proposal = aiProposeAgreement(next, buyer.id, supplier.candidate.id, 'trade');
+      next = proposal.state;
+      if (!proposal.accepted) continue;
       relation = relationFor(next.countries[buyer.id], supplier.candidate.id);
     }
 

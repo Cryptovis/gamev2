@@ -9,7 +9,7 @@ export function relationFor(country: CountryState, targetId: string): Diplomatic
   return country.diplomacy.relations[targetId] ?? neutralRelation();
 }
 
-function statusFromScore(score: number): DiplomaticRelation['status'] {
+export function statusFromScore(score: number): DiplomaticRelation['status'] {
   if (score <= -50) return 'hostile';
   if (score >= 65) return 'ally';
   if (score >= 20) return 'friendly';
@@ -49,7 +49,7 @@ export function addTreaty(state: GameState, aId: string, bId: string, treaty: Tr
   return updateBilateralRelation(state, aId, bId, (relation) => ({
     ...relation,
     treaties: relation.treaties.includes(treaty) ? relation.treaties : [...relation.treaties, treaty],
-    ...(treaty==='trade'?{tradeStrainSinceDay:undefined}:{}),
+    ...(treaty==='trade'?{tradeStrainSinceDay:undefined}:treaty==='alliance'?{allianceStrainSinceDay:undefined}:{nonAggressionStrainSinceDay:undefined}),
     status: treaty === 'alliance' ? 'ally' : relation.status,
     score: treaty === 'alliance' ? Math.max(70, relation.score) : relation.score,
   }));
