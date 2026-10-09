@@ -17,6 +17,7 @@ import {arrears} from './systems/sovereignCredit';
 import {pendingVictory} from './systems/victory';
 import {continueAfterVictory} from './systems/campaignVictory';
 import {requestDiplomacy,diplomaticProposalStatus} from './systems/livingEconomy';
+import {commodityOrderPreview,placeCommodityOrder,COMMODITY_SPECS} from './systems/commodityExchange';
 import type { GameCommand } from '../domain/commands';
 import type { CountryState, GameState, TradeResource } from '../domain/game';
 import { tickGame } from './tick';
@@ -99,6 +100,12 @@ function executeGameCommand(state: GameState, command: GameCommand): GameState {
       return next === state || !listing ? next : cargoFlight(next, listing.sellerId, state.playerCountryId, 'Exchange purchase');
     }
     case 'exchange/cancel': return cancelListing(state,command.id);
+    case 'commodity/order': {
+      const next=placeCommodityOrder(state,state.playerCountryId,command.good,command.side,command.quantity);
+      if(next===state)return state;
+      const fill=next.world.commodities?.trades[0];
+      return note(next,`EXCHANGE // ${command.side==='buy'?'Bought':'Sold'} ${command.quantity.toFixed(3)} ${COMMODITY_SPECS[command.good].label} at $${(fill?.price??0).toFixed(4)}B per unit.`);
+    }
     case 'gold/move': return moveBankGold(state,command.tonnes,command.direction);
     case 'activity/start': return startActivity(state,command.kind);
     case 'personnel/recruit': return recruitPersonnel(state,command.count);
@@ -255,6 +262,7 @@ export function executeCommandResult(state:GameState,command:GameCommand):Comman
  if(command.type==='military/assault'&&!combatAllowed(state))return {state,status:'unavailable',message:'Resolve the pending campaign decision before giving combat orders.'};
  if(command.type==='tactical/start'){const reason=tacticalStartStatus(state,command.warId);if(reason)return {state,status:'unavailable',message:reason};}
  if(command.type==='tactical/commit'){const reasons=tacticalCommandStatus(state,command.warId,command.expectedRound,command.orders);if(reasons.length)return {state,status:'unavailable',message:reasons.join(' ')};}
+ if(command.type==='commodity/order'){const preview=commodityOrderPreview(state,state.playerCountryId,command.good,command.side,command.quantity);if(!preview.allowed)return {state,status:'unavailable',message:preview.reasons.join(' ')};}
  if(command.type==='credit/post'){const status=creditOfferStatus(state,command.kind,command.principal,command.apr,command.days);if(!status.allowed)return {state,status:'unavailable',message:status.reasons.join(' ')};}
  const proposal=command.type==='diplomacy/request'?diplomaticProposalStatus(state,command.id,command.kind):command.type==='diplomacy/signTradePact'?diplomaticProposalStatus(state,command.targetCountryId,'trade_pact'):null;
  if(proposal&&!proposal.allowed)return {state,status:'unavailable',message:proposal.reason};

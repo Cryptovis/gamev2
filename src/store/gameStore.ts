@@ -47,6 +47,7 @@ interface GameActions {
  buyListing:(id:string,quantity:number,commandId?:string)=>void;
  cancelListing:(id:string,commandId?:string)=>void;
  moveBankGold:(tonnes:number,direction:'release'|'deposit',commandId?:string)=>void;
+ tradeCommodity:(good:import('../domain/commodityExchange').Commodity,side:'buy'|'sell',quantity:number,commandId?:string)=>void;
  startActivity:(kind:ActivityKind,commandId?:string)=>void;
  recruitPersonnel:(count:number,commandId?:string)=>void;
  dismissAdvice:(kind:AdviceKind,disable?:boolean)=>void;
@@ -176,6 +177,7 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
   buyListing:(id,quantity,commandId)=>set(s=>commandWithReceipt(s,{...{type:'exchange/buy',id,quantity},commandId})),
   cancelListing:(id,commandId)=>set(s=>commandWithReceipt(s,{...{type:'exchange/cancel',id},commandId})),
   moveBankGold:(tonnes,direction,commandId)=>set(s=>commandWithReceipt(s,{...{type:'gold/move',tonnes,direction},commandId})),
+  tradeCommodity:(good,side,quantity,commandId)=>set(s=>commandWithReceipt(s,{...{type:'commodity/order',good,side,quantity},commandId})),
   startActivity:(kind,commandId)=>set(s=>commandWithReceipt(s,{...{type:'activity/start',kind},commandId})),
   recruitPersonnel:(count,commandId)=>set(s=>commandWithReceipt(s,{...{type:'personnel/recruit',count},commandId})),
   dismissAdvice:(kind,disable=false)=>set(s=>dismissAdvice(s,kind,disable)),

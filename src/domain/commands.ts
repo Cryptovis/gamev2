@@ -48,6 +48,8 @@ export type ReliableCommand =
  | {type:'exchange/post';good:import('./living').ExchangeGood;quantity:number;price:number}
  | {type:'exchange/buy';id:string;quantity:number}
  | {type:'exchange/cancel';id:string}
+ // 0.89 track H: commodity exchange market orders (commodityExchange.ts).
+ | {type:'commodity/order';good:import('./commodityExchange').Commodity;side:'buy'|'sell';quantity:number}
  | {type:'gold/move';tonnes:number;direction:'release'|'deposit'}
  | {type:'activity/start';kind:import('./living').ActivityKind}
  | {type:'personnel/recruit';count:number}

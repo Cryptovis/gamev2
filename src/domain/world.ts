@@ -43,6 +43,8 @@ export interface WorldState {
  campaign?:import('./campaign').CampaignProgress;
  /** 0.89 diplomatic and cargo flights (flights.ts); absent in older saves. */
  flights?:import('./flights').Flight[];
+ /** 0.89 commodity exchange (commodityExchange.ts); absent in older saves and created on the next tick. */
+ commodities?:import('./commodityExchange').CommodityExchangeState;
   members: Record<InstitutionId, string[]>;
   ballots: WorldBallot[];
   missions: OutreachMission[];
