@@ -113,6 +113,8 @@ export interface WarState {
   attackerLosses: CasualtySnapshot; defenderLosses: CasualtySnapshot; lastReport: string;
   /** Personnel at declaration; the 8% collapse rule is measured against it. Absent in pre-0.84 saves. */
   attackerStartPersonnel?: number; defenderStartPersonnel?: number;
+  /** 0.88: allies (alliance treaty or collective-security bloc) fighting on the defender's side. Absent in older saves. */
+  defenderAllies?: string[];
 }
 
 export interface EventOption { id: string; label: string; consequenceHint: string; }

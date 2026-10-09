@@ -15,13 +15,13 @@ import {recordReports} from './journal';
 import {arrears} from './systems/sovereignCredit';
 import {pendingVictory} from './systems/victory';
 import {requestDiplomacy,diplomaticProposalStatus} from './systems/livingEconomy';
-import {applyWarCondemnation} from './systems/worldInstitutions';
 import type { GameCommand } from '../domain/commands';
-import type { CountryState, GameState, TradeResource, WarState } from '../domain/game';
+import type { CountryState, GameState, TradeResource } from '../domain/game';
 import { tickGame } from './tick';
-import { applyThirdPartyTradeReaction, changeRelations, embassyRelationBonus, relationFor, sendResourceGift, sendTreasuryGift, setWarRelation, updateBilateralRelation, endWarRelation } from './systems/diplomacy';
+import { applyThirdPartyTradeReaction, changeRelations, embassyRelationBonus, relationFor, sendResourceGift, sendTreasuryGift, updateBilateralRelation } from './systems/diplomacy';
 import { makeImportDeal } from './systems/trade';
-import { emptyLosses, getWarPreview, resolveCombatRound } from './systems/warfare';
+import { resolveCombatRound } from './systems/warfare';
+import { cancelPairTrades, concedeWar, openWar, warDeclarationStatus } from './systems/warRules';
 import { resolveEvent } from './systems/events';
 import { setMinistryAllocation } from './systems/ministries';
 import { unlockTechnology } from './systems/technology';
@@ -35,11 +35,6 @@ import { BASE_COST_B, actionCooldownDays, actionEffectMultiplier, diplomaticMiss
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 const note = (state: GameState, message: string): GameState => ({ ...state, sitrep: [message, ...state.sitrep].slice(0, 12) });
-
-function cancelPairTrades(state: GameState, aId: string, bId: string): GameState {
-  const tradeDeals = Object.fromEntries(Object.entries(state.tradeDeals).map(([id, deal]) => [id, (deal.sellerId === aId && deal.buyerId === bId) || (deal.sellerId === bId && deal.buyerId === aId) ? { ...deal, active: false } : deal]));
-  return { ...state, tradeDeals };
-}
 
 function createImport(state: GameState, targetCountryId: string, resource: TradeResource): GameState {
   const player = state.countries[state.playerCountryId];
@@ -192,20 +187,12 @@ function executeGameCommand(state: GameState, command: GameCommand): GameState {
       return note({ ...state, tradeDeals: { ...state.tradeDeals, [deal.id]: { ...deal, active: false } } }, `TRADE // ${deal.resource.toUpperCase()} contract cancelled.`);
     }
     case 'military/declareWar': {
-      const attacker = state.countries[state.playerCountryId];
+      // Shared with the AI (warRules.ts): same eligibility, consequences and allied response.
       const defender = state.countries[command.targetCountryId];
-      if (!attacker || !defender || attacker.id === defender.id) return state;
-      if (defender.annexedBy || defender.controllerCountryId != null) return note(state, `WAR // ${defender.name} is not an independent state and cannot be targeted.`);
-      const existing = Object.values(state.wars).find((war) => war.status === 'active' && ((war.attackerId === attacker.id && war.defenderId === defender.id) || (war.attackerId === defender.id && war.defenderId === attacker.id)));
-      if (existing) return note(state, `WAR // Conflict with ${defender.name} is already active.`);
-      let warId = `${attacker.id}-${defender.id}-${state.day}`;
-      let suffix=0;while(state.wars[warId])warId=`${attacker.id}-${defender.id}-${state.day}-${++suffix}`;
-      const preview = getWarPreview(attacker, defender, state.infrastructure[attacker.id], state.infrastructure[defender.id]);
-      const war: WarState = { id: warId, attackerId: attacker.id, defenderId: defender.id, startedDay: state.day, progress: 0, rounds: 0, autoAssault: false, status: 'active', terrain: preview.terrain, attackerSupply: preview.attackerSupply, defenderSupply: preview.defenderSupply, airSuperiority: preview.airSuperiority, attackerExhaustion: 0, defenderExhaustion: 0, lastCombatDay: state.day - 1, attackerLosses: emptyLosses(), defenderLosses: emptyLosses(), attackerStartPersonnel: attacker.military.personnel, defenderStartPersonnel: defender.military.personnel, lastReport: `Mobilization ordered · ${preview.terrain.toUpperCase()} theatre · supply ${preview.attackerSupply.toFixed(0)}%.` };
-      let next = cancelPairTrades(state, attacker.id, defender.id);
-      next = setWarRelation(next, attacker.id, defender.id);
-      next = { ...next, wars: { ...next.wars, [warId]: war }, countries: { ...next.countries, [attacker.id]: { ...next.countries[attacker.id], diplomacy: { ...next.countries[attacker.id].diplomacy, reputation: clamp(next.countries[attacker.id].diplomacy.reputation - 8, 0, 100) } } } };
-      return applyWarCondemnation(state,note(next, `WAR // ${attacker.name} declared war on ${defender.name}.`),attacker.id,defender.id);
+      const eligibility = warDeclarationStatus(state, state.playerCountryId, command.targetCountryId);
+      if (eligibility.block === 'target_not_independent') return note(state, `WAR // ${defender.name} is not an independent state and cannot be targeted.`);
+      if (eligibility.block === 'active') return note(state, `WAR // Conflict with ${defender.name} is already active.`);
+      return openWar(state, state.playerCountryId, command.targetCountryId).state;
     }
     case 'military/assault': { const w=state.wars[command.warId];if(!w||![w.attackerId,w.defenderId].includes(state.playerCountryId)||!combatAllowed(state))return state;return w.tactical?resolveTacticalRound(state,w.id,chooseTacticalOrders(state,w.id,playerSide(state,w)),w.tactical.round):resolveCombatRound(state,w.id); }
     case 'military/setAutoAssault': {
@@ -232,11 +219,8 @@ function executeGameCommand(state: GameState, command: GameCommand): GameState {
     case 'military/withdraw': {
       const war = state.wars[command.warId];
       if (!war || war.status !== 'active' || ![war.attackerId,war.defenderId].includes(state.playerCountryId)) return state;
-      const defending=war.defenderId===state.playerCountryId;
-      let next:GameState = { ...state, wars: { ...state.wars, [war.id]: { ...war, status: defending?'victory':'withdrawn', autoAssault: false, lastReport: defending?'Defender withdrew and conceded control.':'Attacker withdrew from the theatre.' } } };
-      if(defending){const d=next.countries[war.defenderId];next={...next,countries:{...next.countries,[d.id]:{...d,controllerCountryId:war.attackerId,politics:{...d.politics,stability:clamp(d.politics.stability-15,0,100)}}}};}
-      next = endWarRelation(next, war.attackerId, war.defenderId);
-      return note(next, defending?'WAR // Defender withdrew and conceded control to the attacker.':'WAR // Forces withdrew. Ceasefire established under hostile relations.');
+      // A defender's withdrawal concedes; the shared lifecycle (warRules.concedeWar) ends the campaign if the home country falls.
+      return concedeWar(state, war.id, war.defenderId === state.playerCountryId ? 'defender' : 'attacker');
     }
   }
 }
