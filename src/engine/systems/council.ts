@@ -24,8 +24,9 @@ function supportFor(state:GameState,targetId:string,type:CouncilResolutionType){
   return total?Number((yes/total*100).toFixed(1)):0;
 }
 
-export function proposeCouncilResolution(state:GameState,type:CouncilResolutionType,targetId:string):GameState{
-  const player=state.countries[state.playerCountryId]; const target=state.countries[targetId]; if(!player||!target||target.id===player.id)return state;
+/** The player's command and AI members (aiWar.ts) propose under the same influence costs and vote. */
+export function proposeCouncilResolution(state:GameState,type:CouncilResolutionType,targetId:string,proposerId=state.playerCountryId):GameState{
+  const player=state.countries[proposerId]; const target=state.countries[targetId]; if(!player||!target||target.id===player.id)return state;
   if(type==='ceasefire'&&!inActiveWar(state,targetId))return {...state,sitrep:[`COUNCIL // ${target.name} is not at war; no ceasefire to impose.`,...state.sitrep].slice(0,12)};
   const influence=state.council.influenceByCountry[player.id]??20; const cost=type==='sanctions'?10:type==='ceasefire'?8:6;
   if(influence<cost)return {...state,sitrep:[`COUNCIL // Not enough diplomatic influence.`,...state.sitrep].slice(0,12)};

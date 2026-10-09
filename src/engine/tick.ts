@@ -33,6 +33,7 @@ import {processIndustrialEconomy,processIndustrialAI} from './systems/industrial
 import {processIndustrialContracts,processIndustrialMarketAI} from './systems/industrialMarket';
 import {processLeadership} from './systems/leadership';
 import { processInfrastructure, processInfrastructureAI } from './systems/infrastructure';
+import { processAiWars } from './systems/aiWar';
 
 export function tickCountry(country: CountryState,boost=1,managedEnergy=false,tradeInflow?: TradeInflow): CountryState {
   const administered = processMinistries(country);
@@ -126,6 +127,7 @@ export function tickGame(state: GameState): GameState {
   next = processCredit(next);
   next = processIntegration(next);
   next = processWellbeing(next);
+  next = processAiWars(next);
   if(!next.world.living?.advice.active&&!next.world.living?.notice)next = maybeCreateResourceAdvisor(next);
   return recordEconomicHistory(next);
 }

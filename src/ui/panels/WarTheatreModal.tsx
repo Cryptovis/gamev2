@@ -5,7 +5,7 @@ import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useGameStore } from "../../store/gameStore";
 import { flagEmoji } from "../../data/countryThemes";
-import { getWarPreview } from "../../engine/systems/warfare";
+import { coalitionSupport, getWarPreview } from "../../engine/systems/warfare";
 import { AssetThumbnail } from "../icons/AssetThumbnail";
 import {tacticalStartStatus} from '../../engine/systems/tactical';
 import {ErrorBoundary} from '../ErrorBoundary';
@@ -187,6 +187,11 @@ export function WarTheatreModal() {
               value={w.lastReport || "No combat round has been resolved yet."}
             />
           </p>
+          {!!w.defenderAllies?.length && (
+            <p className="war-allies">
+              <LocaleText value={`Allies of the defender: ${(w.defenderAllies ?? []).map((id) => s.countries[id]?.name ?? id).join(", ")} (+${(coalitionSupport(s, w) * 100).toFixed(0)}% defender power)`} />
+            </p>
+          )}
         </div>
         <footer>
           <button

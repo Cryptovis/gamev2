@@ -62,6 +62,9 @@ export function valid083State(value:unknown):boolean {
   for(const [id,w] of Object.entries(s.wars)){
     // 0.84 optional war-start strength; absent in older saves.
     if(w&&[w.attackerStartPersonnel,w.defenderStartPersonnel].some(n=>n!==undefined&&(typeof n!=='number'||!Number.isFinite(n)||n<0)))return false;
+    // 0.88 optional co-belligerents: distinct known countries, never a main party; absent in older saves.
+    const allies=(w as {defenderAllies?:unknown})?.defenderAllies;
+    if(w&&allies!==undefined&&(!Array.isArray(allies)||allies.some(a=>typeof a!=='string'||!s.countries[a]||a===w.attackerId||a===w.defenderId)||new Set(allies).size!==allies.length))return false;
     if(!w||w.tactical===undefined)continue;
     const parsed=tactical.safeParse(w.tactical);if(!parsed.success)return false;
     const t=parsed.data;
