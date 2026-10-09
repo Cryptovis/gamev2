@@ -1,4 +1,4 @@
-# The Real President — 0.88.0-playtest.1
+# The Real President — 0.89.0-playtest.1
 
 A browser-based grand-strategy prototype built with React, TypeScript, Zustand, D3 Geo and Dexie. Lead a country through its economy, resources, diplomacy, development and military conflicts. Chart.js provides economic charts; Vitest and Playwright verify gameplay and browser flows.
 
@@ -6,9 +6,9 @@ A browser-based grand-strategy prototype built with React, TypeScript, Zustand, 
 
 | Item | Current state |
 |---|---|
-| Version | **0.88.0-playtest.1 — Politics & Victory** |
-| Development branch | `dev/politics-victory-088` |
-| Save schema | 17 (0.86–0.88 add optional fields only); schemas 12–16 migrate automatically, older or newer saves are refused with a warning |
+| Version | **0.89.0-playtest.1 — Trade & Markets** |
+| Development branch | `dev/trade-markets-089` |
+| Save schema | 17 (0.86–0.89 add optional fields only); schemas 12–16 migrate automatically, older or newer saves are refused with a warning |
 | Validation | CI passed for this release: unit tests, TypeScript, production build and Playwright browser scenarios |
 | V3 | Reserved for the complete-playability milestone; no rewrite is required for 0.83 |
 
@@ -34,6 +34,12 @@ npm run test:e2e
 `check` runs tests, TypeScript checks and the production build. Browser tests run separately against the production preview.
 
 ## Recent changelog
+
+### 0.89.0-playtest.1 — Trade & Markets
+
+- Find trade partners fast: ranked supplier lists (who can sell to you now, who is one pact away) and a TRADE tab on every country.
+- A commodity exchange for food, oil, metals, gold and silver with moving prices, news-driven shocks, charts, realistic spreads, limits and storage costs.
+- Diplomatic jets and cargo planes fly across the map; travel time follows real distance, and mission goodwill arrives with the delegation.
 
 ### 0.88.0-playtest.1 — Politics & Victory
 
@@ -103,6 +109,7 @@ Delivered milestones are retained here when new releases are added. This table s
 
 | Milestone | Delivered foundation | Record |
 |---|---|---|
+| 0.89 — Trade & Markets | Supplier ranking and country trade desk, commodity exchange with shocks and charts, diplomatic and cargo flights on the map | [Playtest 0.89](docs/PLAYTEST-089.md) |
 | 0.88 — Politics & Victory | AI wars and the defender path, allies joining, factions and contested elections, regime crises, data-driven events with chains, campaign victory | [Playtest 0.88](docs/PLAYTEST-088.md) |
 | 0.87 — Living World | Repeat fatigue and GDP-scaled costs, one market price scale, demand-bound AI buyers, shared treaty rules, command and migration cleanup | [Playtest 0.87](docs/PLAYTEST-087.md) |
 | 0.86 — HD War Playback | Step-by-step round playback with effects and controls, battle RNG stream, scored tactical AI | [Playtest 0.86](docs/PLAYTEST-086.md) |

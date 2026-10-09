@@ -130,3 +130,8 @@ Next candidates:
 - **Balance from playtests:** approval baseline pull (so approval does not drift to the ceiling), AI war outcome variety, AI targeting of the player, democratic unrest.
 - **Phase 4, technical debt:** single translation catalogue per language with lazy loading, CSS layers and a z-index scale, a shared modal hook, engine preview functions for the remaining UI forecasts, map texture conversion, Prettier, docs archive, demo-account hashing.
 - **HD War presentation:** sprites or a measured PixiJS layer, terrain art, sound, multi-round AI plans.
+
+## 0.89 Trade & Markets
+Delivered: supplier ranking and the country trade desk, the commodity exchange, diplomatic and cargo flights on the map, and related visual polish. Checks and limits: [Playtest 0.89](PLAYTEST-089.md).
+
+Next candidates: one price level for contracts, listings and the exchange; exchange balance (reversion speed, spreads); approval baseline pull and AI war variety from 0.88; Phase 4 technical debt.

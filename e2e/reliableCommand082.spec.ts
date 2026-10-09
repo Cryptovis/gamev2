@@ -64,7 +64,7 @@ test(`${viewport.width}px all ten tutorial lessons including funded construction
 for(const viewport of [{width:1440,height:900},{width:1280,height:720},{width:390,height:844}]){
  test(`${viewport.width}px stable setup and readable nation selection`,async({page})=>{
   await page.setViewportSize(viewport);await page.goto('/');await page.locator('[data-entry="demo"]').click();await page.locator('[data-entry="new-game"]').click();
-  await expect(page.locator('.wizard-release')).toHaveText('0.88.0-playtest.1');
+  await expect(page.locator('.wizard-release')).toHaveText('0.89.0-playtest.1');
   const nextButton=page.locator('.wizard-next');
   const nextBounds=await nextButton.boundingBox(),footerBounds=await page.locator('.wizard-footer').boundingBox();
   expect(nextBounds!.y).toBeGreaterThanOrEqual(footerBounds!.y);
