@@ -1,3 +1,4 @@
+import {withWarFuel} from './warFixture';
 import { describe, expect, it } from 'vitest';
 import { makeInitialState } from '../data/initialState';
 import type { GameState, WarState } from '../domain/game';
@@ -172,7 +173,7 @@ describe('0.88 allies join the defender (audit E5)', () => {
   it('an ally declares war on the attacker and adds power to the defender', () => {
     const base = alliedDefender();
     expect(coalitionCandidates(base, 'TUR', 'GRC')).toEqual([{ countryId: 'BGR', basis: 'alliance' }]);
-    const s = applyGameCommand(base, { type: 'military/declareWar', targetCountryId: 'GRC' });
+    const s = applyGameCommand(withWarFuel(base), { type: 'military/declareWar', targetCountryId: 'GRC' });
     const war = warOf(s, 'TUR', 'GRC');
     expect(war.defenderAllies).toEqual(['BGR']);
     expect(relationFor(s.countries.BGR, 'TUR').status).toBe('war');
@@ -226,7 +227,7 @@ describe('0.88 wars end', () => {
 
 describe('0.88 save compatibility', () => {
   it('accepts wars with and without defenderAllies and rejects malformed coalitions', () => {
-    const s = applyGameCommand(makeInitialState(), { type: 'military/declareWar', targetCountryId: 'GRC' }), war = warOf(s, 'TUR', 'GRC');
+    const s = applyGameCommand(withWarFuel(makeInitialState()), { type: 'military/declareWar', targetCountryId: 'GRC' }), war = warOf(s, 'TUR', 'GRC');
     expect(valid083State(s)).toBe(true);
     expect(valid083State(withWar(s, { ...war, defenderAllies: ['ARM'] }))).toBe(true);
     expect(valid083State(withWar(s, { ...war, defenderAllies: ['TUR'] }))).toBe(false);

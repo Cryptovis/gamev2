@@ -1,3 +1,4 @@
+import {withWarFuel} from './warFixture';
 import { describe, it, expect } from "vitest";
 import { makeInitialState } from "../data/initialState";
 import {
@@ -303,7 +304,7 @@ describe("territory integration", () => {
 });
 describe("victory and surface rendering", () => {
   it("queues an actual victory once, pauses time and remembers the seeded quotation", () => {
-    let s = applyGameCommand(makeInitialState(), {
+    let s = applyGameCommand(withWarFuel(makeInitialState()), {
       type: "military/declareWar",
       targetCountryId: "GRC",
     });
@@ -321,7 +322,7 @@ describe("victory and surface rendering", () => {
     ).toBe(pendingVictory(n)?.quote);
   });
   it("never celebrates an enemy victory or a withdrawal", () => {
-    let s = applyGameCommand(makeInitialState(), {
+    let s = applyGameCommand(withWarFuel(makeInitialState()), {
       type: "military/declareWar",
       targetCountryId: "GRC",
     });

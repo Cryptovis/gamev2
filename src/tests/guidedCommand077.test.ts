@@ -1,3 +1,4 @@
+import {withWarFuel} from './warFixture';
 import { describe, it, expect, beforeEach } from "vitest";
 import { makeInitialState } from "../data/initialState";
 import {
@@ -28,6 +29,7 @@ describe("guided command workspace", () => {
   it("opens the actual new war and closes the workspace", () => {
     const s = useGameStore.getState();
     s.openTool("market");
+    useGameStore.setState(withWarFuel(useGameStore.getState()));
     s.declareWar("GRC");
     const next = useGameStore.getState();
     expect(next.warWindowId).toBeTruthy();

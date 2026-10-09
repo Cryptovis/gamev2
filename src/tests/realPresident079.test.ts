@@ -1,3 +1,4 @@
+import {withWarFuel} from './warFixture';
 import { describe, it, expect } from "vitest";
 import { makeInitialState } from "../data/initialState";
 import {
@@ -265,7 +266,7 @@ describe("open exchange settlement and precious metals", () => {
   it("raises precious-metal reference prices during war and keeps finished imports above assembly costs", () => {
     let s = makeInitialState();
     const gold = industrialPrice(s, "gold");
-    s = applyGameCommand(s, {
+    s = applyGameCommand(withWarFuel(s), {
       type: "military/declareWar",
       targetCountryId: "GRC",
     });

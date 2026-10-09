@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.89.0-playtest.4 — Supply contracts & war readiness
+Implementation and validation: **Codex**. Branch: `dev/trade-markets-089`. Save schema stays 17; existing campaigns load unchanged.
+
+- Raw-resource import reviews now offer long-term supply agreements for 1, 3, 5 or 10 years. Monthly deliveries use a fixed unit price; payment occurs on delivery. Relations must exceed 40/100, a trade pact must be active, surplus must exist and the treasury must cover one monthly payment. The preview and all contract creation paths share the validator. Duplicate active agreements are rejected; signing replaces the same supplier's daily flow for that resource. Manage or cancel contracts in Diplomacy.
+- Player and AI war declarations share a minimum of 14 operational days of **refined fuel**, matching the existing AI threshold. The war review shows current stock, required stock and shortfall; crude oil alone is insufficient. Fuel can still run out in a long war: shortages keep their combat penalties but no longer create oil/fuel popups that stop time. Existing saved oil/fuel prompts are cleared when auto assault resumes; other national decisions still pause time.
+- Auto assault selects 5× and advances one campaign day per second. Tactical turn, replay and save/load tests now begin from explicitly prepared fuel stocks rather than bypassing readiness.
+- Lazy panels retry transient module fetch failures twice, with a fresh URL for the known same-origin panel when the browser cached a failed request. Programming errors and persistent failures remain visible through the error boundary; there is no automatic page reload or campaign reset.
+- Contract reviews use compact metrics and keep their action buttons visible while scrolling on small screens. New prompts are reviewed in all five languages. No balance rewrite or new save migration.
+
+Validation: 548 unit tests (including the 365-day invariant), TypeScript and production build, and all 52 Playwright browser scenarios passed locally. Contract/retry and translation regressions were rechecked after the final edits. CI runs separately on push.
+
 ## 0.89.0-playtest.3 — Portrait tiles & leadership quotes (Codex)
 - Setup portraits fit inside their selection cards, with softer shadows and no overlap into neighbouring tiles.
 - The identity step shows one randomly selected, sourced saying from Atatürk, Lincoln or Mandela, translated into all five game languages. It uses open quotation marks and serif text without a box, and stays stable while editing or moving between steps.

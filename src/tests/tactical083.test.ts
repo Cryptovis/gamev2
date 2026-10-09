@@ -1,3 +1,4 @@
+import {withWarFuel} from './warFixture';
 import { describe,it,expect } from 'vitest';
 import { makeInitialState } from '../data/initialState';
 import { applyGameCommand,executeCommandResult } from '../engine/commands';
@@ -9,7 +10,7 @@ import type { GameState } from '../domain/game';
 import type { TacticalOrder, TacticalUnit } from '../domain/tactical';
 const fixture=()=>{
  let s=makeInitialState();s.world.tutorial.active=false;s.eventCooldownUntil=10000;s.advisorCooldownUntil=10000;
- s=applyGameCommand(s,{type:'military/declareWar',targetCountryId:'GRC'});const id=Object.keys(s.wars)[0];
+ s=applyGameCommand(withWarFuel(s),{type:'military/declareWar',targetCountryId:'GRC'});const id=Object.keys(s.wars)[0];
  return {s:startTacticalBattle(s,id),id};
 };
 // 0.85 board: 10×8. Attacker infantry group 1 starts in sector B3 (cell 21).
@@ -22,7 +23,7 @@ describe('0.83 tactical orders',()=>{
   expect(startTacticalBattle(s,id)).toBe(s);expect(s.wars[id].autoAssault).toBe(false);
  });
  it('prevents a country committing its groups to another tactical battle',()=>{
-  const {s,id}=fixture();const n=applyGameCommand(s,{type:'military/declareWar',targetCountryId:'BGR'}),other=Object.keys(n.wars).find(x=>x!==id)!;
+  const {s,id}=fixture();const n=applyGameCommand(withWarFuel(s),{type:'military/declareWar',targetCountryId:'BGR'}),other=Object.keys(n.wars).find(x=>x!==id)!;
   expect(executeCommandResult(n,{type:'tactical/start',warId:other}).message).toContain('already committed');
  });
  it('validates command budgets, ownership, destinations and movement range',()=>{
@@ -50,7 +51,7 @@ describe('0.83 tactical orders',()=>{
  });
  it('retains the old battlefield when a same-day ceasefire is followed by redeclaration',()=>{
   const {s,id}=fixture(),ended=applyGameCommand(s,{type:'military/withdraw',warId:id});
-  const n=applyGameCommand(ended,{type:'military/declareWar',targetCountryId:'GRC'});
+  const n=applyGameCommand(withWarFuel(ended),{type:'military/declareWar',targetCountryId:'GRC'});
   expect(Object.keys(n.wars)).toHaveLength(2);expect(n.wars[id]).toEqual(ended.wars[id]);
   expect(Object.values(n.wars).filter(w=>w.status==='active')).toHaveLength(1);
   expect(migrateSave(snapshotGame(n))).not.toBeNull();

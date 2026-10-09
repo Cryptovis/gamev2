@@ -17,6 +17,7 @@ type LegacyCommand =
   | { type: 'diplomacy/toggleEmbargo'; targetCountryId: string }
   | { type: 'diplomacy/formBloc'; targetCountryId: string }
   | { type: 'diplomacy/inviteToBloc'; targetCountryId: string }
+  | { type: 'trade/createLongTermContract'; targetCountryId: string; resource: TradeResource; years: 1|3|5|10 }
   | { type: 'trade/createImport'; targetCountryId: string; resource: TradeResource }
   | { type: 'trade/cancel'; dealId: string }
   | { type: 'military/declareWar'; targetCountryId: string }

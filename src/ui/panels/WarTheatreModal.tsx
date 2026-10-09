@@ -1,3 +1,4 @@
+import {retryImport} from '../retryImport';
 import {calculateSupplyNetwork} from '../../engine/systems/supplyNetwork';
 import {pilotCoverage,academyFor} from '../../engine/systems/governance';
 import { LocaleText, translateLive } from "../../i18n/localeText";
@@ -9,7 +10,7 @@ import { coalitionSupport, getWarPreview } from "../../engine/systems/warfare";
 import { AssetThumbnail } from "../icons/AssetThumbnail";
 import {tacticalStartStatus} from '../../engine/systems/tactical';
 import {ErrorBoundary} from '../ErrorBoundary';
-const TacticalBattlefield=lazy(()=>import('./TacticalBattlefield').then(m=>({default:m.TacticalBattlefield})));
+const TacticalBattlefield=lazy(()=>retryImport(()=>import('./TacticalBattlefield'),undefined,'TacticalBattlefield').then(m=>({default:m.TacticalBattlefield})));
 export function WarTheatreModal() {
   const s = useGameStore(),
     [tacticalView, setTacticalView] = useState(false),
@@ -224,7 +225,7 @@ export function WarTheatreModal() {
         <p className="muted">
           <LocaleText
             value={
-              "Auto assault advances one day every two seconds while this window is open. Decisions pause the clock."
+              "Auto assault runs at 5×: one day per second. Fuel warnings stay in the theatre; other decisions can pause the clock."
             }
           />
         </p>

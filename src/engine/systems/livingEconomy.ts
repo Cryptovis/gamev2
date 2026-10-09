@@ -25,7 +25,6 @@ import {
 import { AGREEMENT_BASE_COST, agreementAcceptanceChance, agreementCost, concludeAgreement, TRADE_MIN_INDEX } from "./treaties";
 import { nextRandom } from "../rng";
 import { actionEffectMultiplier, headroomFactor, publicGain, recordActionUse, scaledCostB } from "./policyPressure";
-import { calculateSupplyNetwork } from "./supplyNetwork";
 import { advisorPopupAllowed } from "./advisorPacing";
 import { diplomaticFlight } from "./flightHooks";
 const clamp = (n: number, a: number, b: number) => Math.max(a, Math.min(b, n));
@@ -548,14 +547,7 @@ export function processWellbeing(s: GameState): GameState {
     !advisorPopupAllowed(n)
   )
     return n;
-  const war = Object.values(s.wars).some(
-      (w) =>
-        w.status === "active" &&
-        (w.attackerId === c.id || w.defenderId === c.id),
-    ),
-    fuel = calculateSupplyNetwork(c).fuelDays;
   const candidates: AdviceKind[] = [
-    ...(war && fuel < 3 ? ["fuel" as const] : []),
     ...(c.politics.approval < 40 ? ["approval" as const] : []),
     ...(c.demographics.growthRate < 0 ? ["population" as const] : []),
     ...(c.resources.food < 5 ? ["food" as const] : []),

@@ -27,6 +27,7 @@ export interface StrategicDecisionImpact {
 }
 
 export interface StrategicDecisionSpec {
+  allowed?:boolean;
   kind:StrategicActionKind;
   title:string;
   kicker:string;

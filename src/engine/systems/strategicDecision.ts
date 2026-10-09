@@ -3,7 +3,7 @@ import {BASE_COST_B,diplomaticMissionStatus,formatCostB,scaledCostB} from './pol
 import {agreementCost} from './treaties';
 import {travelDays} from './flights';
 import {activeCountries} from '../../domain/sovereignty';
-import {calculateSupplyNetwork} from './supplyNetwork';
+import {warDeclarationStatus,warFuelReadiness,WAR_FUEL_MESSAGE} from './warRules';
 import type { GameState, TradeResource } from '../../domain/game';
 import type { StrategicActionKind, StrategicDecisionSpec } from '../../domain/interaction';
 import { blocForCountry } from './blocs';
@@ -120,15 +120,18 @@ export function strategicDecisionSpec(
     ],warnings:['Aid is more diplomatically effective when the recipient is genuinely short of the resource.']};
   }
   if(kind==='declare_war'){
+    const fuel=warFuelReadiness(state,actor.id),status=warDeclarationStatus(state,actor.id,target.id);
     const ballot=state.world.ballots.find(b=>b.kind==='attack'&&b.proposerId===actor.id&&b.targetId===target.id&&b.status!=='open');
     const rejected=ballot?.status==='rejected'&&!ballot.condemned;
     const pending=state.world.ballots.some(b=>b.kind==='attack'&&b.proposerId===actor.id&&b.targetId===target.id&&b.status==='open');
-    return {...base,kicker:'NATIONAL SECURITY COUNCIL',title:'Declare War on '+target.name,summary:'Authorize open armed conflict. Trade is severed, bilateral relations collapse and national reputation is damaged.',confirmLabel:'DECLARE WAR',tone:'danger',impacts:[
+    return {...base,allowed:status.allowed,kicker:'NATIONAL SECURITY COUNCIL',title:'Declare War on '+target.name,summary:'Authorize open armed conflict. Trade is severed, bilateral relations collapse and national reputation is damaged.',confirmLabel:'DECLARE WAR',tone:'danger',impacts:[
       {label:'Relationship',value:'WAR / 0',tone:'danger'},
       {label:'Reputation',value:rejected?'-18 (includes condemnation)':'-8',tone:'danger'},
       {label:'International mandate',value:rejected?'REJECTED':pending?'VOTE STILL OPEN':ballot?.status==='passed'?'SUPPORTED':'Not requested',tone:rejected?'danger':'warning'},
       {label:'Trade',value:'Cancelled',tone:'danger'},
-    ],warnings:[...(rejected?['The rejected resolution adds -10 reputation and -20 relations with opposing countries and target allies.']:pending?['The vote is still open. If it rejects your attack, condemnation will apply at closing.']:[]),'This action immediately creates an active war and cannot be undone with a simple cancel action.',...(calculateSupplyNetwork(actor).fuelDays<14?['Fuel reserves cover fewer than fourteen operational days. Secure refined fuel before starting this operation.']:[]),'Supply, fuel, infrastructure and equipment reserves will determine sustained combat effectiveness.']};
+      {label:'Refined fuel / required',value:actor.processedResources.fuel.toFixed(1)+' / '+fuel.required.toFixed(1),tone:fuel.allowed?'positive':'danger'},
+      {label:'Fuel shortfall',value:fuel.missing.toFixed(1),tone:fuel.allowed?'positive':'danger'},
+    ],warnings:[...(rejected?['The rejected resolution adds -10 reputation and -20 relations with opposing countries and target allies.']:pending?['The vote is still open. If it rejects your attack, condemnation will apply at closing.']:[]),'This action immediately creates an active war and cannot be undone with a simple cancel action.',...(!fuel.allowed?[WAR_FUEL_MESSAGE]:[]),'Supply, fuel, infrastructure and equipment reserves will determine sustained combat effectiveness.']};
   }
   return null;
 }

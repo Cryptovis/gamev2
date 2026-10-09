@@ -1,7 +1,8 @@
-const VictoryScroll=lazy(()=>import('../ui/panels/VictoryScroll').then(m=>({default:m.VictoryScroll})));
+import {retryImport} from '../ui/retryImport';
+const VictoryScroll=lazy(()=>retryImport(()=>import('../ui/panels/VictoryScroll'),undefined,'VictoryScroll').then(m=>({default:m.VictoryScroll})));
 import {EconomicAdvice} from '../ui/panels/EconomicAdvice';
 import {LocaleText} from '../i18n/localeText';
-const WarTheatreModal=lazy(()=>import('../ui/panels/WarTheatreModal').then(m=>({default:m.WarTheatreModal})));
+const WarTheatreModal=lazy(()=>retryImport(()=>import('../ui/panels/WarTheatreModal'),undefined,'WarTheatreModal').then(m=>({default:m.WarTheatreModal})));
 import {ActionReceipt} from '../ui/panels/ReviewDialog';
 import {CampaignTutorial} from '../ui/panels/CampaignTutorial';
 import {lazy,Suspense,useState,useCallback,useEffect,type CSSProperties} from 'react';
@@ -10,13 +11,13 @@ import { useGameClock } from '../engine/useGameClock';
 import { WorldMap } from '../map/WorldMap';
 import { useGameStore } from '../store/gameStore';
 import { TopBar } from '../ui/hud/TopBar';
-const CountryPanel=lazy(()=>import('../ui/panels/CountryPanel').then(m=>({default:m.CountryPanel})));
+const CountryPanel=lazy(()=>retryImport(()=>import('../ui/panels/CountryPanel'),undefined,'CountryPanel').then(m=>({default:m.CountryPanel})));
 import { EventModal } from '../ui/panels/EventModal';
 import { RegimeCrisisModal } from '../ui/panels/RegimeCrisisModal';
 import { CampaignOverlay } from '../ui/panels/CampaignOverlay';
 import { CommandRails } from '../ui/hud/CommandRails';
-const CampaignEntry=lazy(()=>import('../ui/panels/CampaignEntry').then(m=>({default:m.CampaignEntry})));
-const AdvisorModal=lazy(()=>import('../ui/panels/AdvisorModal').then(m=>({default:m.AdvisorModal})));
+const CampaignEntry=lazy(()=>retryImport(()=>import('../ui/panels/CampaignEntry'),undefined,'CampaignEntry').then(m=>({default:m.CampaignEntry})));
+const AdvisorModal=lazy(()=>retryImport(()=>import('../ui/panels/AdvisorModal'),undefined,'AdvisorModal').then(m=>({default:m.AdvisorModal})));
 import { countryThemeFor } from '../data/countryThemes';
 
 export function App(){

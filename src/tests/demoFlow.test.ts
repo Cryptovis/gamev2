@@ -1,3 +1,4 @@
+import {withWarFuel} from './warFixture';
 import { describe, expect, it } from 'vitest';
 import { applyGameCommand } from '../engine/commands';
 import { makeInitialState } from '../data/initialState';
@@ -10,7 +11,7 @@ describe('Demo 0.1 smoke flow',()=>{
     state=applyGameCommand(state,{type:'diplomacy/signTradePact',targetCountryId:'GRC'});
     state=applyGameCommand(state,{type:'trade/createImport',targetCountryId:'GRC',resource:'oil'});
     state=applyGameCommand(state,{type:'time/advanceDay'});
-    state=applyGameCommand(state,{type:'military/declareWar',targetCountryId:'GRC'});
+    state=applyGameCommand(withWarFuel(state),{type:'military/declareWar',targetCountryId:'GRC'});
     const war=Object.values(state.wars)[0];
     state=applyGameCommand(state,{type:'military/assault',warId:war.id});
     const saved=snapshotGame(state);

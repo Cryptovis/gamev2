@@ -1,3 +1,4 @@
+import {withWarFuel} from './warFixture';
 import { describe, it, expect } from "vitest";
 import { makeInitialState } from "../data/initialState";
 import {
@@ -173,7 +174,7 @@ describe("world membership and player voting", () => {
     s = addTreaty(s, "FRA", "GRC", "alliance");
     const score = relationFor(s.countries.TUR, "USA").score,
       rep = s.countries.TUR.diplomacy.reputation;
-    const n = applyGameCommand(s, {
+    const n = applyGameCommand(withWarFuel(s), {
       type: "military/declareWar",
       targetCountryId: "GRC",
     });
@@ -182,7 +183,7 @@ describe("world membership and player voting", () => {
     expect(relationFor(n.countries.TUR, "USA").score).toBe(
       Math.max(-100, score - 20),
     );
-    const again = applyGameCommand(n, {
+    const again = applyGameCommand(withWarFuel(n), {
       type: "military/declareWar",
       targetCountryId: "GRC",
     });
@@ -195,7 +196,7 @@ describe("world membership and player voting", () => {
     s.world.members.un.push("TUR");
     s = proposeAttack(s, "GRC");
     s.world.ballots[0].votes = { USA: "no" };
-    s = applyGameCommand(s, {
+    s = applyGameCommand(withWarFuel(s), {
       type: "military/declareWar",
       targetCountryId: "GRC",
     });

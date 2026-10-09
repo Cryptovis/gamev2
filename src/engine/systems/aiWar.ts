@@ -1,3 +1,4 @@
+import { WAR_MIN_FUEL_DAYS } from './warRules';
 import type { CountryState, GameState, StrategicGoal, WarState } from '../../domain/game';
 import { activeCountries } from '../../domain/sovereignty';
 import { nextRandom } from '../rng';
@@ -34,7 +35,7 @@ export const AI_WAR_PAIR_COOLDOWN_DAYS = 1095;
 /** Effective power ratio needed, after the defender's potential allies are counted. */
 export const AI_WAR_MIN_RATIO = 1.6;
 /** Fuel cover needed: the same 14 operational days below which the player's war briefing warns. */
-export const AI_WAR_MIN_FUEL_DAYS = 14;
+export const AI_WAR_MIN_FUEL_DAYS = WAR_MIN_FUEL_DAYS;
 export const AI_WAR_MIN_STABILITY = 45;
 export const AI_WAR_GOALS: readonly StrategicGoal[] = ['rearm', 'expand_influence', 'secure_resources'];
 /** Chance per weekly review that a government with a valid target actually declares. */

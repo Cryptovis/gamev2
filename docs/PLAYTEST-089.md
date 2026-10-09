@@ -1,10 +1,10 @@
-# 0.89.0-playtest.3 — Trade & Markets / Onboarding polish
+# 0.89.0-playtest.4 — Supply contracts & war readiness
 
 Branch: `dev/trade-markets-089`. Base: 0.88.0-playtest.1. Source: playtest feedback (finding trade partners, a commodity exchange, aircraft on the map, more graphics).
 
 ## Checks run
 
-- GitHub CI on `dev/trade-markets-089` passed: Vitest unit suites, `tsc --noEmit`, production build and the Playwright browser scenarios.
+- Previous playtest.3 GitHub CI on `dev/trade-markets-089` passed: Vitest unit suites, `tsc --noEmit`, production build and the Playwright browser scenarios.
 - New unit suites: `flights089` (distances, travel days, delivery on arrival, pruning, caps, saves), `tradeOptions089` (tier ranking, block reasons and next steps, per-country buy/sell lists, advisor preference), `commodityExchange089` (determinism, mean reversion, shocks and decay, spread/fee/impact/freight against the preview, limits, cargo delivery, storage, P&L and settlement, AI trades, saves), `flightHooks089` (goodwill on arrival, one cargo flight per new deal plus monthly flights, AI flight limit, great-circle helpers).
 - Headless measurements: two-year exchange run with 30 shocks (21 news, 5 war, 4 events); measured daily volatility food 2.3%, oil 2.6%, gold 0.9%; median tick 17–21 ms (18.4 ms without the exchange). Strategy results over 5 worlds × 365 days: random trading −$0.21B, stockpiling food and selling into a spike −$0.10B on average (wins only when a spike comes), buying below the fundamental and selling above it +$0.83B.
 
@@ -37,3 +37,12 @@ Branch: `dev/trade-markets-089`. Base: 0.88.0-playtest.1. Source: playtest feedb
 - Check portrait thumbnails at desktop and mobile widths: no image may extend beyond its card. Scroll and filters should still work.
 
 - Patch validation: 534 unit tests passed; compact-money and quote suites rechecked after the Node 22 formatting fix. TypeScript/production build and 17 targeted browser tests passed; desktop/mobile portrait and quote screenshots inspected.
+
+## Supply/war patch 0.89.0-playtest.4 (Codex)
+
+1. Strategic Resources → Oil → supplier IMPORT → LONG-TERM AGREEMENT. At 40/100 it must be disabled with a reason; above 40/100 with a pact, surplus and funds, choose 1/3/5/10 years and sign. Check the active agreement in Diplomacy. Delivery is every 30 days; there is no upfront full-term payment. A daily flow from the same supplier is replaced.
+2. Try declaring war without refined fuel. Confirmation must be disabled; the review shows stock, required amount and shortfall. Buy **refined fuel**, not only crude oil, or refine oil locally. Player and AI need at least 14 operational days.
+3. Enable auto assault: 5× becomes active and days advance once per second. Short fuel is shown inside War Command and reduces combat strength; it must not open an oil/fuel advice popup. Other campaign decisions still pause the clock. Preparation does not guarantee unlimited supplies during a long war.
+4. A briefly interrupted panel download retries without resetting the leader/profile. Persistent server outages still show the recoverable error screen; restart Vite and use Reload if necessary.
+
+Validation: 548 unit tests (including the 365-day invariant), TypeScript and production build, and all 52 Playwright browser scenarios passed locally. The five contract/war/retry browser cases and 19 relevant unit/translation tests were rechecked after the compact mobile review fix; the mobile screenshot was inspected. CI runs separately on push. Existing schema-17 saves remain compatible.

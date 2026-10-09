@@ -17,7 +17,7 @@ export const campaignInterval = (
   blocked || tutorial || speed === 0
     ? null
     : autoWar
-      ? 2000
+      ? 1000
       : TICK_INTERVAL_BY_SPEED[speed];
 export const getTickIntervalMs = (speed: GameSpeed) =>
   TICK_INTERVAL_BY_SPEED[speed];

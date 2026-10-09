@@ -3,8 +3,8 @@
 Bu dosya yeni bir konuşmanın ilk okuması içindir. Geçmiş konuşmayı taşımadan kaldığımız yerden devam etmeyi sağlar.
 
 ## Durum
-- Sürüm: **0.89.0-playtest.3 "Trade & Markets / Onboarding polish"**
-- Dal: `dev/trade-markets-089`. Önceki hotfix `f249f31` tüm CI aşamalarını geçti; 0.89.0-playtest.2 CI para biçimlendirme testinde Node 22 minimum ondalık varsayımı yüzünden başarısız oldu; playtest.3 minimumFractionDigits:0 ile düzeltiyor. Yeni CI ayrıca kontrol edilmeli.
+- Sürüm: **0.89.0-playtest.4 "Supply contracts & war readiness"**
+- Dal: `dev/trade-markets-089`. Önceki playtest.3 CI (`b7149f5`) geçti; bu patch'in CI sonucu push sonrası ayrıca kontrol edilmeli.
 - `main`'e doğrudan push yok. Yeni işler `dev/<name>-0XX` dallarında yapılır.
 - Kapsam (0.89): ticaret ortağı seçimi ve ülke TRADE sekmesi, emtia borsası (spread, komisyon, günlük limit, pozisyon limiti, depolama, şoklar), diplomatik jet ve kargo uçakları (harita katmanı, mesafeye göre varış süresi).
 
@@ -52,3 +52,10 @@ Bu dosyayı oku, `git status` ve son commit'e bak, kullanıcıya bekleyen işler
 - İlk profil adımına kutusuz alıntı eklendi: dört kaynaklı söz, beş dil; her kurulum açılışında UI rastgele seçer, yazarken/geri dönerken değişmez. `src/data/leadershipQuotes.ts` kaynakları ve çevirileri içerir. Oyun RNG/simülasyonu etkilenmez.
 
 - Doğrulama: 534 birim testi; Node 22 para düzeltmesi sonrası ilgili 4 test yeniden geçti. Build ve 17 tarayıcı testi geçti.
+
+## 0.89.0-playtest.4 (Codex)
+- Satın alma incelemesinden 1/3/5/10 yıllık aylık tedarik anlaşması açılır. İlişki >40/100, pakt, stok ve ilk aylık ödeme bütçesi şart; motor önizlemesi ve tüm yaratma yolları aynı kuralları kullanır. Aynı tedarikçinin günlük akışı değiştirilir; aktif sözleşme tekrarlanamaz.
+- Savaş açmak için oyuncu/AI ortak 14 günlük işlenmiş yakıt şartı. İncelemede stok/gereken/eksik miktar görünür. Ham petrol tek başına yeterli değildir.
+- Auto assault 5×, saniyede bir gün. Yakıt/petrol önerileri savaş sırasında popup açıp zamanı durdurmaz; eski kayıttaki bu öneriler auto yeniden açılınca temizlenir. Diğer ulusal kararlar durdurabilir; uzun savaşlarda yakıt bitebilir ve savaş gücü azalır.
+- React.lazy geçici fetch hatalarını en fazla iki kez yeniden dener; aynı kaynaktaki bilinen panel için tarayıcı başarısız URL önbelleği aşılır. Kod hataları maskelenmez, otomatik reload yok.
+- Yeni metinler beş dilde. Şema 17; mevcut kayıtlar uyumlu. Doğrulama: 548 birim testi (365 gün invariant dahil), TypeScript/üretim build ve 52 tarayıcı senaryosu yerelde geçti. Mobil sözleşme özeti iki sütun; eylemler kaydırırken görünür. Son UI düzenlemesi sonrası ilgili 5 tarayıcı ve 19 birim/çeviri testi tekrar geçti; mobil görüntü incelendi. CI push sonrasında ayrıca izlenmeli.

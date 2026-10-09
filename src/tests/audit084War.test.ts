@@ -1,3 +1,4 @@
+import {withWarFuel} from './warFixture';
 import { describe, it, expect } from 'vitest';
 import { makeInitialState } from '../data/initialState';
 import { applyGameCommand, executeCommandResult } from '../engine/commands';
@@ -8,7 +9,7 @@ import { valid083State } from '../persistence/validation083';
 import type { GameState } from '../domain/game';
 
 const base = () => { const s = makeInitialState(); s.world.tutorial.active = false; s.eventCooldownUntil = 10000; s.advisorCooldownUntil = 10000; return s; };
-const declare = (target = 'GRC', s: GameState = base()) => { const n = applyGameCommand(s, { type: 'military/declareWar', targetCountryId: target }); const id = Object.values(n.wars).find(w => w.defenderId === target && w.status === 'active')!.id; return { s: n, id }; };
+const declare = (target = 'GRC', s: GameState = base()) => { const n = applyGameCommand(withWarFuel(s), { type: 'military/declareWar', targetCountryId: target }); const id = Object.values(n.wars).find(w => w.defenderId === target && w.status === 'active')!.id; return { s: n, id }; };
 const side = (s: GameState, id: string): CombatSideOrders => { const m = s.countries[id].military; return { power: 1, loss: 1, fuel: 1, forces: { personnel: m.personnel, tanks: m.tanks, artillery: m.artillery, fighters: m.fighters, bombers: m.bombers, warships: m.warships } }; };
 // Mirrors tactical defend/reserve-only orders: no offensive fuel.
 const hold = (s: GameState, a: string, d: string): CombatOrders => ({ attacking: false, attacker: { ...side(s, a), fuel: 0 }, defender: { ...side(s, d), fuel: 0 } });

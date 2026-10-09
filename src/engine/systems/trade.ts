@@ -1,7 +1,7 @@
 import {activeCountries} from '../../domain/sovereignty';
 import type { CountryState, GameState, TradeDeal, TradeResource } from '../../domain/game';
 import { simulateResources } from './resources';
-import { changeRelations, embassyFor, embassyRelationBonus } from './diplomacy';
+import { changeRelations, embassyFor, embassyRelationBonus, relationshipIndex } from './diplomacy';
 import { REFERENCE_PRICES } from '../../data/commodityPrices';
 
 /** Raw-resource slice of the single reference price table (audit C10). */
@@ -120,13 +120,26 @@ export function makeImportDeal(state: GameState, targetCountryId: string, resour
   return makeBilateralImportDeal(state, state.playerCountryId, targetCountryId, resource);
 }
 
+export function longTermContractPreview(state: GameState, buyerId: string, sellerId: string, resource: TradeResource, years: 1|3|5|10) {
+  const buyer=state.countries[buyerId], seller=state.countries[sellerId], relation=buyer?.diplomacy.relations[sellerId];
+  const index=relation?relationshipIndex(relation):0;
+  const quote=buyer&&seller?getTradeQuote(state,sellerId,resource,undefined,buyerId):{quantity:0,price:0};
+  const monthlyQuantity=quote.quantity*30, monthlyCost=monthlyQuantity*quote.price;
+  let reason='';
+  if (!buyer||!seller||buyerId===sellerId||![1,3,5,10].includes(years)) reason='Select a valid supplier and contract duration.';
+  else if (buyer.globalSanctions||seller.globalSanctions||relation?.sanctions||relation?.status==='war') reason='War or sanctions block this agreement.';
+  else if (!relation?.treaties.includes('trade')) reason='A trade pact is required first.';
+  else if (index<=40) reason='Relations must be above 40/100. Improve relations first.';
+  else if (Object.values(state.tradeDeals).some(d=>d.active&&d.contractType==='long_term'&&d.buyerId===buyerId&&d.sellerId===sellerId&&d.resource===resource)) reason='This supply contract is already active. View it in Diplomacy.';
+  else if (!(monthlyQuantity>0)) reason='The supplier has no exportable surplus.';
+  else if (buyer.economy.treasury<monthlyCost) reason='Your treasury must cover one monthly payment before signing.';
+  return {allowed:!reason,reason,relationIndex:index,monthlyQuantity,monthlyCost,unitPrice:quote.price,expiresDay:state.day+years*365};
+}
+
 export function makeLongTermImportContract(state: GameState, buyerId: string, sellerId: string, resource: TradeResource, years: 1|3|5|10): TradeDeal | null {
-  const buyer=state.countries[buyerId],seller=state.countries[sellerId];
-  const relation=buyer?.diplomacy.relations[sellerId];
-  if(!buyer||!seller||buyerId===sellerId||buyer.globalSanctions||seller.globalSanctions||!relation?.treaties.includes('trade')||relation.sanctions||relation.status==='war'||![1,3,5,10].includes(years))return null;
-  if(Object.values(state.tradeDeals).some(d=>d.active&&d.contractType==='long_term'&&d.buyerId===buyerId&&d.sellerId===sellerId&&d.resource===resource))return null;
-  const quote = getTradeQuote(state, sellerId, resource, undefined, buyerId);
-  if (!quote.quantity || quote.quantity <= 0) return null;
+  const preview=longTermContractPreview(state,buyerId,sellerId,resource,years);
+  if(!preview.allowed)return null;
+  const quote={quantity:preview.monthlyQuantity/30,price:preview.unitPrice};
   const interval = 30;
   return {
     id: `LTC-${sellerId}-${buyerId}-${resource}-${state.day}`,

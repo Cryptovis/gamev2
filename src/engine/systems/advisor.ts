@@ -3,7 +3,7 @@ import {letterCost,requestDiplomacy} from './livingEconomy';
 import type { GameState, TradeResource } from '../../domain/game';
 import type { AdviceKind } from '../../domain/living';
 import { addTreaty, relationFor } from './diplomacy';
-import { getExportCapacity, makeLongTermImportContract } from './trade';
+import { getExportCapacity, makeLongTermImportContract, longTermContractPreview } from './trade';
 import { simulateResources } from './resources';
 import { advisorPopupAllowed, recordAdvisorPopup } from './advisorPacing';
 import { cargoFlight } from './flightHooks';
@@ -41,7 +41,7 @@ export function maybeCreateResourceAdvisor(state:GameState):GameState{
 
  const need=resources
   .map(resource=>({resource,days:reserveDays(state,resource)}))
-  .filter(x=>x.days<threshold(x.resource)&&!isSuppressed(state,x.resource))
+  .filter(x=>x.days<threshold(x.resource)&&!isSuppressed(state,x.resource)&&!(x.resource==='oil'&&Object.values(state.wars).some(w=>w.status==='active'&&[w.attackerId,w.defenderId].includes(player.id))))
   .sort((a,b)=>a.days-b.days)[0];
  if(!need)return {...state,advisorCooldownUntil:state.day+5};
 
@@ -93,12 +93,12 @@ export function acceptAdvisorContract(state:GameState,years:1|3|5|10):GameState{
  const prompt=state.activeAdvisor;
  if(!prompt||prompt.stage!=='contract')return state;
  const contract=makeLongTermImportContract(state,state.playerCountryId,prompt.supplierId,prompt.resource,years);
- if(!contract)return {...dismissAdvisor(state),sitrep:[`ADVISOR // Supplier can no longer support the proposed ${prompt.resource.toUpperCase()} contract.`,...state.sitrep].slice(0,12)};
+ if(!contract)return {...dismissAdvisor(state),sitrep:[longTermContractPreview(state,state.playerCountryId,prompt.supplierId,prompt.resource,years).reason,...state.sitrep].slice(0,12)};
  const supplier=state.countries[prompt.supplierId];
  const shipped=cargoFlight(state,contract.sellerId,contract.buyerId,'Supply contract cargo'); // 0.89: first delivery flies (visual)
  return {
   ...shipped,
-  tradeDeals:{...state.tradeDeals,[contract.id]:contract},
+  tradeDeals:{...Object.fromEntries(Object.entries(state.tradeDeals).map(([id,d])=>[id,d.active&&d.buyerId===contract.buyerId&&d.sellerId===contract.sellerId&&d.resource===contract.resource?{...d,active:false}:d])),[contract.id]:contract},
   activeAdvisor:null,
   advisorCooldownUntil:state.day+20,
   speed:state.preferredSpeed,

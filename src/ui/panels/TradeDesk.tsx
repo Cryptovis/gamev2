@@ -13,6 +13,7 @@ import { money } from '../formatMoney';
 import { AssetThumbnail } from '../icons/AssetThumbnail';
 import { CivicArt } from '../icons/CivicArt';
 import { ReviewDialog, type ReviewContent } from './ReviewDialog';
+import {longTermContractPreview} from '../../engine/systems/trade';
 import '../styles/tradeDesk.css';
 
 /**
@@ -40,13 +41,15 @@ function priceDelta(option: TradeOption) {
   return delta === 0 ? 'world price' : `${delta > 0 ? '+' : ''}${delta}% vs world`;
 }
 
-type Dialog = ReviewContent & { allowed?: boolean; confirmLabel?: string; run: (commandId: string) => void };
+type Dialog = ReviewContent & { actions?:Array<{label:string;onClick:()=>void;disabled?:boolean}>; allowed?: boolean; confirmLabel?: string; run: (commandId: string) => void };
 
 /** Turns a route's next step into a button and, where the action costs money, a review dialog. */
 function useTradeActions() {
   const state = useGameStore();
   const [dialog, setDialog] = useState<Dialog | null>(null);
   const player = state.countries[state.playerCountryId];
+  const [contract,setContract]=useState<{partnerId:string;resource:TradeResource}|null>(null);
+  const [years,setYears]=useState<1|3|5|10>(1);
 
   function open(option: TradeOption) {
     const partner = state.countries[option.partnerId];
@@ -55,9 +58,11 @@ function useTradeActions() {
     switch (option.nextStep) {
       case 'buy':
         if (option.raw) {
+          const terms=longTermContractPreview(state,player.id,partner.id,option.good as TradeResource,1);
           setDialog({ title: translateLive('Review import flow'), summary: `Import ${label.toLowerCase()} from ${partner.name}.`, visual: 'contract',
             metrics: [['Daily supply', amount(option.suggestedQuantity)], ['Daily cost', money(option.orderCost)], ['Cargo travel', `${option.travelDays} days`], ['Treasury', money(player.economy.treasury)]],
-            warnings: ['This daily flow can be cancelled in Diplomacy. Actual supply depends on available stock and funds.'],
+            warnings: ['This daily flow can be cancelled in Diplomacy. Actual supply depends on available stock and funds.',...(!terms.allowed?[terms.reason]:[])],
+            actions:[{label:'LONG-TERM AGREEMENT',disabled:!terms.allowed,onClick:()=>{setDialog(null);setYears(1);setContract({partnerId:partner.id,resource:option.good as TradeResource});}}],
             allowed: option.suggestedQuantity > 0,
             run: () => { state.createImport(partner.id, option.good as TradeResource); state.showReceipt({ title: 'Import flow updated', summary: useGameStore.getState().sitrep[0] }); } });
         } else {
@@ -99,7 +104,13 @@ function useTradeActions() {
       run: (commandId) => state.requestDiplomacy(partner.id, 'trade_pact', 1, commandId) });
   }
 
-  const element = dialog && <ReviewDialog title={dialog.title} summary={dialog.summary} metrics={dialog.metrics} warnings={dialog.warnings} visual={dialog.visual} allowed={dialog.allowed ?? true} confirmLabel={dialog.confirmLabel ?? 'CONFIRM'} onCancel={() => setDialog(null)} onConfirm={(commandId) => { dialog.run(commandId); setDialog(null); }} />;
+  const terms=contract?longTermContractPreview(state,player.id,contract.partnerId,contract.resource,years):null;
+  const element = <>{contract&&terms&&<ReviewDialog className="supply-contract-review" title="Long-term supply agreement" summary={`Import ${goodLabel(contract.resource).toLowerCase()} from ${state.countries[contract.partnerId].name}.`} visual="contract"
+    metrics={[["Monthly supply",amount(terms.monthlyQuantity)],["Monthly payment",money(terms.monthlyCost)],["Unit price",money(terms.unitPrice)],["RELATIONS",terms.relationIndex+'/100']]}
+    warnings={["Delivery every 30 days at a fixed price. Pay on arrival. Low stock or funds can reduce delivery.","Replaces this supplier's daily flow. Manage or cancel the agreement in Diplomacy.",...(!terms.allowed?[terms.reason]:[])]}
+    allowed={terms.allowed} confirmLabel="SIGN AGREEMENT" onCancel={()=>setContract(null)} onConfirm={commandId=>{state.createLongTermContract(contract.partnerId,contract.resource,years,commandId);setContract(null);}}>
+    <div className="contract-duration"><small><LocaleText value="Contract duration"/></small><div>{([1,3,5,10] as const).map(y=><button key={y} aria-pressed={years===y} onClick={()=>setYears(y)}><LocaleText value={y+(y===1?' year':' years')}/></button>)}</div></div>
+  </ReviewDialog>}{dialog && <ReviewDialog title={dialog.title} summary={dialog.summary} metrics={dialog.metrics} warnings={dialog.warnings} visual={dialog.visual} actions={dialog.actions} allowed={dialog.allowed ?? true} confirmLabel={dialog.confirmLabel ?? 'CONFIRM'} onCancel={() => setDialog(null)} onConfirm={(commandId) => { dialog.run(commandId); setDialog(null); }} />}</>;
   return { open, proposePact, element };
 }
 
@@ -184,6 +195,8 @@ export function SupplierRanking({ good, limit = 4 }: { good: ExchangeGood; limit
 export function SupplierFinder() {
   const state = useGameStore();
   const player = state.countries[state.playerCountryId];
+  const [contract,setContract]=useState<{partnerId:string;resource:TradeResource}|null>(null);
+  const [years,setYears]=useState<1|3|5|10>(1);
   const urgent = MARKET_RESOURCES.find((r) => resourceStrategicStatus(player, r) === 'CRITICAL') ?? MARKET_RESOURCES.find((r) => resourceStrategicStatus(player, r) === 'IMPORT NEED') ?? 'oil';
   const [good, setGood] = useState<ExchangeGood>(urgent);
   return <section className="trade-finder">
@@ -208,6 +221,8 @@ export function CountryTradeDesk({ country }: { country: CountryState }) {
 
   if (isPlayer || !desk) {
     const player = state.countries[state.playerCountryId];
+  const [contract,setContract]=useState<{partnerId:string;resource:TradeResource}|null>(null);
+  const [years,setYears]=useState<1|3|5|10>(1);
     const needs = MARKET_RESOURCES.filter((r) => ['CRITICAL', 'IMPORT NEED'].includes(resourceStrategicStatus(player, r)));
     return <section className="trade-desk">
       <header className="trade-desk-hero"><CivicArt kind="trade" size={46} /><span><small><LocaleText value="TRADE DESK" /></small><strong><LocaleText value="Best suppliers for your shortfalls" /></strong><p><LocaleText value="Select another country to see what you can buy from it and sell to it." /></p></span></header>

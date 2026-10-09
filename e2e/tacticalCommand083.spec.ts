@@ -1,3 +1,5 @@
+import {campaignFixture,resumeFixture} from './seedCampaign';
+import {withWarFuel} from '../src/tests/warFixture';
 import {readFileSync} from 'node:fs';
 const {version}=JSON.parse(readFileSync(new URL('../package.json',import.meta.url),'utf8'));
 import {test,expect,type Page} from '@playwright/test';
@@ -8,7 +10,7 @@ async function start(page:Page){
  await page.locator('.guided-card footer button').first().click();
 }
 async function battle(page:Page){
- await start(page);await page.locator('[data-guide="nation"]').first().click();await page.locator('.country-select').selectOption('GRC');await page.locator('[data-guide="tab-war"]').click();
+ await resumeFixture(page,withWarFuel(campaignFixture()));await page.locator('[data-guide="nation"]').first().click();await page.locator('.country-select').selectOption('GRC');await page.locator('[data-guide="tab-war"]').click();
  await page.locator('.declare-war').click();await page.locator('.strategic-decision-modal .confirm').click();
  await expect(page.locator('.war-theatre-backdrop')).toBeVisible();
  await page.locator('.hd-war-button').click();await page.locator('[data-guide="review-dismiss"]').first().click();await expect(page.locator('[data-testid="tactical-battlefield"]')).toBeVisible();
@@ -41,9 +43,7 @@ test('economic observations draw a chart and accessible table after a campaign d
 test('guided turn results advance the campaign once and offer withdrawal',async({page})=>{
  await battle(page);await page.locator('[data-order-kind="defend"]').click();await page.locator('.tactical-queue').click();await page.locator('.tactical-commit').click();await page.locator('[data-guide="review-confirm"]').click();await expect(page.locator('.review-dialog h2')).toHaveText('Planın tamamlandı');
  const day=await page.locator('.campaign-clock strong').innerText();await page.locator('[data-guide="review-confirm"]').click();await expect(page.locator('.review-dialog h2')).toHaveText('Tur tamamlandı');await expect(page.locator('.review-dialog')).toContainText('Karşı tarafın emirleri');await page.screenshot({path:'test-results/guided-round-result.png',fullPage:true});
- await page.locator('[data-guide="review-confirm"]').click();await expect(page.locator('.review-dialog h2')).toHaveText('Bekleyen ülke kararı var');await expect(page.locator('.campaign-clock strong')).not.toHaveText(day);
- await page.locator('[data-guide="review-confirm"]').click();await expect(page.locator('.war-theatre-backdrop')).toHaveCount(0);await page.getByRole('button',{name:'Bu uyarıyı bir daha gösterme',exact:true}).click();
- await page.locator('[data-guide="nation"]').first().click();await page.locator('.country-select').selectOption('GRC');await page.locator('[data-guide="tab-war"]').click();await page.locator('.war-command > button').click();await expect(page.locator('.tactical-commit')).toBeEnabled();
+ await page.locator('[data-guide="review-confirm"]').click();await expect(page.locator('.review-dialog')).toHaveCount(0);await expect(page.locator('.campaign-clock strong')).not.toHaveText(day);await expect(page.locator('.tactical-commit')).toBeEnabled();
  await page.locator('[data-order-kind="defend"]').click();await page.locator('.tactical-queue').click();await page.locator('.tactical-commit').click();await page.locator('[data-guide="review-confirm"]').click();await page.locator('[data-guide="review-confirm"]').click();await expect(page.locator('.review-dialog h2')).toHaveText('Tur tamamlandı');await expect(page.locator('.tactical-round-result h4')).toContainText('2');
  await page.locator('.review-dialog footer').getByRole('button',{name:/çekil/i}).click();await expect(page.locator('.review-dialog h2')).toHaveText('Muharebe sahasından çekil');await page.locator('[data-guide="review-dismiss"]').first().click();await expect(page.locator('.tactical-outcome')).toHaveCount(0);
 });

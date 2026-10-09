@@ -1,3 +1,4 @@
+import {withWarFuel} from './warFixture';
 import { describe, expect, it } from 'vitest';
 import { makeInitialState } from '../data/initialState';
 import type { GameState } from '../domain/game';
@@ -15,7 +16,7 @@ import { valid083State } from '../persistence/validation083';
 const declare = () => {
   let s = makeInitialState();
   s.world.tutorial.active = false; s.eventCooldownUntil = 10000; s.advisorCooldownUntil = 10000;
-  s = applyGameCommand(s, { type: 'military/declareWar', targetCountryId: 'GRC' });
+  s = applyGameCommand(withWarFuel(s), { type: 'military/declareWar', targetCountryId: 'GRC' });
   return { s, id: Object.keys(s.wars)[0] };
 };
 const fixture = () => { const { s, id } = declare(); return { s: startTacticalBattle(s, id), id }; };

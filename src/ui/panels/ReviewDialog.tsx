@@ -21,12 +21,16 @@ export function ReviewDialog({
   allowed = true,
   visual,
   actions=[],
+  children,
+  className="",
 }: {
   onCancel: () => void;
   onConfirm?: (commandId:string) => void;
   confirmLabel?: string;
   allowed?: boolean;
-  actions?:Array<{label:string;onClick:()=>void}>;
+  className?:string;
+  children?:import("react").ReactNode;
+  actions?:Array<{label:string;onClick:()=>void;disabled?:boolean}>;
 } & ReviewContent) {
   const ref = useRef<HTMLElement>(null),
     submitted = useRef(false),
@@ -83,7 +87,7 @@ export function ReviewDialog({
         role="dialog"
         aria-modal="true"
         aria-label={translateLive(title)}
-        className={`review-dialog ${onConfirm?'review-confirmation':'review-result'}`}
+        className={`review-dialog ${onConfirm?'review-confirmation':'review-result'} ${className}`}
       >
         <header>
           <small><LocaleText value={"COMMAND REVIEW"}/></small>
@@ -100,6 +104,7 @@ export function ReviewDialog({
             </div>
           ))}
         </div>
+        {children}
         <div className="review-notes">
           {warnings.map((w) => (
             <p key={w}><LocaleText value={w}/></p>
@@ -109,7 +114,7 @@ export function ReviewDialog({
           <button data-guide="review-dismiss" onClick={onCancel}>
             <LocaleText value={onConfirm ? "BACK / CANCEL" : "CLOSE"}/>
           </button>
-          {actions.map(action=><button key={action.label} onClick={action.onClick}><LocaleText value={action.label}/></button>)}
+          {actions.map(action=><button key={action.label} disabled={action.disabled} onClick={action.onClick}><LocaleText value={action.label}/></button>)}
           {onConfirm && (
             <button
               data-guide="review-confirm" className="primary"

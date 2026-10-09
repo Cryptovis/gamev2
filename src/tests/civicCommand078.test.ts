@@ -36,8 +36,8 @@ function weak() {
   return s;
 }
 describe("single campaign clock", () => {
-  it("runs player auto war at 2000 ms and respects pause, decisions and tutorial", () => {
-    expect(campaignInterval(3, true)).toBe(2000);
+  it("runs player auto war at 1000 ms and respects pause, decisions and tutorial", () => {
+    expect(campaignInterval(3, true)).toBe(1000);
     expect(campaignInterval(0, true)).toBeNull();
     expect(campaignInterval(3, true, true)).toBeNull();
     expect(campaignInterval(3, true, false, true)).toBeNull();

@@ -1,6 +1,7 @@
 import type { GameState, WarState } from '../../domain/game';
 import { activeCountries } from '../../domain/sovereignty';
 import { nextRandom } from '../rng';
+import { calculateSupplyNetwork } from './supplyNetwork';
 import { endWarRelation, relationFor, setWarRelation } from './diplomacy';
 import { blocForCountry } from './blocs';
 import { pilotCoverage } from './governance';
@@ -16,7 +17,7 @@ import { settleWarOutcome } from './warOutcome';
 const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v));
 const note = (state: GameState, message: string): GameState => ({ ...state, sitrep: [message, ...state.sitrep].slice(0, 12) });
 
-export type WarBlock = 'invalid' | 'attacker_not_independent' | 'target_not_independent' | 'active';
+export type WarBlock = 'invalid' | 'attacker_not_independent' | 'target_not_independent' | 'active' | 'fuel';
 export interface WarEligibility { allowed: boolean; block?: WarBlock }
 
 export const inActiveWar = (state: GameState, id: string) =>
@@ -26,6 +27,18 @@ export function activeWarBetween(state: GameState, aId: string, bId: string): Wa
   return Object.values(state.wars).find(w => w.status === 'active' && ((w.attackerId === aId && w.defenderId === bId) || (w.attackerId === bId && w.defenderId === aId)));
 }
 
+export const WAR_MIN_FUEL_DAYS = 14;
+/** Refined fuel is what vehicles use; crude oil alone cannot fund an operation. */
+export function warFuelReadiness(state: GameState, attackerId: string) {
+  const country = state.countries[attackerId];
+  if (!country) return { allowed: false, days: 0, required: 0, missing: 0 };
+  const supply = calculateSupplyNetwork(country);
+  const required = supply.militaryFuelDemand * WAR_MIN_FUEL_DAYS;
+  return { allowed: country.processedResources.fuel >= required, days: supply.fuelDays,
+    required, missing: Math.max(0, required - country.processedResources.fuel) };
+}
+export const WAR_FUEL_MESSAGE = 'Build refined fuel reserves for at least 14 operational days before declaring war. Buy refined fuel in the market or refine oil in your factories.';
+
 /** Hard rules for opening a war, identical for the player and the AI. */
 export function warDeclarationStatus(state: GameState, attackerId: string, defenderId: string): WarEligibility {
   const attacker = state.countries[attackerId], defender = state.countries[defenderId];
@@ -33,6 +46,7 @@ export function warDeclarationStatus(state: GameState, attackerId: string, defen
   if (attacker.annexedBy || (attacker.controllerCountryId != null && attacker.controllerCountryId !== attacker.id)) return { allowed: false, block: 'attacker_not_independent' };
   if (defender.annexedBy || defender.controllerCountryId != null) return { allowed: false, block: 'target_not_independent' };
   if (activeWarBetween(state, attacker.id, defender.id)) return { allowed: false, block: 'active' };
+  if (!warFuelReadiness(state, attackerId).allowed) return { allowed: false, block: 'fuel' };
   return { allowed: true };
 }
 

@@ -22,9 +22,9 @@ import type { GameCommand } from '../domain/commands';
 import type { CountryState, GameState, TradeResource } from '../domain/game';
 import { tickGame } from './tick';
 import { applyThirdPartyTradeReaction, changeRelations, embassyRelationBonus, relationFor, sendResourceGift, sendTreasuryGift, updateBilateralRelation } from './systems/diplomacy';
-import { makeImportDeal } from './systems/trade';
+import { makeImportDeal, makeLongTermImportContract, longTermContractPreview } from './systems/trade';
 import { resolveCombatRound } from './systems/warfare';
-import { cancelPairTrades, concedeWar, openWar, warDeclarationStatus } from './systems/warRules';
+import { cancelPairTrades, concedeWar, openWar, warDeclarationStatus, WAR_FUEL_MESSAGE } from './systems/warRules';
 import { resolveEvent } from './systems/events';
 import { setMinistryAllocation } from './systems/ministries';
 import { unlockTechnology } from './systems/technology';
@@ -209,6 +209,15 @@ function executeGameCommand(state: GameState, command: GameCommand): GameState {
       if (!current.sanctions) next = cancelPairTrades(next, player.id, target.id);
       return note(next, `DIPLOMACY // Embargo ${!current.sanctions ? 'imposed on' : 'lifted from'} ${target.name}.`);
     }
+    case 'trade/createLongTermContract': {
+      const preview=longTermContractPreview(state,state.playerCountryId,command.targetCountryId,command.resource,command.years);
+      const contract=makeLongTermImportContract(state,state.playerCountryId,command.targetCountryId,command.resource,command.years);
+      if(!contract)return note(state,preview.reason);
+      // Switching to monthly delivery replaces this supplier's daily flow, avoiding duplicate orders.
+      const tradeDeals=Object.fromEntries(Object.entries(state.tradeDeals).map(([id,d])=>[id,d.active&&d.buyerId===contract.buyerId&&d.sellerId===contract.sellerId&&d.resource===contract.resource?{...d,active:false}:d]));
+      const shipped=cargoFlight({...state,tradeDeals:{...tradeDeals,[contract.id]:contract}},contract.sellerId,contract.buyerId,'Supply contract cargo');
+      return note(shipped,`TRADE // ${command.years}-year ${command.resource.toUpperCase()} contract signed with ${state.countries[command.targetCountryId].name}; monthly delivery, locked unit price $${contract.pricePerUnit.toFixed(3)}.`);
+    }
     case 'trade/createImport': return createImport(state, command.targetCountryId, command.resource);
     case 'trade/cancel': {
       const deal = state.tradeDeals[command.dealId];
@@ -221,13 +230,16 @@ function executeGameCommand(state: GameState, command: GameCommand): GameState {
       const eligibility = warDeclarationStatus(state, state.playerCountryId, command.targetCountryId);
       if (eligibility.block === 'target_not_independent') return note(state, `WAR // ${defender.name} is not an independent state and cannot be targeted.`);
       if (eligibility.block === 'active') return note(state, `WAR // Conflict with ${defender.name} is already active.`);
+      if (eligibility.block === 'fuel') return note(state, WAR_FUEL_MESSAGE);
       return openWar(state, state.playerCountryId, command.targetCountryId).state;
     }
     case 'military/assault': { const w=state.wars[command.warId];if(!w||![w.attackerId,w.defenderId].includes(state.playerCountryId)||!combatAllowed(state))return state;return w.tactical?resolveTacticalRound(state,w.id,chooseTacticalOrders(state,w.id,playerSide(state,w)),w.tactical.round):resolveCombatRound(state,w.id); }
     case 'military/setAutoAssault': {
       const war = state.wars[command.warId];
       if (!war || war.status !== 'active' || ![war.attackerId,war.defenderId].includes(state.playerCountryId)) return state;
-      return note({ ...state, wars: { ...state.wars, [war.id]: { ...war, autoAssault: command.enabled } } }, `WAR // Auto assault ${command.enabled ? 'ENGAGED' : 'HALTED'}.`);
+      const resumed=command.enabled?{...state,activeAdvisor:state.activeAdvisor?.resource==='oil'?null:state.activeAdvisor,
+        world:state.world.living?.advice.active==='fuel'?{...state.world,living:{...state.world.living,advice:{...state.world.living.advice,active:null}}}:state.world}:state;
+      return note({ ...resumed, wars: { ...state.wars, [war.id]: { ...war, autoAssault: command.enabled } } }, `WAR // Auto assault ${command.enabled ? 'ENGAGED' : 'HALTED'}.`);
     }
 
     case 'development/economicResearch': return domesticAction(state, 'development/economicResearch', BASE_COST_B.economicResearch, 'DEVELOPMENT // Economic research requires {0}.', 'DEVELOPMENT // Economic modernization program completed. Productivity improved.', (p, m) => ({ ...p, economy: { ...p.economy, productivity: clamp(p.economy.productivity + 2.5 * m, 1, 100) }, industry: { ...p.industry, utilization: clamp(p.industry.utilization + 1.5 * m, 0, 100) } }));

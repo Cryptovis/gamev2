@@ -29,7 +29,7 @@ import {createLeadership,validBirthDate} from '../engine/systems/leadership';
 import type { MapMode, MapPresentation } from '../domain/map';
 import {applyGameCommand,executeCommandResult} from '../engine/commands';
 import {acceptAdvisorContract,acceptAdvisorTradePact,dismissAdvisor} from '../engine/systems/advisor';
-import {makeLongTermImportContract} from '../engine/systems/trade';
+
 
 import {resolveDiplomaticOffer} from '../engine/systems/diplomaticOffers';
 
@@ -88,7 +88,7 @@ interface GameActions {
   setPlayerAvatar: (avatarId:string)=>void;
   setLanguage: (language:GameLanguage)=>void;
   resolveAdvisor: (decision:'dismiss'|'pact'|1|3|5|10)=>void;
-  createLongTermContract: (targetCountryId:string,resource:TradeResource,years:1|3|5|10)=>void;
+  createLongTermContract: (targetCountryId:string,resource:TradeResource,years:1|3|5|10,commandId?:string)=>void;
   dispatch: (command: GameCommand) => void;
   setSpeed: (speed: GameSpeed) => void;
   selectCountry: (countryId: string | null) => void;
@@ -217,7 +217,7 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
   setPlayerAvatar: (avatarId) => set((state)=>({playerProfile:{...state.playerProfile,avatarId}})),
   setLanguage: (language) => set((state)=>({playerProfile:{...state.playerProfile,language}})),
   resolveAdvisor: (decision) => set((state)=>decision==='dismiss'?dismissAdvisor(state):decision==='pact'?acceptAdvisorTradePact(state):acceptAdvisorContract(state,decision)),
-  createLongTermContract: (targetCountryId,resource,years) => set((state)=>{const contract=makeLongTermImportContract(state,state.playerCountryId,targetCountryId,resource,years);return contract?{tradeDeals:{...state.tradeDeals,[contract.id]:contract},sitrep:[`TRADE // ${years}-year ${resource.toUpperCase()} contract opened with ${state.countries[targetCountryId].name}.`,...state.sitrep].slice(0,12)}:{};}),
+  createLongTermContract: (targetCountryId,resource,years,commandId) => set(state=>commandWithReceipt(state,{type:'trade/createLongTermContract',targetCountryId,resource,years,commandId})),
   dispatch: (command) => set((state) => applyGameCommand(state, command)),
   setSpeed: (speed) => set((state) => applyGameCommand(state, { type: 'clock/setSpeed', speed })),
   selectCountry: (selectedCountryId) => set(s=>({ selectedCountryId:selectedCountryId?sovereignId(s.countries,selectedCountryId):null,activeTool:null,warWindowId:null,navigation:null })),
@@ -253,9 +253,9 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
   toggleEmbargo: (targetCountryId) => set((state) => commandWithReceipt(state, { type: 'diplomacy/toggleEmbargo', targetCountryId })),
   createImport: (targetCountryId, resource: TradeResource) => set((state) => commandWithReceipt(state, { type: 'trade/createImport', targetCountryId, resource })),
   cancelTrade: (dealId) => set((state) => commandWithReceipt(state, { type: 'trade/cancel', dealId })),
-  declareWar: (targetCountryId) => set((state) => {const next=applyGameCommand(state,{type:'military/declareWar',targetCountryId});const war=Object.values(next.wars).find(w=>w.status==='active'&&((w.attackerId===state.playerCountryId&&w.defenderId===targetCountryId)||(w.defenderId===state.playerCountryId&&w.attackerId===targetCountryId)));if(!war)return {actionReceipt:{title:'Decision unavailable',summary:'Select another country to prepare a military operation.'}};return {...next,actionReceipt:null,warWindowId:war?.id??null,selectedCountryId:null,activeTool:null};}),
+  declareWar: (targetCountryId) => set((state) => {const next=applyGameCommand(state,{type:'military/declareWar',targetCountryId});const war=Object.values(next.wars).find(w=>w.status==='active'&&((w.attackerId===state.playerCountryId&&w.defenderId===targetCountryId)||(w.defenderId===state.playerCountryId&&w.attackerId===targetCountryId)));if(!war)return {...next,actionReceipt:{title:'Decision unavailable',summary:next.sitrep[0]!==state.sitrep[0]?next.sitrep[0]:'Select another country to prepare a military operation.'}};return {...next,actionReceipt:null,warWindowId:war?.id??null,selectedCountryId:null,activeTool:null};}),
   assault: (warId) => set((state) => applyGameCommand(state, { type: 'military/assault', warId })),
-  setAutoAssault: (warId, enabled) => set((state) => {const war=state.wars[warId];if(!war||war.status!=='active'||(war.attackerId!==state.playerCountryId&&war.defenderId!==state.playerCountryId))return state;return {...applyGameCommand(state, { type: 'military/setAutoAssault', warId, enabled }),speed:enabled?3:state.warWindowId===warId?0:state.speed};}),
+  setAutoAssault: (warId, enabled) => set((state) => {const war=state.wars[warId];if(!war||war.status!=='active'||(war.attackerId!==state.playerCountryId&&war.defenderId!==state.playerCountryId))return state;return {...applyGameCommand(state, { type: 'military/setAutoAssault', warId, enabled }),speed:enabled?5:state.warWindowId===warId?0:state.speed};}),
   withdraw: (warId) => set((state) => commandWithReceipt(state, { type: 'military/withdraw', warId })),
   economicResearch: () => set((state) => commandWithReceipt(state, { type: 'development/economicResearch' })),
   militaryResearch: () => set((state) => commandWithReceipt(state, { type: 'development/militaryResearch' })),
