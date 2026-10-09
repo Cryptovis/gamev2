@@ -1,0 +1,94 @@
+/* 0.89 trade discovery: supplier rankings and the country Trade tab (charcoal / gold command style). */
+.trade-ranking { display: grid; gap: 5px; border-top: 1px solid rgba(255, 255, 255, .06); padding-top: 8px; container-type: inline-size; }
+.trade-desk-section { container-type: inline-size; }
+/* Narrow containers (country panel, resource cards): name + action on top, the four figures below. */
+.trade-row {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+  grid-template-areas: "lead main action" "lead stats stats";
+  gap: 5px 8px;
+  align-items: center;
+  padding: 7px 8px;
+  border: 1px solid rgba(137, 168, 189, .1);
+  border-radius: 8px;
+  background: linear-gradient(100deg, rgba(10, 20, 28, .96), #06141e);
+}
+.trade-row.tier-0 { border-color: rgba(224, 177, 74, .38); background: linear-gradient(100deg, rgba(82, 65, 28, .22), #06141e 60%); }
+.trade-row.tier-1 { border-color: rgba(115, 213, 255, .22); }
+.trade-row.tier-2, .trade-row.tier-3 { opacity: .78; }
+.trade-row-lead { grid-area: lead; display: grid; place-items: center; }
+.trade-row-main { grid-area: main; }
+.trade-row > .trade-action, .trade-row > .trade-action-none { grid-area: action; }
+.trade-row-stats { grid-area: stats; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; min-width: 0; }
+/* Wide containers (market window): one line per route. */
+@container (min-width: 620px) {
+  .trade-row { grid-template-columns: 34px minmax(0, 1.3fr) minmax(0, 3fr) auto; grid-template-areas: "lead main stats action"; }
+}
+.trade-flag { font-size: 22px; line-height: 1; }
+.trade-row-main { display: grid; min-width: 0; }
+.trade-row-main strong { font-size: 11px; color: #e8dcc0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.trade-reason { margin: 2px 0 0; font-size: 8.5px; line-height: 1.3; color: #9a8f7a; }
+.trade-reason.open { color: #e0b14a; }
+.trade-reason.near { color: #73d5ff; }
+.trade-reason.closed { color: #c98a7a; }
+.trade-row-stat { display: grid; gap: 2px; min-width: 0; }
+.trade-row-stat small { font-size: 7px; letter-spacing: .1em; color: #6f8291; }
+.trade-row-stat b { font-size: 10px; color: #dce6eb; white-space: nowrap; }
+.trade-row-stat em { font-style: normal; font-size: 8px; color: #8297a7; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.trade-meter { position: relative; display: block; height: 5px; background: #102838; border-radius: 99px; overflow: hidden; }
+.trade-meter b { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, #8a6a2a, #e0b14a); }
+.trade-meter.cyan b { background: linear-gradient(90deg, #458ca9, #68c2dc); }
+.trade-meter.red b { background: linear-gradient(90deg, #bf7047, #df626b); }
+.trade-meter em { position: absolute; top: 0; bottom: 0; width: 1px; background: rgba(255, 255, 255, .55); }
+.trade-action {
+  cursor: pointer; white-space: nowrap; min-height: 28px; padding: 5px 9px; border-radius: 7px;
+  font-size: 9px; font-weight: 800; letter-spacing: .04em;
+  border: 1px solid rgba(224, 177, 74, .45); background: #1b1608; color: #f0cf7e;
+}
+.trade-action:hover { background: #2a210b; }
+.trade-action.step-buy, .trade-action.step-sell { background: linear-gradient(180deg, #e0b14a, #b98a2e); color: #120d03; border-color: #e0b14a; }
+.trade-action.step-propose_pact { border-color: rgba(115, 213, 255, .5); background: #08202c; color: #9fe2ff; }
+.trade-action.step-pact_pending { border-style: dashed; color: #9aa9b5; background: transparent; }
+.trade-action-none { width: 1px; }
+.trade-more summary, .trade-more-button {
+  cursor: pointer; padding: 6px 8px; font-size: 9px; color: #c49a44; letter-spacing: .04em;
+  border: 1px dashed rgba(224, 177, 74, .28); border-radius: 7px; background: transparent; list-style: none;
+}
+.trade-more[open] summary { margin-bottom: 5px; }
+.trade-more { display: grid; gap: 5px; }
+.trade-footnote { color: #6f8291; font-size: 8px; }
+.trade-empty { margin: 4px 0; color: #8297a7; font-size: 10px; line-height: 1.5; }
+.trade-desk { display: grid; gap: 12px; }
+.trade-desk-hero {
+  display: flex; flex-wrap: wrap; gap: 12px; align-items: center; padding: 12px;
+  border: 1px solid rgba(224, 177, 74, .24); border-radius: 11px;
+  background: linear-gradient(145deg, rgba(82, 65, 28, .2), #06131d);
+}
+.trade-desk-hero > span:first-of-type { flex: 1 1 160px; min-width: 0; display: grid; }
+.trade-desk-hero small { color: #c49a44; font-size: 7px; letter-spacing: .12em; }
+.trade-desk-hero strong { font-size: 17px; color: #f1e6cc; }
+.trade-desk-hero p { margin: 3px 0 0; font-size: 10px; }
+.trade-desk-facts { display: flex; gap: 14px; }
+.trade-desk-facts > span { display: grid; gap: 2px; min-width: 70px; }
+.trade-desk-facts b { font-size: 12px; color: #dce6eb; }
+.trade-desk-facts em { font-style: normal; font-size: 8px; color: #8297a7; }
+.trade-desk-section { display: grid; gap: 5px; }
+.trade-desk-subhead { display: flex; align-items: center; gap: 7px; font-size: 9px; font-weight: 800; letter-spacing: .12em; color: #c49a44; }
+.trade-desk-subhead em { margin-left: auto; font-style: normal; font-weight: 600; letter-spacing: .02em; color: #8297a7; }
+.trade-open-market { justify-self: start; cursor: pointer; padding: 7px 12px; border-radius: 8px; font-size: 10px; font-weight: 800; border: 1px solid rgba(224, 177, 74, .45); background: #1b1608; color: #f0cf7e; }
+/* The country panel gains an 11th tab (Trade); keep the last row left-aligned instead of the 10-tab centring. */
+.panel-tabs-11 button:nth-child(9), .panel-tabs-11 button:nth-child(10) { grid-column: auto; }
+.panel-tabs-11 button[data-tab="trade"]:not(.active) { border-color: rgba(224, 177, 74, .45); }
+@media (max-width: 420px) {
+  .trade-row-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+.trade-finder { display: grid; gap: 8px; margin: 10px 0; }
+.trade-good-picker { display: flex; gap: 5px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: thin; }
+.trade-good-picker button {
+  flex: 0 0 auto; display: grid; justify-items: center; gap: 3px; width: 64px; padding: 5px 3px; cursor: pointer;
+  border: 1px solid rgba(137, 168, 189, .14); border-radius: 8px; background: #06141e; color: #9fb0bd; font-size: 8px;
+}
+.trade-good-picker button span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.trade-good-picker button.active { border-color: #e0b14a; background: linear-gradient(180deg, rgba(82, 65, 28, .45), #06141e); color: #f0cf7e; }
+.subhead .trade-open-market { margin-left: 8px; padding: 3px 8px; font-size: 9px; }
+.panel-command-actions button[data-guide="trade-desk"] { grid-column: 1 / -1; border-color: rgba(224, 177, 74, .45); color: #f0cf7e; }

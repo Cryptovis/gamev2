@@ -1,0 +1,82 @@
+// 0.89 track G: trade discovery (supplier ranking, country trade desk).
+// Order: [tr, es, zh, ru]. Keys with {n} are matched as templates by translateText.
+export const UI_CATALOG_089_G: Record<string, string[]> = {
+  // ── Route status (engine/systems/tradeOptions TRADE_REASONS) ──
+  "Trade pact active: route open": ["Ticaret anlaşması yürürlükte: hat açık", "Pacto comercial activo: ruta abierta", "贸易协定生效：通道开放", "Торговый пакт действует: маршрут открыт"],
+  "At war: trade suspended": ["Savaş hâli: ticaret askıya alındı", "En guerra: comercio suspendido", "交战中：贸易中止", "Война: торговля приостановлена"],
+  "Sanctions block trade": ["Yaptırımlar ticareti engelliyor", "Las sanciones bloquean el comercio", "制裁阻断贸易", "Санкции блокируют торговлю"],
+  "No exportable surplus": ["İhraç edilebilir fazla yok", "Sin excedente exportable", "无可出口盈余", "Нет экспортного излишка"],
+  "No current demand": ["Şu anda talep yok", "Sin demanda actual", "当前无需求", "Сейчас нет спроса"],
+  "Relations below 20/100: improve relations before a trade pact": ["İlişkiler 20/100 altında: ticaret anlaşmasından önce ilişkileri geliştirin", "Relaciones por debajo de 20/100: mejore las relaciones antes de un pacto comercial", "关系低于20/100：签订贸易协定前需改善关系", "Отношения ниже 20/100: улучшите их до торгового пакта"],
+  "Needs a trade pact": ["Ticaret anlaşması gerekli", "Requiere un pacto comercial", "需要贸易协定", "Нужен торговый пакт"],
+  "Needs a trade pact and relations of 55/100": ["Ticaret anlaşması ve 55/100 ilişki gerekli", "Requiere un pacto comercial y relaciones de 55/100", "需要贸易协定且关系达到55/100", "Нужны торговый пакт и отношения 55/100"],
+  "Industrial goods need relations of 55/100": ["Sanayi malları için 55/100 ilişki gerekli", "Los bienes industriales requieren relaciones de 55/100", "工业品贸易需要关系达到55/100", "Для промышленных товаров нужны отношения 55/100"],
+  "Needs a trade pact and an alliance": ["Ticaret anlaşması ve ittifak gerekli", "Requiere un pacto comercial y una alianza", "需要贸易协定和同盟", "Нужны торговый пакт и союз"],
+  "Armored vehicles need an alliance and relations of 80/100": ["Zırhlı araçlar için ittifak ve 80/100 ilişki gerekli", "Los vehículos blindados requieren una alianza y relaciones de 80/100", "装甲车辆需要同盟且关系达到80/100", "Для бронетехники нужны союз и отношения 80/100"],
+  "Trade pact proposal pending": ["Ticaret anlaşması teklifi yanıt bekliyor", "Propuesta de pacto comercial pendiente", "贸易协定提议待答复", "Предложение торгового пакта ожидает ответа"],
+
+  // ── Actions ──
+  "BUY": ["SATIN AL", "COMPRAR", "购买", "КУПИТЬ"],
+  "SELL": ["SAT", "VENDER", "出售", "ПРОДАТЬ"],
+  "IMPORT": ["İTHAL ET", "IMPORTAR", "进口", "ИМПОРТ"],
+  "LIST ON EXCHANGE": ["BORSADA LİSTELE", "PUBLICAR EN LA BOLSA", "挂牌至交易所", "ВЫСТАВИТЬ НА БИРЖУ"],
+  "PROPOSE TRADE PACT": ["TİCARET ANLAŞMASI ÖNER", "PROPONER PACTO COMERCIAL", "提议贸易协定", "ПРЕДЛОЖИТЬ ТОРГОВЫЙ ПАКТ"],
+  "PACT PENDING": ["ANLAŞMA BEKLEMEDE", "PACTO PENDIENTE", "协定待定", "ПАКТ ОЖИДАЕТ"],
+  "IMPROVE RELATIONS": ["İLİŞKİLERİ GELİŞTİR", "MEJORAR RELACIONES", "改善关系", "УЛУЧШИТЬ ОТНОШЕНИЯ"],
+  "SEEK ALLIANCE": ["İTTİFAK ARA", "BUSCAR ALIANZA", "寻求同盟", "ИСКАТЬ СОЮЗ"],
+  "SEND PROPOSAL": ["TEKLİFİ GÖNDER", "ENVIAR PROPUESTA", "发送提议", "ОТПРАВИТЬ ПРЕДЛОЖЕНИЕ"],
+  "OPEN GLOBAL MARKET": ["KÜRESEL PAZARI AÇ", "ABRIR MERCADO GLOBAL", "打开全球市场", "ОТКРЫТЬ МИРОВОЙ РЫНОК"],
+  "Full trade desk": ["Tüm ticaret masası", "Mesa comercial completa", "完整贸易台", "Полный торговый стол"],
+
+  // ── Route figures ──
+  "DEMAND / MONTH": ["TALEP / AY", "DEMANDA / MES", "需求/月", "СПРОС / МЕС."],
+  "SURPLUS": ["FAZLA", "EXCEDENTE", "盈余", "ИЗЛИШЕК"],
+  "Surplus": ["Fazla", "Excedente", "盈余", "Излишек"],
+  "PRICE": ["FİYAT", "PRECIO", "价格", "ЦЕНА"],
+  "RELATIONS": ["İLİŞKİLER", "RELACIONES", "关系", "ОТНОШЕНИЯ"],
+  "Relations": ["İlişkiler", "Relaciones", "关系", "Отношения"],
+  "CARGO": ["KARGO", "CARGA", "货运", "ГРУЗ"],
+  "days": ["gün", "días", "天", "дн."],
+  "km": ["km", "km", "公里", "км"],
+  "/day": ["/gün", "/día", "/天", "/день"],
+  "world price": ["dünya fiyatı", "precio mundial", "国际价格", "мировая цена"],
+  "{0}% vs world": ["dünya fiyatına göre {0}%", "{0}% frente al mundial", "较国际价格{0}%", "{0}% к мировой"],
+
+  // ── Supplier lists ──
+  "BEST SUPPLIERS FOR YOU": ["SİZİN İÇİN EN İYİ TEDARİKÇİLER", "MEJORES PROVEEDORES PARA USTED", "最适合您的供应国", "ЛУЧШИЕ ПОСТАВЩИКИ ДЛЯ ВАС"],
+  "No supplier with surplus can trade with you yet. Improve relations or propose a trade pact below.": ["Fazlası olan hiçbir tedarikçi henüz sizinle ticaret yapamıyor. İlişkileri geliştirin veya aşağıdan ticaret anlaşması önerin.", "Ningún proveedor con excedente puede comerciar con usted todavía. Mejore las relaciones o proponga un pacto comercial abajo.", "目前没有拥有盈余的供应国能与您贸易。请改善关系或在下方提议贸易协定。", "Ни один поставщик с излишком пока не может торговать с вами. Улучшите отношения или предложите торговый пакт ниже."],
+  "Show {0} more countries without access": ["Erişimi olmayan {0} ülkeyi daha göster", "Mostrar {0} países más sin acceso", "显示另外{0}个无准入的国家", "Показать ещё стран без доступа: {0}"],
+  "{0} countries have no exportable surplus": ["{0} ülkenin ihraç edilebilir fazlası yok", "{0} países no tienen excedente exportable", "{0}个国家没有可出口盈余", "Стран без экспортного излишка: {0}"],
+  "SUPPLIER FINDER": ["TEDARİKÇİ BULUCU", "BUSCADOR DE PROVEEDORES", "供应国查找", "ПОИСК ПОСТАВЩИКОВ"],
+  "Who can sell you {0}?": ["Size kim {0} satabilir?", "¿Quién puede venderle {0}?", "谁能向您出售{0}？", "Кто может продать вам {0}?"],
+  "Open routes first, then countries one trade pact away. Countries without access are collapsed.": ["Önce açık hatlar, ardından bir ticaret anlaşması uzaklıktaki ülkeler. Erişimi olmayan ülkeler gizlenir.", "Primero las rutas abiertas, luego los países a un pacto comercial de distancia. Los países sin acceso se agrupan.", "先列开放通道，再列只差一项贸易协定的国家。无准入国家已折叠。", "Сначала открытые маршруты, затем страны, до которых один торговый пакт. Страны без доступа свёрнуты."],
+  "Choose a good": ["Bir mal seçin", "Elija un bien", "选择商品", "Выберите товар"],
+
+  // ── Country trade desk ──
+  "TRADE": ["TİCARET", "COMERCIO", "贸易", "ТОРГОВЛЯ"],
+  "TRADE DESK": ["TİCARET MASASI", "MESA COMERCIAL", "贸易台", "ТОРГОВЫЙ СТОЛ"],
+  "Best suppliers for your shortfalls": ["Eksikleriniz için en iyi tedarikçiler", "Mejores proveedores para sus carencias", "弥补短缺的最佳供应国", "Лучшие поставщики для ваших дефицитов"],
+  "Select another country to see what you can buy from it and sell to it.": ["Neler alıp satabileceğinizi görmek için başka bir ülke seçin.", "Seleccione otro país para ver qué puede comprarle y venderle.", "选择其他国家，查看可向其购买和出售的商品。", "Выберите другую страну, чтобы увидеть, что можно у неё купить и ей продать."],
+  "No raw-resource shortfall. Open the market to trade industrial goods.": ["Ham madde açığı yok. Sanayi malları ticareti için pazarı açın.", "Sin carencias de materias primas. Abra el mercado para comerciar bienes industriales.", "无原材料短缺。打开市场以交易工业品。", "Дефицита сырья нет. Откройте рынок для торговли промышленными товарами."],
+  "YOU CAN BUY": ["ALABİLECEKLERİNİZ", "PUEDE COMPRAR", "可购买", "МОЖНО КУПИТЬ"],
+  "YOU CAN SELL": ["SATABİLECEKLERİNİZ", "PUEDE VENDER", "可出售", "МОЖНО ПРОДАТЬ"],
+  "{0} open · {1} with surplus": ["{0} açık · {1} fazlası olan", "{0} abiertas · {1} con excedente", "{0}项开放 · {1}项有盈余", "открыто: {0} · с излишком: {1}"],
+  "{0} open · {1} in demand": ["{0} açık · {1} talep gören", "{0} abiertas · {1} con demanda", "{0}项开放 · {1}项有需求", "открыто: {0} · со спросом: {1}"],
+  "Show {0} more goods": ["{0} malı daha göster", "Mostrar {0} bienes más", "再显示{0}种商品", "Показать ещё товаров: {0}"],
+  "{0} has no exportable surplus right now.": ["{0} şu anda ihraç edilebilir fazlaya sahip değil.", "{0} no tiene excedente exportable ahora mismo.", "{0}目前没有可出口盈余。", "У страны {0} сейчас нет экспортного излишка."],
+  "{0} has no current demand for goods you can export.": ["{0} şu anda ihraç edebileceğiniz mallara talep duymuyor.", "{0} no tiene demanda actual de los bienes que puede exportar.", "{0}目前对您可出口的商品没有需求。", "У страны {0} сейчас нет спроса на ваши экспортные товары."],
+
+  // ── Review dialogs ──
+  "Import {0} from {1}.": ["{1} ülkesinden {0} ithal et.", "Importar {0} de {1}.", "从{1}进口{0}。", "Импорт: {0} из страны {1}."],
+  "Review industrial order": ["Sanayi siparişini incele", "Revisar pedido industrial", "审核工业订单", "Проверка промышленного заказа"],
+  "Buy {0} from {1}.": ["{1} ülkesinden {0} satın al.", "Comprar {0} a {1}.", "从{1}购买{0}。", "Покупка: {0} у страны {1}."],
+  "Review industrial export": ["Sanayi ihracatını incele", "Revisar exportación industrial", "审核工业出口", "Проверка промышленного экспорта"],
+  "Sell {0} to {1}.": ["{1} ülkesine {0} sat.", "Vender {0} a {1}.", "向{1}出售{0}。", "Продажа: {0} стране {1}."],
+  "Propose a trade pact": ["Ticaret anlaşması öner", "Proponer un pacto comercial", "提议贸易协定", "Предложить торговый пакт"],
+  "Send a trade pact proposal to {0}.": ["{0} ülkesine ticaret anlaşması teklifi gönder.", "Enviar una propuesta de pacto comercial a {0}.", "向{0}发送贸易协定提议。", "Отправить предложение торгового пакта стране {0}."],
+  "Fee if accepted": ["Kabul edilirse ücret", "Tarifa si se acepta", "接受后费用", "Сбор при согласии"],
+  "Cargo travel": ["Kargo süresi", "Tránsito de carga", "货运时间", "Доставка груза"],
+  "Shipment value": ["Sevkiyat değeri", "Valor del envío", "货运价值", "Стоимость поставки"],
+  "Daily supply": ["Günlük tedarik", "Suministro diario", "每日供应", "Ежедневная поставка"],
+  "Daily cost": ["Günlük maliyet", "Coste diario", "每日成本", "Ежедневные расходы"],
+};

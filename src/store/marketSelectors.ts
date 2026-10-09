@@ -1,7 +1,8 @@
 import {activeCountries} from '../domain/sovereignty';
 import type { CountryState, GameState, TradeResource } from '../domain/game';
 import { simulateResources } from '../engine/systems/resources';
-import { getGlobalMarketPrice, getTradeQuote } from '../engine/systems/trade';
+import { getGlobalMarketPrice } from '../engine/systems/trade';
+import { rankSuppliers } from '../engine/systems/tradeOptions';
 
 export const MARKET_RESOURCES: TradeResource[] = ['food','oil','iron','uranium'];
 
@@ -27,20 +28,15 @@ export function resourceStrategicStatus(country: CountryState, resource: TradeRe
   return 'BALANCED';
 }
 
+/**
+ * Suppliers of a raw resource for a buyer, best first (0.89 trade discovery): open routes, then countries one
+ * trade pact away. Countries without access or surplus are left out; `rankSuppliers` explains them.
+ */
 export function findBestSuppliers(state: GameState, buyerId: string, resource: TradeResource, limit = 4) {
-  const buyer = state.countries[buyerId];
-  if (!buyer) return [];
-  const marketPrice = getGlobalMarketPrice(state, resource);
-  return activeCountries(state.countries)
-    .filter((seller) => seller.id !== buyerId)
-    .map((seller) => {
-      const relation = buyer.diplomacy.relations[seller.id];
-      const quote = getTradeQuote(state, seller.id, resource, marketPrice);
-      return { seller, relation, ...quote };
-    })
-    .filter((item) => item.available > 0.05 && item.relation?.status !== 'war' && !item.relation?.sanctions)
-    .sort((a,b) => (b.available * 2 - b.price * 10) - (a.available * 2 - a.price * 10))
-    .slice(0, limit);
+  return rankSuppliers(state, buyerId, resource)
+    .filter((option) => option.tier <= 1)
+    .slice(0, limit)
+    .map((option) => ({ seller: state.countries[option.sellerId], relation: state.countries[buyerId]?.diplomacy.relations[option.sellerId], available: option.available, price: option.price, quantity: option.suggestedQuantity, dailyCost: option.suggestedQuantity * option.price, option }));
 }
 
 export function getMarketBoard(state: GameState) {

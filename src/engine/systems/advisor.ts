@@ -51,7 +51,8 @@ export function maybeCreateResourceAdvisor(state:GameState):GameState{
   .filter(c=>c.id!==player.id&&!c.globalSanctions&&getExportCapacity(c,need.resource)>.05)
   .map(c=>({country:c,relation:relationFor(player,c.id),capacity:getExportCapacity(c,need.resource)}))
   .filter(x=>x.relation.status!=='war'&&!x.relation.sanctions&&x.relation.score>=15)
-  .sort((a,b)=>(b.relation.score+b.capacity*10)-(a.relation.score+a.capacity*10));
+  // 0.89: a supplier with an open trade pact comes first, so the advice leads to a contract instead of a fresh pact.
+  .sort((a,b)=>Number(b.relation.treaties.includes('trade'))-Number(a.relation.treaties.includes('trade'))||(b.relation.score+b.capacity*10)-(a.relation.score+a.capacity*10));
  const best=candidates[0];
  if(!best)return {...state,advisorCooldownUntil:state.day+10};
 
