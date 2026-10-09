@@ -117,3 +117,8 @@ Next, in order:
 - **Phase 2 remainder:** activity repetition limits (rest of C4), unified price scale and AI market demand (C10–C12), GDP-scaled flat costs (C15), treaty rule parity (D8), espionage and alliance fixes (D12), AI-declared wars with the defender path (B9, E1), deeper politics and a victory condition (E2–E5), command-path and migration-table cleanup (A5, A6).
 - **HD War presentation:** sprites or a measured PixiJS layer, terrain art, sound, and multi-round AI plans, after playtest feedback on 0.86.
 - **Phase 4, technical debt:** unchanged from the 0.84 plan.
+
+## 0.87 Living World
+Delivered: Phase 2 economy and rule-parity items (C4 rest, C10–C13, C15, D8, D12, A5, A6). Checks and limits: [Playtest 0.87](PLAYTEST-087.md).
+
+Next: 0.88 Politics & Victory (AI-declared wars and the player-as-defender path B9/E1, factions, contested elections and coup risk E2, a data-driven event catalogue with chains E3, campaign victory paths E4, allies joining wars E5).

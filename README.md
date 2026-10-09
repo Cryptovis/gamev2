@@ -1,4 +1,4 @@
-# The Real President — 0.86.0-playtest.1
+# The Real President — 0.87.0-playtest.1
 
 A browser-based grand-strategy prototype built with React, TypeScript, Zustand, D3 Geo and Dexie. Lead a country through its economy, resources, diplomacy, development and military conflicts. Chart.js provides economic charts; Vitest and Playwright verify gameplay and browser flows.
 
@@ -6,10 +6,10 @@ A browser-based grand-strategy prototype built with React, TypeScript, Zustand, 
 
 | Item | Current state |
 |---|---|
-| Version | **0.86.0-playtest.1 — HD War Playback** |
-| Development branch | `dev/hd-playback-086` |
-| Save schema | 17 (0.86 adds an optional battle RNG state); schemas 12–16 migrate automatically, and open 0.83/0.84 tactical battles keep their 6×6 board |
-| Validation | CI passed for this release: unit tests, TypeScript, production build and Playwright browser scenarios (10×8 tactical orders, step playback controls, replay and save/load) |
+| Version | **0.87.0-playtest.1 — Living World** |
+| Development branch | `dev/living-world-087` |
+| Save schema | 17 (0.86–0.87 add optional fields only); schemas 12–16 migrate automatically, older or newer saves are refused with a warning |
+| Validation | CI passed for this release: unit tests, TypeScript, production build and Playwright browser scenarios |
 | V3 | Reserved for the complete-playability milestone; no rewrite is required for 0.83 |
 
 These details describe this development branch. Another branch, including `main`, can contain an older release. Check `package.json` and your checked-out branch when comparing previews.
@@ -34,6 +34,13 @@ npm run test:e2e
 `check` runs tests, TypeScript checks and the production build. Browser tests run separately against the production preview.
 
 ## Recent changelog
+
+### 0.87.0-playtest.1 — Living World
+
+- Repeating the same domestic action now gives less each time, with cooldowns; high tax costs extra approval. The old "60% tax + activity spam" strategy no longer keeps approval at the ceiling.
+- Most flat costs scale with GDP, so they matter for large and small countries alike. Diplomatic missions have a 30-day cooldown per country.
+- One price scale for the industrial market: refineries add value, mines pay for themselves, and the AI only buys what it needs.
+- Player and AI share the same treaty rules and fees; alliances break when relations collapse; intelligence uses separate dice for success and detection.
 
 ### 0.86.0-playtest.1 — HD War Playback
 
@@ -89,6 +96,7 @@ Delivered milestones are retained here when new releases are added. This table s
 
 | Milestone | Delivered foundation | Record |
 |---|---|---|
+| 0.87 — Living World | Repeat fatigue and GDP-scaled costs, one market price scale, demand-bound AI buyers, shared treaty rules, command and migration cleanup | [Playtest 0.87](docs/PLAYTEST-087.md) |
 | 0.86 — HD War Playback | Step-by-step round playback with effects and controls, battle RNG stream, scored tactical AI | [Playtest 0.86](docs/PLAYTEST-086.md) |
 | 0.85 — HD War v2 | 10×8 symmetric battlefield, contested depots, contact-based combat, action timeline, auto-resolve parity, error boundaries | [Playtest 0.85](docs/PLAYTEST-085.md) |
 | 0.84 — Stable Command | Audit-driven world balance, war exploit fixes, per-campaign validated autosaves and performance | [Audit 0.83](docs/AUDIT-0.83.md), [Playtest 0.84](docs/PLAYTEST-084.md) |
