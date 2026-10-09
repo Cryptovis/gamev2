@@ -6,6 +6,7 @@ import { addTreaty, relationFor } from './diplomacy';
 import { getExportCapacity, makeLongTermImportContract } from './trade';
 import { simulateResources } from './resources';
 import { advisorPopupAllowed, recordAdvisorPopup } from './advisorPacing';
+import { cargoFlight } from './flightHooks';
 
 const resources: TradeResource[]=['food','oil','iron','uranium'];
 
@@ -94,8 +95,9 @@ export function acceptAdvisorContract(state:GameState,years:1|3|5|10):GameState{
  const contract=makeLongTermImportContract(state,state.playerCountryId,prompt.supplierId,prompt.resource,years);
  if(!contract)return {...dismissAdvisor(state),sitrep:[`ADVISOR // Supplier can no longer support the proposed ${prompt.resource.toUpperCase()} contract.`,...state.sitrep].slice(0,12)};
  const supplier=state.countries[prompt.supplierId];
+ const shipped=cargoFlight(state,contract.sellerId,contract.buyerId,'Supply contract cargo'); // 0.89: first delivery flies (visual)
  return {
-  ...state,
+  ...shipped,
   tradeDeals:{...state.tradeDeals,[contract.id]:contract},
   activeAdvisor:null,
   advisorCooldownUntil:state.day+20,

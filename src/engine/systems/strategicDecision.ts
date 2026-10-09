@@ -1,6 +1,7 @@
 import {proposalAcceptanceChance} from './livingEconomy';
 import {BASE_COST_B,diplomaticMissionStatus,formatCostB,scaledCostB} from './policyPressure';
 import {agreementCost} from './treaties';
+import {travelDays} from './flights';
 import {activeCountries} from '../../domain/sovereignty';
 import {calculateSupplyNetwork} from './supplyNetwork';
 import type { GameState, TradeResource } from '../../domain/game';
@@ -42,9 +43,10 @@ export function strategicDecisionSpec(
     return {...base,kicker:'FOREIGN MINISTRY',title:'Authorize Diplomatic Mission',summary:'Dispatch a senior diplomatic mission to improve bilateral trust and reopen channels for deeper cooperation.',confirmLabel:'AUTHORIZE MISSION',tone:'positive',impacts:[
       {label:'Treasury',value:'-'+formatCostB(mission.costB),tone:'warning'},
       {label:'Relationship',value:'+'+mission.gain+' raw',tone:'positive'},
+      {label:'Delegation arrives in',value:travelDays('diplomatic',actor.id,target.id)+' days'},
       {label:'Current index',value:currentIndex+'/100'},
       ...(mission.cooldownDays>0?[{label:'Available in',value:mission.cooldownDays+' days',tone:'warning' as const}]:[]),
-    ],warnings:['Goodwill gains are stronger when an embassy is already operating.','Repeated missions to the same country bring less goodwill; one mission per country every 30 days.']};
+    ],warnings:['The goodwill applies when the delegation lands.','Goodwill gains are stronger when an embassy is already operating.','Repeated missions to the same country bring less goodwill; one mission per country every 30 days.']};
   }
   if(kind==='embassy'){
     return {...base,kicker:'DIPLOMATIC PRESENCE',title:'Open Embassy in '+target.name,summary:'Send an embassy exchange proposal. The partner replies after three campaign days. A permanent mission opens only if accepted.',confirmLabel:'OPEN EMBASSY',tone:'positive',impacts:[

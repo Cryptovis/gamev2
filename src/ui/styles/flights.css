@@ -1,0 +1,58 @@
+/* 0.89 flights on the world map: diplomatic jets (gold) and cargo aircraft (steel blue) on great-circle routes. */
+.flight-layer { --flight-diplomatic: #f0cf7a; --flight-cargo: #9fc9d9; pointer-events: none; }
+.flight-layer .flight-diplomatic { --flight-color: var(--flight-diplomatic); }
+.flight-layer .flight-cargo { --flight-color: var(--flight-cargo); }
+
+.flight-route-glow { fill: none; stroke: var(--flight-color); stroke-opacity: .08; stroke-width: 4; stroke-linecap: round; }
+.flight-route-line { fill: none; stroke: var(--flight-color); stroke-opacity: .38; stroke-width: 1.1; stroke-dasharray: 4 5; stroke-linecap: round; animation: flight-route-flow 1.6s linear infinite; }
+.flight-route.is-player .flight-route-line { stroke-opacity: .7; stroke-width: 1.3; }
+.flight-route.is-player .flight-route-glow { stroke-opacity: .14; }
+.flight-route:not(.is-player) { opacity: .7; }
+
+.flight-origin { fill: var(--flight-color); fill-opacity: .55; stroke: #08131b; stroke-width: .8; }
+
+.flight-aircraft { pointer-events: auto; cursor: help; }
+.flight-hit-target { fill: transparent; stroke: none; pointer-events: all; }
+.aircraft-shadow * { fill: #02080d !important; stroke: none !important; opacity: .38; }
+.aircraft-shape .aircraft-body { fill: var(--flight-color); stroke: #08131b; stroke-width: .7; }
+.aircraft-shape .aircraft-wing { fill: var(--flight-color); fill: color-mix(in srgb, var(--flight-color) 78%, #2a3b44); stroke: #08131b; stroke-width: .6; }
+.aircraft-shape .aircraft-engine { fill: #33464f; stroke: #08131b; stroke-width: .5; }
+.aircraft-shape .aircraft-glass { fill: #1d3440; }
+.flight-aircraft-layer > g:not(.is-player) .aircraft-shape { opacity: .82; }
+.flight-aircraft:hover .aircraft-body { stroke: #fff4cf; }
+
+.flight-landing-core { fill: var(--flight-color, #f0cf7a); stroke: #08131b; stroke-width: .8; }
+.flight-landing-ring { fill: none; stroke: var(--flight-color, #f0cf7a); stroke-width: 1.4; transform-box: fill-box; transform-origin: center; animation: flight-landing-pulse 2.4s ease-out infinite; }
+.flight-landing.flight-diplomatic { --flight-color: #f0cf7a; }
+.flight-landing.flight-cargo { --flight-color: #9fc9d9; }
+
+@keyframes flight-route-flow { to { stroke-dashoffset: -18; } }
+@keyframes flight-landing-pulse { 0% { transform: scale(.8); opacity: .9; } 100% { transform: scale(3.6); opacity: 0; } }
+
+/* Inline glyphs (HUD list, news lines). */
+.aircraft-glyph { display: inline-block; vertical-align: -2px; flex-shrink: 0; }
+.aircraft-glyph .aircraft-body { stroke: #08131b; stroke-width: .7; }
+.aircraft-glyph .aircraft-wing { stroke: #08131b; stroke-width: .6; }
+.aircraft-glyph .aircraft-engine { fill: #33464f; }
+.aircraft-glyph .aircraft-glass { fill: #1d3440; }
+.aircraft-glyph.aircraft-diplomatic :is(.aircraft-body, .aircraft-wing) { fill: #f0cf7a; }
+.aircraft-glyph.aircraft-cargo :is(.aircraft-body, .aircraft-wing) { fill: #9fc9d9; }
+.news-flight-icon { margin-right: 5px; }
+
+/* "In transit" chip inside the map camera HUD. */
+.flight-transit { position: relative; display: flex; align-items: center; }
+.map-camera-hud .flight-transit-toggle { display: inline-flex; align-items: center; gap: 5px; min-width: 44px; padding: 0 8px; font-size: 12px; font-weight: 800; color: #f5d58a; background: #2c3b40; }
+.map-camera-hud .flight-transit-toggle[aria-expanded="true"] { background: #4a4430; }
+.flight-transit-list { position: absolute; bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%); width: min(300px, 86vw); display: grid; gap: 4px; padding: 9px; border: 1px solid rgba(240, 207, 122, .32); border-radius: 10px; background: rgba(12, 18, 22, .94); box-shadow: 0 10px 28px rgba(0, 0, 0, .45); backdrop-filter: blur(10px); color: #e6edf0; }
+.flight-transit-list > strong { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: #f0cf7a; padding: 0 2px 3px; }
+.flight-transit-item { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 8px; padding: 5px 6px; border-radius: 7px; background: rgba(255, 255, 255, .04); border-left: 2px solid var(--flight-item, #f0cf7a); }
+.flight-transit-item.flight-cargo { --flight-item: #9fc9d9; }
+.flight-transit-item span { display: grid; min-width: 0; }
+.flight-transit-item b { font-size: 11.5px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.flight-transit-item small { font-size: 10.5px; color: #a9bcc5; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.flight-transit-item em { font-style: normal; font-size: 10.5px; color: #f5d58a; white-space: nowrap; }
+
+@media (prefers-reduced-motion: reduce) {
+  .flight-route-line, .flight-landing-ring { animation: none; }
+  .flight-landing-ring { transform: scale(2); opacity: .45; }
+}

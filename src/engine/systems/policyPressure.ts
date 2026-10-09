@@ -1,5 +1,6 @@
 import type { CountryState, GameState } from '../../domain/game';
-import { changeRelations, embassyRelationBonus, relationFor } from './diplomacy';
+import { embassyRelationBonus, relationFor } from './diplomacy';
+import { scheduleFlight } from './flights';
 
 // Audit C4/C15 (0.87): GDP-scaled action costs, repeat fatigue (diminishing returns) and cooldowns.
 // The same functions serve the player, the AI and every UI preview, so nobody re-implements the formulas.
@@ -133,13 +134,16 @@ export function diplomaticMissionStatus(state: GameState, actorId: string, targe
   return result(true, 'Mission available.');
 }
 
-/** Pays the GDP-scaled fee, adds goodwill reduced by repeat fatigue and starts the per-target cooldown. */
+/**
+ * Pays the GDP-scaled fee and starts the per-target cooldown now; the delegation flies out on a diplomatic jet and
+ * its goodwill (reduced by repeat fatigue) applies when it lands, 1–3 days later depending on distance (0.89).
+ */
 export function sendDiplomaticMission(state: GameState, actorId: string, targetId: string): GameState {
   const status = diplomaticMissionStatus(state, actorId, targetId);
   if (!status.allowed) return state;
   const actor = state.countries[actorId];
   let next: GameState = { ...state, countries: { ...state.countries, [actorId]: { ...actor, economy: { ...actor.economy, treasury: actor.economy.treasury - status.costB } } } };
-  next = changeRelations(next, actorId, targetId, status.gain);
+  next = scheduleFlight(next, { kind: 'diplomatic', fromId: actorId, toId: targetId, label: 'Diplomatic mission', payload: { type: 'relations', aId: actorId, bId: targetId, amount: status.gain } });
   return recordActionUse(next, actorId, `relations/${targetId}`);
 }
 

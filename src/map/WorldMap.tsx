@@ -13,6 +13,8 @@ import { useGameStore } from '../store/gameStore';
 import { calculateMilitaryPower } from '../store/selectors';
 import { MICROSTATE_POINTS } from '../data/microstates';
 import { terrainForCountry } from '../engine/systems/warfare';
+import { FlightLayer, FlightTransit, type FlightProjector } from './FlightLayer';
+import { visibleOnGlobe } from './flightPath';
 
 const W = 1200;
 const H = 700;
@@ -144,6 +146,13 @@ function WorldMapView() {
     if(projectionMode==='flat')return [flatPan.x+W/2+flatZoom*(p[0]-W/2),flatPan.y+H/2+flatZoom*(p[1]-H/2)] as [number,number];
     return p as [number,number];
   };
+  // 0.89 flights: screen position of a geographic point, or null when it is on the far side of the globe.
+  const flightProjector=useMemo<FlightProjector>(()=>position=>{
+    if(!projection||(projectionMode==='globe'&&!visibleOnGlobe(position,[-rotation[0],-rotation[1]])))return null;
+    const p=projection(position);
+    if(!p)return null;
+    return projectionMode==='flat'?[flatPan.x+W/2+flatZoom*(p[0]-W/2),flatPan.y+H/2+flatZoom*(p[1]-H/2)]:[p[0],p[1]];
+  },[projection,projectionMode,rotation,flatPan,flatZoom]);
   const mapZoom=projectionMode==='globe'?globeZoom:flatZoom;
   const globeCenter:MapPoint=[-rotation[0],-rotation[1]];
   const visibleMarkers=Object.entries(MICROSTATE_POINTS).flatMap(([id,position])=>{
@@ -389,10 +398,13 @@ function WorldMapView() {
         <pattern id="terrain-desert" width="20" height="16" patternUnits="userSpaceOnUse"><rect width="20" height="16" fill="#a88a5a"/><path d="M0 10Q5 6 10 10t10 0" fill="none" stroke="#d5bb7d" strokeOpacity=".35"/></pattern>
         <pattern id="terrain-mountain" width="22" height="20" patternUnits="userSpaceOnUse"><rect width="22" height="20" fill="#657065"/><path d="M1 17 7 6l4 7 4-9 6 13" fill="none" stroke="#aab0a4" strokeOpacity=".42" strokeWidth="1.1"/></pattern>
         <pattern id="terrain-urban" width="16" height="16" patternUnits="userSpaceOnUse"><rect width="16" height="16" fill="#687077"/><path d="M0 8h16M8 0v16" stroke="#9da3a8" strokeOpacity=".18"/></pattern>
+        <radialGradient id="globe-atmosphere"><stop offset=".9" stopColor="#7fb8d4" stopOpacity="0"/><stop offset=".945" stopColor="#8fc4dc" stopOpacity=".26"/><stop offset="1" stopColor="#8fc4dc" stopOpacity="0"/></radialGradient>
+        <radialGradient id="globe-shade" cx=".38" cy=".32" r=".72"><stop offset="0" stopColor="#fff6dc" stopOpacity=".07"/><stop offset=".55" stopColor="#000" stopOpacity="0"/><stop offset="1" stopColor="#01070c" stopOpacity=".38"/></radialGradient>
         <pattern id="terrain-coastal" width="18" height="18" patternUnits="userSpaceOnUse"><rect width="18" height="18" fill="#53796c"/><path d="M0 5c5 3 9-3 18 0M0 12c6 3 11-2 18 0" fill="none" stroke="#8fb6a8" strokeOpacity=".26"/></pattern>
       </defs>
       {projectionMode === 'flat' && <rect x="0" y="0" width={W} height={H} className="flat-ocean"/>}
       {projectionMode === 'globe' && <>
+        <circle cx={W/2} cy={H/2+8} r={286*globeZoom*1.06} fill="url(#globe-atmosphere)" className="globe-atmosphere" pointerEvents="none"/>
         <path d={path({ type: 'Sphere' } as any) ?? ''} className="ocean-sphere"/>
         <path d={path(graticule as any) ?? ''} className="globe-graticule"/>
       </>}
@@ -400,9 +412,11 @@ function WorldMapView() {
       <g className="map-viewport" transform={projectionMode === 'flat' ? flatTransform : undefined}>
         <g className="country-layer">{shapeLayer}</g>
       </g>
+      {projectionMode === 'globe' && <circle cx={W/2} cy={H/2+8} r={286*globeZoom} fill="url(#globe-shade)" className="globe-shade" pointerEvents="none"/>}
       <g className="screen-label-layer" pointerEvents="none">
         {screenLabels.map(label=><g key={label.id}><text x={label.x} y={label.y} className={label.className} style={{fontSize:label.fontSize}}><LocaleText value={label.text}/></text>{mapMode==='resources'&&countries[label.id]&&dominantResources(countries[label.id],industrialEconomy[label.id]).map((r,index,all)=><ResourceMapBadge key={r} resource={r} x={label.x+(index-(all.length-1)/2)*27-11} y={label.y+7}/>)}</g>)}
       </g>
+      <FlightLayer project={flightProjector}/>
       <g className="screen-microstate-layer"><LocaleText value={microstateMarkers}/></g>
     </svg>
     <div className="map-camera-hud" aria-label={translateLive("Map camera controls")}>
@@ -412,6 +426,7 @@ function WorldMapView() {
       <button className="camera-home" aria-label={translateLive("Return to your nation")} title={translateLive("Return to your nation")} onClick={()=>focusCountry(countries[playerCountryId])}><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-7 7-12a7 7 0 1 0-14 0c0 5 7 12 7 12Z" fill="#f2d283"/><circle cx="12" cy="9" r="3" fill="#243e4a"/></svg></button>
       <i/>
       <button className="camera-reset" onClick={resetView} title={translateLive("Reset camera")}><LocaleText value={"RESET"}/></button>
+      <FlightTransit/>
     </div>
   </div>;
 }

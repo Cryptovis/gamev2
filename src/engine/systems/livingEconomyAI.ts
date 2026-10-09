@@ -2,6 +2,7 @@ import {activeCountries} from '../../domain/sovereignty';
 import type { GameState, TradeResource } from '../../domain/game';
 import { changeRelations, relationFor } from './diplomacy';
 import { aiProposeAgreement } from './treaties';
+import { cargoFlight } from './flightHooks';
 import { getExportCapacity, getGlobalMarketPrice, makeBilateralImportDeal } from './trade';
 import { simulateResources } from './resources';
 
@@ -90,6 +91,7 @@ export function processLivingEconomyAI(state: GameState): GameState {
     if (!deal) continue;
 
     next = { ...next, tradeDeals: { ...next.tradeDeals, [deal.id]: deal } };
+    next = cargoFlight(next, deal.sellerId, deal.buyerId, 'Trade cargo'); // rate-limited for AI–AI deals
     // Consume the supplier's weekly export capacity so later buyers spread across sellers instead of all signing with one.
     exportCapacity[supplier.candidate.id][need.resource] = Math.max(0, exportCapacity[supplier.candidate.id][need.resource] - deal.quantityPerDay);
     notices.push(`AI TRADE // ${buyer.name} secured ${need.resource.toUpperCase()} imports from ${supplier.candidate.name}.`);
