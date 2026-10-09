@@ -5,6 +5,7 @@ import type { AdviceKind } from '../../domain/living';
 import { addTreaty, relationFor } from './diplomacy';
 import { getExportCapacity, makeLongTermImportContract } from './trade';
 import { simulateResources } from './resources';
+import { advisorPopupAllowed, recordAdvisorPopup } from './advisorPacing';
 
 const resources: TradeResource[]=['food','oil','iron','uranium'];
 
@@ -33,7 +34,7 @@ function threshold(resource:TradeResource){
 }
 
 export function maybeCreateResourceAdvisor(state:GameState):GameState{
- if(state.activeEvent||state.activeAdvisor||state.day<state.advisorCooldownUntil||state.day%5!==0)return state;
+ if(state.activeEvent||state.activeAdvisor||state.day<state.advisorCooldownUntil||state.day%5!==0||!advisorPopupAllowed(state))return state;
  const player=state.countries[state.playerCountryId];
  if(!player)return state;
 
@@ -66,7 +67,7 @@ export function maybeCreateResourceAdvisor(state:GameState):GameState{
    ? `${need.resource.toUpperCase()} reserves are falling. ${best.country.name} has export capacity and an active trade pact. Consider locking a long-term contract.`
    : `${need.resource.toUpperCase()} reserves are falling. ${best.country.name} is the strongest friendly supplier candidate. A trade pact is required first.`,
  } as const;
- return {...state,activeAdvisor:prompt,speed:0,sitrep:[`ADVISOR // ${prompt.message}`,...state.sitrep].slice(0,12)};
+ return {...recordAdvisorPopup(state),activeAdvisor:prompt,speed:0,sitrep:[`ADVISOR // ${prompt.message}`,...state.sitrep].slice(0,12)};
 }
 
 export function dismissAdvisor(state:GameState):GameState{

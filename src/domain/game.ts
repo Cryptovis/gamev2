@@ -12,8 +12,13 @@ export type TreatyType = 'trade' | 'nonAggression' | 'alliance';
 export type TradeResource = 'food' | 'oil' | 'iron' | 'uranium';
 export type WarStatus = 'active' | 'victory' | 'defeat' | 'withdrawn';
 export type BattlefieldTerrain = 'plains' | 'urban' | 'mountain' | 'forest' | 'desert' | 'coastal';
-export type CampaignStatus = 'active' | 'lost';
-export type EventKind = 'food_crisis' | 'inflation_shock' | 'war_weariness' | 'corruption_scandal' | 'fuel_crisis' | 'intelligence_breach' | 'earthquake' | 'health_crisis' | 'tax_protest' | 'reform_demand' | 'foreign_policy_backlash';
+/** 'won' (0.88) is set when a campaign victory path completes; older saves only hold 'active' or 'lost'. */
+export type CampaignStatus = 'active' | 'lost' | 'won';
+export type EventKind = 'food_crisis' | 'inflation_shock' | 'war_weariness' | 'corruption_scandal' | 'fuel_crisis' | 'intelligence_breach' | 'earthquake' | 'health_crisis' | 'tax_protest' | 'reform_demand' | 'foreign_policy_backlash'
+  // 0.88 data-driven catalogue (src/data/events.ts); saves before 0.88 only contain the kinds above.
+  | 'investigation_findings' | 'corruption_trial' | 'tech_breakthrough' | 'tech_investment_boom' | 'grid_failure' | 'grid_modernization'
+  | 'refugee_influx' | 'refugee_integration' | 'pandemic_outbreak' | 'pandemic_second_wave' | 'flood' | 'drought' | 'cyberattack'
+  | 'banking_stress' | 'export_boom' | 'general_strike' | 'border_incident' | 'veterans_demands' | 'arms_export_offer' | 'summit_invitation' | 'energy_windfall';
 export type MinistryKey = 'economy' | 'defense' | 'science' | 'intelligence' | 'interior' | 'society';
 export type TechnologyCategory = 'economy' | 'industry' | 'military' | 'intelligence' | 'energy' | 'society' | 'education' | 'diplomacy';
 export type CouncilResolutionType = 'sanctions' | 'ceasefire' | 'humanitarian_aid';
@@ -87,6 +92,8 @@ export interface CountryState {
   globalSanctionsUntil?: number;
   /** Player-only memory of the last day each event kind fired, for per-kind cooldowns. */
   eventLastFired?: Partial<Record<EventKind, number>>;
+  /** 0.88 player-only event-chain flags: flag id -> day it was set; a later event in the chain reads it. */
+  eventFlags?: Record<string, number>;
   demographics: DemographicsState;
   economy: EconomyState;
   resources: ResourceStockpile;
@@ -120,7 +127,9 @@ export interface WarState {
 }
 
 export interface EventOption { id: string; label: string; consequenceHint: string; }
-export interface ActiveGameEvent { id: string; kind: EventKind; title: string; description: string; triggeredDay: number; options: EventOption[]; }
+export interface ActiveGameEvent { id: string; kind: EventKind; title: string; description: string; triggeredDay: number; options: EventOption[];
+  /** 0.88: the foreign country an event concerns (border incident, arms offer); absent for domestic events and older saves. */
+  subjectCountryId?: string; }
 
 export interface AllianceBloc {
   id: string;

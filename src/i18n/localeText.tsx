@@ -2,6 +2,9 @@ import {UI_CATALOG_FLOW} from './uiCatalogFlow083';
 import {UI_CATALOG_087_A} from './uiCatalog087A';
 import {UI_CATALOG_087_B} from './uiCatalog087B';
 import {UI_CATALOG_087_C} from './uiCatalog087C';
+import {UI_CATALOG_088_D} from './uiCatalog088D';
+import {UI_CATALOG_088_E} from './uiCatalog088E';
+import {UI_CATALOG_088_F} from './uiCatalog088F';
 import {UI_CATALOG_083} from './uiCatalog083';
 import {UI_CATALOG_COMPLETE} from './uiCatalogComplete';
 import {UI_CATALOG_POLISH,PLAIN_EN} from './uiCatalogPolish';
@@ -51,6 +54,8 @@ for (const language of languages) {
       entries.set(value.toLowerCase(), D[language as keyof typeof D][key]);
   for(const [key,values] of Object.entries({...UI_CATALOG_POLISH,...UI_CATALOG_FLOW,...UI_CATALOG_087_A,...UI_CATALOG_087_B,...UI_CATALOG_087_C}))
     entries.set(key.trim().toLowerCase().replaceAll("_", " "),values[index]);
+  // 0.88 catalogs only fill missing keys, so reviewed translations of shared words (e.g. "Approval") are kept.
+  for(const [key,values] of Object.entries({...UI_CATALOG_088_D,...UI_CATALOG_088_E,...UI_CATALOG_088_F})){const k=key.trim().toLowerCase().replaceAll("_"," ");if(!entries.has(k)&&values[index])entries.set(k,values[index]);}
   const countries = new Intl.DisplayNames([language], { type: "region" });
   for (const c of WORLD_COUNTRY_SEEDS)
     entries.set(c.name.toLowerCase(), countries.of(c.iso2) ?? c.name);

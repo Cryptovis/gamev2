@@ -39,6 +39,8 @@ export interface WorldState {
  programs?:Array<{id:string;kind:'jobs'|'education'|'health';readyDay:number;status:'active'|'completed';strength?:number}>;
  /** 0.87 repeat fatigue and cooldowns per `countryId|action` (policyPressure.ts); absent in older saves. */
  actionFatigue?:Record<string,{value:number;day:number}>;
+ /** 0.88 campaign victory tracking (campaignVictory.ts); absent in older saves. */
+ campaign?:import('./campaign').CampaignProgress;
   members: Record<InstitutionId, string[]>;
   ballots: WorldBallot[];
   missions: OutreachMission[];

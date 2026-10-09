@@ -76,6 +76,8 @@ export type ReliableCommand =
  // 0.88 track E: factions and regime crises (audit E2).
  | {type:'politics/concession';faction:import('./politics').FactionKey}
  | {type:'politics/crisisResponse';option:import('./politics').CrisisOption}
- | {type:'politics/acknowledgeCrisis'};
+ | {type:'politics/acknowledgeCrisis'}
+ // 0.88 audit E4: keep playing after a campaign victory.
+ | {type:'campaign/continue'};
 
 export type GameCommand = (LegacyCommand | ReliableCommand) & {commandId?:string};

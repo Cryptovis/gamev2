@@ -28,6 +28,7 @@ import { processLivingEconomyAI } from './systems/livingEconomyAI';
 import { processWorldDiplomacy,processTradeRelations } from './systems/worldDynamics';
 import { processPactStrain } from './systems/treaties';
 import { maybeCreateResourceAdvisor } from './systems/advisor';
+import { processCampaignVictory } from './systems/campaignVictory';
 import { processIncomingDiplomaticOffers } from './systems/diplomaticOffers';
 import { processProduction, processProductionAI } from './systems/production';
 import {processIndustrialEconomy,processIndustrialAI} from './systems/industrialEconomy';
@@ -125,5 +126,6 @@ export function tickGame(state: GameState): GameState {
   next = processWellbeing(next);
   next = processAiWars(next);
   if(!next.world.living?.advice.active&&!next.world.living?.notice)next = maybeCreateResourceAdvisor(next);
+  next = processCampaignVictory(next);
   return recordEconomicHistory(next);
 }

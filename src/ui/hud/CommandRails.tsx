@@ -3,6 +3,7 @@ const CreditWindow=lazy(()=>import('../panels/CreditWindow').then(m=>({default:m
 import {activeCountries} from '../../domain/sovereignty';
 import {money} from '../formatMoney';
 import {GuideBriefing} from '../panels/GuideBriefing';
+import {CampaignVictoryProgress} from './CampaignVictoryProgress';
 const DomesticWindow=lazy(()=>import('../panels/DomesticWindow').then(m=>({default:m.DomesticWindow})));
 const DiplomaticPost=lazy(()=>import('../panels/DiplomaticPost').then(m=>({default:m.DiplomaticPost})));
 import {living} from '../../engine/systems/livingEconomy';
@@ -83,6 +84,7 @@ export function CommandRails(){
   {open.has('objectives')&&<DraggableWindow id="objectives-window" kicker="CAMPAIGN / GUIDANCE" title={translateLive("Strategic Objectives")} initialX={88} initialY={170} width={470} onClose={()=>close('objectives')}>
    <div className="floating-progress"><span><b><LocaleText value={done}/></b><LocaleText value={" of "}/><LocaleText value={objectives.length}/><LocaleText value={" complete"}/></span><i><b style={{width:`${done/objectives.length*100}%`}}/></i></div>
    <div className="floating-objectives">{objectives.map((o,i)=><div className={o.done?'done':''} key={o.label}><b><LocaleText value={o.done?'✓':String(i+1).padStart(2,'0')}/></b><span><strong><LocaleText value={o.label}/></strong><small><LocaleText value={o.done?'Completed':'Active objective'}/></small></span></div>)}</div>
+   <CampaignVictoryProgress/>
   </DraggableWindow>}
 
   {open.has('market')&&<DraggableWindow id="market-window" kicker="GLOBAL ECONOMY" title={translateLive("Global Commodity & Industrial Market")} initialX={110} initialY={135} width={760} onClose={()=>close('market')}>

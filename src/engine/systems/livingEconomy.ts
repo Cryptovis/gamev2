@@ -26,6 +26,7 @@ import { AGREEMENT_BASE_COST, agreementAcceptanceChance, agreementCost, conclude
 import { nextRandom } from "../rng";
 import { actionEffectMultiplier, headroomFactor, publicGain, recordActionUse, scaledCostB } from "./policyPressure";
 import { calculateSupplyNetwork } from "./supplyNetwork";
+import { advisorPopupAllowed } from "./advisorPacing";
 const clamp = (n: number, a: number, b: number) => Math.max(a, Math.min(b, n));
 const raw = (g: ExchangeGood): g is TradeResource =>
   ["food", "oil", "iron", "uranium"].includes(g);
@@ -542,7 +543,8 @@ export function processWellbeing(s: GameState): GameState {
     s.activeEvent ||
     s.world.tutorial.active ||
     l.advice.active ||
-    l.notice
+    l.notice ||
+    !advisorPopupAllowed(n)
   )
     return n;
   const war = Object.values(s.wars).some(
@@ -572,6 +574,7 @@ export function processWellbeing(s: GameState): GameState {
           ...l.advice,
           active: kind,
           lastShown: { ...l.advice.lastShown, [kind]: s.day },
+          lastPopupDay: s.day,
         },
       },
     );

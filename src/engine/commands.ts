@@ -15,6 +15,7 @@ import {cancelResearch} from './systems/technology';
 import {recordReports} from './journal';
 import {arrears} from './systems/sovereignCredit';
 import {pendingVictory} from './systems/victory';
+import {continueAfterVictory} from './systems/campaignVictory';
 import {requestDiplomacy,diplomaticProposalStatus} from './systems/livingEconomy';
 import type { GameCommand } from '../domain/commands';
 import type { CountryState, GameState, TradeResource } from '../domain/game';
@@ -108,6 +109,7 @@ function executeGameCommand(state: GameState, command: GameCommand): GameState {
     case 'politics/concession': return grantConcession(state,command.faction);
     case 'politics/crisisResponse': return respondToCrisis(state,command.option);
     case 'politics/acknowledgeCrisis': return acknowledgeCrisis(state);
+    case 'campaign/continue': return continueAfterVictory(state);
     case 'world/outreach': return startOutreach(state,command.id,command.religion);
     case 'technology/cancel': return cancelResearch(state,state.playerCountryId);
     case 'time/advanceDay': return tickGame(state);
