@@ -15,6 +15,10 @@ const InvestmentWindow=lazy(()=>import('../panels/InvestmentWindow').then(m=>({d
 const GovernanceWindow=lazy(()=>import('../panels/GovernanceWindow').then(m=>({default:m.GovernanceWindow})));
 const HelpPanel=lazy(()=>import('../panels/HelpPanel').then(m=>({default:m.HelpPanel})));
 import {NavigationArt} from '../icons/NavigationArt';
+import {AircraftGlyph} from '../icons/AircraftIcons';
+import {newsFlightKind} from '../../map/flightPresentation';
+/** 0.89: diplomatic and trade news lines carry a small jet or freighter icon. */
+function NewsFlightIcon({message}:{message:string}){const kind=newsFlightKind(message);return kind?<span className="news-flight-icon"><AircraftGlyph kind={kind} size={13}/></span>:null;}
 import {lazy,Suspense,useEffect, useMemo, useState, type ReactNode } from 'react';
 import { MARKET_RESOURCES, getMarketBoard, resourceReserveDays, resourceStrategicStatus } from '../../store/marketSelectors';
 import { useGameStore } from '../../store/gameStore';
@@ -109,7 +113,7 @@ export function CommandRails(){
   </DraggableWindow>}
 
   {open.has('sitrep')&&<DraggableWindow id="sitrep-window" kicker="COMMAND CHANNEL" title={translateLive("News Archive")} initialX={window.innerWidth-600} initialY={220} width={540} onClose={()=>close('sitrep')}>
-   <div className="sitrep-archive">{(state.world.journal??state.sitrep.map((message,i)=>({id:String(i),message,day:state.day}))).map(entry=><div key={entry.id}><b><LocaleText value="Day"/> {entry.day}</b><span><LocaleText value={entry.message}/></span></div>)}</div>
+   <div className="sitrep-archive">{(state.world.journal??state.sitrep.map((message,i)=>({id:String(i),message,day:state.day}))).map(entry=><div key={entry.id}><b><LocaleText value="Day"/> {entry.day}</b><span><NewsFlightIcon message={entry.message}/><LocaleText value={entry.message}/></span></div>)}</div>
   </DraggableWindow>}
  </Suspense>;
 }

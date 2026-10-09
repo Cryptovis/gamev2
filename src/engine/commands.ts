@@ -33,6 +33,8 @@ import { launchIntelOperation } from './systems/espionage';
 import { agreementEligibility, concludeAgreement, ALLIANCE_MIN_SCORE, NON_AGGRESSION_MIN_SCORE } from './systems/treaties';
 import { deployEquipment, setMilitaryFactoryShare, setProductionFactories } from './systems/production';
 import { investInfrastructure } from './systems/infrastructure';
+import { agreementFlightLabel, cargoFlight, diplomaticFlight } from './systems/flightHooks';
+import { travelDays } from './systems/flights';
 import { BASE_COST_B, actionCooldownDays, actionEffectMultiplier, diplomaticMissionStatus, formatCostB, publicGain, recordActionUse, scaledCostB, sendDiplomaticMission, type DomesticAction } from './systems/policyPressure';
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
@@ -46,7 +48,8 @@ function createImport(state: GameState, targetCountryId: string, resource: Trade
   if (!relation.treaties.includes('trade') || relation.status === 'war' || relation.sanctions) return note(state, `TRADE // A trade pact with ${target.name} is required.`);
   const deal = makeImportDeal(state, targetCountryId, resource);
   if (!deal) return note(state, `TRADE // ${target.name} has no safe export surplus of ${resource.toUpperCase()}. Seek another supplier or change the strategic situation.`);
-  return note({ ...state, tradeDeals: { ...state.tradeDeals, [deal.id]: deal } }, `TRADE // ${resource.toUpperCase()} import contract signed with ${target.name} at $${deal.pricePerUnit.toFixed(3)}/unit.`);
+  const shipped = cargoFlight({ ...state, tradeDeals: { ...state.tradeDeals, [deal.id]: deal } }, deal.sellerId, deal.buyerId, 'Trade cargo');
+  return note(shipped, `TRADE // ${resource.toUpperCase()} import contract signed with ${target.name} at $${deal.pricePerUnit.toFixed(3)}/unit.`);
 }
 
 /**
@@ -77,14 +80,24 @@ function executeGameCommand(state: GameState, command: GameCommand): GameState {
       const project=n.industrialEconomy[state.playerCountryId].projects.at(-1);
       return n!==state&&state.world.tutorial.active&&state.world.tutorial.step===3&&project?{...n,world:{...n.world,tutorial:{...n.world.tutorial,practiceProjectId:project.id}}}:n;
     }
-    case 'industry/order': return placeIndustrialOrder(state,command.partnerId,command.good,command.quantity,command.direction,command.years);
+    case 'industry/order': {
+      // 0.89: a spot shipment or the first delivery of a new supply contract leaves on a cargo aircraft (visual only).
+      const next = placeIndustrialOrder(state,command.partnerId,command.good,command.quantity,command.direction,command.years);
+      if (next === state) return state;
+      const [sellerId, buyerId] = command.direction === 'buy' ? [command.partnerId, state.playerCountryId] : [state.playerCountryId, command.partnerId];
+      return cargoFlight(next, sellerId, buyerId, command.years === 0 ? 'Trade cargo' : 'Supply contract cargo');
+    }
     case 'credit/post': return postCredit(state,command.kind,command.principal,command.apr,command.days);
     case 'credit/accept': return acceptCredit(state,command.id);
     case 'credit/cancel': return cancelCredit(state,command.id);
     case 'integration/prepare': return prepareIntegration(state,command.id,command.kind);
     case 'integration/begin': return beginIntegration(state,command.id);
     case 'exchange/post': return postListing(state,command.good,command.quantity,command.price);
-    case 'exchange/buy': return buyListing(state,command.id,command.quantity);
+    case 'exchange/buy': {
+      // 0.89: goods arrive immediately as before; a cargo aircraft shows the purchase travelling from the seller.
+      const listing = state.world.living?.listings.find((x) => x.id === command.id), next = buyListing(state,command.id,command.quantity);
+      return next === state || !listing ? next : cargoFlight(next, listing.sellerId, state.playerCountryId, 'Exchange purchase');
+    }
     case 'exchange/cancel': return cancelListing(state,command.id);
     case 'gold/move': return moveBankGold(state,command.tonnes,command.direction);
     case 'activity/start': return startActivity(state,command.kind);
@@ -133,7 +146,8 @@ function executeGameCommand(state: GameState, command: GameCommand): GameState {
       const status = diplomaticMissionStatus(state, state.playerCountryId, command.targetCountryId);
       if (!target) return state;
       if (!status.allowed) return note(state, status.cooldownDays > 0 ? `DIPLOMACY // Next mission to ${target.name} possible in ${status.cooldownDays} days.` : status.reason === 'Insufficient treasury for diplomatic mission.' ? 'DIPLOMACY // Insufficient treasury for diplomatic mission.' : `DIPLOMACY // ${status.reason}`);
-      return note(sendDiplomaticMission(state, state.playerCountryId, target.id), `DIPLOMACY // Relations with ${target.name} improved (+${status.gain}).`);
+      // 0.89: the goodwill travels with the delegation and applies on arrival.
+      return note(sendDiplomaticMission(state, state.playerCountryId, target.id), `DIPLOMACY // Delegation departed for ${target.name}: relations +${status.gain} on arrival (day ${state.day + travelDays('diplomatic', state.playerCountryId, target.id)}).`);
     }
     case 'diplomacy/giftTreasury': {
       const player = state.countries[state.playerCountryId];
@@ -144,7 +158,7 @@ function executeGameCommand(state: GameState, command: GameCommand): GameState {
       const next = sendTreasuryGift(state,player.id,target.id,command.amountB);
       const after = relationFor(next.countries[player.id],target.id).score;
       if (after === before) return note(state,`DIPLOMACY // ${target.name} cannot receive the proposed financial gesture.`);
-      return note(next,`DIPLOMACY // ${command.amountB}B goodwill grant sent to ${target.name}. Bilateral relations improved.`);
+      return note(diplomaticFlight(next,player.id,target.id,'Treasury grant'),`DIPLOMACY // ${command.amountB}B goodwill grant sent to ${target.name}. Bilateral relations improved.`);
     }
     case 'diplomacy/giftResource': {
       const player = state.countries[state.playerCountryId];
@@ -154,7 +168,7 @@ function executeGameCommand(state: GameState, command: GameCommand): GameState {
       const next = sendResourceGift(state,player.id,target.id,command.resource);
       const sent = beforeStock - next.countries[player.id].resources[command.resource];
       if (sent <= 0) return note(state,`DIPLOMACY // No ${command.resource.toUpperCase()} package is available for aid.`);
-      return note(next,`DIPLOMACY // Humanitarian ${command.resource.toUpperCase()} shipment sent to ${target.name} (${sent.toFixed(1)} units).`);
+      return note(cargoFlight(next,player.id,target.id,'Aid shipment'),`DIPLOMACY // Humanitarian ${command.resource.toUpperCase()} shipment sent to ${target.name} (${sent.toFixed(1)} units).`);
     }
     case 'diplomacy/signTradePact': return requestDiplomacy(state,command.targetCountryId,'trade_pact');
     case 'diplomacy/signNonAggression': {
@@ -164,7 +178,7 @@ function executeGameCommand(state: GameState, command: GameCommand): GameState {
       if (check.block === 'war' || check.block === 'relations') return note(state, `DIPLOMACY // ${target.name} requires relations of at least +${NON_AGGRESSION_MIN_SCORE} for a non-aggression pact.`);
       if (check.block === 'treasury') return note(state, `DIPLOMACY // Non-aggression talks require ${formatCostB(check.cost)}.`);
       const next = concludeAgreement(state, state.playerCountryId, target.id, 'nonAggression');
-      return next === state ? state : note(next, `DIPLOMACY // Non-aggression pact signed with ${target.name}.`);
+      return next === state ? state : note(diplomaticFlight(next, state.playerCountryId, target.id, agreementFlightLabel('nonAggression')), `DIPLOMACY // Non-aggression pact signed with ${target.name}.`);
     }
     case 'diplomacy/signAlliance': {
       const target = state.countries[command.targetCountryId];
@@ -173,10 +187,12 @@ function executeGameCommand(state: GameState, command: GameCommand): GameState {
       if (check.block === 'war' || check.block === 'relations') return note(state, `DIPLOMACY // ${target.name} requires relations of at least +${ALLIANCE_MIN_SCORE} for an alliance.`);
       if (check.block === 'treasury') return note(state, `DIPLOMACY // Alliance summit requires ${formatCostB(check.cost)}.`);
       const next = concludeAgreement(state, state.playerCountryId, target.id, 'alliance');
-      return next === state ? state : note(next, `DIPLOMACY // Strategic alliance signed with ${target.name}.`);
+      return next === state ? state : note(diplomaticFlight(next, state.playerCountryId, target.id, agreementFlightLabel('alliance')), `DIPLOMACY // Strategic alliance signed with ${target.name}.`);
     }
-    case 'diplomacy/formBloc': return formBloc(state, command.targetCountryId);
-    case 'diplomacy/inviteToBloc': return inviteToBloc(state, command.targetCountryId);
+    case 'diplomacy/formBloc': case 'diplomacy/inviteToBloc': {
+      const next = command.type === 'diplomacy/formBloc' ? formBloc(state, command.targetCountryId) : inviteToBloc(state, command.targetCountryId);
+      return next.blocs === state.blocs ? next : diplomaticFlight(next, state.playerCountryId, command.targetCountryId, 'Bloc summit');
+    }
     case 'diplomacy/toggleEmbargo': {
       const player = state.countries[state.playerCountryId];
       const target = state.countries[command.targetCountryId];

@@ -3,6 +3,7 @@ import { makeInitialState } from '../data/initialState';
 import type { CountryState, GameState } from '../domain/game';
 import { applyGameCommand } from '../engine/commands';
 import { tickGame } from '../engine/tick';
+import { flights, processFlights } from '../engine/systems/flights';
 import { relationFor } from '../engine/systems/diplomacy';
 import { infrastructureInvestmentCost, investInfrastructure, processInfrastructureAI } from '../engine/systems/infrastructure';
 import { activityPreview, letterCost, living, processWellbeing, startActivity } from '../engine/systems/livingEconomy';
@@ -79,7 +80,9 @@ describe('C15: "improve relations" has a per-target cooldown and fading goodwill
   it('refuses a second mission to the same target within 30 days without charging', () => {
     const s = fresh();
     const first = applyGameCommand(s, { type: 'diplomacy/improveRelations', targetCountryId: 'GRC' });
-    const gain = relationFor(first.countries.TUR, 'GRC').score - relationFor(s.countries.TUR, 'GRC').score;
+    // 0.89: the goodwill travels with the delegation's jet and applies on arrival (flightHooks089.test.ts).
+    const landed = processFlights({ ...first, day: flights(first)[0].arriveDay });
+    const gain = relationFor(landed.countries.TUR, 'GRC').score - relationFor(s.countries.TUR, 'GRC').score;
     expect(gain).toBe(10);
     const again = applyGameCommand(first, { type: 'diplomacy/improveRelations', targetCountryId: 'GRC' });
     expect(treasury(again)).toBe(treasury(first));

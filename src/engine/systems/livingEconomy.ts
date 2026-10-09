@@ -27,6 +27,7 @@ import { nextRandom } from "../rng";
 import { actionEffectMultiplier, headroomFactor, publicGain, recordActionUse, scaledCostB } from "./policyPressure";
 import { calculateSupplyNetwork } from "./supplyNetwork";
 import { advisorPopupAllowed } from "./advisorPacing";
+import { diplomaticFlight } from "./flightHooks";
 const clamp = (n: number, a: number, b: number) => Math.max(a, Math.min(b, n));
 const raw = (g: ExchangeGood): g is TradeResource =>
   ["food", "oil", "iron", "uranium"].includes(g);
@@ -645,7 +646,9 @@ export function requestDiplomacy(
       "Proposal sent. The partner will assess relations and strategic needs in three days. Payment is charged only if accepted.",
     read: true,
   };
-  return withLiving(s, { ...l, letters: retainLetters([x, ...l.letters]) });
+  // 0.89: the proposal travels on a diplomatic jet; the reply still comes on day +3.
+  const sent = diplomaticFlight(s, p.id, t.id, kind === "embassy" ? "Embassy proposal" : "Trade pact proposal");
+  return withLiving(sent, { ...living(sent), letters: retainLetters([x, ...l.letters]) });
 }
 function enactLetter(
   s: GameState,
@@ -675,8 +678,10 @@ export function resolveIncomingLetter(
     return s;
   const rel = relationFor(s.countries[x.senderId], x.receiverId);
   if (accept && (rel.status === "war" || rel.sanctions)) return s;
-  const n = accept ? enactLetter(s, x, 0.5) : s;
-  if (accept && n === s) return s;
+  const enacted = accept ? enactLetter(s, x, 0.5) : s;
+  if (accept && enacted === s) return s;
+  // 0.89: accepting sends a signing delegation to the proposer.
+  const n = accept ? diplomaticFlight(enacted, x.receiverId, x.senderId, x.kind === "embassy" ? "Embassy delegation" : "Trade pact delegation") : enacted;
   return withLiving(n, {
     ...living(n),
     letters: living(n).letters.map((v) =>
@@ -728,6 +733,8 @@ export function processLetters(s: GameState): GameState {
   // Convert legacy/new incoming offers into retained, readable letters.
   for (const x of n.diplomaticOffers) {
     if (living(n).letters.some((v) => v.id === x.id)) continue;
+    // 0.89: a foreign proposal to the player arrives with a diplomatic jet.
+    if (x.receiverId === n.playerCountryId) n = diplomaticFlight(n, x.senderId, x.receiverId, "Incoming proposal");
     n = withLiving(n, {
       ...living(n),
       letters: retainLetters([

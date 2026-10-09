@@ -1,6 +1,7 @@
 import { activeCountries } from '../../domain/sovereignty';
 import type { CountryState, DiplomaticRelation, GameState, TreatyType } from '../../domain/game';
 import { nextRandom } from '../rng';
+import { agreementFlightLabel, diplomaticFlight } from './flightHooks';
 import { costScale, scaledCostB } from './policyPressure';
 import { addTreaty, applyThirdPartyTradeReaction, changeRelations, embassyFor, openEmbassy, relationFor, relationshipIndex, statusFromScore, updateBilateralRelation } from './diplomacy';
 
@@ -125,7 +126,8 @@ export function aiProposeAgreement(state: GameState, proposerId: string, partner
     }
   }
   const concluded = concludeAgreement(next, proposerId, partnerId, kind);
-  return { state: concluded, accepted: concluded !== next };
+  // 0.89: a new AI agreement may show a delegation flight; AI–AI flights are rate-limited (flightHooks.ts).
+  return concluded === next ? { state: concluded, accepted: false } : { state: diplomaticFlight(concluded, proposerId, partnerId, agreementFlightLabel(kind)), accepted: true };
 }
 
 /**
