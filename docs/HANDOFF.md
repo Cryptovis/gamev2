@@ -3,8 +3,8 @@
 Bu dosya yeni bir konuşmanın ilk okuması içindir. Geçmiş konuşmayı taşımadan kaldığımız yerden devam etmeyi sağlar.
 
 ## Durum
-- Sürüm: **0.89.0-playtest.1 "Trade & Markets"**
-- Dal: `dev/trade-markets-089`. Son remote commit `5a1556e`; bu commit'in CI sonucu başarısız (kurulum ekranında eksik `LANGUAGE_OPTIONS` import'u).
+- Sürüm: **0.89.0-playtest.2 "Trade & Markets / Unified onboarding"**
+- Dal: `dev/trade-markets-089`. Önceki hotfix `f249f31` tüm CI aşamalarını geçti; bu patch için yeni CI sonucu ayrıca kontrol edilmeli.
 - `main`'e doğrudan push yok. Yeni işler `dev/<name>-0XX` dallarında yapılır.
 - Kapsam (0.89): ticaret ortağı seçimi ve ülke TRADE sekmesi, emtia borsası (spread, komisyon, günlük limit, pozisyon limiti, depolama, şoklar), diplomatik jet ve kargo uçakları (harita katmanı, mesafeye göre varış süresi).
 
@@ -39,3 +39,10 @@ Bu dosyayı oku, `git status` ve son commit'e bak, kullanıcıya bekleyen işler
 - Kurulum testi son onay adımını, sabit kart yüksekliğini ve onay düğmesinin ekranda kalmasını kontrol ediyor.
 - Doğrulama: 530 birim testi, TypeScript/üretim derlemesi ve 5 hedefli Playwright testi geçti (giriş: 1440/390 px; kurulum: 1440/1280/390 px). Mobil son onay ekranı görsel olarak kontrol edildi.
 - Kullanıcı Codex'e commit/push için sürekli yetki verdi; önceki "yalnızca istediğimde commit" kısıtı Codex için geçerli değil. Remote CI sonucu ayrıca kontrol edilmeli.
+
+## 0.89.0-playtest.2 giriş/kurulum düzeni (Codex)
+- Kullanıcının son tercihine göre dil seçimi yalnızca ilk giriş ekranında; sonraki ekranlar seçilen dili koruyor. Önceki dil seçiciyi geri getirme kararı bu tercihle değişti.
+- Ortak kart ölçüleri, kapak görseli, tema ve kompakt son özet. GDP/hazine dilin sayı biçimiyle kısaltılıyor.
+- Bir önceki hotfix ve kullanıcı yetkisi geçerli: Codex gerekli commit/push işlemlerini ek onay beklemeden yapabilir.
+
+- Doğrulama: 532 birim testi, TypeScript/üretim derlemesi ve 22 hedefli tarayıcı testi geçti. Beş dilde 1440×900, 1280×720 ve 390×844 son özet kaydırmadan sığıyor.

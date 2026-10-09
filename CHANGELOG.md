@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.89.0-playtest.2 — Unified onboarding (Codex)
+- Choose the language on the first sign-in screen; registration, the game menu and setup keep that language without repeating the picker.
+- Sign-in and campaign setup share the same card size, cover image, warm palette, inputs and heading style. Mobile keeps a fixed frame with scrollable form content and visible setup navigation.
+- The final review uses a compact leader strip and a full-width information grid, with a denser layout on shorter desktop screens. GDP and treasury use localized compact USD amounts (for example, $1.3T instead of $1300B).
+- Save schema and simulation rules are unchanged.
+- Validation: 532 unit tests, TypeScript/production build and 22 targeted Playwright tests passed; all five languages at 1440×900, 1280×720 and 390×844. Desktop and mobile final-review screenshots were inspected.
+
 ## 0.89.0-playtest.1 — Trade & Markets
 - Entry/setup hotfix (Codex, 2026-10-09): restore the setup language picker and its missing import, keep mobile navigation within the viewport, and exclude decorative menu markers from accessible button names. Verified with 530 unit tests, production build and five targeted browser tests.
 Playtest feedback pack: finding trade partners, a commodity exchange, and aircraft on the map. No schema change; new state (`world.flights`, `world.commodities`) is optional and 0.88 saves load unchanged.

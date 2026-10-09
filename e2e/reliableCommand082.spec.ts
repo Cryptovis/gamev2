@@ -1,6 +1,8 @@
+import {readFileSync} from 'node:fs';
+const {version}=JSON.parse(readFileSync(new URL('../package.json',import.meta.url),'utf8'));
 import {test,expect,type Page} from '@playwright/test';
 async function start(page:Page){
- await page.goto('/');await page.locator('[data-entry="demo"]').click();await page.locator('[data-entry="new-game"]').click();await page.locator('.wizard-name-field input').fill('Playtest');await page.getByRole('button',{name:'Türkçe',exact:true}).click();
+ await page.goto('/');await page.getByRole('button',{name:'Türkçe',exact:true}).click();await page.locator('[data-entry="demo"]').click();await page.locator('[data-entry="new-game"]').click();await page.locator('.wizard-name-field input').fill('Playtest');
  for(let i=0;i<4;i++)await page.locator('.wizard-footer .wizard-next').click();
  await expect(page.locator('.guided-tutorial')).toBeVisible();
 }
@@ -64,7 +66,7 @@ test(`${viewport.width}px all ten tutorial lessons including funded construction
 for(const viewport of [{width:1440,height:900},{width:1280,height:720},{width:390,height:844}]){
  test(`${viewport.width}px stable setup and readable nation selection`,async({page})=>{
   await page.setViewportSize(viewport);await page.goto('/');await page.locator('[data-entry="demo"]').click();await page.locator('[data-entry="new-game"]').click();
-  await expect(page.locator('.wizard-release')).toHaveText('0.89.0-playtest.1');
+  await expect(page.locator('.wizard-release')).toHaveText(version);
   const nextButton=page.locator('.wizard-next');
   const nextBounds=await nextButton.boundingBox(),footerBounds=await page.locator('.wizard-footer').boundingBox();
   expect(nextBounds!.y).toBeGreaterThanOrEqual(footerBounds!.y);
@@ -72,10 +74,7 @@ for(const viewport of [{width:1440,height:900},{width:1280,height:720},{width:39
   expect(await nextButton.evaluate(el=>{const b=el.getBoundingClientRect();return el.contains(document.elementFromPoint(b.x+b.width/2,b.y+b.height/2));})).toBe(true);
   const frame=await page.locator('.campaign-wizard').boundingBox();
   await page.locator('.wizard-name-field input').fill('Layout test');
-  for(const language of ['Türkçe','English']){
-   await page.getByRole('button',{name:language,exact:true}).click();
-   const current=await page.locator('.campaign-wizard').boundingBox();expect(current!.height).toBeCloseTo(frame!.height,0);expect(current!.width).toBeCloseTo(frame!.width,0);
-  }
+  await expect(page.locator('.wizard-language')).toHaveCount(0);
   await page.locator('.wizard-next').click();await page.locator('.wizard-next').click();
   const current=await page.locator('.campaign-wizard').boundingBox();expect(current!.height).toBeCloseTo(frame!.height,0);
   await page.locator('.country-search').fill('Angola');await page.locator('.country-choice-list button').click();
@@ -138,20 +137,20 @@ test('failed atlas requests retain decorative fallback',async({page})=>{
 
 for(const viewport of [{width:1440,height:900},{width:390,height:844}]){
  test(`${viewport.width}px localized nation search and warm setup palette`,async({page})=>{
-  await page.setViewportSize(viewport);await page.goto('/');await page.locator('[data-entry="demo"]').click();await page.locator('[data-entry="new-game"]').click();await page.locator('.wizard-name-field input').fill('Palette test');await page.getByRole('button',{name:'Türkçe',exact:true}).click();
+  await page.setViewportSize(viewport);await page.goto('/');await page.getByRole('button',{name:'Türkçe',exact:true}).click();await page.locator('[data-entry="demo"]').click();await page.locator('[data-entry="new-game"]').click();await page.locator('.wizard-name-field input').fill('Palette test');
   await page.locator('.wizard-next').click();await page.locator('.wizard-next').click();
   const search=page.locator('.country-search');
   for(const query of ['Türkiye','Turkiye','TUR']){
    await search.fill(query);await expect(page.locator('.country-choice-list > button')).toHaveCount(1);await expect(page.locator('.country-choice-list > button')).toContainText('Türkiye');
   }
   await page.locator('.country-choice-list > button').click();await expect(page.locator('.country-choice-list > button')).toHaveAttribute('aria-pressed','true');
-  expect(await page.locator('.wizard-country-preview').evaluate(el=>getComputedStyle(el).backgroundImage)).toContain('rgb(48, 50, 41)');
+  expect(await page.locator('.wizard-country-preview').evaluate(el=>getComputedStyle(el).backgroundColor)).toBe('rgb(29, 37, 35)');
   expect(await page.locator('.wizard-stat-grid span').first().evaluate(el=>getComputedStyle(el).backgroundColor)).toBe('rgb(24, 28, 23)');
   await search.fill('zzzz-no-country');await expect(page.locator('.country-search-empty')).toContainText('ülke bulunamadı');
   await page.getByRole('button',{name:'Aramayı temizle',exact:true}).click();await expect(search).toHaveValue('');expect(await page.locator('.country-choice-list > button').count()).toBeGreaterThan(100);
   await expect(page.locator('.wizard-country-preview h2')).toHaveText('Türkiye');
   await page.screenshot({path:`test-results/nation-palette-${viewport.width}.png`,fullPage:true});
-  await page.locator('.wizard-next').click();expect(await page.locator('.confirm-leader-card').evaluate(el=>getComputedStyle(el).backgroundImage)).toContain('rgb(48, 50, 41)');
+  await page.locator('.wizard-next').click();expect(await page.locator('.confirm-leader-card').evaluate(el=>getComputedStyle(el).backgroundColor)).toBe('rgb(29, 37, 35)');
  });
 }
 

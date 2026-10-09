@@ -1,21 +1,118 @@
-/* Setup wizard (identity, portrait, nation, confirm). Matches the entry card size so every screen keeps the same frame. Loaded after the older wizard rules and overrides them. */
-
-.campaign-wizard-backdrop .campaign-wizard{
-  width:min(1040px,calc(100vw - 48px))!important;
-  height:min(920px,calc(100dvh - 48px))!important;
-  min-height:0!important;
-  max-height:none!important;
-  grid-template-rows:auto minmax(0,1fr) auto!important;
-  border-radius:20px!important;
+/* Shared entry/setup frame; loaded after legacy onboarding rules. */
+:is(.entry-backdrop,.campaign-wizard-backdrop){
+ --entry-height:min(920px,calc(100dvh - 48px));
+ --entry-surface:linear-gradient(180deg,#1c2321,#141a18);
+ background:radial-gradient(1100px 620px at 18% 10%,rgba(232,197,112,.16),transparent 62%),radial-gradient(900px 560px at 92% 100%,rgba(155,59,59,.18),transparent 60%),#0a0f0e!important;
+ padding:24px;
 }
-
-@media (max-width:760px){
-  .campaign-wizard-backdrop .campaign-wizard{
-    width:100%!important;
-    height:calc(100dvh - 24px)!important;
-    min-height:0!important;
-    grid-template-rows:60px 145px minmax(0,1fr) 110px!important;
-    overflow:hidden!important;
-    border-radius:16px!important;
-  }
+.entry-backdrop .entry-shell,.campaign-wizard-backdrop .campaign-wizard{
+ width:min(1040px,calc(100vw - 48px))!important;height:var(--entry-height)!important;min-height:0!important;max-height:none!important;
+ grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);
+ border:1px solid rgba(232,197,112,.38)!important;border-radius:20px;
+ background:var(--entry-surface)!important;box-shadow:0 40px 120px rgba(0,0,0,.65),inset 0 1px 0 rgba(255,236,186,.08)!important;overflow:hidden;
+}
+.entry-backdrop .entry-content{min-height:0;overflow:auto;scrollbar-width:thin;scrollbar-color:#b79a58 #141a18}
+.entry-backdrop .entry-content h1{font-size:32px}
+.entry-backdrop .entry-game-menu{margin-top:24px}
+.campaign-wizard-backdrop .campaign-wizard{grid-template-rows:122px minmax(0,1fr) 82px!important}
+.campaign-wizard-backdrop .setup-cover{grid-row:1/4;grid-column:1;height:auto;background:#141a18;display:flex;flex-direction:column;justify-content:flex-end;padding:36px}
+.campaign-wizard-backdrop .campaign-wizard>:is(.wizard-header,.wizard-body,.wizard-footer){grid-column:2}
+.campaign-wizard-backdrop .setup-cover img{position:absolute;inset:0}
+.campaign-wizard-backdrop .setup-cover>:is(span,p,small){position:relative;z-index:1}
+.campaign-wizard-backdrop .setup-cover>span{font:700 38px/1.02 Georgia,serif;color:#f6d98f;letter-spacing:.02em;text-shadow:0 2px 18px rgba(0,0,0,.6)}
+.campaign-wizard-backdrop .setup-cover p{margin:12px 0 14px;font-size:17px;color:#f3ead2!important}
+.campaign-wizard-backdrop .setup-cover>small{align-self:flex-start;padding:4px 11px;border:1px solid rgba(232,197,112,.5);border-radius:999px;background:rgba(10,15,14,.5);font-size:11px;letter-spacing:.08em}
+.campaign-wizard-backdrop .setup-cover::after{box-shadow:none;background:linear-gradient(180deg,rgba(10,15,14,.1) 35%,rgba(10,15,14,.92) 100%),linear-gradient(90deg,transparent 62%,#141a18 100%)}
+.campaign-wizard-backdrop .campaign-wizard :is(.wizard-header,.wizard-footer){background:transparent!important;border-color:rgba(232,197,112,.14)!important}
+.campaign-wizard-backdrop .wizard-header{padding:18px 26px!important;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-content:center}
+.campaign-wizard-backdrop .wizard-header h1{font:700 32px/1.08 Georgia,serif;margin:8px 0;color:#fff3d6!important;letter-spacing:-.01em}
+.campaign-wizard-backdrop .wizard-header p{font-size:12px;line-height:1.4}
+.campaign-wizard-backdrop .wizard-stepper{gap:4px}
+.campaign-wizard-backdrop .wizard-stepper>span{min-width:0;grid-template-columns:22px;padding:4px}
+.campaign-wizard-backdrop .wizard-stepper small{display:none}
+.campaign-wizard-backdrop .wizard-stepper b{width:22px;height:22px;font-size:11px}
+.campaign-wizard-backdrop .wizard-release{display:block;margin:4px 0 0}
+.campaign-wizard-backdrop .campaign-wizard :is(.wizard-body,.wizard-single-column){background:transparent!important}
+.campaign-wizard-backdrop .campaign-wizard .wizard-body{padding:22px 26px!important;scrollbar-width:thin;scrollbar-color:#b79a58 #141a18}
+.campaign-wizard-backdrop .wizard-single-column{margin:0;max-width:none;gap:18px!important}
+.campaign-wizard-backdrop .wizard-intro{margin:0!important}
+.campaign-wizard-backdrop .wizard-intro h2{font-size:24px;line-height:1.2;margin:8px 0}
+.campaign-wizard-backdrop .campaign-wizard :is(.wizard-intro p,.confirm-brief>p){font-size:13px;line-height:1.5;color:#b9b49c!important}
+.campaign-wizard-backdrop .campaign-wizard :is(.wizard-name-field,.wizard-personal-fields){margin:0!important}
+.campaign-wizard-backdrop .campaign-wizard :is(input,select){font-size:16px;border-radius:10px;border-color:rgba(232,197,112,.25)!important;background:#0e1413!important;color:#fff3d6!important;min-height:44px}
+.campaign-wizard-backdrop .wizard-name-field input{height:48px}
+.campaign-wizard-backdrop .campaign-wizard :is(input,select):focus-visible{outline:none;border-color:#e8c570!important;box-shadow:0 0 0 3px rgba(232,197,112,.16)}
+.campaign-wizard-backdrop .wizard-personal-fields{gap:12px}
+.campaign-wizard-backdrop .wizard-personal-fields small{font-size:11px;line-height:1.4}
+.campaign-wizard-backdrop .campaign-wizard button{background:#1d2523!important;border-color:rgba(232,197,112,.3)!important;color:#eadfbf!important;font-weight:600}
+.campaign-wizard-backdrop .campaign-wizard :is(button.active,.wizard-next){background:linear-gradient(180deg,#f0d07e,#dcb25a)!important;color:#17190f!important;border-color:#e8c570!important}
+.campaign-wizard-backdrop .campaign-wizard button:focus-visible{outline:3px solid #ffe397;outline-offset:2px}
+.campaign-wizard-backdrop .campaign-wizard :is(.wizard-avatar-preview,.wizard-country-preview,.confirm-leader-card){background:#1d2523!important;border-color:rgba(232,197,112,.3)!important}
+.campaign-wizard-backdrop .wizard-avatar-layout{grid-template-columns:minmax(0,1fr) 135px;gap:12px}
+.campaign-wizard-backdrop .wizard-avatar-grid{grid-template-columns:repeat(auto-fit,minmax(80px,1fr))}
+.campaign-wizard-backdrop .wizard-avatar-preview{padding:12px}
+.campaign-wizard-backdrop .wizard-avatar-preview .portrait-generated{width:100px!important;height:116px!important}
+.campaign-wizard-backdrop .wizard-country-stage{gap:12px}
+.campaign-wizard-backdrop .wizard-country-preview{padding:12px}
+.campaign-wizard-backdrop .wizard-country-preview h2{font-size:24px}
+.campaign-wizard-backdrop .wizard-country-preview .nation-flag-hero{font-size:36px}
+.campaign-wizard-backdrop .wizard-country-preview .wizard-stat-grid b{font-size:15px}
+/* Compact identity strip gives the summary the full content width. */
+.campaign-wizard-backdrop .wizard-confirm-stage{grid-template-columns:minmax(0,1fr);gap:16px;margin:0;max-width:none;align-content:start}
+.campaign-wizard-backdrop .confirm-leader-card{display:grid;grid-template-columns:80px minmax(0,1fr);column-gap:16px;row-gap:3px;align-content:center;align-items:center;justify-items:start;text-align:left;padding:14px 16px;border-radius:14px}
+.campaign-wizard-backdrop .confirm-banner{height:100%;width:4px;opacity:1}
+.campaign-wizard-backdrop .confirm-avatar{grid-column:1;grid-row:1/5;margin:0}
+.campaign-wizard-backdrop .confirm-avatar .portrait-generated{width:72px!important;height:84px!important}
+.campaign-wizard-backdrop .confirm-avatar>span{font-size:22px;right:-5px;bottom:0}
+.campaign-wizard-backdrop .confirm-leader-card>small{display:none}
+.campaign-wizard-backdrop .confirm-leader-card h2{margin:0;font-size:24px;line-height:1.2;overflow-wrap:anywhere}
+.campaign-wizard-backdrop .confirm-leader-card>strong{font-size:14px}
+.campaign-wizard-backdrop .confirm-leader-card p{margin:0;font-size:11px;line-height:1.4}
+.campaign-wizard-backdrop .confirm-brief{min-width:0}
+.campaign-wizard-backdrop .confirm-brief h2{font-size:24px;line-height:1.2;margin:6px 0}
+.campaign-wizard-backdrop .confirm-summary-grid{gap:6px;margin-top:12px;grid-template-columns:repeat(2,minmax(0,1fr))}
+.campaign-wizard-backdrop .confirm-summary-grid>span{padding:8px 10px;min-width:0;background:#0e1413;border-color:rgba(232,197,112,.18)}
+.campaign-wizard-backdrop .confirm-summary-grid small{font-size:10px;line-height:1.2}
+.campaign-wizard-backdrop .confirm-summary-grid strong{font-size:14px;line-height:1.3;margin-top:3px;overflow-wrap:anywhere}
+.campaign-wizard-backdrop .confirm-message{margin-top:10px;padding:8px 10px;font-size:11px;line-height:1.4}
+.campaign-wizard-backdrop .wizard-footer .wizard-navigation button{min-height:40px}
+@media(min-width:761px) and (max-height:800px){
+ .campaign-wizard-backdrop .campaign-wizard{grid-template-rows:98px minmax(0,1fr) 70px!important}
+ .campaign-wizard-backdrop .wizard-header{padding:12px 26px!important}
+ .campaign-wizard-backdrop .confirm-summary-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+ .campaign-wizard-backdrop .confirm-summary-grid strong{font-size:12px}
+}
+@media(max-width:760px){
+ :is(.entry-backdrop,.campaign-wizard-backdrop){padding:12px;--entry-height:calc(100dvh - 24px)}
+ .entry-backdrop .entry-shell,.campaign-wizard-backdrop .campaign-wizard{width:calc(100vw - 24px)!important;grid-template-columns:minmax(0,1fr);border-radius:16px}
+ .entry-backdrop .entry-shell{grid-template-rows:64px minmax(0,1fr)}
+ .entry-backdrop .entry-art{min-height:0;height:64px;padding:14px 20px;box-sizing:border-box}
+ .entry-backdrop .entry-art>span{font-size:22px}
+ .entry-backdrop .entry-art :is(p,small){display:none}
+ .entry-backdrop .entry-content{padding:20px;justify-content:flex-start}
+ .entry-backdrop .entry-content h1{font-size:26px}
+ .campaign-wizard-backdrop .campaign-wizard{grid-template-rows:64px 105px minmax(0,1fr) 82px!important}
+ .campaign-wizard-backdrop .setup-cover{grid-column:1;grid-row:1;height:64px;padding:14px 20px}
+ .campaign-wizard-backdrop .setup-cover>span{font-size:22px}
+ .campaign-wizard-backdrop .setup-cover :is(p,small){display:none}
+ .campaign-wizard-backdrop .campaign-wizard>:is(.wizard-header,.wizard-body,.wizard-footer){grid-column:1}
+ .campaign-wizard-backdrop .wizard-header{padding:10px 16px!important}
+ .campaign-wizard-backdrop .wizard-header h1{font-size:26px;margin:5px 0}
+ .campaign-wizard-backdrop .wizard-header p{display:none}
+ .campaign-wizard-backdrop .wizard-header>div:first-child>small{font-size:9px}
+ .campaign-wizard-backdrop .campaign-wizard .wizard-body{padding:14px 16px!important}
+ .campaign-wizard-backdrop .wizard-intro h2{font-size:22px}
+ .campaign-wizard-backdrop .wizard-avatar-layout{display:block}
+ .campaign-wizard-backdrop .wizard-avatar-preview{display:none}
+ .campaign-wizard-backdrop .wizard-country-preview .wizard-stat-grid b{font-size:12px}
+ .campaign-wizard-backdrop .wizard-country-preview h2{font-size:20px}
+ .campaign-wizard-backdrop .wizard-confirm-stage{gap:12px}
+ .campaign-wizard-backdrop .confirm-leader-card{padding:10px 12px;column-gap:12px;grid-template-columns:60px minmax(0,1fr)}
+ .campaign-wizard-backdrop .confirm-avatar .portrait-generated{width:54px!important;height:63px!important}
+ .campaign-wizard-backdrop .confirm-leader-card h2{font-size:21px}
+ .campaign-wizard-backdrop .confirm-brief h2{font-size:22px}
+ .campaign-wizard-backdrop .confirm-brief>p{font-size:12px!important}
+ .campaign-wizard-backdrop .confirm-summary-grid>span{padding:7px 8px}
+ .campaign-wizard-backdrop .confirm-summary-grid strong{font-size:12px}
+ .campaign-wizard-backdrop .confirm-summary-grid small{font-size:9px}
 }

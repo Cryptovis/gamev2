@@ -132,6 +132,7 @@ Next candidates:
 - **HD War presentation:** sprites or a measured PixiJS layer, terrain art, sound, multi-round AI plans.
 
 ## 0.89 Trade & Markets
+0.89.0-playtest.2 onboarding polish (Codex): language selection only at sign-in, one entry/setup frame and theme, compact confirmation and localized money. No gameplay balance changes.
 Delivered: supplier ranking and the country trade desk, the commodity exchange, diplomatic and cargo flights on the map, and related visual polish. Checks and limits: [Playtest 0.89](PLAYTEST-089.md).
 
 Next candidates: one price level for contracts, listings and the exchange; exchange balance (reversion speed, spreads); approval baseline pull and AI war variety from 0.88; Phase 4 technical debt.

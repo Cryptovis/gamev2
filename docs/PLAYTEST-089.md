@@ -1,4 +1,4 @@
-# 0.89.0-playtest.1 — Trade & Markets
+# 0.89.0-playtest.2 — Trade & Markets / Unified onboarding
 
 Branch: `dev/trade-markets-089`. Base: 0.88.0-playtest.1. Source: playtest feedback (finding trade partners, a commodity exchange, aircraft on the map, more graphics).
 
@@ -22,3 +22,11 @@ Branch: `dev/trade-markets-089`. Base: 0.88.0-playtest.1. Source: playtest feedb
 - The exchange price is separate from the reference prices used by bilateral contracts and the open listing market.
 - Gold and silver trades have no counterparty country.
 - Diplomatic missions now raise relations 1–3 days later.
+
+## Onboarding patch 0.89.0-playtest.2 (Codex)
+
+- Check the first sign-in screen in each of the five languages, then enter Demo → New game. Later screens should keep the language and show no second language picker.
+- Compare the card bounds across entry, game menu and all four setup steps. The final review should fit at 1440×900, 1280×720 and 390×844 with visible confirmation controls.
+- Check GDP and treasury number formatting; Turkey starts with $1.3T GDP in English. Schema remains 17.
+
+- Patch validation: 532 unit tests, TypeScript/production build and 22 targeted Playwright tests passed; all five languages at 1440×900, 1280×720 and 390×844. Desktop and mobile final-review screenshots were inspected.
