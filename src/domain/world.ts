@@ -41,6 +41,8 @@ export interface WorldState {
  actionFatigue?:Record<string,{value:number;day:number}>;
  /** 0.88 campaign victory tracking (campaignVictory.ts); absent in older saves. */
  campaign?:import('./campaign').CampaignProgress;
+ /** 0.89 diplomatic and cargo flights (flights.ts); absent in older saves. */
+ flights?:import('./flights').Flight[];
   members: Record<InstitutionId, string[]>;
   ballots: WorldBallot[];
   missions: OutreachMission[];
