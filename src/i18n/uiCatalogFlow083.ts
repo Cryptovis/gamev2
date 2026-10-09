@@ -1,4 +1,13 @@
 export const UI_CATALOG_FLOW:Record<string,string[]>={
+  // 0.86 HD War playback.
+  "Playback": ["Oynatma", "Reproducción", "回放", "Воспроизведение"],
+  "Play": ["Oynat", "Reproducir", "播放", "Воспроизвести"],
+  "Pause": ["Duraklat", "Pausa", "暂停", "Пауза"],
+  "Previous step": ["Önceki adım", "Paso anterior", "上一步", "Предыдущий шаг"],
+  "Next step": ["Sonraki adım", "Paso siguiente", "下一步", "Следующий шаг"],
+  "Playback speed": ["Oynatma hızı", "Velocidad de reproducción", "回放速度", "Скорость воспроизведения"],
+  "Skip to result": ["Sonuca atla", "Saltar al resultado", "跳到结果", "Перейти к результату"],
+  "Step": ["Adım", "Paso", "步骤", "Шаг"],
   // 0.85 HD War v2 and error boundaries.
   "Secure the supply depots": ["İkmal depolarını ele geçir", "Asegura los depósitos de suministro", "夺取补给站", "Захватите склады снабжения"],
   "Objectives are held only while no enemy is adjacent.": ["Hedefler yalnızca yanında düşman yokken tutulur.", "Los objetivos solo se mantienen mientras no haya enemigos adyacentes.", "只有在相邻格没有敌军时才能控制目标。", "Цель удерживается, только пока рядом нет противника."],

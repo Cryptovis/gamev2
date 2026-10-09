@@ -1,6 +1,6 @@
 import {test,expect,type Page} from '@playwright/test';
 async function start(page:Page){
- await page.goto('/');await page.locator('[data-entry="demo"]').click();await page.locator('[data-entry="new-game"]').click();await expect(page.locator('.wizard-release')).toHaveText('0.85.0-playtest.1');
+ await page.goto('/');await page.locator('[data-entry="demo"]').click();await page.locator('[data-entry="new-game"]').click();await expect(page.locator('.wizard-release')).toHaveText('0.86.0-playtest.1');
  await page.locator('.wizard-name-field input').fill('Tactical playtest');await page.getByRole('button',{name:'Türkçe',exact:true}).click();
  for(let i=0;i<4;i++)await page.locator('.wizard-footer .wizard-next').click();
  await page.locator('.guided-card footer button').first().click();
@@ -21,7 +21,7 @@ for(const viewport of [{width:1440,height:900},{width:390,height:844}]){
   await expect(page.locator('.tactical-plan li')).toHaveCount(1);await page.locator('.tactical-commit').click();await expect(page.locator('.review-dialog h2')).toHaveText('Taktik emirleri onayla');
   await page.locator('[data-guide="review-confirm"]').click();await expect(page.locator('.review-dialog h2')).toHaveText('Planın tamamlandı');await page.locator('[data-guide="review-confirm"]').click();await page.locator('[data-guide="review-dismiss"]').first().click();await expect(page.locator('.tactical-round-result h4')).toContainText('1');
   const result=await page.locator('.tactical-round-result p').first().innerText();await expect(page.locator('.tactical-commit')).toBeDisabled();
-  await page.locator('.tactical-round-result button').first().click();await expect(page.locator('.tactical-round-result p').first()).toHaveText(result);await page.locator('.tactical-round-result button').first().click();
+  await page.locator('.tactical-round-result button').first().click();await expect(page.locator('.tactical-round-result p').first()).toHaveText(result);await expect(page.locator('.tactical-playback')).toBeVisible();await page.locator('.tactical-playback button').last().click();await expect(page.locator('.tactical-playback button').last()).toBeDisabled();await expect(page.locator('.tactical-round-result p').first()).toHaveText(result);await page.locator('.tactical-round-result button').first().click();
   await page.screenshot({path:`test-results/tactical-083-${viewport.width}.png`,fullPage:true});
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
   await page.locator('.war-theatre > header > button').click();await page.locator('.leader-avatar-button').click();await page.locator('.profile-tabs button').last().click();await page.locator('.campaign-option-actions button').first().click();

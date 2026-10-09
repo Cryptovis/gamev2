@@ -59,6 +59,8 @@ export interface TacticalBattle {
   height: number;
   /** Battle-local seed used for terrain generation; independent of the world RNG stream. */
   seed: number;
+  /** 0.86: battle-local RNG state for combat rolls. Absent until the first 0.86 round; starts from `seed`. */
+  rngState?: number;
   startedDay: number;
   round: number;
   terrain: BattlefieldTerrain[];

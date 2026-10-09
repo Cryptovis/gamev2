@@ -214,31 +214,48 @@ export function validateTacticalOrders(s: GameState, id: string, side: TacticalS
   return [...new Set(reasons)];
 }
 
-/** AI orders: same validator, budget, vision and fuel as the player. Units on an objective hold it. */
+/**
+ * AI orders (0.86): every surviving group proposes scored options, and the best options that fit the
+ * command budget are taken, one per group. The AI uses the same validator, vision and fuel as the player.
+ * Priorities: hold a depot under threat, bombard visible enemies (above all on depots), take an open depot,
+ * contest an enemy-held depot, then advance.
+ */
 export function chooseTacticalOrders(s: GameState, id: string, side: TacticalSide): TacticalOrder[] {
-  const b = s.wars[id].tactical!, orders: TacticalOrder[] = [], visible = visibleCells(b, side);
+  const b = s.wars[id].tactical!, visible = visibleCells(b, side);
   const enemies = alive(b.units).filter(u => u.side !== side && visible.has(u.cell));
   const holders = objectiveHolders(b);
   const open = b.objectives.filter((_, i) => holders[i] !== side);
+  const enemyHeld = b.objectives.filter((_, i) => holders[i] === other(side));
   const goals = open.length ? open : b.objectives;
+  const options: { order: TacticalOrder; score: number }[] = [];
   for (const u of alive(b.units).filter(x => x.side === side)) {
-    const candidates: TacticalOrder[] = [];
-    if (u.role === 'artillery')
-      for (const enemy of [...enemies].sort((x, y) => cellDistance(b, u.cell, x.cell) - cellDistance(b, u.cell, y.cell)))
-        candidates.push({ unitId: u.id, kind: 'bombard', target: enemy.cell });
-    if (!b.objectives.includes(u.cell)) {
+    const onObjective = b.objectives.includes(u.cell);
+    const threatened = enemies.some(e => cellDistance(b, e.cell, u.cell) <= 2);
+    if (onObjective) options.push({ order: { unitId: u.id, kind: 'defend' }, score: threatened ? 7 : 4 });
+    if (u.role === 'artillery') for (const enemy of enemies) {
+      const onDepot = b.objectives.includes(enemy.cell) ? 2 : 0, nearOwn = alive(b.units).some(x => x.side === side && cellDistance(b, x.cell, enemy.cell) <= 1) ? 1 : 0;
+      options.push({ order: { unitId: u.id, kind: 'bombard', target: enemy.cell }, score: 5 + onDepot + nearOwn - cellDistance(b, u.cell, enemy.cell) * 0.1 });
+    }
+    if (!onObjective) {
       const goal = [...goals].sort((x, y) => cellDistance(b, u.cell, x) - cellDistance(b, u.cell, y) || x - y)[0];
-      const steps = allCells(b)
-        .filter(c => cellDistance(b, u.cell, c) <= 2 && cellDistance(b, c, goal) < cellDistance(b, u.cell, goal))
-        .sort((x, y) => cellDistance(b, x, goal) - cellDistance(b, y, goal) || x - y);
-      for (const target of steps) {
-        if (u.role === 'armor') candidates.push({ unitId: u.id, kind: 'flank', target });
-        candidates.push({ unitId: u.id, kind: 'move', target });
+      for (const target of allCells(b)) {
+        const remaining = cellDistance(b, target, goal);
+        if (cellDistance(b, u.cell, target) > 2 || remaining >= cellDistance(b, u.cell, goal)) continue;
+        const takesDepot = open.includes(target) ? 4 : 0, contests = enemyHeld.some(o => cellDistance(b, target, o) === 1) ? 1.5 : 0;
+        const score = 3 + takesDepot + contests - remaining * 0.3;
+        if (u.role === 'armor') options.push({ order: { unitId: u.id, kind: 'flank', target }, score: score + 0.5 });
+        options.push({ order: { unitId: u.id, kind: 'move', target }, score });
       }
     }
-    candidates.push({ unitId: u.id, kind: 'defend' });
-    const chosen = candidates.find(o => validateTacticalOrders(s, id, side, [...orders, o]).length === 0);
-    if (chosen) orders.push(chosen);
+    options.push({ order: { unitId: u.id, kind: 'defend' }, score: b.terrain[u.cell] === 'plains' ? 1 : 1.5 });
+  }
+  options.sort((x, y) => y.score - x.score || x.order.unitId.localeCompare(y.order.unitId) || (x.order.target ?? -1) - (y.order.target ?? -1));
+  const orders: TacticalOrder[] = [], used = new Set<string>();
+  for (const { order } of options) {
+    if (used.has(order.unitId)) continue;
+    if (validateTacticalOrders(s, id, side, [...orders, order]).length) continue;
+    orders.push(order); used.add(order.unitId);
+    if (orders.reduce((n, o) => n + ORDER_COST[o.kind], 0) >= COMMAND_BUDGET) break;
   }
   return orders;
 }
@@ -357,8 +374,12 @@ export function resolveTacticalRound(s: GameState, id: string, orders: TacticalO
     attacker: sideModifiers(s, stagedWar, 'attacker', bySide.attacker, bySide.defender),
     defender: sideModifiers(s, stagedWar, 'defender', bySide.defender, bySide.attacker),
   };
-  let next = resolveCombatRound({ ...s, wars: { ...s.wars, [id]: stagedWar } }, id, modifiers);
+  // Combat rolls come from the battle's own RNG stream (0.86): world events cannot change a battle's dice,
+  // and a battle does not consume the world stream.
+  let next = resolveCombatRound({ ...s, simulationSeed: b.rngState ?? b.seed, wars: { ...s.wars, [id]: stagedWar } }, id, modifiers);
   if (next.wars[id].rounds === w.rounds) return s;
+  const rngState = next.simulationSeed;
+  next = { ...next, simulationSeed: s.simulationSeed };
   const nw = next.wars[id];
   const difference = (side: TacticalSide): CasualtySnapshot => {
     const total = side === 'attacker' ? nw.attackerLosses : nw.defenderLosses, previous = side === 'attacker' ? w.attackerLosses : w.defenderLosses;
@@ -402,7 +423,7 @@ export function resolveTacticalRound(s: GameState, id: string, orders: TacticalO
     attackerLosses: losses.attacker, defenderLosses: losses.defender, attackerFuel: costs.attacker, defenderFuel: costs.defender,
     progressBefore: w.progress, progressAfter: nw.progress, units: after, beforeUnits: structuredClone(b.units), objectives: holders, revealed, actions,
   };
-  return { ...next, wars: { ...next.wars, [id]: { ...nw, tactical: { ...b, round: b.round + 1, units: after, revealed, events: [...b.events, event].slice(-60) } } } };
+  return { ...next, wars: { ...next.wars, [id]: { ...nw, tactical: { ...b, rngState, round: b.round + 1, units: after, revealed, events: [...b.events, event].slice(-60) } } } };
 }
 
 export function processAutoTacticalWars(s: GameState): GameState {
