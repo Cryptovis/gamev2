@@ -122,3 +122,11 @@ Next, in order:
 Delivered: Phase 2 economy and rule-parity items (C4 rest, C10–C13, C15, D8, D12, A5, A6). Checks and limits: [Playtest 0.87](PLAYTEST-087.md).
 
 Next: 0.88 Politics & Victory (AI-declared wars and the player-as-defender path B9/E1, factions, contested elections and coup risk E2, a data-driven event catalogue with chains E3, campaign victory paths E4, allies joining wars E5).
+
+## 0.88 Politics & Victory
+Delivered: B9 and E1–E5. Phase 2 of the 0.83 audit is complete. Checks and limits: [Playtest 0.88](PLAYTEST-088.md).
+
+Next candidates:
+- **Balance from playtests:** approval baseline pull (so approval does not drift to the ceiling), AI war outcome variety, AI targeting of the player, democratic unrest.
+- **Phase 4, technical debt:** single translation catalogue per language with lazy loading, CSS layers and a z-index scale, a shared modal hook, engine preview functions for the remaining UI forecasts, map texture conversion, Prettier, docs archive, demo-account hashing.
+- **HD War presentation:** sprites or a measured PixiJS layer, terrain art, sound, multi-round AI plans.

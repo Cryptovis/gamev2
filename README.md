@@ -1,4 +1,4 @@
-# The Real President — 0.87.0-playtest.1
+# The Real President — 0.88.0-playtest.1
 
 A browser-based grand-strategy prototype built with React, TypeScript, Zustand, D3 Geo and Dexie. Lead a country through its economy, resources, diplomacy, development and military conflicts. Chart.js provides economic charts; Vitest and Playwright verify gameplay and browser flows.
 
@@ -6,9 +6,9 @@ A browser-based grand-strategy prototype built with React, TypeScript, Zustand, 
 
 | Item | Current state |
 |---|---|
-| Version | **0.87.0-playtest.1 — Living World** |
-| Development branch | `dev/living-world-087` |
-| Save schema | 17 (0.86–0.87 add optional fields only); schemas 12–16 migrate automatically, older or newer saves are refused with a warning |
+| Version | **0.88.0-playtest.1 — Politics & Victory** |
+| Development branch | `dev/politics-victory-088` |
+| Save schema | 17 (0.86–0.88 add optional fields only); schemas 12–16 migrate automatically, older or newer saves are refused with a warning |
 | Validation | CI passed for this release: unit tests, TypeScript, production build and Playwright browser scenarios |
 | V3 | Reserved for the complete-playability milestone; no rewrite is required for 0.83 |
 
@@ -34,6 +34,13 @@ npm run test:e2e
 `check` runs tests, TypeScript checks and the production build. Browser tests run separately against the production preview.
 
 ## Recent changelog
+
+### 0.88.0-playtest.1 — Politics & Victory
+
+- AI countries now go to war with each other, and can declare war on you; you can defend, win or lose as the defender. Allies may join the defender.
+- Factions, contested elections with real margins, and regime crises and coups in non-democracies, shown in a new Politics section.
+- 32 event kinds, including chains, at about 7 a year; far fewer advisor pop-ups.
+- Three ways to win the campaign: Enduring Mandate, Economic Leadership, Regional Leadership. You can keep playing after victory.
 
 ### 0.87.0-playtest.1 — Living World
 
@@ -96,6 +103,7 @@ Delivered milestones are retained here when new releases are added. This table s
 
 | Milestone | Delivered foundation | Record |
 |---|---|---|
+| 0.88 — Politics & Victory | AI wars and the defender path, allies joining, factions and contested elections, regime crises, data-driven events with chains, campaign victory | [Playtest 0.88](docs/PLAYTEST-088.md) |
 | 0.87 — Living World | Repeat fatigue and GDP-scaled costs, one market price scale, demand-bound AI buyers, shared treaty rules, command and migration cleanup | [Playtest 0.87](docs/PLAYTEST-087.md) |
 | 0.86 — HD War Playback | Step-by-step round playback with effects and controls, battle RNG stream, scored tactical AI | [Playtest 0.86](docs/PLAYTEST-086.md) |
 | 0.85 — HD War v2 | 10×8 symmetric battlefield, contested depots, contact-based combat, action timeline, auto-resolve parity, error boundaries | [Playtest 0.85](docs/PLAYTEST-085.md) |
