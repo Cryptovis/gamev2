@@ -1,4 +1,4 @@
-# The Real President — 0.89.0-playtest.2
+# The Real President — 0.89.0-playtest.3
 
 A browser-based grand-strategy prototype built with React, TypeScript, Zustand, D3 Geo and Dexie. Lead a country through its economy, resources, diplomacy, development and military conflicts. Chart.js provides economic charts; Vitest and Playwright verify gameplay and browser flows.
 
@@ -6,7 +6,7 @@ A browser-based grand-strategy prototype built with React, TypeScript, Zustand, 
 
 | Item | Current state |
 |---|---|
-| Version | **0.89.0-playtest.2 — Trade & Markets / Unified onboarding** |
+| Version | **0.89.0-playtest.3 — Trade & Markets / Onboarding polish** |
 | Development branch | `dev/trade-markets-089` |
 | Save schema | 17 (0.86–0.89 add optional fields only); schemas 12–16 migrate automatically, older or newer saves are refused with a warning |
 | Validation | CI passed for this release: unit tests, TypeScript, production build and Playwright browser scenarios |
@@ -34,6 +34,11 @@ npm run test:e2e
 `check` runs tests, TypeScript checks and the production build. Browser tests run separately against the production preview.
 
 ## Recent changelog
+
+### 0.89.0-playtest.3 — Portrait tiles & leadership quotes (Codex)
+
+- Portrait tiles keep images and soft shadows within their cards.
+- A sourced leadership quote appears below the identity fields; it is randomly chosen per setup opening and available in all five languages.
 
 ### 0.89.0-playtest.2 — Unified onboarding (Codex)
 

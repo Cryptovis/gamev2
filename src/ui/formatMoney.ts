@@ -2,7 +2,7 @@
 export function compactMoney(billions: number, locale: string = 'en') {
   if (!Number.isFinite(billions)) return '—';
   return new Intl.NumberFormat(locale, {
-    style: 'currency', currency: 'USD', notation: 'compact', maximumFractionDigits: 1,
+    style: 'currency', currency: 'USD', notation: 'compact', minimumFractionDigits: 0, maximumFractionDigits: 1,
   }).format(billions * 1e9);
 }
 

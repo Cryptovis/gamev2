@@ -3,8 +3,8 @@
 Bu dosya yeni bir konuşmanın ilk okuması içindir. Geçmiş konuşmayı taşımadan kaldığımız yerden devam etmeyi sağlar.
 
 ## Durum
-- Sürüm: **0.89.0-playtest.2 "Trade & Markets / Unified onboarding"**
-- Dal: `dev/trade-markets-089`. Önceki hotfix `f249f31` tüm CI aşamalarını geçti; bu patch için yeni CI sonucu ayrıca kontrol edilmeli.
+- Sürüm: **0.89.0-playtest.3 "Trade & Markets / Onboarding polish"**
+- Dal: `dev/trade-markets-089`. Önceki hotfix `f249f31` tüm CI aşamalarını geçti; 0.89.0-playtest.2 CI para biçimlendirme testinde Node 22 minimum ondalık varsayımı yüzünden başarısız oldu; playtest.3 minimumFractionDigits:0 ile düzeltiyor. Yeni CI ayrıca kontrol edilmeli.
 - `main`'e doğrudan push yok. Yeni işler `dev/<name>-0XX` dallarında yapılır.
 - Kapsam (0.89): ticaret ortağı seçimi ve ülke TRADE sekmesi, emtia borsası (spread, komisyon, günlük limit, pozisyon limiti, depolama, şoklar), diplomatik jet ve kargo uçakları (harita katmanı, mesafeye göre varış süresi).
 
@@ -46,3 +46,9 @@ Bu dosyayı oku, `git status` ve son commit'e bak, kullanıcıya bekleyen işler
 - Bir önceki hotfix ve kullanıcı yetkisi geçerli: Codex gerekli commit/push işlemlerini ek onay beklemeden yapabilir.
 
 - Doğrulama: 532 birim testi, TypeScript/üretim derlemesi ve 22 hedefli tarayıcı testi geçti. Beş dilde 1440×900, 1280×720 ve 390×844 son özet kaydırmadan sığıyor.
+
+## 0.89.0-playtest.3 (Codex)
+- Portre kartlarının içinden taşan sabit genişlik düzeltildi; gölge yumuşatıldı.
+- İlk profil adımına kutusuz alıntı eklendi: dört kaynaklı söz, beş dil; her kurulum açılışında UI rastgele seçer, yazarken/geri dönerken değişmez. `src/data/leadershipQuotes.ts` kaynakları ve çevirileri içerir. Oyun RNG/simülasyonu etkilenmez.
+
+- Doğrulama: 534 birim testi; Node 22 para düzeltmesi sonrası ilgili 4 test yeniden geçti. Build ve 17 tarayıcı testi geçti.

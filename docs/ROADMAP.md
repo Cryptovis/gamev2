@@ -132,6 +132,7 @@ Next candidates:
 - **HD War presentation:** sprites or a measured PixiJS layer, terrain art, sound, multi-round AI plans.
 
 ## 0.89 Trade & Markets
+0.89.0-playtest.3 (Codex): bounded portrait tiles and sourced, localized leadership sayings on the identity step.
 0.89.0-playtest.2 onboarding polish (Codex): language selection only at sign-in, one entry/setup frame and theme, compact confirmation and localized money. No gameplay balance changes.
 Delivered: supplier ranking and the country trade desk, the commodity exchange, diplomatic and cargo flights on the map, and related visual polish. Checks and limits: [Playtest 0.89](PLAYTEST-089.md).
 

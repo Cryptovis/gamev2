@@ -1,4 +1,4 @@
-# 0.89.0-playtest.2 — Trade & Markets / Unified onboarding
+# 0.89.0-playtest.3 — Trade & Markets / Onboarding polish
 
 Branch: `dev/trade-markets-089`. Base: 0.88.0-playtest.1. Source: playtest feedback (finding trade partners, a commodity exchange, aircraft on the map, more graphics).
 
@@ -30,3 +30,10 @@ Branch: `dev/trade-markets-089`. Base: 0.88.0-playtest.1. Source: playtest feedb
 - Check GDP and treasury number formatting; Turkey starts with $1.3T GDP in English. Schema remains 17.
 
 - Patch validation: 532 unit tests, TypeScript/production build and 22 targeted Playwright tests passed; all five languages at 1440×900, 1280×720 and 390×844. Desktop and mobile final-review screenshots were inspected.
+
+## Portrait/quote patch 0.89.0-playtest.3 (Codex)
+
+- Open a new setup: a box-free leadership quote and its author should appear below the identity fields in the chosen language. It stays the same while typing or navigating back from the portrait step; a fresh setup opening selects randomly (repeats are possible).
+- Check portrait thumbnails at desktop and mobile widths: no image may extend beyond its card. Scroll and filters should still work.
+
+- Patch validation: 534 unit tests passed; compact-money and quote suites rechecked after the Node 22 formatting fix. TypeScript/production build and 17 targeted browser tests passed; desktop/mobile portrait and quote screenshots inspected.

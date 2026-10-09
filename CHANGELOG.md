@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.89.0-playtest.3 — Portrait tiles & leadership quotes (Codex)
+- Setup portraits fit inside their selection cards, with softer shadows and no overlap into neighbouring tiles.
+- The identity step shows one randomly selected, sourced saying from Atatürk, Lincoln or Mandela, translated into all five game languages. It uses open quotation marks and serif text without a box, and stays stable while editing or moving between steps.
+- Compact money explicitly omits unnecessary trailing decimal zeros across Node/browser versions (fixes the Node 22 CI failure from the previous patch).
+- Validation: 534 unit tests passed; compact-money and quote suites rechecked after the Node 22 formatting fix. TypeScript/production build and 17 targeted browser tests passed; desktop/mobile portrait and quote screenshots inspected.
+- UI-only random selection; simulation rules and save schema remain unchanged. Source links live in `src/data/leadershipQuotes.ts`; translated wording is maintained by the project.
+
 ## 0.89.0-playtest.2 — Unified onboarding (Codex)
 - Choose the language on the first sign-in screen; registration, the game menu and setup keep that language without repeating the picker.
 - Sign-in and campaign setup share the same card size, cover image, warm palette, inputs and heading style. Mobile keeps a fixed frame with scrollable form content and visible setup navigation.

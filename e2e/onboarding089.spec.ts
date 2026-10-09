@@ -27,3 +27,22 @@ for(const viewport of [{width:1440,height:900},{width:1280,height:720},{width:39
   });
  }
 }
+
+for(const viewport of [{width:1440,height:900},{width:390,height:844}]){
+ test(`${viewport.width}px stable opening quote and bounded portraits`,async({page})=>{
+  await page.setViewportSize(viewport);await page.goto('/');await page.locator('[data-entry="demo"]').click();await page.locator('[data-entry="new-game"]').click();
+  const quote=page.locator('.wizard-leadership-quote');await expect(quote).toBeVisible();
+  const id=await quote.getAttribute('data-quote-id'),text=await quote.locator('blockquote').innerText();
+  expect(text.length).toBeGreaterThan(10);await expect(quote.locator('figcaption')).not.toBeEmpty();
+  expect(await quote.evaluate(el=>({border:getComputedStyle(el).borderTopWidth,background:getComputedStyle(el).backgroundColor}))).toEqual({border:'0px',background:'rgba(0, 0, 0, 0)'});
+  await page.locator('.wizard-name-field input').fill('Quote test');await expect(quote).toHaveAttribute('data-quote-id',id!);
+  await page.locator('.wizard-next').click();
+  expect(await page.locator('.wizard-avatar-grid>button').evaluateAll(buttons=>buttons.every(button=>{
+   const image=button.querySelector('.portrait-generated')!.getBoundingClientRect(),card=button.getBoundingClientRect();
+   return image.left>=card.left&&image.right<=card.right&&image.top>=card.top&&image.bottom<=card.bottom;
+  }))).toBe(true);
+  await page.screenshot({path:`test-results/bounded-portraits-${viewport.width}.png`});
+  await page.locator('.wizard-back').click();await expect(quote).toHaveAttribute('data-quote-id',id!);await expect(quote.locator('blockquote')).toHaveText(text);
+  await page.screenshot({path:`test-results/opening-quote-${viewport.width}.png`});
+ });
+}
