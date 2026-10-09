@@ -48,8 +48,9 @@ describe("investment decision integrity", () => {
       snap = snapshotGame(s),
       q = investmentReview(s, "coal_mine");
     expect(q.allowed).toBe(true);
+    // 0.87 (C10): the review shows what the engine charges — catalog $0.002B scaled by TUR's 0.15 coal grade.
     expect(q.metrics.find((m) => m[0] === "Additional running cost")?.[1]).toBe(
-      "$0.002B/day",
+      "$0.0003B/day",
     );
     expect(s).toEqual(snap);
   });

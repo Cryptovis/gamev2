@@ -43,6 +43,44 @@ export function buildFacility(state:GameState,id:string,kind:FacilityKind):GameS
 }
 /** Facility running costs scale down below $400B GDP (floor 2%); flat catalog upkeep alone exceeded the whole fiscal surplus of small states. */
 export const facilityUpkeepScale=(c:CountryState)=>clamp(c.economy.gdp/400,.02,1);
+/** Output multiplier of one facility: deposit grade for mines, national water/rubber potential, otherwise 1. */
+export function facilityPotential(n:NationalIndustrialEconomy,kind:FacilityKind){
+ const d=FACILITIES[kind];
+ return d.deposit?n.potential[d.deposit]:d.output==='water'?n.potential.water:d.output==='rubber'?n.potential.rubber:1;
+}
+/**
+ * Daily running cost of `count` facilities (audit C10). GDP-scaled like before; a mine's cost also follows its
+ * deposit grade (floor 10%, cap 100%), so a low-grade deposit is a smaller operation rather than a guaranteed loss.
+ */
+export function facilityUpkeep(c:CountryState,n:NationalIndustrialEconomy,kind:FacilityKind,count=n.facilities[kind]){
+ const d=FACILITIES[kind];
+ return d.upkeep*count*facilityUpkeepScale(c)*(d.deposit?clamp(n.potential[d.deposit],.1,1):1);
+}
+export interface FacilityEconomics {output:number;outputValue:number;inputCost:number;upkeep:number;margin:number}
+/** Daily output, input cost, upkeep and margin of one more facility of `kind` in country `id`, at the given prices. */
+export function facilityDailyEconomics(state:GameState,id:string,kind:FacilityKind,priceOf:(good:IndustrialGood)=>number=good=>GOODS[good].price):FacilityEconomics|null {
+ const c=state.countries[id],n=state.industrialEconomy[id],d=FACILITIES[kind];
+ if(!c||!n||!d)return null;
+ const output=d.yield*facilityPotential(n,kind)*c.industry.utilization/100;
+ const outputValue=d.output?output*priceOf(d.output):0;
+ const inputCost=Object.entries(d.inputs).reduce((sum,[good,amount])=>sum+(amount??0)*output*priceOf(good as IndustrialGood),0);
+ const upkeep=facilityUpkeep(c,n,kind,1);
+ return {output,outputValue,inputCost,upkeep,margin:outputValue-inputCost-upkeep};
+}
+/** Opening world density of national factories per $B of GDP (USA 181/29 000, DEU 29/4 700). */
+export const FACTORIES_PER_GDP=.0065;
+/** One-off GDP gain of a completed Industrial Park, as a share of its build cost, capped at 2% of GDP (audit C12). */
+export const PARK_GDP_RETURN=.5,PARK_GDP_CAP=.02;
+/** Factories an AI aims for (audit C12): 10% above the opening density, 25% above it under a growth or rearmament goal. */
+export function civilFactoryTarget(c:CountryState){
+ const ambition=c.ai.strategicGoal==='grow_economy'||c.ai.strategicGoal==='rearm'?1.25:1.1;
+ return Math.max(2,Math.ceil(c.economy.gdp*FACTORIES_PER_GDP*ambition));
+}
+/** GDP added when an Industrial Park completes; returns fall to a quarter as factories outgrow the economy. */
+export function civilParkGdpGain(c:CountryState){
+ const saturation=clamp(c.economy.gdp*FACTORIES_PER_GDP/Math.max(1,c.industry.factories),.25,1);
+ return Math.min(FACILITIES.civil_factory.cost*PARK_GDP_RETURN,Math.max(0,c.economy.gdp)*PARK_GDP_CAP)*saturation;
+}
 export function processIndustrialEconomy(state:GameState):GameState {
  // One mutable draft per country, written back once: avoids re-copying the 203-country maps on every facility step.
  const countries={...state.countries},industrialEconomy={...state.industrialEconomy};let production=state.production;
@@ -61,15 +99,14 @@ export function processIndustrialEconomy(state:GameState):GameState {
   };
   for(const p of n.projects.filter(p=>p.readyDay<=state.day)){
    n.facilities[p.kind]++;
-   if(p.kind==='civil_factory'){c.industry.factories+=5;c.industry.refineries+=1;}
+   if(p.kind==='civil_factory'){c.economy.gdp+=civilParkGdpGain(c);c.industry.factories+=5;c.industry.refineries+=1;}
   }
   n.projects=n.projects.filter(p=>p.readyDay>state.day);
   const boost=(id===state.playerCountryId&&state.day<state.leadership.celebrationUntilDay?1.12:1)*((occupationFor(state,id)?.unrest??0)>=80?.7:1);
   for(const [kind,d] of Object.entries(FACILITIES) as Array<[FacilityKind,typeof FACILITIES[FacilityKind]]>){
    const count=n.facilities[kind];if(!count||!n.enabled[kind])continue;
-   const potential=d.deposit?n.potential[d.deposit]:d.output==='water'?n.potential.water:d.output==='rubber'?n.potential.rubber:1;
-   const output=d.yield*count*potential*(c.industry.utilization/100)*boost;
-   const upkeep=d.upkeep*count*facilityUpkeepScale(c);
+   const output=d.yield*count*facilityPotential(n,kind)*(c.industry.utilization/100)*boost;
+   const upkeep=facilityUpkeep(c,n,kind,count);
    let ratio=1,reason='';
    const constrain=(available:number,needed:number,label:string)=>{if(needed>0&&available/needed<ratio){ratio=clamp(available/needed,0,1);reason=label;}};
    constrain(Math.max(0,c.economy.treasury),upkeep,'treasury');constrain(c.processedResources.electricity,d.power*count,'electricity');
@@ -100,8 +137,9 @@ export function processIndustrialAI(state:GameState):GameState {
   if(research){const reports=next.sitrep;next=unlockTechnology(next,c.id,research);next={...next,sitrep:reports};}
   if(c.economy.treasury<30)continue;
   const n=next.industrialEconomy[c.id];if(n.projects.length)continue;
-  const kind:FacilityKind=goodStock(next,c.id,'water')<25?'waterworks':c.ai.strategicGoal==='rearm'&&c.technology.unlocked.includes('ind-engines')?'engine_works':'civil_factory';
-  next=buildFacility(next,c.id,kind);
+  // Audit C12: Industrial Parks only toward a GDP-linked factory target, not every month a treasury allows it.
+  const kind:FacilityKind|null=goodStock(next,c.id,'water')<25?'waterworks':c.ai.strategicGoal==='rearm'&&c.technology.unlocked.includes('ind-engines')?'engine_works':next.countries[c.id].industry.factories<civilFactoryTarget(next.countries[c.id])?'civil_factory':null;
+  if(kind)next=buildFacility(next,c.id,kind);
  }
  return next;
 }

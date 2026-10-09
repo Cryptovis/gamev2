@@ -47,7 +47,8 @@ describe('industrial investment and component manufacturing',()=>{
 
 describe('industrial exchange and secured supply',()=>{
  it('conserves real stock and treasury during an export',()=>{
-  const s=ready();const before=s.industrialEconomy.TUR.stock.water+s.industrialEconomy.GRC.stock.water;
+  const s=ready();s.industrialEconomy.GRC.stock.water=10;// 0.87 (C11): an AI buyer only imports what it is short of.
+  const before=s.industrialEconomy.TUR.stock.water+s.industrialEconomy.GRC.stock.water;
   const next=placeIndustrialOrder(s,'GRC','water',5,'sell',0);
   expect(next.countries.TUR.economy.treasury).toBeGreaterThan(100);expect(next.countries.TUR.economy.treasury+next.countries.GRC.economy.treasury).toBeCloseTo(200);
   expect(goodStock(next,'TUR','water')+goodStock(next,'GRC','water')).toBeCloseTo(before);

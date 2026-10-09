@@ -8,7 +8,7 @@ import {useState} from 'react';
 import type {IndustrialGood} from '../../domain/industrial';
 import {GOODS} from '../../data/industrialCatalog';
 import {goodStock} from '../../engine/systems/industrialEconomy';
-import {industrialPrice,industrialQuote,canTradeIndustrial} from '../../engine/systems/industrialMarket';
+import {industrialPrice,industrialQuote,industrialOrderError,canTradeIndustrial} from '../../engine/systems/industrialMarket';
 import {useGameStore} from '../../store/gameStore';
 import {IndustryIcon} from '../icons/GameIcons';
 
@@ -21,8 +21,7 @@ export function IndustrialMarketPanel(){
  const sellerId=direction==='buy'?target?.id??'':player.id,buyerId=direction==='buy'?player.id:target?.id??'';
  const quote=industrialQuote(state,sellerId,buyerId,good,quantity);
  const contracts=Object.values(state.industrialContracts).filter(c=>c.active&&(c.sellerId===player.id||c.buyerId===player.id));
- const duplicate=years!==0&&contracts.some(c=>c.sellerId===sellerId&&c.buyerId===buyerId&&c.good===good);
- const error=duplicate?'A supply contract already exists for this route':quote.error;
+ const error=target?industrialOrderError(state,target.id,good,quantity,direction,years):quote.error;
  return <section className="industrial-market">
   <OpenExchange/><details className="legacy-exchange"><summary><LocaleText value="Direct partner shipments & recurring contracts"/></summary><header className="industrial-heading"><IndustryIcon size={27}/><div><small><LocaleText value={"COMMODITIES / COMPONENTS / DEFENSE"}/></small><h3><LocaleText value={"Industrial Exchange"}/></h3><p><LocaleText value={"Buy supplies or sell reserves. Every shipment transfers real stock and treasury."}/></p></div></header>
   <div className="exchange-board">{(Object.entries(GOODS) as Array<[IndustrialGood,typeof GOODS[IndustrialGood]]>).map(([id,d])=><button key={id} className={good===id?'selected':''} onClick={()=>{setGood(id);setReview(false);setPartner('')}}><AssetThumbnail asset={id} size={56}/><span><LocaleText value={d.label}/></span><b>{money(industrialPrice(state,id))}</b><small><LocaleText value={"OWN "}/><LocaleText value={goodStock(state,player.id,id).toFixed(1)}/></small></button>)}</div>

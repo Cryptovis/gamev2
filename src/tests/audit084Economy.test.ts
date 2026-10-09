@@ -6,7 +6,7 @@ import type { FacilityKind, IndustrialGood, NationalIndustrialEconomy } from '..
 import { tickGame } from '../engine/tick';
 import { simulateEconomy } from '../engine/systems/economy';
 import { occupationFor } from '../engine/systems/governance';
-import { changeGoodStock, facilityUpkeepScale, goodStock, processIndustrialEconomy } from '../engine/systems/industrialEconomy';
+import { changeGoodStock, civilParkGdpGain, facilityPotential, facilityUpkeep, facilityUpkeepScale, goodStock, processIndustrialEconomy } from '../engine/systems/industrialEconomy';
 import { infrastructureMaintenance, processInfrastructure } from '../engine/systems/infrastructure';
 import { EXCHANGE_GOODS, exchangePrice, exchangeStock, exportableStock, living, processExchange, withLiving } from '../engine/systems/livingEconomy';
 import { processNationalProduction } from '../engine/systems/production';
@@ -17,7 +17,8 @@ const clamp = (n: number, a: number, b: number) => Math.max(a, Math.min(b, n));
 const unblock = (s: GameState): GameState => ({ ...s, activeEvent: null, activeAdvisor: null, world: { ...s.world, tutorial: { ...s.world.tutorial, active: false }, living: s.world.living ? { ...s.world.living, advice: { ...s.world.living.advice, active: null }, notice: undefined } : s.world.living } });
 
 // Pre-0.84 algorithm (re-copies the country maps after every facility step), kept as the reference for the C8 rewrite.
-// Upkeep uses the same facilityUpkeepScale as the engine so only the draft/write-back change is compared.
+// Upkeep, potential and the park GDP gain use the engine helpers (0.87: C10 grade-scaled mine upkeep, C12 park GDP gain)
+// so only the draft/write-back change is compared.
 function legacyProcessIndustrialEconomy(state: GameState): GameState {
  let next=state;
  for(const id of Object.keys(state.countries)){
@@ -25,16 +26,15 @@ function legacyProcessIndustrialEconomy(state: GameState): GameState {
   let c=next.countries[id];let n={...next.industrialEconomy[id],stock:{...next.industrialEconomy[id].stock},facilities:{...next.industrialEconomy[id].facilities},deposits:{...next.industrialEconomy[id].deposits},lastOutput:{},bottlenecks:{},lastCosts:0} as NationalIndustrialEconomy;
   for(const p of n.projects.filter(p=>p.readyDay<=state.day)){
    n.facilities[p.kind]++;
-   if(p.kind==='civil_factory')c={...c,industry:{...c.industry,factories:c.industry.factories+5,refineries:c.industry.refineries+1}};
+   if(p.kind==='civil_factory')c={...c,economy:{...c.economy,gdp:c.economy.gdp+civilParkGdpGain(c)},industry:{...c.industry,factories:c.industry.factories+5,refineries:c.industry.refineries+1}};
   }
   n.projects=n.projects.filter(p=>p.readyDay>state.day);
   next={...next,countries:{...next.countries,[id]:c},industrialEconomy:{...next.industrialEconomy,[id]:n}};
   const boost=(id===state.playerCountryId&&state.day<state.leadership.celebrationUntilDay?1.12:1)*((occupationFor(state,id)?.unrest??0)>=80?.7:1);
   for(const [kind,d] of Object.entries(FACILITIES) as Array<[FacilityKind,typeof FACILITIES[FacilityKind]]>){
    const count=n.facilities[kind];if(!count||!n.enabled[kind])continue;
-   const potential=d.deposit?n.potential[d.deposit]:d.output==='water'?n.potential.water:d.output==='rubber'?n.potential.rubber:1;
-   const output=d.yield*count*potential*(c.industry.utilization/100)*boost;
-   const upkeep=d.upkeep*count*facilityUpkeepScale(c);
+   const output=d.yield*count*facilityPotential(n,kind)*(c.industry.utilization/100)*boost;
+   const upkeep=facilityUpkeep(c,n,kind,count);
    let ratio=1,reason='';
    const constrain=(available:number,needed:number,label:string)=>{if(needed>0&&available/needed<ratio){ratio=clamp(available/needed,0,1);reason=label;}};
    constrain(Math.max(0,c.economy.treasury),upkeep,'treasury');constrain(c.processedResources.electricity,d.power*count,'electricity');

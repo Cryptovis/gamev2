@@ -2,8 +2,10 @@ import {activeCountries} from '../../domain/sovereignty';
 import type { CountryState, GameState, TradeDeal, TradeResource } from '../../domain/game';
 import { simulateResources } from './resources';
 import { changeRelations, embassyFor, embassyRelationBonus } from './diplomacy';
+import { REFERENCE_PRICES } from '../../data/commodityPrices';
 
-export const TRADE_PRICES: Record<TradeResource, number> = { food: 0.025, oil: 0.06, iron: 0.04, uranium: 0.22 };
+/** Raw-resource slice of the single reference price table (audit C10). */
+export const TRADE_PRICES: Record<TradeResource, number> = { food: REFERENCE_PRICES.food, oil: REFERENCE_PRICES.oil, iron: REFERENCE_PRICES.iron, uranium: REFERENCE_PRICES.uranium };
 
 const clamp = (v:number,min:number,max:number)=>Math.min(max,Math.max(min,v));
 

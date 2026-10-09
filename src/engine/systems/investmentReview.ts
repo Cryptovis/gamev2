@@ -1,7 +1,8 @@
 import type { GameState } from "../../domain/game";
 import type { FacilityKind } from "../../domain/industrial";
 import { FACILITIES, GOODS } from "../../data/industrialCatalog";
-import { goodStock } from "./industrialEconomy";
+import { civilParkGdpGain, facilityDailyEconomics, goodStock } from "./industrialEconomy";
+import { industrialPrice } from "./industrialMarket";
 export function investmentReview(state: GameState, kind: FacilityKind) {
   const c = state.countries[state.playerCountryId],
     n = state.industrialEconomy[c.id],
@@ -17,6 +18,9 @@ export function investmentReview(state: GameState, kind: FacilityKind) {
     ((d.yield * potential * c.industry.utilization) / 100) *
     (state.day < state.leadership.celebrationUntilDay ? 1.12 : 1);
   const capacity = extra * n.facilities[kind];
+  const economics = facilityDailyEconomics(state, c.id, kind, (good) =>
+    industrialPrice(state, good),
+  );
   const warnings = [
     "Production estimate assumes sufficient inputs, power and cash. Operating expenses begin after completion.",
     d.description,
@@ -73,7 +77,19 @@ export function investmentReview(state: GameState, kind: FacilityKind) {
           ? `${(n.lastOutput[d.output] ?? 0).toFixed(3)}/day`
           : "Not a resource producer",
       ],
-      ["Additional running cost", `$${d.upkeep.toFixed(3)}B/day`],
+      [
+        "Additional running cost",
+        `$${(economics?.upkeep ?? d.upkeep).toFixed(4)}B/day`,
+      ],
+      d.output
+        ? [
+            "Estimated daily margin at market prices",
+            `$${(economics?.margin ?? 0).toFixed(4)}B/day`,
+          ]
+        : [
+            "Estimated GDP gain on completion",
+            `+$${civilParkGdpGain(c).toFixed(2)}B`,
+          ],
       ["Additional power", `${d.power.toFixed(3)}/day`],
       [
         "Daily inputs",
