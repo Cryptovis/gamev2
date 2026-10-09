@@ -4,6 +4,7 @@ import type { ResourceFlow } from './resources';
 export interface EconomyFlow {
   taxRevenue: number;
   publicSpending: number;
+  debtService: number;
   dailyBalance: number;
   dailyGrowthRate: number;
   next: EconomyState;
@@ -18,9 +19,14 @@ export function simulateEconomy(country: CountryState, resources: ResourceFlow):
 
   const taxRevenue = (economy.gdp * (economy.taxRate / 100)) / 365;
   const publicSpending = economy.gdp * 0.00035 + country.military.personnel*.00000006;
-  const dailyBalance = taxRevenue - publicSpending;
+  // Debt service (audit C4): interest rises with leverage, so a heavily indebted state pays more of its revenue back.
+  const debtRate = 0.03 + 0.05 * clamp(economy.debt / Math.max(1, economy.gdp), 0, 2);
+  const debtService = (economy.debt * debtRate) / 365;
+  const dailyBalance = taxRevenue - publicSpending - debtService;
 
-  const productiveGrowth = utilization * productivity * 0.00016;
+  // High tax rates dampen private investment (audit C4): no effect up to 25%, then -1% of growth per point, floored at 70%.
+  const taxFriction = clamp(1 - Math.max(0, economy.taxRate - 25) * 0.01, 0.7, 1);
+  const productiveGrowth = utilization * productivity * 0.00016 * taxFriction;
   const inflationDrag = Math.max(0, economy.inflation - 4) * 0.000004;
   const unemploymentDrag = Math.max(0, economy.unemployment - 6) * 0.000002;
   // Stored electricity is capped (1500) by energy.ts, so compare it with daily civil demand: pressure means the buffer no longer covers generation shortfalls.
@@ -41,5 +47,5 @@ export function simulateEconomy(country: CountryState, resources: ResourceFlow):
     unemployment: clamp(economy.unemployment + unemploymentTrend, 0, 45),
   };
 
-  return { taxRevenue, publicSpending, dailyBalance, dailyGrowthRate, next };
+  return { taxRevenue, publicSpending, debtService, dailyBalance, dailyGrowthRate, next };
 }
