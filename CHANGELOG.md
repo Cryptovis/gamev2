@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.86.0-playtest.1 — HD War Playback
+Builds on 0.85 HD War v2. No save schema change: battles gain an optional RNG state, and 0.85 saves load unchanged.
+- Playback: replaying a round now steps through its recorded action timeline on the board. Groups move one action at a time, and the board shows hit and miss bursts, casualty counts, destroyed groups and depot captures. Controls: play/pause, previous and next step, 1×/2×/4× speed and skip to result. The round log highlights the current step. With reduced motion, playback opens at the result without animation. Playback only reads recorded actions and never resolves combat. Rounds migrated from 0.83/0.84 have no timeline and play as a single before/after step.
+- Battle RNG stream: combat rolls in a tactical battle come from the battle's own stream, which starts from its seed and is saved with the battle. World events can no longer change a battle's dice, and a battle no longer consumes the world stream.
+- Tactical AI: each group proposes scored options and the AI takes the best ones that fit the command budget, one per group, under the same validator as the player. In order of priority it holds a depot under threat, bombards visible enemies (above all on depots), takes an open depot, contests an enemy-held depot, then advances.
+- Known limits: effects are glyph and CSS animations, not sprites or 3D. Simultaneous actions play one after another in a fixed order (attacker orders, defender orders, then losses and captures). The AI still plans one round at a time without a multi-round plan. AI countries still never declare war (B9/E1). Phase 2 items remain open.
+
 ## 0.85.0-playtest.1 — HD War v2
 Phase 3 of the [0.83 audit](docs/AUDIT-0.83.md) (HD War foundation) plus the first Phase 2 economy item. Save schema 17: 0.84 saves (schema 16) migrate automatically, and an open 6×6 battle keeps its board, units and recorded rounds.
 - Battlefield: new tactical battles use a 10×8 board with five force groups per side (two infantry, two armor, one artillery) and two supply depots. Terrain comes from a battle seed and, like deployment and the depots, is point-symmetric through the board centre, so neither side starts on better ground. The two deployment columns on each edge stay open.

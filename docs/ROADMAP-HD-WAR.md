@@ -21,6 +21,12 @@ Official implementation references: [PixiJS architecture](https://pixijs.com/8.x
 - Each round records an ordered action timeline. The result panel lists it; playback will animate it without rerolling combat.
 - Auto-resolve commits the same force share as tactical battles.
 
+## HD War Playback (0.86 delivered)
+
+- Round playback steps through the recorded action timeline with board effects and play/pause, step, speed and skip controls; reduced motion opens at the result.
+- Each battle rolls combat from its own saved RNG stream.
+- The tactical AI scores options across all groups within the command budget.
+
 ## Subsequent visual development
 
 1. **Combat events:** extend the delivered deterministic round records with finer actions and effects. Rendering must never reroll casualties.

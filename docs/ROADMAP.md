@@ -109,3 +109,11 @@ Next, in order:
 - **HD War playback:** animate rounds from the action timeline (movement, fire, losses, captures) with pause, speed and skip; a per-battle RNG stream for combat rolls; AI that coordinates groups; then measured rendering work (PixiJS only if needed).
 - **Phase 2 remainder:** activity repetition limits (rest of C4), unified price scale and AI market demand (C10–C12), GDP-scaled flat costs (C15), treaty rule parity (D8), espionage and alliance fixes (D12), AI-declared wars with the defender path (B9, E1), deeper politics and a victory condition (E2–E5), command-path and migration-table cleanup (A5, A6).
 - **Phase 4, technical debt:** unchanged from the 0.84 plan.
+
+## 0.86 HD War Playback
+Delivered: step-by-step round playback driven by the action timeline (effects, play/pause, step, speed, skip, reduced-motion support), a saved per-battle RNG stream for combat rolls and a scored tactical AI. Checks and limits: [Playtest 0.86](PLAYTEST-086.md).
+
+Next, in order:
+- **Phase 2 remainder:** activity repetition limits (rest of C4), unified price scale and AI market demand (C10–C12), GDP-scaled flat costs (C15), treaty rule parity (D8), espionage and alliance fixes (D12), AI-declared wars with the defender path (B9, E1), deeper politics and a victory condition (E2–E5), command-path and migration-table cleanup (A5, A6).
+- **HD War presentation:** sprites or a measured PixiJS layer, terrain art, sound, and multi-round AI plans, after playtest feedback on 0.86.
+- **Phase 4, technical debt:** unchanged from the 0.84 plan.
