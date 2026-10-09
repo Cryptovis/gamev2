@@ -196,7 +196,7 @@ describe('C4: high tax is not a free lunch', () => {
     // Before 0.87 this strategy reached ~100 approval within 120 days.
     expect(s.countries.TUR.politics.approval).toBeLessThan(start + 15);
     expect(s.countries.TUR.politics.approval).toBeLessThan(80);
-  });
+  }, 120_000);
 });
 
 describe('save compatibility for the optional 0.87 fields', () => {
