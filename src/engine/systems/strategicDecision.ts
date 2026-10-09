@@ -1,10 +1,11 @@
-import {proposalAcceptanceChance} from './livingEconomy';
+import {proposalAcceptanceChance,letterCost} from './livingEconomy';
+import {BASE_COST_B,diplomaticMissionStatus,formatCostB,scaledCostB} from './policyPressure';
 import {activeCountries} from '../../domain/sovereignty';
 import {calculateSupplyNetwork} from './supplyNetwork';
 import type { GameState, TradeResource } from '../../domain/game';
 import type { StrategicActionKind, StrategicDecisionSpec } from '../../domain/interaction';
 import { blocForCountry } from './blocs';
-import { GIFT_PACKAGE, embassyFor, embassyRelationBonus, relationFor, relationshipIndex } from './diplomacy';
+import { GIFT_PACKAGE, embassyFor, relationFor, relationshipIndex } from './diplomacy';
 
 export type StrategicDecisionContext={
   amountB?:1|5|10;
@@ -35,23 +36,25 @@ export function strategicDecisionSpec(
   const base={kind,targetCountryId:target.id} as const;
 
   if(kind==='diplomatic_mission'){
-    const gain=Math.round(10*embassyRelationBonus(state,actor.id,target.id));
+    // Cost, gain and cooldown come from the engine rule the command uses (audit C15).
+    const mission=diplomaticMissionStatus(state,actor.id,target.id);
     return {...base,kicker:'FOREIGN MINISTRY',title:'Authorize Diplomatic Mission',summary:'Dispatch a senior diplomatic mission to improve bilateral trust and reopen channels for deeper cooperation.',confirmLabel:'AUTHORIZE MISSION',tone:'positive',impacts:[
-      {label:'Treasury',value:'-$2B',tone:'warning'},
-      {label:'Relationship',value:'+'+gain+' raw',tone:'positive'},
+      {label:'Treasury',value:'-'+formatCostB(mission.costB),tone:'warning'},
+      {label:'Relationship',value:'+'+mission.gain+' raw',tone:'positive'},
       {label:'Current index',value:currentIndex+'/100'},
-    ],warnings:['Goodwill gains are stronger when an embassy is already operating.']};
+      ...(mission.cooldownDays>0?[{label:'Available in',value:mission.cooldownDays+' days',tone:'warning' as const}]:[]),
+    ],warnings:['Goodwill gains are stronger when an embassy is already operating.','Repeated missions to the same country bring less goodwill; one mission per country every 30 days.']};
   }
   if(kind==='embassy'){
     return {...base,kicker:'DIPLOMATIC PRESENCE',title:'Open Embassy in '+target.name,summary:'Send an embassy exchange proposal. The partner replies after three campaign days. A permanent mission opens only if accepted.',confirmLabel:'OPEN EMBASSY',tone:'positive',impacts:[
-      {label:'Cost if accepted',value:'-$3B',tone:'warning'},
+      {label:'Cost if accepted',value:'-'+formatCostB(letterCost(state,actor.id,'embassy')),tone:'warning'},
       {label:'Relationship',value:'+6 raw',tone:'positive'},
       {label:'Trade friction',value:'Reduced',tone:'positive'},
     ],warnings:['An embassy increases diplomatic access but may later become exposed to bilateral crises or intelligence incidents.']};
   }
   if(kind==='trade_pact'){
     return {...base,kicker:'TRADE NEGOTIATION',title:'Sign Trade Pact with '+target.name,summary:'Create a formal commercial framework that enables direct commodity imports and improves bilateral economic trust.',confirmLabel:'SIGN TRADE PACT',tone:'positive',impacts:[
-      {label:'Cost if accepted',value:'-$5B',tone:'warning'},
+      {label:'Cost if accepted',value:'-'+formatCostB(letterCost(state,actor.id,'trade_pact')),tone:'warning'},
       {label:'Relations',value:`${relationshipIndex(relationFor(actor,target.id))}/100`},
       {label:'Points to Good',value:String(Math.max(0,51-relationshipIndex(relationFor(actor,target.id))))},
       {label:'Estimated acceptance',value:`${Math.round(proposalAcceptanceChance(state,actor.id,target.id,'trade_pact')*100)}%`},
@@ -65,14 +68,14 @@ export function strategicDecisionSpec(
   }
   if(kind==='non_aggression'){
     return {...base,kicker:'SECURITY GUARANTEE',title:'Non-Aggression Pact with '+target.name,summary:'Commit both governments to mutual restraint and reduce the immediate risk of bilateral escalation.',confirmLabel:'SIGN NON-AGGRESSION',tone:'neutral',impacts:[
-      {label:'Negotiation',value:'-$4B',tone:'warning'},
+      {label:'Negotiation',value:'-'+formatCostB(scaledCostB(actor,BASE_COST_B.nonAggression)),tone:'warning'},
       {label:'Current index',value:currentIndex+'/100'},
       {label:'Strategic effect',value:'Mutual restraint',tone:'positive'},
     ],warnings:['This pact limits immediate hostility but does not create an alliance obligation.']};
   }
   if(kind==='alliance'){
     return {...base,kicker:'STRATEGIC ALIGNMENT',title:'Alliance with '+target.name,summary:'Enter a high-trust strategic alignment that changes how both countries are perceived by rivals and potential partners.',confirmLabel:'SIGN ALLIANCE',tone:'warning',impacts:[
-      {label:'Summit cost',value:'-$10B',tone:'warning'},
+      {label:'Summit cost',value:'-'+formatCostB(scaledCostB(actor,BASE_COST_B.alliance)),tone:'warning'},
       {label:'Relationship',value:'+8 raw',tone:'positive'},
       {label:'Status',value:'ALLY',tone:'positive'},
     ],warnings:['Alliance commitments can reshape third-party diplomacy and future bloc politics.','This is a high-impact strategic decision.']};
@@ -88,7 +91,7 @@ export function strategicDecisionSpec(
   if(kind==='strategic_bloc'){
     const existing=blocForCountry(state,actor.id);
     return {...base,kicker:'MULTILATERAL STRATEGY',title:'Strategic Bloc Decision',summary:'Deepen institutional alignment with '+target.name+' through a formal strategic grouping.',confirmLabel:'PROCEED WITH BLOC',tone:'warning',impacts:[
-      {label:'Treasury',value:existing?'$0B':'-$20B',tone:existing?'neutral':'warning'},
+      {label:'Treasury',value:existing?'$0B':'-'+formatCostB(scaledCostB(actor,BASE_COST_B.strategicBloc)),tone:existing?'neutral':'warning'},
       {label:'Requirement',value:existing?'Alliance · REL 80/100':'Alliance · REL 83/100'},
       {label:'Partner',value:target.name},
       {label:'Relationship',value:currentIndex+'/100'},

@@ -2,7 +2,7 @@ import {useWorldView} from '../../store/useWorldView';
 import { useState } from "react";
 import { useGameStore } from "../../store/gameStore";
 import { LocaleText } from "../../i18n/localeText";
-import { ACTIVITIES, living } from "../../engine/systems/livingEconomy";
+import { ACTIVITIES, activityPreview, living } from "../../engine/systems/livingEconomy";
 import type { ActivityKind } from "../../domain/living";
 import { CommandWindow } from "./CommandWindow";
 import { ReviewDialog } from "./ReviewDialog";
@@ -45,18 +45,19 @@ export function DomesticWindow() {
           >
         ).map(([kind, d]) => {
           const active = l.activities.find(
-            (x) => x.kind === kind && s.day < x.endsDay + 30,
-          );
+              (x) => x.kind === kind && s.day < x.endsDay + 30,
+            ),
+            preview = activityPreview(s, kind);
           return (
             <article key={kind}>
               <CivicArt kind={kind} size={120} />
               <h3>
                 <LocaleText value={d.title} />
               </h3>
-              <strong>{money(d.cost)}</strong>
+              <strong>{money(preview.cost)}</strong>
               <p>
                 {d.days} <LocaleText value="days" /> · +
-                {(d.approval * d.days).toFixed(1)}{" "}
+                {preview.approvalGain.toFixed(1)}{" "}
                 <LocaleText value="approval" />
               </p>
               {kind === "food_relief" && (
@@ -67,7 +68,7 @@ export function DomesticWindow() {
               <button
                 disabled={
                   !!active ||
-                  p.economy.treasury < d.cost ||
+                  p.economy.treasury < preview.cost ||
                   (kind === "food_relief" && p.resources.food < 20)
                 }
                 onClick={() => setReview(kind)}
@@ -90,21 +91,24 @@ export function DomesticWindow() {
           </p>
         ))}
       </div>
-      {review && (
+      {review && (() => {
+        const preview = activityPreview(s, review);
+        return (
         <ReviewDialog
           title={ACTIVITIES[review].title}
           summary="This public program is paid upfront and applies its effects once per day while active. A cooldown prevents repeated instant approval gains."
           metrics={[
-            ["Cost", money(ACTIVITIES[review].cost)],
+            ["Cost", money(preview.cost)],
             [
               "Treasury after",
-              money(p.economy.treasury - ACTIVITIES[review].cost),
+              money(p.economy.treasury - preview.cost),
             ],
             ["Duration", `${ACTIVITIES[review].days} days`],
             [
               "Total approval gain",
-              `+${(ACTIVITIES[review].approval * ACTIVITIES[review].days).toFixed(1)}`,
+              `+${preview.approvalGain.toFixed(1)}`,
             ],
+            ["Effect after repeat fatigue", `${Math.round(preview.multiplier * 100)}%`],
             ...(review === "food_relief" ? [["Food reserves used", "20"]] : []),
           ]}
           onCancel={() => setReview(null)}
@@ -113,7 +117,8 @@ export function DomesticWindow() {
             setReview(null);
           }}
         />
-      )}
+        );
+      })()}
     </CommandWindow>
   );
 }

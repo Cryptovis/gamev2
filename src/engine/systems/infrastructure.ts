@@ -1,5 +1,6 @@
 import {activeCountries} from '../../domain/sovereignty';
 import type { CountryState, GameState, InfrastructureAsset, NationalInfrastructureState } from '../../domain/game';
+import { formatCostB, scaledCostB } from './policyPressure';
 
 const clamp=(v:number,min:number,max:number)=>Math.min(max,Math.max(min,v));
 const LANDLOCKED=new Set(['AND','AUT','BLR','BOL','BWA','BFA','BDI','CAF','TCD','CZE','ETH','HUN','KAZ','KGZ','LAO','LSO','LIE','LUX','MKD','MWI','MLI','MDA','MNG','NPL','NER','PRY','RWA','SMR','SRB','SVK','SSD','SWZ','CHE','TJK','TKM','UGA','UZB','VAT','ZMB','ZWE','AFG','ARM','AZE','BTN']);
@@ -80,13 +81,14 @@ export function investInfrastructure(state:GameState,countryId:string,asset:Infr
   if(!country||!infra)return state;
   const rule=INVESTMENT[asset];
   if(asset==='ports'&&infra.ports<=0)return state;
-  if(country.economy.treasury<rule.cost)return state;
+  const cost=infrastructureInvestmentCost(state,countryId,asset);
+  if(country.economy.treasury<cost)return state;
   const nextInfra=calculateState(country,{...infra,[asset]:clamp(infra[asset]+rule.gain,0,100),lastInvestmentDay:state.day});
   return {
     ...state,
-    countries:{...state.countries,[countryId]:{...country,economy:{...country.economy,treasury:country.economy.treasury-rule.cost}}},
+    countries:{...state.countries,[countryId]:{...country,economy:{...country.economy,treasury:country.economy.treasury-cost}}},
     infrastructure:{...state.infrastructure,[countryId]:nextInfra},
-    sitrep:[`INFRASTRUCTURE // ${rule.label} investment completed in ${country.name}. -$${rule.cost}B.`,...state.sitrep].slice(0,12),
+    sitrep:[`INFRASTRUCTURE // ${rule.label} investment completed in ${country.name}. -${formatCostB(cost)}.`,...state.sitrep].slice(0,12),
   };
 }
 
@@ -97,7 +99,8 @@ export function processInfrastructureAI(state:GameState):GameState{
     if(country.id===state.playerCountryId)continue;
     const infra=next.infrastructure[country.id];
     const current=next.countries[country.id];
-    if(!infra||!current||current.economy.treasury<10)continue;
+    // Same GDP-scaled price as the player; the gate is the old flat $10B at the reference GDP, scaled the same way.
+    if(!infra||!current||current.economy.treasury<infrastructureInvestmentCost(next,country.id,'ports')*1.25)continue;
     const options:(InfrastructureAsset)[]=['roads','rail','hubs',...(infra.ports>0?['ports' as const]:[])];
     const target=options.sort((a,b)=>infra[a]-infra[b])[0];
     if(infra[target]<72){const before=next.sitrep;const invested=investInfrastructure(next,country.id,target);next={...invested,sitrep:before};}
@@ -106,3 +109,5 @@ export function processInfrastructureAI(state:GameState):GameState{
 }
 
 export function infrastructureInvestmentRule(asset:InfrastructureAsset){return INVESTMENT[asset];}
+/** GDP-scaled price of one +5 investment (audit C15): the same share of output for every economy, within the cost-scale bounds. */
+export function infrastructureInvestmentCost(state:GameState,countryId:string,asset:InfrastructureAsset):number{return scaledCostB(state.countries[countryId],INVESTMENT[asset].cost);}

@@ -7,6 +7,9 @@ const clamp = (value: number, min: number, max: number) => Math.min(max, Math.ma
 
 /** Share of the gap between stability and its target closed per day (half-life ≈ 170 days). */
 export const STABILITY_DRIFT = 0.004;
+/** Tax rate above which each further point carries an extra daily approval cost (audit C4). */
+export const HIGH_TAX_THRESHOLD = 30;
+export const HIGH_TAX_APPROVAL_COST = 0.003;
 
 /**
  * Long-run stability a government settles toward: mostly public approval, partly social cohesion,
@@ -26,6 +29,8 @@ export function simulatePolitics(
   let stabilityDelta = 0;
 
   approvalDelta += Math.max(-.1,Math.min(.04,(22-country.economy.taxRate)*.0025));
+  // Audit C4: above 30% each extra point costs a further 0.003/day, so a 60% rate is no free lunch (-0.185/day in total).
+  approvalDelta -= Math.max(0,country.economy.taxRate-HIGH_TAX_THRESHOLD)*HIGH_TAX_APPROVAL_COST;
   if (economy.next.inflation > 10) approvalDelta -= 0.035;
   if (economy.next.unemployment > 10) approvalDelta -= 0.025;
   if (economy.dailyGrowthRate > 0.00005) approvalDelta += 0.012;

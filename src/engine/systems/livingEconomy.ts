@@ -27,6 +27,7 @@ import {
   relationFor,
 } from "./diplomacy";
 import { nextRandom } from "../rng";
+import { actionEffectMultiplier, headroomFactor, publicGain, recordActionUse, scaledCostB } from "./policyPressure";
 import { calculateSupplyNetwork } from "./supplyNetwork";
 const clamp = (n: number, a: number, b: number) => Math.max(a, Math.min(b, n));
 const raw = (g: ExchangeGood): g is TradeResource =>
@@ -402,13 +403,24 @@ export const ACTIVITIES = {
     cohesion: 0.1,
   },
 };
+/** GDP-scaled cost (audit C15); `ACTIVITIES[kind].cost` is the reference-economy base. */
+export function activityCost(s: GameState, kind: ActivityKind, countryId = s.playerCountryId): number {
+  return scaledCostB(s.countries[countryId], ACTIVITIES[kind].cost);
+}
+/** Dialog preview: scaled cost, repeat-fatigue multiplier and the approval gain expected at today's approval. */
+export function activityPreview(s: GameState, kind: ActivityKind) {
+  const c = s.countries[s.playerCountryId], d = ACTIVITIES[kind];
+  const multiplier = actionEffectMultiplier(s, c.id, `activity/${kind}`);
+  return { cost: activityCost(s, kind), multiplier, approvalGain: d.approval * d.days * multiplier * headroomFactor(c.politics.approval) };
+}
 export function startActivity(s: GameState, kind: ActivityKind): GameState {
   const d = ACTIVITIES[kind],
     c = s.countries[s.playerCountryId],
-    l = living(s);
+    l = living(s),
+    cost = d ? activityCost(s, kind) : 0;
   if (
     !d ||
-    c.economy.treasury < d.cost ||
+    c.economy.treasury < cost ||
     l.activities.some((x) => x.kind === kind && s.day < x.endsDay + 30) ||
     (kind === "food_relief" && c.resources.food < 20)
   )
@@ -419,7 +431,7 @@ export function startActivity(s: GameState, kind: ActivityKind): GameState {
       ...s.countries,
       [c.id]: {
         ...c,
-        economy: { ...c.economy, treasury: c.economy.treasury - d.cost },
+        economy: { ...c.economy, treasury: c.economy.treasury - cost },
         resources: {
           ...c.resources,
           food: c.resources.food - (kind === "food_relief" ? 20 : 0),
@@ -427,7 +439,9 @@ export function startActivity(s: GameState, kind: ActivityKind): GameState {
       },
     },
   };
-  return withLiving(n, {
+  // Repeat fatigue (audit C4): festivals, games and relief share one public-attention pool.
+  const strength = actionEffectMultiplier(s, c.id, `activity/${kind}`);
+  return recordActionUse(withLiving(n, {
     ...l,
     activities: [
       {
@@ -436,10 +450,11 @@ export function startActivity(s: GameState, kind: ActivityKind): GameState {
         startedDay: s.day,
         endsDay: s.day + d.days,
         lastAppliedDay: s.day,
+        strength,
       },
       ...l.activities,
     ].slice(0, 80),
-  });
+  }), c.id, `activity/${kind}`);
 }
 export function recruitPersonnel(s: GameState, count: number): GameState {
   const c = s.countries[s.playerCountryId],
@@ -507,16 +522,16 @@ export function processWellbeing(s: GameState): GameState {
   const activities = l.activities.map((x) => {
     if (s.day <= x.startedDay || s.day > x.endsDay || x.lastAppliedDay >= s.day)
       return x;
-    const d = ACTIVITIES[x.kind];
+    const d = ACTIVITIES[x.kind], m = x.strength ?? 1;
     c = {
       ...c,
       politics: {
         ...c.politics,
-        approval: Math.min(100, c.politics.approval + d.approval),
+        approval: publicGain(c.politics.approval, d.approval, m),
       },
       society: {
         ...c.society,
-        cohesion: Math.min(100, c.society.cohesion + d.cohesion),
+        cohesion: publicGain(c.society.cohesion, d.cohesion, m),
       },
     };
     return { ...x, lastAppliedDay: s.day };
@@ -566,10 +581,14 @@ export function processWellbeing(s: GameState): GameState {
   return n;
 }
 export const LETTER_COST = { embassy: 3, trade_pact: 5, closure: 0 };
+/** Full fee for this country at its GDP (audit C15); each side of a split fee pays its share of its own scaled fee. */
+export function letterCost(s: GameState, countryId: string, kind: keyof typeof LETTER_COST): number {
+  return scaledCostB(s.countries[countryId], LETTER_COST[kind]);
+}
 export function proposalAcceptanceChance(s:GameState,senderId:string,targetId:string,kind:'embassy'|'trade_pact'){
  const p=s.countries[senderId],t=s.countries[targetId];if(!p||!t)return 0;
  const rel=relationFor(p,targetId),index=relationshipIndex(rel);
- if(rel.status==='war'||rel.sanctions||p.globalSanctions||t.globalSanctions||p.economy.treasury<LETTER_COST[kind]||(kind==='trade_pact'&&index<20))return 0;
+ if(rel.status==='war'||rel.sanctions||p.globalSanctions||t.globalSanctions||p.economy.treasury<letterCost(s,senderId,kind)||(kind==='trade_pact'&&index<20))return 0;
  const need=t.resources.food<30||t.resources.oil<20;
  if(kind==='embassy')return clamp((rel.score+20)/100,.05,.95);
  const base=index>50?.75+(index-51)/49*.15:.1+index/50*.4;
@@ -584,7 +603,7 @@ export function diplomaticProposalStatus(s:GameState,targetId:string,kind:'embas
  if(letter)return {allowed:false,letter,reason:letter.incoming?'An incoming proposal is waiting. Review Received proposals instead of sending another.':letter.status==='pending'?'Proposal already sent. Wait for the reply; repeating it will not speed up the answer or charge another fee.':'A recent proposal is still on cooldown. Check its result in the proposal tracker.',retryDay:letter.replyDay+14};
  if(relation.status==='war'||p.globalSanctions||t.globalSanctions||relation.sanctions)return {allowed:false,reason:'War or sanctions prevent this proposal. Open partner diplomacy to inspect access.'};
  if(kind==='trade_pact'&&relationshipIndex(relation)<20)return {allowed:false,reason:'Trade proposals require relations of at least 20/100. Improve relations through diplomatic missions or aid; above 50/100, acceptance becomes easier.'};
- if(p.economy.treasury<LETTER_COST[kind])return {allowed:false,reason:'Insufficient treasury for the fee if accepted.'};
+ if(p.economy.treasury<letterCost(s,p.id,kind))return {allowed:false,reason:'Insufficient treasury for the fee if accepted.'};
  return {allowed:true,reason:'The reply arrives after three campaign days. Payment is charged only if accepted.'};
 }
 export function requestDiplomacy(
@@ -616,7 +635,7 @@ export function requestDiplomacy(
     (kind === "embassy"
       ? !!embassyFor(s, p.id, t.id)
       : relationFor(p, t.id).treaties.includes("trade")) ||
-    p.economy.treasury < LETTER_COST[kind]
+    p.economy.treasury < letterCost(s, p.id, kind)
   )
     return s;
   const x: DiplomaticLetter = {
@@ -643,9 +662,10 @@ function enactLetter(
 ): GameState {
   const a = s.countries[x.senderId],
     b = s.countries[x.receiverId],
-    cost = LETTER_COST[x.kind],
     player = s.playerCountryId,
-    other = x.senderId === player ? x.receiverId : x.senderId;
+    other = x.senderId === player ? x.receiverId : x.senderId,
+    playerFee = letterCost(s, player, x.kind) * costShare,
+    otherFee = letterCost(s, other, x.kind) * (1 - costShare);
   if (
     !a ||
     !b ||
@@ -656,8 +676,8 @@ function enactLetter(
   )
     return s;
   if (
-    s.countries[player].economy.treasury < cost * costShare ||
-    (cost*(1-costShare)>0&&s.countries[other].economy.treasury < cost * (1 - costShare))
+    s.countries[player].economy.treasury < playerFee ||
+    (otherFee>0&&s.countries[other].economy.treasury < otherFee)
   )
     return s;
   let n = {
@@ -668,7 +688,7 @@ function enactLetter(
         ...s.countries[player],
         economy: {
           ...s.countries[player].economy,
-          treasury: s.countries[player].economy.treasury - cost * costShare,
+          treasury: s.countries[player].economy.treasury - playerFee,
         },
       },
       [other]: {
@@ -676,7 +696,7 @@ function enactLetter(
         economy: {
           ...s.countries[other].economy,
           treasury:
-            s.countries[other].economy.treasury - cost * (1 - costShare),
+            s.countries[other].economy.treasury - otherFee,
         },
       },
     },
@@ -750,7 +770,7 @@ export function processLetters(s: GameState): GameState {
               status: accepted ? "accepted" : "rejected",
               message: accepted
                 ? "Proposal accepted. The agreement is now active; diplomatic costs have been paid."
-                : (rel.status==='war'||rel.sanctions||p.globalSanctions||t.globalSanctions?'Proposal declined because war or sanctions block diplomatic access.':p.economy.treasury<LETTER_COST[x.kind]?'Proposal declined because your treasury cannot pay the acceptance fee.':x.kind==='trade_pact'&&relationshipIndex(rel)<20?'Proposal declined because relations fell below 20/100. Improve relations through missions or aid.':'The partner declined on strategic interest. Improve relations above 50/100 for easier trade acceptance; approval remains probabilistic.'),
+                : (rel.status==='war'||rel.sanctions||p.globalSanctions||t.globalSanctions?'Proposal declined because war or sanctions block diplomatic access.':p.economy.treasury<letterCost(n,p.id,x.kind)?'Proposal declined because your treasury cannot pay the acceptance fee.':x.kind==='trade_pact'&&relationshipIndex(rel)<20?'Proposal declined because relations fell below 20/100. Improve relations through missions or aid.':'The partner declined on strategic interest. Improve relations above 50/100 for easier trade acceptance; approval remains probabilistic.'),
               read: false,
             }
           : v,
