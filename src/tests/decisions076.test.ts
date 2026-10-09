@@ -248,7 +248,7 @@ describe("outreach, tutorial and compatible saves", () => {
       old = { ...s, schemaVersion: 13 };
     delete (old as Partial<typeof old>).world;
     const migrated = migrateSave(old)!;
-    expect(migrated.schemaVersion).toBe(16);
+    expect(migrated.schemaVersion).toBe(17);
     expect(migrated.countries).toEqual(s.countries);
     expect(migrated.industrialEconomy).toEqual(s.industrialEconomy);
     expect(migrated.world.tutorial.active).toBe(false);

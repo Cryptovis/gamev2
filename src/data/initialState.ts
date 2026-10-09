@@ -10,7 +10,7 @@ import { createInitialInfrastructureMap } from '../engine/systems/infrastructure
 export const makeInitialState = (): GameState => {
   const countries=structuredClone(initialCountries);
   const state:GameState=({
-  schemaVersion: 16,
+  schemaVersion: 17,
   simulationSeed: 0xA17E5EED,
   day: 1,
   speed: 0,

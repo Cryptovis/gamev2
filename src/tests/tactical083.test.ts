@@ -6,17 +6,19 @@ import { processAutoWars } from '../engine/systems/warfare';
 import { snapshotGame } from '../persistence/snapshot';
 import { migrateSave } from '../persistence/migrations';
 import type { GameState } from '../domain/game';
-import type { TacticalOrder } from '../domain/tactical';
+import type { TacticalOrder, TacticalUnit } from '../domain/tactical';
 const fixture=()=>{
  let s=makeInitialState();s.world.tutorial.active=false;s.eventCooldownUntil=10000;s.advisorCooldownUntil=10000;
  s=applyGameCommand(s,{type:'military/declareWar',targetCountryId:'GRC'});const id=Object.keys(s.wars)[0];
  return {s:startTacticalBattle(s,id),id};
 };
-const move:TacticalOrder={unitId:'attacker-infantry',kind:'move',target:8};
+// 0.85 board: 10×8. Attacker infantry group 1 starts in sector B3 (cell 21).
+const move:TacticalOrder={unitId:'attacker-infantry-1',kind:'move',target:22};
+const infantry=(us:TacticalUnit[])=>us.filter(u=>u.side==='attacker'&&u.role==='infantry').reduce((n,u)=>n+u.remaining,0);
 describe('0.83 tactical orders',()=>{
  it('allocates bounded forces without spawning troops or resetting an existing battle',()=>{
   const {s,id}=fixture(),b=s.wars[id].tactical!;
-  expect(b.units).toHaveLength(6);expect(b.units.find(u=>u.id==='attacker-infantry')!.allocated).toBe(Math.floor(s.countries.TUR.military.personnel*.25));
+  expect(b.units).toHaveLength(10);expect(b.units.filter(u=>u.side==='attacker'&&u.role==='infantry').reduce((n,u)=>n+u.allocated,0)).toBe(Math.floor(s.countries.TUR.military.personnel*.25));
   expect(startTacticalBattle(s,id)).toBe(s);expect(s.wars[id].autoAssault).toBe(false);
  });
  it('prevents a country committing its groups to another tactical battle',()=>{
@@ -28,9 +30,9 @@ describe('0.83 tactical orders',()=>{
   expect(validateTacticalOrders(s,id,'attacker',[move])).toEqual([]);
   expect(validateTacticalOrders(s,id,'attacker',[move,move]).join(' ')).toContain('only one');
   expect(validateTacticalOrders(s,id,'attacker',[{...move,unitId:'defender-infantry'}]).join(' ')).toContain('under your command');
-  expect(validateTacticalOrders(s,id,'attacker',[{...move,target:13}]).join(' ')).toContain('unoccupied');
-  expect(validateTacticalOrders(s,id,'attacker',[{...move,target:22}]).length).toBeGreaterThan(0);
-  expect(validateTacticalOrders(s,id,'attacker',[{...move,kind:'flank',target:9},{unitId:'attacker-armor',kind:'flank',target:14}]).join(' ')).toContain('three points');
+  expect(validateTacticalOrders(s,id,'attacker',[{...move,target:11}]).join(' ')).toContain('unoccupied');
+  expect(validateTacticalOrders(s,id,'attacker',[{...move,target:25}]).length).toBeGreaterThan(0);
+  expect(validateTacticalOrders(s,id,'attacker',[{...move,kind:'flank',target:23},{unitId:'attacker-armor-1',kind:'flank',target:13}]).join(' ')).toContain('three points');
  });
  it('rejects invalid numbers, prototype names and malformed orders without spending fuel',()=>{
   const {s,id}=fixture();
@@ -40,11 +42,11 @@ describe('0.83 tactical orders',()=>{
  });
  it('requires a forward flank and a traversable route through intervening terrain',()=>{
   const {s,id}=fixture(),b=s.wars[id].tactical!;
-  expect(validateTacticalOrders(s,id,'attacker',[{...move,kind:'flank',target:6}]).join(' ')).toContain('advance toward');
-  b.terrain[14]='mountain';
-  expect(validateTacticalOrders(s,id,'attacker',[{unitId:'attacker-armor',kind:'move',target:15}]).join(' ')).toContain('path is blocked');
-  b.terrain[14]='plains';
-  expect(validateTacticalOrders(s,id,'attacker',[{unitId:'attacker-armor',kind:'move',target:15}])).toEqual([]);
+  expect(validateTacticalOrders(s,id,'attacker',[{...move,kind:'flank',target:20}]).join(' ')).toContain('advance toward');
+  b.terrain[12]='mountain';b.terrain[13]='plains';
+  expect(validateTacticalOrders(s,id,'attacker',[{unitId:'attacker-armor-1',kind:'move',target:13}]).join(' ')).toContain('path is blocked');
+  b.terrain[12]='plains';
+  expect(validateTacticalOrders(s,id,'attacker',[{unitId:'attacker-armor-1',kind:'move',target:13}])).toEqual([]);
  });
  it('retains the old battlefield when a same-day ceasefire is followed by redeclaration',()=>{
   const {s,id}=fixture(),ended=applyGameCommand(s,{type:'military/withdraw',warId:id});
@@ -76,7 +78,7 @@ describe('0.83 tactical orders',()=>{
   const n=resolveTacticalRound(s,id,[move],0),b=n.wars[id].tactical!,e=b.events[0];
   expect(b.round).toBe(1);expect(n.countries.TUR.processedResources.fuel).toBeCloseTo(before.countries.TUR.processedResources.fuel-fuel);
   expect(before.countries.TUR.military.personnel-n.countries.TUR.military.personnel).toBe(e.attackerLosses.personnel);
-  expect(b.units.find(u=>u.id===move.unitId)!.remaining).toBe(before.wars[id].tactical!.units[0].remaining-e.attackerLosses.personnel);
+  expect(infantry(b.units)).toBe(infantry(before.wars[id].tactical!.units)-e.attackerLosses.personnel);
   expect(n.wars[id].rounds).toBe(1);expect(resolveTacticalRound(n,id,[move],1)).toBe(n);expect(resolveTacticalRound({...n,day:n.day+1},id,[move],0)).toBeDefined();
   expect(tacticalCommandStatus({...n,day:n.day+1},id,0,[move]).join(' ')).toContain('earlier round');
  });
@@ -96,8 +98,8 @@ describe('0.83 tactical orders',()=>{
   const n=applyGameCommand(s,{type:'military/assault',warId:id});expect(n.wars[id].tactical!.round).toBe(1);expect(n.wars[id].rounds).toBe(1);
  });
  it('recon reveals a remote sector for the next planning round only',()=>{
-  const {s,id}=fixture(),b=s.wars[id].tactical!;expect(visibleCells(b,'attacker').has(11)).toBe(false);
-  const n=resolveTacticalRound(s,id,[{unitId:move.unitId,kind:'recon',target:10}],0);expect(visibleCells(n.wars[id].tactical!,'attacker').has(11)).toBe(true);
+  const {s,id}=fixture(),b=s.wars[id].tactical!;expect(visibleCells(b,'attacker').has(26)).toBe(false);
+  const n=resolveTacticalRound(s,id,[{unitId:move.unitId,kind:'recon',target:24}],0);expect(visibleCells(n.wars[id].tactical!,'attacker').has(26)).toBe(true);
   const again=resolveTacticalRound({...n,day:n.day+1},id,[],1);expect(again.wars[id].tactical!.revealed.attacker).toEqual([]);
  });
  it('reserve preparation survives save/load and is consumed by a later order',()=>{

@@ -132,11 +132,11 @@ describe('0.84 audit: tactical bombardment', () => {
     const { s, id } = declare();
     const t = startTacticalBattle(s, id), w = t.wars[id], b = w.tactical!;
     const occupied = new Set(b.units.filter(u => u.remaining > 0).map(u => u.cell));
-    const empty = Array.from({ length: 36 }, (_, i) => i).find(c => !occupied.has(c))!;
+    const empty = Array.from({ length: b.width * b.height }, (_, i) => i).find(c => !occupied.has(c))!;
     const target = b.units.find(u => u.side === 'defender' && u.role === 'infantry')!;
     const quiet = sideModifiers(t, w, 'defender', [], []);
-    const miss = sideModifiers(t, w, 'defender', [], [{ unitId: 'attacker-artillery', kind: 'bombard', target: empty }]);
-    const hit = sideModifiers(t, w, 'defender', [], [{ unitId: 'attacker-artillery', kind: 'bombard', target: target.cell }]);
+    const miss = sideModifiers(t, w, 'defender', [], [{ unitId: 'attacker-artillery-1', kind: 'bombard', target: empty }]);
+    const hit = sideModifiers(t, w, 'defender', [], [{ unitId: 'attacker-artillery-1', kind: 'bombard', target: target.cell }]);
     expect(miss.power).toBe(quiet.power); expect(miss.loss).toBe(quiet.loss); expect(miss.lossByType).toEqual({});
     expect(hit.power).toBeLessThan(quiet.power); expect(hit.loss).toBeGreaterThan(quiet.loss); expect(hit.lossByType?.personnel).toBe(.12);
   });

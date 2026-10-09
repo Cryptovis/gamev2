@@ -8,6 +8,13 @@ import { productionCombatModifier, strategicReserveScore } from './production';
 const clamp=(v:number,min:number,max:number)=>Math.min(max,Math.max(min,v));
 const zeroLosses=():CasualtySnapshot=>({personnel:0,tanks:0,artillery:0,fighters:0,bombers:0,warships:0});
 export const emptyLosses=zeroLosses;
+/** Share of each national force type committed to one battle, in tactical and auto-resolve combat alike (audit B8). */
+export const COMMITTED_SHARE=.25;
+/** Auto-resolve commits the same share as a tactical battle and uses neutral modifiers, so war length no longer depends on the mode. */
+function autoResolveOrders(a:CountryState,d:CountryState):CombatOrders{
+ const committed=(c:CountryState):CasualtySnapshot=>({personnel:Math.floor(c.military.personnel*COMMITTED_SHARE),tanks:Math.floor(c.military.tanks*COMMITTED_SHARE),artillery:Math.floor(c.military.artillery*COMMITTED_SHARE),fighters:Math.floor(c.military.fighters*COMMITTED_SHARE),bombers:Math.floor(c.military.bombers*COMMITTED_SHARE),warships:Math.floor(c.military.warships*COMMITTED_SHARE)});
+ return {attacking:true,attacker:{power:1,loss:1,fuel:COMMITTED_SHARE,forces:committed(a)},defender:{power:1,loss:1,fuel:0,forces:committed(d)}};
+}
 const MOUNTAIN=new Set(['TUR','GRC','GEO','ARM','AFG','NPL','BTN','CHE','AUT','KGZ','TJK','CHL','PER']);
 const DESERT=new Set(['SAU','ARE','QAT','KWT','OMN','YEM','LBY','DZA','EGY','NER','MLI','MRT','TCD','JOR']);
 const FOREST=new Set(['FIN','SWE','NOR','CAN','BRA','COD','GAB','CMR','IDN','MYS','PNG']);
@@ -31,7 +38,8 @@ function boundedLosses(losses:CasualtySnapshot,side?:CombatSideOrders):CasualtyS
 }
 export function resolveCombatRound(state:GameState,warId:string,orders?:CombatOrders):GameState{
  const w=state.wars[warId];if(!w||w.status!=='active'||w.lastCombatDay===state.day)return state;const a=state.countries[w.attackerId],d=state.countries[w.defenderId];if(!a||!d)return state;
- // Legacy auto-assault (no orders) is an attack. Exhaustion and decisive outcomes require offensive pressure.
+ orders=orders??autoResolveOrders(a,d);
+ // Auto-resolve is an attack. Exhaustion and decisive outcomes require offensive pressure. Exhaustion and decisive outcomes require offensive pressure.
  const attacking=!orders||orders.attacking,aStart=w.attackerStartPersonnel??a.military.personnel,dStart=w.defenderStartPersonnel??d.military.personnel,collapseAt=(start:number)=>Math.max(Math.min(5000,start*.5),start*.08);
 const combatA={...a,military:{...a.military,fighters:a.military.fighters*pilotCoverage(state,a.id),bombers:a.military.bombers*pilotCoverage(state,a.id)}},combatD={...d,military:{...d.military,fighters:d.military.fighters*pilotCoverage(state,d.id),bombers:d.military.bombers*pilotCoverage(state,d.id)}};const p=getWarPreview(combatA,combatD,state.infrastructure[a.id],state.infrastructure[d.id]),fuelCost=Math.max(3,2.5+a.military.tanks*.0016+a.military.fighters*.02+a.military.bombers*.032)*(orders?.attacker.fuel??1),hasFuel=a.processedResources.fuel>=fuelCost,r1=nextRandom(state.simulationSeed),r2=nextRandom(r1.seed),r3=nextRandom(r2.seed),ae=1-w.attackerExhaustion/180,de=1-w.defenderExhaustion/190,airA=1+p.airSuperiority/450,airD=1-p.airSuperiority/520;
  const aReserve=productionCombatModifier(state,a.id),dReserve=productionCombatModifier(state,d.id),aPower=militaryPower(combatA)*aReserve*(orders?.attacker.power??1)*(hasFuel?1:.38)*(p.attackerSupply/100)*atk[w.terrain]*clamp(ae,.42,1)*clamp(airA,.72,1.25),dPower=militaryPower(combatD)*dReserve*(orders?.defender.power??1)*(p.defenderSupply/100)*def[w.terrain]*clamp(de,.44,1)*clamp(airD,.75,1.24)*(.96+r1.value*.08),ratio=aPower/Math.max(1,dPower),al=boundedLosses(makeLosses(a,clamp(.0017+(1/Math.max(.4,ratio))*.0028+(p.attackerSupply<35?.002:0),.0015,.016),r2.value),orders?.attacker),dl=boundedLosses(makeLosses(d,clamp(.0018+ratio*.0032+(p.airSuperiority>35?.0008:0),.0015,.019),r3.value),orders?.defender),aep=al.personnel/Math.max(1,a.military.personnel),dep=dl.personnel/Math.max(1,d.military.personnel),aEx=clamp(w.attackerExhaustion+(attacking?1.2:.4)+aep*460+(p.attackerSupply<40?2.2:0),0,100),dEx=clamp(w.defenderExhaustion+(attacking?clamp(.75+ratio*.25,.75,1.25)+(p.defenderSupply<40?1.8:0):0)+dep*500,0,100),rawDelta=clamp((ratio-1)*13+(r3.value-.5)*5+(hasFuel?1.2:-7)+(p.airSuperiority/100)*3.5-(aEx-dEx)*.035,-20,20),delta=orders&&!orders.attacking?Math.min(0,rawDelta):rawDelta,progress=clamp(w.progress+delta,-100,100);
