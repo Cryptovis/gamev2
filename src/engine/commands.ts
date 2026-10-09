@@ -1,3 +1,4 @@
+import {cancelIndustrialContract,dismissLivingNotice,markInboxRead,setTutorialStep,toggleFacility} from './systems/playerRecords';
 import {startTacticalBattle,tacticalStartStatus,tacticalCommandStatus,combatAllowed,resolveTacticalRound,chooseTacticalOrders,playerSide} from './systems/tactical';
 import {buildPlant,togglePlant,cancelPowerProject} from './systems/energy';
 import {buildFacility} from './systems/industrialEconomy';
@@ -103,6 +104,11 @@ function executeGameCommand(state: GameState, command: GameCommand): GameState {
     case 'world/membership': return applyMembership(state,command.id);
     case 'world/attackProposal': return proposeAttack(state,command.id);
     case 'world/vote': return voteWorld(state,command.id,command.choice);
+    case 'industry/toggleFacility': return toggleFacility(state,command.kind);
+    case 'industry/cancelContract': return cancelIndustrialContract(state,command.id);
+    case 'tutorial/set': return setTutorialStep(state,command.step,command.active);
+    case 'inbox/read': return markInboxRead(state,command.scope);
+    case 'living/dismissNotice': return dismissLivingNotice(state);
     case 'world/outreach': return startOutreach(state,command.id,command.religion);
     case 'technology/cancel': return cancelResearch(state,state.playerCountryId);
     case 'time/advanceDay': return tickGame(state);
@@ -247,7 +253,7 @@ export function executeCommandResult(state:GameState,command:GameCommand):Comman
  const proposal=command.type==='diplomacy/request'?diplomaticProposalStatus(state,command.id,command.kind):command.type==='diplomacy/signTradePact'?diplomaticProposalStatus(state,command.targetCountryId,'trade_pact'):null;
  if(proposal&&!proposal.allowed)return {state,status:'unavailable',message:proposal.reason};
  const next=executeGameCommand(state,command);
- const changed=next.countries!==state.countries||next.tradeDeals!==state.tradeDeals||next.world!==state.world||next.wars!==state.wars||next.production!==state.production||next.industrialContracts!==state.industrialContracts||next.industrialEconomy!==state.industrialEconomy||next.infrastructure!==state.infrastructure||next.intelOperations!==state.intelOperations||next.council!==state.council||next.day!==state.day||next.speed!==state.speed;
+ const changed=next.countries!==state.countries||next.tradeDeals!==state.tradeDeals||next.world!==state.world||next.wars!==state.wars||next.production!==state.production||next.industrialContracts!==state.industrialContracts||next.industrialEconomy!==state.industrialEconomy||next.infrastructure!==state.infrastructure||next.intelOperations!==state.intelOperations||next.council!==state.council||next.leadership!==state.leadership||next.day!==state.day||next.speed!==state.speed;
  let recorded=recordReports(state,next,command.type==='time/advanceDay'?'world':'command');
  if(command.commandId && changed)recorded={...recorded,world:{...recorded.world,commandIds:[...(recorded.world.commandIds??[]),command.commandId].slice(-512)}};
  return {state:recorded,status:changed?'applied':'unavailable',message:next.sitrep[0]!==state.sitrep[0]?next.sitrep[0]:changed?'Your command has been applied.':'Check budget, stock, prerequisites, access or an existing order.'};

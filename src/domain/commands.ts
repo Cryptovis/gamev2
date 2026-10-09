@@ -66,6 +66,12 @@ export type ReliableCommand =
  | {type:'world/outreach';id:string;religion:import('./game').ReligionType}
  | {type:'technology/cancel'}
  | {type:'tactical/start';warId:string}
- | {type:'tactical/commit';warId:string;expectedRound:number;orders:import('./tactical').TacticalOrder[]};
+ | {type:'tactical/commit';warId:string;expectedRound:number;orders:import('./tactical').TacticalOrder[]}
+ // 0.87 audit A5: actions that used to write the store directly.
+ | {type:'industry/toggleFacility';kind:import('./industrial').FacilityKind}
+ | {type:'industry/cancelContract';id:string}
+ | {type:'tutorial/set';step:number;active:boolean}
+ | {type:'inbox/read';scope:'letters'|'leadership'}
+ | {type:'living/dismissNotice'};
 
 export type GameCommand = (LegacyCommand | ReliableCommand) & {commandId?:string};
