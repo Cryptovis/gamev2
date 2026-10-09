@@ -72,6 +72,8 @@ export type ReliableCommand =
  | {type:'industry/cancelContract';id:string}
  | {type:'tutorial/set';step:number;active:boolean}
  | {type:'inbox/read';scope:'letters'|'leadership'}
- | {type:'living/dismissNotice'};
+ | {type:'living/dismissNotice'}
+ // 0.88 audit E4: keep playing after a campaign victory.
+ | {type:'campaign/continue'};
 
 export type GameCommand = (LegacyCommand | ReliableCommand) & {commandId?:string};

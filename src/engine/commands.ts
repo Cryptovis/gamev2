@@ -14,6 +14,7 @@ import {cancelResearch} from './systems/technology';
 import {recordReports} from './journal';
 import {arrears} from './systems/sovereignCredit';
 import {pendingVictory} from './systems/victory';
+import {continueAfterVictory} from './systems/campaignVictory';
 import {requestDiplomacy,diplomaticProposalStatus} from './systems/livingEconomy';
 import {applyWarCondemnation} from './systems/worldInstitutions';
 import type { GameCommand } from '../domain/commands';
@@ -109,6 +110,7 @@ function executeGameCommand(state: GameState, command: GameCommand): GameState {
     case 'tutorial/set': return setTutorialStep(state,command.step,command.active);
     case 'inbox/read': return markInboxRead(state,command.scope);
     case 'living/dismissNotice': return dismissLivingNotice(state);
+    case 'campaign/continue': return continueAfterVictory(state);
     case 'world/outreach': return startOutreach(state,command.id,command.religion);
     case 'technology/cancel': return cancelResearch(state,state.playerCountryId);
     case 'time/advanceDay': return tickGame(state);

@@ -1,7 +1,10 @@
 import {LocaleText,translateLive} from '../../i18n/localeText';
 import type { EventKind } from '../../domain/game';
+import { EVENT_CATALOGUE } from '../../data/events';
 
-const palette:Record<EventKind,{a:string;b:string;accent:string}> = {
+/** Scenes drawn below; 0.88 catalogue kinds reuse one of them through their `artwork` field. */
+type SceneKind = 'food_crisis' | 'inflation_shock' | 'war_weariness' | 'corruption_scandal' | 'fuel_crisis' | 'intelligence_breach' | 'earthquake' | 'health_crisis' | 'tax_protest' | 'reform_demand' | 'foreign_policy_backlash';
+const palette:Record<SceneKind,{a:string;b:string;accent:string}> = {
  food_crisis:{a:'#4d5231',b:'#111a15',accent:'#c9b35f'},
  inflation_shock:{a:'#5a3d34',b:'#141015',accent:'#d47764'},
  war_weariness:{a:'#41484f',b:'#0f151b',accent:'#c55d61'},
@@ -15,7 +18,9 @@ const palette:Record<EventKind,{a:string;b:string;accent:string}> = {
  foreign_policy_backlash:{a:'#4a405b',b:'#111019',accent:'#a685db'},
 };
 
-function Scene({kind}:{kind:EventKind}){
+const sceneKind=(kind:EventKind):SceneKind=>{const art=EVENT_CATALOGUE[kind]?.artwork??kind;return art in palette?art as SceneKind:'reform_demand';};
+
+function Scene({kind}:{kind:SceneKind}){
  const p=palette[kind];
  if(kind==='food_crisis') return <><path d="M70 430c70-48 120-35 180-5 57 28 126 10 205-28v210H70Z" fill={p.a}/><path d="M145 520c20-76 42-130 71-188M194 512c16-62 36-113 65-165M300 520c-9-70-8-130 7-191M350 518c4-64 18-117 44-163" stroke={p.accent} strokeOpacity=".62" strokeWidth="8" strokeLinecap="round"/><path d="M205 356l-37-29M228 405l-45-26M307 354l36-33M313 418l46-25" stroke={p.accent} strokeOpacity=".46" strokeWidth="7" strokeLinecap="round"/></>;
  if(kind==='inflation_shock') return <><path d="M90 505 160 420l72 43 72-138 88 54 92-171" fill="none" stroke={p.accent} strokeWidth="15" strokeLinejoin="round"/><path d="m458 208 27 8-16 24" fill="none" stroke={p.accent} strokeWidth="11" strokeLinecap="round"/><g opacity=".45" fill="none" stroke="#e6e9e9" strokeWidth="3"><circle cx="175" cy="258" r="72"/><circle cx="175" cy="258" r="52"/></g><text x="175" y="283" textAnchor="middle" fontSize="75" fontWeight="800" fill="#eef0ec" opacity=".65"><LocaleText value={"%"}/></text></>;
@@ -30,9 +35,10 @@ function Scene({kind}:{kind:EventKind}){
  return <><path d="M90 332s78-126 190-126 190 126 190 126-78 126-190 126S90 332 90 332Z" fill={p.a} opacity=".74" stroke={p.accent} strokeWidth="8"/><circle cx="280" cy="332" r="76" fill="#08131b" stroke={p.accent} strokeWidth="8"/><circle cx="280" cy="332" r="27" fill={p.accent}/><path d="M112 158h150M298 158h146M112 505h105M338 505h106" stroke="#dce8ed" strokeOpacity=".18" strokeWidth="7" strokeLinecap="round"/></>;
 }
 
-export function EventArtwork({kind}:{kind:EventKind}){
+export function EventArtwork({kind:eventKind}:{kind:EventKind}){
+ const kind=sceneKind(eventKind);
  const p=palette[kind];
- return <svg className="event-illustration" viewBox="0 0 560 700" role="img" aria-label={translateLive(kind.replaceAll('_',' '))}>
+ return <svg className="event-illustration" viewBox="0 0 560 700" role="img" aria-label={translateLive(eventKind.replaceAll('_',' '))}>
   <defs>
    <linearGradient id={`event-bg-${kind}`} x1="0" x2="1" y1="0" y2="1"><stop stopColor={p.a}/><stop offset=".5" stopColor={p.b}/><stop offset="1" stopColor="#03080d"/></linearGradient>
    <radialGradient id={`event-glow-${kind}`}><stop stopColor={p.accent} stopOpacity=".24"/><stop offset="1" stopColor={p.accent} stopOpacity="0"/></radialGradient>

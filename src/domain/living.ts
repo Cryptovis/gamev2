@@ -50,5 +50,7 @@ export interface LivingWorld {
     suppressed: AdviceKind[];
     lastShown: Partial<Record<AdviceKind, number>>;
     active: AdviceKind | null;
+    /** 0.88: day of the last advisor pop-up of any kind (resource advisor or advice), for the shared gap; absent in older saves. */
+    lastPopupDay?: number;
   };
 }
