@@ -1,4 +1,5 @@
 import { processFlights } from './systems/flights';
+import { processCommodityExchange } from './systems/commodityExchange';
 import {recordEconomicHistory} from './systems/economicHistory';
 import {processAutoTacticalWars} from './systems/tactical';
 import {processEnergy,processEnergyAI} from './systems/energy';
@@ -128,6 +129,7 @@ export function tickGame(state: GameState): GameState {
   next = processAiWars(next);
   if(!next.world.living?.advice.active&&!next.world.living?.notice)next = maybeCreateResourceAdvisor(next);
   next = processFlights(next);
+  next = processCommodityExchange(next);
   next = processCampaignVictory(next);
   return recordEconomicHistory(next);
 }

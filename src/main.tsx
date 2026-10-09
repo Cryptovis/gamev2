@@ -23,3 +23,4 @@ import "./ui/styles/tacticalCommand.css";
 import "./ui/styles/commandPolish.css";
 
 import "./ui/styles/flowCommand.css";
+import "./ui/styles/commodityExchange.css";
