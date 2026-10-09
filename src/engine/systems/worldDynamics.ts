@@ -1,6 +1,8 @@
 import {activeCountries} from '../../domain/sovereignty';
 import type { CountryState, GameState } from '../../domain/game';
-import { addTreaty, changeRelations, embassyFor, openEmbassy, relationFor, relationshipIndex, updateBilateralRelation } from './diplomacy';
+import { changeRelations, embassyFor, relationFor, relationshipIndex, updateBilateralRelation } from './diplomacy';
+import { agreementEligibility, aiProposeAgreement, type AgreementKind } from './treaties';
+const AI_AGREEMENT_NOTE:Record<AgreementKind,string>={embassy:'opened reciprocal embassies.',trade:'signed a trade pact.',nonAggression:'signed a non-aggression pact.',alliance:'entered a strategic alliance.'};
 
 function stableHash(value:string){let h=2166136261;for(const ch of value){h^=ch.charCodeAt(0);h=Math.imul(h,16777619);}return h>>>0;}
 function affinity(a:CountryState,b:CountryState){
@@ -33,10 +35,12 @@ export function processWorldDiplomacy(state:GameState):GameState{
   const drift=source.ai.strategicGoal==='expand_influence'?3:source.ai.strategicGoal==='grow_economy'?2:1;
   if(current.score<75)next=changeRelations(next,source.id,target.id,drift);
   const rel=relationFor(next.countries[source.id],target.id);
-  if(rel.score>=12&&!embassyFor(next,source.id,target.id)&&stableHash(`emb-${source.id}-${target.id}-${state.day}`)%5===0){next=openEmbassy(next,source.id,target.id,1);notes.push(`DIPLOMACY // ${source.name} and ${target.name} opened reciprocal embassies.`);}
-  else if(relationshipIndex(rel)>50&&!rel.treaties.includes('trade')){next=addTreaty(next,source.id,target.id,'trade');notes.push(`DIPLOMACY // ${source.name} and ${target.name} signed a trade pact.`);}
-  else if(rel.score>=40&&!rel.treaties.includes('nonAggression')){next=addTreaty(next,source.id,target.id,'nonAggression');notes.push(`DIPLOMACY // ${source.name} and ${target.name} signed a non-aggression pact.`);}
-  else if(rel.score>=72&&!rel.treaties.includes('alliance')){next=addTreaty(next,source.id,target.id,'alliance');notes.push(`DIPLOMACY // ${source.name} and ${target.name} entered a strategic alliance.`);}
+  // AI picks what it wants; the shared treaty rules (eligibility, GDP-scaled fee, acceptance roll, cooldown) decide (audit D8).
+  const wanted:[AgreementKind,boolean][]=[['embassy',rel.score>=12&&!embassyFor(next,source.id,target.id)&&stableHash(`emb-${source.id}-${target.id}-${state.day}`)%5===0],['trade',relationshipIndex(rel)>50],['nonAggression',rel.score>=40],['alliance',rel.score>=72]];
+  const kind=wanted.find(([k,want])=>want&&agreementEligibility(next,source.id,target.id,k).allowed)?.[0];
+  if(!kind)continue;
+  const proposal=aiProposeAgreement(next,source.id,target.id,kind);next=proposal.state;
+  if(proposal.accepted)notes.push(`DIPLOMACY // ${source.name} and ${target.name} ${AI_AGREEMENT_NOTE[kind]}`);
  }
  return {...next,sitrep:[...notes,...next.sitrep].slice(0,12)};
 }
