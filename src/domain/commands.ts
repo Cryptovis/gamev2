@@ -72,6 +72,10 @@ export type ReliableCommand =
  | {type:'industry/cancelContract';id:string}
  | {type:'tutorial/set';step:number;active:boolean}
  | {type:'inbox/read';scope:'letters'|'leadership'}
- | {type:'living/dismissNotice'};
+ | {type:'living/dismissNotice'}
+ // 0.88 track E: factions and regime crises (audit E2).
+ | {type:'politics/concession';faction:import('./politics').FactionKey}
+ | {type:'politics/crisisResponse';option:import('./politics').CrisisOption}
+ | {type:'politics/acknowledgeCrisis'};
 
 export type GameCommand = (LegacyCommand | ReliableCommand) & {commandId?:string};

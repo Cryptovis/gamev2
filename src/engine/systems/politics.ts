@@ -2,6 +2,7 @@ import type { CountryState, PoliticsState } from '../../domain/game';
 import type { EconomyFlow } from './economy';
 import type { ResourceFlow } from './resources';
 import { ministryStabilitySupport } from './ministries';
+import { coalitionStabilityEffect } from './factions';
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 
@@ -15,9 +16,10 @@ export const HIGH_TAX_APPROVAL_COST = 0.003;
  * Long-run stability a government settles toward: mostly public approval, partly social cohesion,
  * plus the interior/society ministry contribution. Ministries raise the target; they no longer add
  * an unbounded daily climb, so stability falls when approval collapses (audit D1).
+ * 0.88: the governing coalition's faction support moves the target by up to ±4 points (factions.ts).
  */
 export function stabilityTarget(country: CountryState) {
-  return clamp(country.politics.approval * 0.55 + country.society.cohesion * 0.45 + ministryStabilitySupport(country), 0, 100);
+  return clamp(country.politics.approval * 0.55 + country.society.cohesion * 0.45 + ministryStabilitySupport(country) + coalitionStabilityEffect(country), 0, 100);
 }
 
 export function simulatePolitics(
