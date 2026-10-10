@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.90.0-playtest.3 — Clear markets & policies
+Implementation and validation: **Codex**. Branch: `dev/clear-command-090`. Save schema stays 17.
+
+- Successful commodity orders show the purchased/sold amount, actual all-in debit, current treasury and green incoming cargo or vault holdings. Physical reserves stay unchanged until cargo arrives; sales show pending proceeds payable on the next game day. Failed and duplicate orders retain their explanation without reporting another gain.
+- Supply contracts use five desktop columns for 15 goods, centered artwork, readable stock counts and red zero-stock warnings. Positive stock below the existing protected-reserve threshold is marked low. Hover and keyboard focus highlight choices. Direction, partner, quantity and term share one desktop row and the panel background; narrow screens wrap controls and tiles.
+- Trade partners show all 19 goods in two desktop rows, with readable names and hover/focus feedback, replacing horizontal scrolling. Remove the redundant World prices section; live quotes remain in all trading screens and the shared selector remains available to other callers.
+- Add Policies to the country menu. Move the existing reviewed tax control out of Economy/Overview, show current budget and provide the existing ministry-budget route. Foreign policies remain read-only. No new tax formula, balance or gameplay command is introduced.
+- Review new wording in Turkish, English, Spanish, Chinese and Russian. Preserve prior releases, save compatibility and the dependency graph.
+
+Validation: 582 unit tests, TypeScript/production build and 98 production-preview browser scenarios passed; see [playtest record](docs/PLAYTEST-090.md) for final focused visual checks. GitHub CI runs independently on push. StackBlitz/WebContainer itself is not exercised by local Chromium tests.
+
 ## 0.90.0-playtest.2 — Market & window hotfix
 Implementation and validation: **Codex**. Branch: `dev/clear-command-090`. Save schema stays 17.
 

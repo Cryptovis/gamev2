@@ -4,12 +4,16 @@ import { useRef } from "react";
 import { createPortal } from "react-dom";
 import { useGameStore } from "../../store/gameStore";
 import {ReviewVisual,reviewVisualKind,type ReviewVisualKind} from '../icons/ReviewVisual';
+import {AssetThumbnail} from '../icons/AssetThumbnail';
 export interface ReviewContent {
   title: string;
   summary: string;
   metrics?: string[][];
   warnings?: string[];
   visual?: ReviewVisualKind;
+  outcome?: 'success';
+  asset?: string;
+  metricTones?: Record<string,'positive'|'negative'|'neutral'>;
 }
 export function ReviewDialog({
   title,
@@ -21,6 +25,9 @@ export function ReviewDialog({
   confirmLabel = "CONFIRM",
   allowed = true,
   visual,
+  outcome,
+  asset,
+  metricTones={},
   actions=[],
   children,
   className="",
@@ -45,18 +52,18 @@ export function ReviewDialog({
         role="dialog"
         aria-modal="true"
         aria-label={translateLive(title)}
-        className={`review-dialog ${onConfirm?'review-confirmation':'review-result'} ${className}`}
+        className={`review-dialog ${onConfirm?'review-confirmation':'review-result'} ${outcome?'receipt-success':''} ${className}`}
       >
         <header>
           <small><LocaleText value={"COMMAND REVIEW"}/></small>
           <button data-guide="review-dismiss" aria-label={translateLive("Close review")} onClick={onCancel}><LocaleText value={"×"}/></button>
         </header>
-        <ReviewVisual kind={visual??reviewVisualKind(title+' '+summary)} signed={!onConfirm&&/signed|agreed/i.test(title)}/>
+        {asset?<div className="review-visual receipt-art" aria-hidden="true"><AssetThumbnail asset={asset} size={72}/><span className="receipt-check">✓</span></div>:<ReviewVisual kind={visual??reviewVisualKind(title+' '+summary)} signed={!onConfirm&&/signed|agreed/i.test(title)}/>}
         <h2><LocaleText value={title}/></h2>
         <p><LocaleText value={summary}/></p>
         <div className="review-metrics">
           {metrics.map(([label, value]) => (
-            <div key={label}>
+            <div key={label} data-metric={label} data-tone={metricTones[label]??'neutral'}>
               <small><LocaleText value={label}/></small>
               <strong><LocaleText value={value}/></strong>
             </div>

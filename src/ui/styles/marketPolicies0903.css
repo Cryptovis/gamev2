@@ -1,0 +1,49 @@
+/* 0.90.3: compact markets, explicit stocks and actual execution receipts. */
+.supply-contract-panel .exchange-board{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px}
+.supply-contract-panel .exchange-board>button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-width:0;padding:12px 7px;text-align:center;color:#ecf2f4;border:1px solid #5a727c;border-radius:10px;transition:background-color .15s,border-color .15s,box-shadow .15s}
+.supply-contract-panel .exchange-board button .asset-thumbnail{margin:0!important;align-self:center;flex-shrink:0}
+.supply-contract-panel .exchange-good-name{font-size:13px;font-weight:650;line-height:1.35;min-height:2.7em;display:flex;align-items:center;white-space:normal;max-width:100%;overflow-wrap:anywhere;letter-spacing:0}
+.supply-contract-panel .exchange-board button>b{font-size:13px;letter-spacing:0;max-width:100%;overflow-wrap:anywhere;color:#f2d89a}
+.supply-contract-panel .exchange-stock{display:flex;align-items:baseline;justify-content:center;flex-wrap:wrap;gap:6px;width:100%;border-top:1px solid #506570;padding-top:7px}
+.supply-contract-panel .exchange-stock small{font-size:11px;color:#c2d1d6;font-weight:600}
+.supply-contract-panel .exchange-stock strong{font-size:18px;letter-spacing:0;font-variant-numeric:tabular-nums;color:#e5f2eb}
+.supply-contract-panel .exchange-stock.stock-critical strong,.supply-contract-panel .stock-hint.stock-critical{color:#ffb7ae}
+.supply-contract-panel .stock-hint.stock-low{color:#f3d391}
+.supply-contract-panel .stock-hint{font-size:11px;line-height:1.4;letter-spacing:0;color:#b9d1c2}
+.supply-contract-panel .exchange-board>button:is(:hover,:focus-visible),.trade-good-picker button:is(:hover,:focus-visible){background:#385359!important;border-color:#d9c692!important;box-shadow:inset 0 0 0 1px #d9c692;color:#fff}
+.supply-contract-panel .exchange-board>button.selected{background:#344d50!important;border-color:#e8cc83!important;box-shadow:inset 0 -3px #e8cc83}
+.supply-contract-panel .exchange-order{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;background:transparent;padding:14px 0;border:none;border-top:1px solid #526773;margin-top:12px}
+.supply-contract-panel .exchange-order label{display:flex;flex-direction:column;gap:8px;min-width:0;color:#edf2f3;font-size:12px;font-weight:650;letter-spacing:.02em}
+.supply-contract-panel .exchange-order :is(select,input){width:100%;min-width:0;min-height:42px;padding:9px 8px;font-size:13px;color:#f4f7f8;background:#253b47;border:1px solid #8298a2;border-radius:7px}
+.supply-contract-panel .exchange-order :is(select,input):focus-visible{outline:2px solid #e8cc83;outline-offset:2px}
+.trade-good-picker{display:flex;flex-wrap:wrap;gap:6px;overflow:visible;padding-bottom:8px}
+.trade-good-picker button{flex:1 0 calc(10% - 5.4px);width:auto;min-width:0;min-height:93px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:8px 3px;color:#dae8ed;font-size:11px;letter-spacing:0;line-height:1.3;border:1px solid #637984;background:#253b47;transition:background-color .15s,border-color .15s,box-shadow .15s}
+.trade-good-picker button span{white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere;font-size:10px;letter-spacing:0;font-weight:600}
+.trade-good-picker button.active{background:#3c504e;border-color:#e7cb8b;color:#ffe6ab;box-shadow:inset 0 -2px #e7cb8b}
+.receipt-success h2{color:#bcebc8}
+.receipt-success .receipt-art{position:relative;background:radial-gradient(ellipse at center,#345b4d,transparent 70%);height:100px;display:flex;align-items:center;justify-content:center}
+.receipt-art>.receipt-check{position:absolute;left:calc(50% + 22px);bottom:9px;background:#235739;color:#d2ffdc;border:1px solid #93d1a3;border-radius:50%;font-size:20px;font-weight:700;line-height:30px;width:32px;text-align:center}
+.receipt-success .review-metrics>div{border:1px solid #617684;border-radius:9px;padding:12px;min-width:0;background:#213641}
+.receipt-success .review-metrics small{font-size:12px;color:#c6d7dd}
+.receipt-success .review-metrics strong{font-size:18px;line-height:1.35;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.receipt-success [data-tone="positive"] strong{color:#a9e8b9}
+.receipt-success [data-tone="negative"] strong{color:#ffb9af}
+.receipt-success .review-notes p{font-size:14px;line-height:1.5;color:#d8e4e7}
+.country-policies{display:grid;gap:14px}
+.policy-heading{display:flex;align-items:center;gap:12px}
+.policy-heading h3{margin:0 0 6px;font-size:19px}
+.policy-heading p{margin:0;color:#c9d9df;line-height:1.5}
+.country-policies :is(.tax-policy-panel,.policy-budget){padding:14px;background:#253c48;border:1px solid #6b818c;border-radius:10px}
+.country-policies .tax-policy-panel label{display:block;font-weight:650;color:#edf3f5;font-size:14px}
+.country-policies .tax-policy-panel input{display:block;width:100%;margin:14px 0}
+.country-policies button{min-height:42px;padding:9px 12px;border:1px solid #879da6;border-radius:7px;background:#35515b;color:#ecf4f4;font-weight:600;line-height:1.4}
+.country-policies button:not(:disabled):is(:hover,:focus-visible){background:#466468;border-color:#e5cb91}
+.country-policies button:disabled{color:#a8bac2;background:#283f49}
+.country-policies .tax-policy-panel>button{display:inline-flex;align-items:center;gap:8px;margin:0 7px 7px 0}
+.policy-budget-link{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:12px}
+.command-panel .panel-tabs-12 button:not(.country-war-action){grid-column:auto}
+@media(max-width:700px){.supply-contract-panel .exchange-board{grid-template-columns:repeat(3,minmax(0,1fr))}.supply-contract-panel .exchange-order{grid-template-columns:repeat(2,minmax(0,1fr))}.trade-good-picker button{flex-basis:calc(20% - 4.8px)}}
+@media(max-width:460px){.supply-contract-panel .exchange-board{grid-template-columns:repeat(2,minmax(0,1fr))}.supply-contract-panel .exchange-order{grid-template-columns:1fr}.trade-good-picker button{flex-basis:calc(50% - 3px)}.receipt-success .review-metrics strong{font-size:16px}}
+@media(prefers-reduced-motion:reduce){.supply-contract-panel .exchange-board>button,.trade-good-picker button{transition:none}}
+
+@media(min-width:701px){.supply-contract-panel .exchange-order label{display:grid;grid-template-rows:2.6em 42px;align-content:start}}

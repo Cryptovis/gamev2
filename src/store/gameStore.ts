@@ -1,3 +1,4 @@
+import {commandReceipt} from './commandReceipt';
 import {recordEconomicHistory} from '../engine/systems/economicHistory';
 import {buildPlant,togglePlant,cancelPowerProject} from '../engine/systems/energy';
 import type {PlantKind} from '../domain/energy';
@@ -149,7 +150,7 @@ interface GameActions {
   resetGame: () => void;
 }
 
-function commandWithReceipt(state:GameState,command:GameCommand):GameState & {actionReceipt:ReviewContent}{const result=executeCommandResult(state,command);return {...result.state,actionReceipt:{title:result.status==='applied'?'Command completed':result.status==='duplicate'?'Command already applied':'Command unavailable',summary:result.message,metrics:[['Treasury',`$${result.state.countries[state.playerCountryId].economy.treasury.toFixed(3)}B`]]}};}
+function commandWithReceipt(state:GameState,command:GameCommand):GameState & {actionReceipt:ReviewContent}{const result=executeCommandResult(state,command);return {...result.state,actionReceipt:commandReceipt(state,command,result)};}
 function livingReceipt(s:GameState,n:GameState,title:string,summary:string){return {...n,actionReceipt:{title:n===s?'Decision unavailable':title,summary:n===s?'Check budget, stock, diplomatic access, limits and cooldown.':summary}};}
 function governanceReceipt(s:GameState,n:GameState){return {...n,actionReceipt:{title:n===s?'Decision unavailable':'Decision executed',summary:n===s?'Requirements changed; check the budget, cooldown and ownership.':n.sitrep[0]}}}
 export const useGameStore = create<GameState & GameActions>((set, get) => ({

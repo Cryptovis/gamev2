@@ -1,3 +1,4 @@
+import {UI_CATALOG_0903} from './uiCatalog0903';
 import {UI_CATALOG_090} from './uiCatalog090';
 import {UI_CATALOG_089_M} from './uiCatalog089M';
 import {UI_CATALOG_089_L} from './uiCatalog089L';
@@ -69,7 +70,7 @@ for (const language of languages) {
   for(const [key,values] of Object.entries(UI_CATALOG_089_K))entries.set(catalogKey(key),values[index]);
   for(const [key,values] of Object.entries(UI_CATALOG_089_L))entries.set(catalogKey(key),values[index]);
   for(const [key,values] of Object.entries(UI_CATALOG_089_M))entries.set(catalogKey(key),values[index]);
-  for(const [key,values] of Object.entries(UI_CATALOG_090))entries.set(catalogKey(key),values[index]);
+  for(const [key,values] of Object.entries({...UI_CATALOG_090,...UI_CATALOG_0903}))entries.set(catalogKey(key),values[index]);
   const countries = new Intl.DisplayNames([language], { type: "region" });
   for (const c of WORLD_COUNTRY_SEEDS)
     entries.set(c.name.toLowerCase(), countries.of(c.iso2) ?? c.name);

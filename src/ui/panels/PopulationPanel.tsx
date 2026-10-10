@@ -11,7 +11,7 @@ import {
 import { simulateResources } from "../../engine/systems/resources";
 import { ReviewDialog } from "./ReviewDialog";
 import { money } from "../formatMoney";
-export function PopulationPanel({ country: c }: { country: CountryState }) {
+export function PopulationPanel({ country: c, policyOnly=false, showPolicy=true }: { country: CountryState; policyOnly?:boolean; showPolicy?:boolean }) {
   const s = useGameStore(),
     own = c.id === s.playerCountryId,
     [tax, setTax] = useState(c.economy.taxRate),
@@ -21,11 +21,11 @@ export function PopulationPanel({ country: c }: { country: CountryState }) {
     after = populationForecast(next, simulateResources(next));
   useEffect(() => setTax(c.economy.taxRate), [c.id, c.economy.taxRate]);
   return (
-    <section className="population-panel">
+    <section className={policyOnly?"population-panel tax-policy-panel":"population-panel"}>
       <h3>
-        <LocaleText value="People, Taxes & Living Standards" />
+        <LocaleText value={policyOnly?"Tax policy":"People, Taxes & Living Standards"} />
       </h3>
-      <div className="population-metrics">
+      {!policyOnly&&<><div className="population-metrics">
         {[
           [
             "Total population",
@@ -57,7 +57,10 @@ export function PopulationPanel({ country: c }: { country: CountryState }) {
       <p>
         <LocaleText value="Food, disposable income, inflation, unemployment and stability affect births and migration. Recruitment moves civilians into the military; it does not erase people from the total population." />
       </p>
-      {own && (
+      </>}
+      {policyOnly&&<p><LocaleText value="Tax rate"/>: <strong>{c.economy.taxRate.toFixed(0)}%</strong></p>}
+      {policyOnly&&!own&&<p><LocaleText value="Only your country’s policies can be changed."/></p>}
+      {own && showPolicy && (
         <>
           <label>
             <LocaleText value="Tax rate" /> {tax.toFixed(0)}%
