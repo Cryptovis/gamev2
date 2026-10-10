@@ -121,20 +121,28 @@ function update(s: GameState, g: GovernanceState): GameState {
 function note(s: GameState, line: string) {
   return { ...s, sitrep: [line, ...s.sitrep].slice(0, 12) };
 }
+export function campusPreview(s:GameState,kind:CampusKind){
+ const c=s.countries[s.playerCountryId],a=academyFor(s,c.id),d=CAMPUSES[kind];
+ if(!d)return {techReady:false,allowed:false,cost:0,completionDay:s.day,monthlyUpkeep:0,treasuryAfter:c.economy.treasury};
+ const techReady=kind==='institute'?c.technology.unlocked.includes('edu-laboratories'):kind==='academy'?c.technology.unlocked.includes('mil-command'):true;
+ return {techReady,allowed:!!d&&techReady&&c.economy.treasury>=d.cost&&a.projects.length<4,cost:d.cost,completionDay:s.day+d.days,monthlyUpkeep:d.upkeep*30,treasuryAfter:c.economy.treasury-d.cost};
+}
+export function pilotTrainingPreview(s:GameState,count:number){
+ const c=s.countries[s.playerCountryId],a=academyFor(s,c.id);
+ const rate=1+a.buildings.academy*.005+(c.technology.unlocked.includes('mil-flight-school')?.1:0);
+ const committed=a.pilots+a.training.reduce((n,t)=>n+t.count,0),cost=count*.0001;
+ return {allowed:Number.isInteger(count)&&count>=1&&count<=1000&&c.economy.treasury>=cost&&committed+count<=Math.floor(c.military.personnel*.05),cost,days:Math.ceil(30/rate),monthlyWages:count*.0000002*30,pilotsAfter:committed+count};
+}
+export function academySummary(s:GameState,id:string){
+ const a=academyFor(s,id);
+ return {researchBonusPercent:a.buildings.university*CAMPUSES.university.bonus*100+a.buildings.institute*CAMPUSES.institute.bonus*100,monthlyUpkeep:a.lastUpkeep*30};
+}
 export function buildCampus(s: GameState, kind: CampusKind): GameState {
   const d = CAMPUSES[kind],
     c = s.countries[s.playerCountryId],
     a = academyFor(s, c.id),
     g = governance(s);
-  if (
-    !d ||
-    (kind === "institute" &&
-      !c.technology.unlocked.includes("edu-laboratories")) ||
-    (kind === "academy" && !c.technology.unlocked.includes("mil-command")) ||
-    c.economy.treasury < d.cost ||
-    a.projects.length >= 4
-  )
-    return s;
+  if(!campusPreview(s,kind).allowed)return s;
   return note(
     update(
       {
@@ -169,23 +177,8 @@ export function buildCampus(s: GameState, kind: CampusKind): GameState {
   );
 }
 export function hirePilots(s: GameState, count: number): GameState {
-  const c = s.countries[s.playerCountryId],
-    a = academyFor(s, c.id),
-    g = governance(s),
-    cost = count * 0.0001,
-    committed = a.pilots + a.training.reduce((n, t) => n + t.count, 0);
-  if (
-    !Number.isInteger(count) ||
-    count < 1 ||
-    count > 1000 ||
-    c.economy.treasury < cost ||
-    committed + count > Math.floor(c.military.personnel * 0.05)
-  )
-    return s;
-  const rate =
-    1 +
-    a.buildings.academy * 0.005 +
-    (c.technology.unlocked.includes("mil-flight-school") ? 0.1 : 0);
+  const c=s.countries[s.playerCountryId],a=academyFor(s,c.id),g=governance(s),view=pilotTrainingPreview(s,count),cost=view.cost;
+  if(!view.allowed)return s;
   return note(
     update(
       {
@@ -209,7 +202,7 @@ export function hirePilots(s: GameState, count: number): GameState {
               {
                 id: `pilots-${s.day}-${a.training.length}`,
                 count,
-                readyDay: s.day + Math.ceil(30 / rate),
+                readyDay: s.day + view.days,
               },
             ],
           },

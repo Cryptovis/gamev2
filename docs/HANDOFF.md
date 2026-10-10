@@ -3,10 +3,11 @@
 Bu dosya yeni bir konuşmanın ilk okuması içindir. Geçmiş konuşmayı taşımadan kaldığımız yerden devam etmeyi sağlar.
 
 ## Durum
-- Sürüm: **0.90.0-playtest.3 "Clear markets & policies"**
-- Dal: `dev/clear-command-090`. Kaynak: 0.89.7 (`8322a3f`). 0.90.2 CI başarılı (38067393720); yeni patch CI sonucu push sonrası ayrıca kontrol edilmeli.
+- Sürüm: **0.90.0-playtest.4 "Reliable command menus & sovereign credit"**
+- Dal: `dev/clear-command-090`. Kaynak: 0.89.7 (`8322a3f`). Başlangıç GitHub HEAD: `6f3695811a6f7834ca6091da80e8bb7a1d0160ff` (0.90.3), CI başarılı (38073189084). 0.90.4 CI push sonrası ayrıca doğrulanmalı.
 - `main`'e doğrudan push yok. Yeni işler `dev/<name>-0XX` dallarında yapılır.
-- Son patch: alış/satış makbuzunda gerçek ödeme, hazine, yoldaki yük ve T+1 satış geliri; 5 sütunlu stok kartları, tek satırlı sözleşme alanları, 2 satırlı ürün seçimi, gereksiz World prices kaldırıldı. Policies vergi onayını ve mevcut bakanlık bütçesi erişimini toplar. 582 test/derleme ve 98 üretim tarayıcı senaryosu geçti; son odaklı kontroller ve sonuçlar [0.90 test kaydında](PLAYTEST-090.md). Üretim dengesi/şema/bağımlılıklar değişmedi.
+- 0.90.4 (Codex): menüler başlangıçta yüklenir; Tech → Investments, Military → Pilot training; okunur Supply ve sözleşme boşluğu; sola bitişik üç World sıralaması. Kredi: bayraklar, tüm ülkelerde AAA–D, üç oyun günü başvuru, ilişki/risk retleri, hedefli 3 yıllık can simidi, erken ödeme ve sınırlı kredi geçmişi ödülü. Şema 17 yeni opsiyonel alanlarla korunur; bağımlılıklar değişmez. 600 birim testi/TypeScript/derleme geçti. 111 üretim senaryosu doğrulandı: tam tur 108 geçti, eski seçici/atlas varsayımına takılan 3 test düzeltildikten sonra 3/3 tekrar geçti. Ayrıntılar PLAYTEST-090 kaydında. Gerçek StackBlitz testi yapılmadı.
+- Önceki 0.90.3: alış/satış makbuzunda gerçek ödeme, hazine, yoldaki yük ve T+1 satış geliri; 5 sütunlu stok kartları, tek satırlı sözleşme alanları, 2 satırlı ürün seçimi, gereksiz World prices kaldırıldı. Policies vergi onayını ve mevcut bakanlık bütçesi erişimini toplar. 582 test/derleme ve 98 üretim tarayıcı senaryosu geçti; son odaklı kontroller ve sonuçlar [0.90 test kaydında](PLAYTEST-090.md). Üretim dengesi/şema/bağımlılıklar değişmedi.
 - Önceki hotfix: borsa review penceresi ve engel açıklaması, Help/Supply/kredi/kontrat için başlangıç yüklemesi, scroll/focus ve rail yerleşimi, bayrak altı ülke kısayolu, güncel ülke adları ve okunur karar/tedarik başlığı. 578 birim testi/derleme ve 6 Vite-dev tarayıcı senaryosu geçti. All 90 production-preview browser scenarios passed (7.7m); final mobile-menu layout rechecked in nine focused scenarios (50.7s).
 - 0.90 major içeriği: bölümlere ayrılmış Affairs, ortak motor koşul/maliyet önizlemesi, HUD/ülke menüsü, değişen açılış sözleri, klavye harita kontrolü; doğrulanan savaş/konsey/seçim düzeltmeleri. [0.90 test kaydı](PLAYTEST-090.md) ve [Antigravity değerlendirmesi](QA-RECONCILIATION-090.md). Market/resim kurtarma önceki sürümde mevcut; tekrar yapılmadı.
 - Kapsam (0.89): ticaret ortağı seçimi ve ülke TRADE sekmesi, emtia borsası (spread, komisyon, günlük limit, pozisyon limiti, depolama, şoklar), diplomatik jet ve kargo uçakları (harita katmanı, mesafeye göre varış süresi).
@@ -14,7 +15,7 @@ Bu dosya yeni bir konuşmanın ilk okuması içindir. Geçmiş konuşmayı taş�
 ## Bekleyen işler
 1. **Faz 4 (teknik borç):** tek çeviri kataloğu, CSS katmanları, z-index ölçeği, modal hook, motor önizleme fonksiyonları, harita dokusu, Prettier, docs arşivi, demo hesap hash'i. Araştırma önizlemesi/iade hesabı playtest.5’te birleştirildi. Playtest.6 ortak pencere yönetimi, katman değişkenleri ve panel indirme kurtarmasını ekledi; kalan kapsam ve kanıtlar: [audit ilerleme kaydı](AUDIT-PROGRESS-089.md).
 2. **Oyun testinden gelen denge hotfix'leri:** approval baseline, AI savaş çeşitliliği, demokrasilerde huzursuzluk, borsa fiyat düzeyi tutarlılığı. Kullanıcı geri bildirimi toplanıp tek bir hotfix sürümünde işlenecek.
-3. **İsteğe bağlı:** Mac'te `rm -rf node_modules package-lock.json && npm install` ile lock dosyasını yeniden üretmek.
+3. **Bağımlılık/lock bakımı:** package-lock değişiklikleri kaynağı ve bağımlılık grafiği incelenmeden yayınlanmamalı. StackBlitz yerel değişiklikleri korunmalı; temiz kurulum için mevcut lock ile `npm ci` kullanılır.
 
 ## Ortam notları
 - Aşağıdaki 403/stub notları önceki Claude ortamına aittir. Codex ortamında `npm ci --ignore-scripts`, TypeScript/build ve yerel Chromium ile Playwright çalışıyor; bu kısıtları başka ortamlara genelleme.

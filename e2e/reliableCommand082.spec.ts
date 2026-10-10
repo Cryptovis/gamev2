@@ -110,7 +110,7 @@ for(const viewport of [{width:1440,height:900},{width:390,height:844}]){
  });
 }
 
-test('diplomacy retry tracker and raster supply/world artwork',async({page})=>{
+test('diplomacy retry tracker and Supply/World atlas artwork',async({page})=>{
  await start(page);await skip(page);await page.locator('[data-guide="rail-diplo"]').click();
  await page.locator('.letter-compose button').click();await page.locator('[data-guide="review-confirm"]').click();await page.locator('[data-guide="review-dismiss"]').first().click();
  await expect(page.locator('.proposal-status')).toContainText('zaten gönderildi');await page.locator('.letter-compose button').click();
@@ -120,7 +120,7 @@ test('diplomacy retry tracker and raster supply/world artwork',async({page})=>{
  await expect(page.locator('.proposal-status')).toContainText('zaten gönderildi');await expect(page.locator('.letter-list article[data-status="pending"]')).toHaveCount(1);
  await page.locator('[data-guide="close-workspace"]').click();
  for(const menu of ['rail-supply','rail-world']){
-  await page.locator(`[data-guide="${menu}"]`).click();const imgs=page.locator('.floating-command-window img[src$=".webp"]');await expect(imgs.first()).toBeVisible();expect(await imgs.count()).toBeGreaterThan(0);
+  await page.locator(`[data-guide="${menu}"]`).click();const imgs=page.locator('.floating-command-window img[src*="/assets/command/"]');await expect(imgs.first()).toBeVisible();expect(await imgs.count()).toBeGreaterThan(0);
   await expect.poll(()=>imgs.evaluateAll(els=>els.every(el=>(el as HTMLImageElement).complete&&(el as HTMLImageElement).naturalWidth>0))).toBe(true);
   await page.screenshot({path:`test-results/patch4-${menu}.png`,fullPage:true});await page.locator('[data-guide="close-workspace"]').click();
  }

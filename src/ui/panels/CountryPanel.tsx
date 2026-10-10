@@ -1,5 +1,8 @@
 import {useShallow} from 'zustand/react/shallow';
-const EconomicTrends=lazy(()=>import('./EconomicTrends').then(m=>({default:m.EconomicTrends})));
+import {EconomicTrends} from './EconomicTrends';
+import {SectionMenu} from '../windows/SectionMenu';
+import {ResearchWindow} from './ResearchWindow';
+import {InvestmentWindow} from './InvestmentWindow';
 import {activeCountries} from '../../domain/sovereignty';
 import {money} from '../formatMoney';
 import {GuideBriefing} from './GuideBriefing';
@@ -8,7 +11,7 @@ import {CommandArt} from '../icons/CommandArt';
 import {LocaleText,translateLive} from '../../i18n/localeText';
 import {WorldInstitutionsPanel} from './WorldInstitutionsPanel';
 import {TechnologyPanel} from './TechnologyPanel';
-import { lazy, Suspense, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { Suspense, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { CountryDossierWindow } from './CountryDossierWindow';
 import { ReviewDialog } from './ReviewDialog';
 import {ResourceCommandWindow} from './ResourceCommandWindow';
@@ -51,10 +54,11 @@ function PanelTabIcon({id}:{id:PanelTab}){return id==='trade'?<CivicArt kind="tr
 export function CountryPanel(){
   const [supplyResource,setSupplyResource]=useState<TradeResource|null>(null);
   const [tab,setTab]=useState<PanelTab>('overview');
+  const [militarySection,setMilitarySection]=useState('overview');
   const [commandWindow,setCommandWindow]=useState<'dossier'|'supply'|null>(null);
   const [pendingDecision,setPendingDecision]=useState<{spec:StrategicDecisionSpec;execute:()=>void}|null>(null);
   const state=useGameStore(useShallow(s=>{const {actionReceipt,saveMessage,mapControlCommand,mapZoomSensitivity,mapLabelScale,...view}=s;return view;}));
-  useEffect(()=>{if(state.navigation?.panel==='technology'){state.openTool('research');return;}if(state.navigation&&['overview','economy','policies','trade','production','diplomacy','military','intel','cabinet','technology','world','war'].includes(state.navigation.panel))setTab(state.navigation.panel as PanelTab);},[state.navigation?.nonce]);
+  useEffect(()=>{if(state.navigation&&['overview','economy','policies','trade','production','diplomacy','military','intel','cabinet','technology','world','war'].includes(state.navigation.panel))setTab(state.navigation.panel as PanelTab);},[state.navigation?.nonce]);
   const language=state.playerProfile.language;
   const selected=state.countries[state.selectedCountryId ?? state.playerCountryId];
   const player=state.countries[state.playerCountryId];
@@ -78,10 +82,9 @@ export function CountryPanel(){
     <div className="panel-title-row"><div className="country-title-identity"><span className="country-panel-flag"><LocaleText value={flagEmoji(selected.iso2)}/></span><div><h1><LocaleText value={selected.name}/></h1><p className="muted"><LocaleText value={isPlayer?'Player nation':'Observed nation'}/><LocaleText value={" · "}/><LocaleText value={humanize(selected.politics.regime)}/><LocaleText value={" · "}/><LocaleText value={selected.region || 'Global'}/></p></div></div>{selected.controllerCountryId&&<span className="occupation-badge"><LocaleText value={"CONTROLLED"}/></span>}</div>
     <div className="identity-strip"><span className="identity-with-icon"><ReligionGlyph religion={selected.society.dominantReligion}/><i><small><LocaleText value={"RELIGION"}/></small><strong><LocaleText value={humanize(selected.society.dominantReligion)}/></strong></i></span><span><small><LocaleText value={"IDEOLOGY"}/></small><strong><LocaleText value={humanize(selected.society.ideology)}/></strong></span><span><small><LocaleText value={"MILITARY"}/></small><strong><LocaleText value={selected.military.assessment.gfpRank ? `GFP #${selected.military.assessment.gfpRank}` : 'ESTIMATE'}/></strong></span></div>
     <div className="panel-command-actions"><button onClick={()=>setCommandWindow('dossier')}><LocaleText value={tr(language,'dossier','STRATEGIC DOSSIER')}/></button><button onClick={()=>setCommandWindow('supply')}><LocaleText value={tr(language,'supply','SUPPLY COMMAND')}/></button></div>
-    {isPlayer&&<div className="national-development-shortcuts"><button onClick={()=>state.openTool('investment')}><CommandArt kind="investment"/><LocaleText value="Investments & Pilot Training"/></button></div>}
 
     <GuideBriefing/><div className="panel-tabs panel-tabs-10 panel-tabs-12"><button data-guide="tab-affairs" onClick={()=>state.navigate('governance',selected.id)}><CommandArt kind="governance" size={26}/><span><LocaleText value="Affairs"/></span></button>
-      {(['overview','economy','policies','trade','production','diplomacy','military','intel','cabinet','technology','world','war'] as PanelTab[]).map((id)=><button data-guide={'tab-'+id} key={id} data-tab={id} aria-pressed={tab===id} className={(tab===id?'active ':'')+(id==='war'?'country-war-action':'')} onClick={()=>id==='technology'?state.openTool('research'):setTab(id)}><PanelTabIcon id={id}/><span><LocaleText value={id==='policies'?'Policies':id==='war'?(activeWar?'War command':isPlayer?'War readiness':'War planning'):tr(language,id==='technology'?'tech':id,id==='technology'?'TECH':id.toUpperCase())}/></span></button>)}
+      {(['overview','economy','policies','trade','production','diplomacy','military','intel','cabinet','technology','world','war'] as PanelTab[]).map((id)=><button data-guide={'tab-'+id} key={id} data-tab={id} aria-pressed={tab===id} className={(tab===id?'active ':'')+(id==='war'?'country-war-action':'')} onClick={()=>setTab(id)}><PanelTabIcon id={id}/><span><LocaleText value={id==='policies'?'Policies':id==='war'?(activeWar?'War command':isPlayer?'War readiness':'War planning'):({overview:'Overview',economy:'Economy',trade:'Trade',production:'Production',diplomacy:'Diplomacy',military:'Military',intel:'Intelligence',cabinet:'Cabinet',technology:'Technology',world:'World'} as Record<string,string>)[id]}/></span></button>)}
     </div>
 
     {tab==='overview'&&<>
@@ -103,7 +106,8 @@ export function CountryPanel(){
 
     {tab==='diplomacy'&&<DiplomacyPanel selectedId={selected.id}/>}
 
-    {tab==='military'&&<div className="military-panel">{isPlayer&&<RecruitmentPanel/>}<div className="military-score"><div><span><LocaleText value={"CONVENTIONAL CAPABILITY"}/></span><strong><LocaleText value={selected.military.assessment.capability.toFixed(1)}/></strong></div><div><span><LocaleText value={"2026 GFP"}/></span><strong><LocaleText value={selected.military.assessment.gfpRank?`#${selected.military.assessment.gfpRank}`:'N/A'}/></strong></div></div><div className="unit-grid"><UnitStat icon={<PersonnelIcon/>} label="Personnel" value={selected.military.personnel}/><UnitStat icon={<TankIcon/>} label="Tanks" value={selected.military.tanks}/><UnitStat icon={<ArtilleryIcon/>} label="Artillery" value={selected.military.artillery}/><UnitStat icon={<JetIcon/>} label="Fighters" value={selected.military.fighters}/><UnitStat icon={<JetIcon/>} label="Bombers" value={selected.military.bombers}/><UnitStat icon={<ShipIcon/>} label="Warships" value={selected.military.warships}/></div><div className="quality-bars">{[['Readiness',selected.military.readiness],['Logistics',selected.military.logistics],['Technology',selected.military.technology],['Morale',selected.military.morale]].map(([label,value])=><div key={String(label)}><span><LocaleText value={label}/></span><i><b style={{width:`${value}%`}}/></i><strong><LocaleText value={Number(value).toFixed(0)}/><LocaleText value={"%"}/></strong></div>)}</div><p className="data-note"><LocaleText value={"Military capability uses 2026 GFP rank/index where available; inventories are gameplay estimates unless authored."}/></p></div>}
+    {tab==='technology'&&<ResearchWindow embedded readOnly={!isPlayer}/>}
+    {tab==='military'&&<div className="military-panel"><SectionMenu items={[{id:'overview',label:'Military overview',icon:<CommandArt kind="military"/>},...(isPlayer?[{id:'pilots',label:'Pilot training',icon:<CommandArt kind="investment"/>}]:[])]} selected={militarySection} onSelect={setMilitarySection} contentId="military-section-content" label="Military sections"/><div id="military-section-content">{isPlayer&&militarySection==='pilots'?<InvestmentWindow embedded section="pilots"/>:<>{isPlayer&&<RecruitmentPanel/>}<div className="military-score"><div><span><LocaleText value={"CONVENTIONAL CAPABILITY"}/></span><strong><LocaleText value={selected.military.assessment.capability.toFixed(1)}/></strong></div><div><span><LocaleText value={"2026 GFP"}/></span><strong><LocaleText value={selected.military.assessment.gfpRank?`#${selected.military.assessment.gfpRank}`:'N/A'}/></strong></div></div><div className="unit-grid"><UnitStat icon={<PersonnelIcon/>} label="Personnel" value={selected.military.personnel}/><UnitStat icon={<TankIcon/>} label="Tanks" value={selected.military.tanks}/><UnitStat icon={<ArtilleryIcon/>} label="Artillery" value={selected.military.artillery}/><UnitStat icon={<JetIcon/>} label="Fighters" value={selected.military.fighters}/><UnitStat icon={<JetIcon/>} label="Bombers" value={selected.military.bombers}/><UnitStat icon={<ShipIcon/>} label="Warships" value={selected.military.warships}/></div><div className="quality-bars">{[['Readiness',selected.military.readiness],['Logistics',selected.military.logistics],['Technology',selected.military.technology],['Morale',selected.military.morale]].map(([label,value])=><div key={String(label)}><span><LocaleText value={label}/></span><i><b style={{width:`${value}%`}}/></i><strong><LocaleText value={Number(value).toFixed(0)}/><LocaleText value={"%"}/></strong></div>)}</div><p className="data-note"><LocaleText value={"Military capability uses 2026 GFP rank/index where available; inventories are gameplay estimates unless authored."}/></p></>}</div></div>}
 
     {tab==='intel'&&<div className="intel-panel">
       <div className="intel-hero"><IntelligenceIcon size={30}/><span><small><LocaleText value={"STRATEGIC INTELLIGENCE"}/></small><strong><LocaleText value={isPlayer?'National intelligence command':`${selected.name} intelligence picture`}/></strong><em><LocaleText value={isPlayer?`Network ${player.intelligence.networkStrength.toFixed(0)} · Counter-intel ${player.intelligence.counterIntelligence.toFixed(0)}`:`Knowledge ${intelKnowledge.toFixed(0)}% · Influence ${culturalInfluence.toFixed(1)}%`}/></em></span></div>

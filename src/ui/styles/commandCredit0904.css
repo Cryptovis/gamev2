@@ -1,0 +1,52 @@
+/* Codex: consistent navigation, readable supplier facts, live rankings and credit desk. */
+.command-panel .panel-tabs button span,.resource-filter button,.section-menu-label {text-transform:uppercase;font-weight:700;letter-spacing:.035em;}
+.command-panel .panel-tabs button {font-size:12px;line-height:1.35;}
+.resource-command-meta {font-size:13px;color:#d8e7ed;line-height:1.5;}
+#resource-command-window .trade-row-main strong {font-size:14px;white-space:normal;}
+#resource-command-window .trade-reason {font-size:12px;line-height:1.4;}
+#resource-command-window .trade-row-stat small {font-size:10px;color:#c0d1da;letter-spacing:.035em;}
+#resource-command-window .trade-row-stat b {font-size:13px;white-space:normal;}
+#resource-command-window .trade-row-stat em {font-size:11px;color:#b6cbd6;white-space:normal;overflow:visible;}
+#resource-command-window .trade-row-stats {grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
+#resource-command-window .trade-action {font-size:11px;white-space:normal;}
+#resource-command-window .trade-more summary,#resource-command-window .trade-more-button {font-size:12px;color:#f1d68d;}
+#resource-command-window .resource-command-card header em {font-size:10px;}
+.market-section-content .supply-contract-panel>.legacy-exchange {padding-top:0;border-top:0;}
+.market-section-content .supply-contract-panel>.legacy-exchange>summary {padding:0 0 10px;}
+.technology-sections .section-menu {grid-template-columns:repeat(2,minmax(0,1fr));margin-bottom:14px;}
+.development-section {margin:12px 0;}
+.development-section .investment-summary {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}
+.command-panel .campus-grid {grid-template-columns:1fr;}
+.command-panel .pilot-recruitment input {max-width:100%;}
+#pulse-window .floating-command-body {display:flex;flex-direction:column;overflow:hidden;height:min(650px,calc(100dvh - 240px));}
+#world-ranking-content {overflow:auto;min-height:0;}
+.ranking-summary {display:flex;flex-wrap:wrap;gap:20px;padding:16px 0;font-size:14px;}
+.ranking-summary b {color:#ffe1a3;}
+.ranking-table-wrap {overflow:auto;}
+.ranking-table {width:100%;border-collapse:collapse;font-size:13px;}
+.ranking-table th,.ranking-table td {padding:12px 8px;text-align:left;border-bottom:1px solid #75909c44;}
+.ranking-table th {color:#d1e0e6;position:sticky;top:0;background:#19333f;}
+.ranking-table .player-row {background:#e5c37222;}
+.ranking-table button {border:0;background:transparent;color:#edf5f8;text-align:left;font:inherit;cursor:pointer;}
+.credit-desk {display:grid;gap:14px;}
+.credit-desk h3,.credit-desk p {margin:0;line-height:1.5;}
+.credit-desk .credit-overview {grid-template-columns:repeat(4,minmax(0,1fr));}
+.credit-desk .credit-overview strong {font-size:21px;}
+.credit-desk .credit-overview article {padding:12px;}
+.credit-desk .credit-board article {display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) auto;align-items:center;}
+.credit-partner {display:flex!important;align-items:center;gap:10px;}
+.credit-partner>span {font-size:30px;flex-shrink:0;}
+.credit-partner>div,.credit-terms {display:grid;gap:6px;min-width:0;}
+.credit-partner small,.credit-terms small {font-size:12px;color:#c8dbe3;}
+.credit-board button,.credit-loan button,.credit-applications button {white-space:normal;max-width:100%;}
+.credit-desk .credit-status {margin:0;}
+.credit-desk .credit-loan {display:grid;grid-template-columns:minmax(0,1fr) auto;}
+.credit-applications article {padding:12px;background:#193442;border:1px solid #6b8793;border-radius:9px;margin:8px 0;display:grid;gap:7px;}
+.credit-rating-grade {color:#ffe1a3;font-weight:800;}
+.credit-loan button {padding:10px;background:#f1ce80;color:#172b34;border:1px solid #ffe1a3;border-radius:7px;cursor:pointer;}
+@media(max-width:700px){.credit-desk .credit-overview {grid-template-columns:repeat(2,minmax(0,1fr));}.credit-desk .credit-board article,.credit-desk .credit-loan {grid-template-columns:1fr;}.ranking-table {min-width:570px;}.credit-compose label {min-width:0;}.resource-filter button {font-size:11px;}.command-panel .panel-tabs button {font-size:11px;}}
+.command-panel .research-card-grid {grid-template-columns:1fr;}.command-panel .research-overview {grid-template-columns:48px minmax(0,1fr);}.command-panel .research-throughput {grid-column:1/-1;}.command-panel .military-panel>.section-menu {grid-template-columns:repeat(2,minmax(0,1fr));}
+
+.market-section-content[data-section="contracts"] { padding-top: 0; }
+#pulse-window .data-note {font-size:12px;line-height:1.45;color:#c8dbe3;}
+@media(max-width:700px){#pulse-window .section-menu {grid-template-columns:1fr;}#pulse-window .section-menu-label {overflow-wrap:normal;word-break:normal;font-size:11px;}}

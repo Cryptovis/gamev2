@@ -1,9 +1,8 @@
 import {useWindowLifecycle,WINDOW_LAYERS} from '../windows/useWindowLifecycle';
-import {retryImport} from '../retryImport';
 import {calculateSupplyNetwork} from '../../engine/systems/supplyNetwork';
 import {pilotCoverage,academyFor} from '../../engine/systems/governance';
 import { LocaleText, translateLive } from "../../i18n/localeText";
-import { lazy, Suspense, useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useGameStore } from "../../store/gameStore";
 import { flagEmoji } from "../../data/countryThemes";
@@ -11,7 +10,7 @@ import { coalitionSupport, getWarPreview } from "../../engine/systems/warfare";
 import { AssetThumbnail } from "../icons/AssetThumbnail";
 import {tacticalStartStatus} from '../../engine/systems/tactical';
 import {ErrorBoundary} from '../ErrorBoundary';
-const TacticalBattlefield=lazy(()=>retryImport(()=>import('./TacticalBattlefield'),undefined,'TacticalBattlefield').then(m=>({default:m.TacticalBattlefield})));
+import {TacticalBattlefield} from './TacticalBattlefield';
 export function WarTheatreModal() {
   const s = useGameStore(),
     [tacticalView, setTacticalView] = useState(false),

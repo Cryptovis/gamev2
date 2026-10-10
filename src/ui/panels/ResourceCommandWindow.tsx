@@ -3,6 +3,7 @@ import {LocaleText,translateLive} from '../../i18n/localeText';
 import type {TradeResource} from '../../domain/game';
 import { useState } from 'react';
 import { MARKET_RESOURCES, resourceReserveDays, resourceSelfSufficiency, resourceStrategicStatus } from '../../store/marketSelectors';
+import {NavigationArt} from '../icons/NavigationArt';
 import { ResourceIcon } from '../icons/GameIcons';
 import { DraggableWindow } from '../windows/DraggableWindow';
 import { SupplierRanking } from './TradeDesk';
@@ -18,7 +19,7 @@ export function ResourceCommandWindow({onClose,resource:initialResource}:{onClos
    <span><small><LocaleText value={"POWER"}/></small><strong><LocaleText value={player.processedResources.electricity.toFixed(1)}/></strong></span>
    <span><small><LocaleText value={"ACTIVE TRADE"}/></small><strong><LocaleText value={Object.values(state.tradeDeals).filter(d=>d.active&&(d.buyerId===player.id||d.sellerId===player.id)).length}/></strong></span>
   </div>
-  <nav className="resource-filter"><button className={!selectedResource?'active':''} onClick={()=>setSelectedResource(null)}><LocaleText value="All resources"/></button>{MARKET_RESOURCES.map(r=><button key={r} className={selectedResource===r?'active':''} onClick={()=>setSelectedResource(r)}><ResourceIcon resource={r} size={20}/><LocaleText value={r}/></button>)}</nav>
+  <nav className="resource-filter"><button className={!selectedResource?'active':''} onClick={()=>setSelectedResource(null)}><NavigationArt kind="alerts" size={24}/><LocaleText value="All resources"/></button>{MARKET_RESOURCES.map(r=><button key={r} className={selectedResource===r?'active':''} onClick={()=>setSelectedResource(r)}><ResourceIcon resource={r} size={20}/><LocaleText value={r[0].toUpperCase()+r.slice(1)}/></button>)}</nav>
   <div className="resource-command-grid">
    {MARKET_RESOURCES.filter(r=>!selectedResource||r===selectedResource).map(resource=>{
     const status=resourceStrategicStatus(player,resource);

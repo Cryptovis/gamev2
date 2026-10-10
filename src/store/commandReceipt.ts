@@ -1,6 +1,7 @@
 import type {GameState} from '../domain/game';
 import type {GameCommand} from '../domain/commands';
 import type {CommandResult} from '../engine/commands';
+import {expansion,repaymentPreview} from '../engine/systems/sovereignCredit';
 import {commodityExchange,COMMODITY_SPECS} from '../engine/systems/commodityExchange';
 import {exchangeStock} from '../engine/systems/livingEconomy';
 import type {ReviewContent} from '../ui/panels/ReviewDialog';
@@ -11,6 +12,8 @@ export function commandReceipt(before:GameState,command:GameCommand,result:Comma
  const after=result.state,id=before.playerCountryId,language=before.playerProfile.language;
  const treasury=after.countries[id].economy.treasury;
  const receipt:ReviewContent={title:result.status==='applied'?'Command completed':result.status==='duplicate'?'Command already applied':'Command unavailable',summary:result.message,metrics:[['Treasury',money(treasury,language)]]};
+ if(result.status==='applied'&&command.type==='credit/accept'){const application=expansion(after).creditApplications?.find(a=>a.offerId===command.id&&a.actorId===id&&a.status==='pending');if(application)return {...receipt,title:'Credit application submitted',summary:'Applications are assessed after three game days. Funds arrive only on approval; relations, rating and lender cash are checked again.',metrics:[['Principal',money(application.principal,language)],['Annual interest',`${application.apr}%`],['Decision day',String(application.decisionDay)],['Treasury now',money(treasury,language)]]};}
+ if(result.status==='applied'&&command.type==='credit/repay'){const view=repaymentPreview(before,command.id);return {...receipt,title:'Loan settled',metrics:[['Payment now',money(view.amount,language)],['Interest saved',money(view.interestSaved,language)],['Credit score gain',`+${view.scoreGain.toFixed(2)}`],['Treasury now',money(treasury,language)]]};}
  if(result.status!=='applied'||command.type!=='commodity/order')return receipt;
  const ex=commodityExchange(after),trade=ex.trades[0];
  if(!trade||trade.countryId!==id||trade.good!==command.good||trade.side!==command.side)return receipt;

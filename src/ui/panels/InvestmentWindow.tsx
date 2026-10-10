@@ -7,9 +7,10 @@ import {
   CAMPUSES,
   academyFor,
   pilotCoverage,
+  campusPreview,pilotTrainingPreview,academySummary,
 } from "../../engine/systems/governance";
 import type { CampusKind } from "../../domain/governance";
-export function InvestmentWindow() {
+export function InvestmentWindow({embedded=false,section='investments'}:{embedded?:boolean;section?:'investments'|'pilots'}={}) {
   const s = useGameStore(),
     c = s.countries[s.playerCountryId],
     a = academyFor(s, c.id),
@@ -17,33 +18,23 @@ export function InvestmentWindow() {
     [review, setReview] = useState<
       (ReviewContent & { execute: (commandId:string) => void; allowed: boolean }) | null
     >(null);
-  const bonuses = a.buildings.university * 0.05 + a.buildings.institute * 0.06,
-    rate =
-      1 +
-      a.buildings.academy * 0.005 +
-      (c.technology.unlocked.includes("mil-flight-school") ? 0.1 : 0);
-  return (
-    <CommandWindow
-      wide
-      title="Investments & Pilot Training"
-      kicker="NATIONAL DEVELOPMENT"
-      onClose={s.closeWorkspace}
-    >
+  const summary=academySummary(s,c.id),training=pilotTrainingPreview(s,count);
+  const content = <section className="development-section" data-development={section}>
       <div className="investment-summary">
-        <span>
+        {section==='investments'&&<span>
           <LocaleText value="Research speed bonus" />{" "}
-          <b>+{bonuses.toFixed(2)}%</b>
-        </span>
-        <span>
+          <b>+{summary.researchBonusPercent.toFixed(2)}%</b>
+        </span>}
+        {section==='pilots'&&<span>
           <LocaleText value="Pilots" /> <b>{a.pilots}</b>
-        </span>
-        <span>
+        </span>}
+        {section==='pilots'&&<span>
           <LocaleText value="Aircraft crew coverage" />{" "}
           <b>{(pilotCoverage(s, c.id) * 100).toFixed(0)}%</b>
-        </span>
+        </span>}
         <span>
           <LocaleText value="Monthly upkeep" />{" "}
-          <b>${(a.lastUpkeep * 30).toFixed(5)}B</b>
+          <b>${summary.monthlyUpkeep.toFixed(5)}B</b>
         </span>
       </div>
       {!a.funded && (
@@ -52,14 +43,8 @@ export function InvestmentWindow() {
         </p>
       )}
       <div className="campus-grid">
-        {(Object.keys(CAMPUSES) as CampusKind[]).map((kind) => {
-          const d = CAMPUSES[kind],
-            techReady =
-              kind === "institute"
-                ? c.technology.unlocked.includes("edu-laboratories")
-                : kind === "academy"
-                  ? c.technology.unlocked.includes("mil-command")
-                  : true;
+        {(Object.keys(CAMPUSES) as CampusKind[]).filter(kind=>section==='pilots'?kind==='academy':kind!=='academy').map((kind) => {
+          const d=CAMPUSES[kind],view=campusPreview(s,kind),techReady=view.techReady;
           return (
             <article key={kind}>
               <h3>
@@ -82,9 +67,7 @@ export function InvestmentWindow() {
               </small>
               <button
                 disabled={
-                  !techReady ||
-                  a.projects.length >= 4 ||
-                  c.economy.treasury < d.cost
+                  !view.allowed
                 }
                 onClick={() =>
                   setReview({
@@ -92,12 +75,12 @@ export function InvestmentWindow() {
                     summary:
                       "Fund construction now. Benefits and upkeep begin on completion.",
                     metrics: [
-                      ["Cost", `$${d.cost}B`],
-                      ["Completion", `Day ${s.day + d.days}`],
-                      ["Monthly upkeep", `$${(d.upkeep * 30).toFixed(3)}B`],
+                      ["Cost", `$${view.cost}B`],
+                      ["Completion", `Day ${view.completionDay}`],
+                      ["Monthly upkeep", `$${view.monthlyUpkeep.toFixed(3)}B`],
                       [
                         "Treasury after",
-                        `$${(c.economy.treasury - d.cost).toFixed(3)}B`,
+                        `$${view.treasuryAfter.toFixed(3)}B`,
                       ],
                     ],
                     allowed: true,
@@ -114,14 +97,14 @@ export function InvestmentWindow() {
         })}
       </div>
       <div className="construction-list">
-        {a.projects.map((p) => (
+        {a.projects.filter(p=>section==='pilots'?p.kind==='academy':p.kind!=='academy').map((p) => (
           <p key={p.id}>
             <LocaleText value={CAMPUSES[p.kind].title} /> · {p.readyDay - s.day}{" "}
             <LocaleText value="days remaining" />
           </p>
         ))}
       </div>
-      <section className="pilot-recruitment">
+      {section==='pilots'&&<section className="pilot-recruitment">
         <h3>
           <LocaleText value="Recruit pilots from your armed forces" />
         </h3>
@@ -146,24 +129,17 @@ export function InvestmentWindow() {
               summary:
                 "Pay training costs now. Pilot wages begin when training completes. Academies accelerate training.",
               metrics: [
-                ["Cost", `$${(count * 0.0001).toFixed(4)}B`],
-                ["Training duration", `${Math.ceil(30 / rate)} days`],
-                ["Monthly wages", `$${(count * 0.0000002 * 30).toFixed(5)}B`],
+                ["Cost", `$${training.cost.toFixed(4)}B`],
+                ["Training duration", `${training.days} days`],
+                ["Monthly wages", `$${training.monthlyWages.toFixed(5)}B`],
                 [
                   "Pilots after training",
                   String(
-                    a.pilots +
-                      a.training.reduce((n, t) => n + t.count, 0) +
-                      count,
+                    training.pilotsAfter,
                   ),
                 ],
               ],
-              allowed:
-                c.economy.treasury >= count * 0.0001 &&
-                a.pilots +
-                  a.training.reduce((n, t) => n + t.count, 0) +
-                  count <=
-                  Math.floor(c.military.personnel * 0.05),
+              allowed:training.allowed,
               execute: (commandId) => s.hirePilots(count, commandId),
             })
           }
@@ -177,7 +153,7 @@ export function InvestmentWindow() {
             <LocaleText value="days remaining" />
           </p>
         ))}
-      </section>
+      </section>}
       {review && (
         <ReviewDialog
           {...review}
@@ -188,6 +164,6 @@ export function InvestmentWindow() {
           }}
         />
       )}
-    </CommandWindow>
-  );
+    </section>;
+  return embedded?content:<CommandWindow wide title={section==='pilots'?'Pilot training':'Investments'} kicker="NATIONAL DEVELOPMENT" onClose={s.closeWorkspace}>{content}</CommandWindow>;
 }

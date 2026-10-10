@@ -1,4 +1,4 @@
-# 0.83 audit reconciliation — updated for 0.90.0-playtest.1
+# 0.83 audit reconciliation — updated for 0.90.0-playtest.4
 
 Maintained by **Codex**, against `dev/clear-command-090`. The [original audit](AUDIT-0.83.md) remains a historical record authored by Claude. Its line numbers and counts describe 0.83, not the current source. This is a source/test reconciliation, not a new full-file security audit or a repeat of every historical multi-year experiment.
 
@@ -37,3 +37,6 @@ Balance follow-ups remain: approval baseline, democratic unrest, AI war variety 
 Historical 0.89 validation is recorded in [Playtest 0.89](PLAYTEST-089.md); current checks are in [Playtest 0.90](PLAYTEST-090.md). Historical delivery claims above are backed by the linked release records and named current test suites; they are not a claim that every Phase 4 item is now closed.
 
 0.90 continues section navigation in Affairs and records the separate Antigravity 0.40 report in [QA reconciliation](QA-RECONCILIATION-090.md). See [current validation](PLAYTEST-090.md).
+
+## 0.90.4 incremental reconciliation (Codex)
+Ordinary command windows now load at startup, replacing click-time panel recovery for these surfaces; blocked-network desktop/mobile tests verify this route. This deliberately trades initial bundle size for navigation reliability and does not close catalogue/performance debt. Campus/pilot cost and duration previews are engine-owned and execution reuses them. Credit previews, delayed decisions, repayment and optional save validation have regression coverage. Remaining previews, translation consolidation/lazy language loading, performance measurement and war AI remain open; no blanket audit-complete claim.

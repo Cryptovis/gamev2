@@ -41,9 +41,10 @@ export type ReliableCommand =
  | {type:'energy/cancel';id:string}
  | {type:'industry/build';kind:import('./industrial').FacilityKind}
  | {type:'industry/order';partnerId:string;good:import('./industrial').IndustrialGood;quantity:number;direction:'buy'|'sell';years:0|1|3|5|10}
- | {type:'credit/post';kind:'lend'|'borrow';principal:number;apr:number;days:90|180|365}
+ | {type:'credit/post';kind:'lend'|'borrow';principal:number;apr:number;days:import('./expansion').CreditTerm}
  | {type:'credit/accept';id:string}
  | {type:'credit/cancel';id:string}
+ | {type:'credit/repay';id:string}
  | {type:'integration/prepare';id:string;kind:'language'|'ideology'|'services'}
  | {type:'integration/begin';id:string}
  | {type:'exchange/post';good:import('./living').ExchangeGood;quantity:number;price:number}

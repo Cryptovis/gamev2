@@ -1,4 +1,4 @@
-import { lazy, Suspense, useMemo, useState } from 'react';
+import { Suspense, useMemo, useState } from 'react';
 import { useWorldView } from '../../store/useWorldView';
 import { LocaleText, translateLive } from '../../i18n/localeText';
 import { money as formatMoney } from '../formatMoney';
@@ -11,7 +11,7 @@ import {
   maxOrderQuantity, commodityExchange,
 } from '../../engine/systems/commodityExchange';
 
-const CommodityPriceChart = lazy(() => import('./CommodityPriceChart'));
+import CommodityPriceChart from './CommodityPriceChart';
 const RANGES = [30, 90, 180] as const;
 
 const pct = (v: number, digits = 2) => `${v > 0 ? '+' : ''}${(v * 100).toFixed(digits)}%`;

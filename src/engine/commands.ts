@@ -4,7 +4,7 @@ import {startTacticalBattle,tacticalStartStatus,tacticalCommandStatus,combatAllo
 import {buildPlant,togglePlant,cancelPowerProject} from './systems/energy';
 import {buildFacility} from './systems/industrialEconomy';
 import {placeIndustrialOrder} from './systems/industrialMarket';
-import {creditOfferStatus,postCredit,acceptCredit,cancelCredit} from './systems/sovereignCredit';
+import {creditOfferStatus,creditApplicationPreview,applyForCredit,repayCredit,repaymentPreview,postCredit,cancelCredit} from './systems/sovereignCredit';
 import {prepareIntegration,beginIntegration} from './systems/integration';
 import {postListing,buyListing,cancelListing,moveBankGold,startActivity,recruitPersonnel,resolveIncomingLetter} from './systems/livingEconomy';
 import {buildCampus,hirePilots,manageOccupation,fundPoliticalCampaign,acceptElectionOffer} from './systems/governance';
@@ -90,7 +90,8 @@ function executeGameCommand(state: GameState, command: GameCommand): GameState {
       return cargoFlight(next, sellerId, buyerId, command.years === 0 ? 'Trade cargo' : 'Supply contract cargo');
     }
     case 'credit/post': return postCredit(state,command.kind,command.principal,command.apr,command.days);
-    case 'credit/accept': return acceptCredit(state,command.id);
+    case 'credit/accept': return applyForCredit(state,command.id);
+    case 'credit/repay': return repayCredit(state,command.id);
     case 'credit/cancel': return cancelCredit(state,command.id);
     case 'integration/prepare': return prepareIntegration(state,command.id,command.kind);
     case 'integration/begin': return beginIntegration(state,command.id);
@@ -276,6 +277,8 @@ export function executeCommandResult(state:GameState,command:GameCommand):Comman
  if(command.type==='tactical/start'){const reason=tacticalStartStatus(state,command.warId);if(reason)return {state,status:'unavailable',message:reason};}
  if(command.type==='tactical/commit'){const reasons=tacticalCommandStatus(state,command.warId,command.expectedRound,command.orders);if(reasons.length)return {state,status:'unavailable',message:reasons.join(' ')};}
  if(command.type==='commodity/order'){const preview=commodityOrderPreview(state,state.playerCountryId,command.good,command.side,command.quantity);if(!preview.allowed)return {state,status:'unavailable',message:preview.reasons.join(' ')};}
+ if(command.type==='credit/accept'){const view=creditApplicationPreview(state,command.id);if(!view.allowed)return {state,status:'unavailable',message:view.reasons.join(' ')};}
+ if(command.type==='credit/repay'){const view=repaymentPreview(state,command.id);if(!view.allowed)return {state,status:'unavailable',message:view.reasons.join(' ')};}
  if(command.type==='credit/post'){const status=creditOfferStatus(state,command.kind,command.principal,command.apr,command.days);if(!status.allowed)return {state,status:'unavailable',message:status.reasons.join(' ')};}
  const proposal=command.type==='diplomacy/request'?diplomaticProposalStatus(state,command.id,command.kind):command.type==='diplomacy/signTradePact'?diplomaticProposalStatus(state,command.targetCountryId,'trade_pact'):null;
  if(proposal&&!proposal.allowed)return {state,status:'unavailable',message:proposal.reason};

@@ -6,13 +6,12 @@ import {CommandArt} from '../icons/CommandArt';
 import {CivicArt} from '../icons/CivicArt';
 import {DraggableWindow} from '../windows/DraggableWindow';
 import {SectionMenu} from '../windows/SectionMenu';
-import {recoverableLazy} from '../windows/recoverableLazy';
-const OpenExchange=recoverableLazy(()=>import('./OpenExchange'),m=>m.OpenExchange,'OpenExchange');
-const CommodityExchangePanel=recoverableLazy(()=>import('./CommodityExchangePanel'),m=>m.CommodityExchangePanel,'CommodityExchangePanel');
+import {OpenExchange} from './OpenExchange';
+import {CommodityExchangePanel} from './CommodityExchangePanel';
 // Frequently used core panels travel with the shell; no click-time WebContainer fetch.
 import {CreditWindow} from './CreditWindow';
 import {IndustrialMarketPanel} from './IndustrialMarketPanel';
-const SupplierFinder=recoverableLazy(()=>import('./TradeDesk'),m=>m.SupplierFinder,'TradeDesk');
+import {SupplierFinder} from './TradeDesk';
 const items=[
  {id:'open',label:'Open Market & Precious Metals',icon:<NavigationArt kind="market" size={28}/>},
  {id:'exchange',label:'Commodity Exchange',icon:<CivicArt kind="gold" size={28}/>},
@@ -29,7 +28,7 @@ export function MarketWindow() {
  const select=(id:string)=>{setSection(id);s.openTool(id==='exchange'?'exchange':id==='credit'?'credit':'market');};
  return <DraggableWindow id="market-window" kicker="GLOBAL ECONOMY" title={translateLive('Global Commodity & Industrial Market')} initialX={96} initialY={110} width={1040} onClose={s.closeWorkspace}>
   <SectionMenu items={items} selected={selected} onSelect={select} contentId="market-section-content"/>
-  <div ref={content} id="market-section-content" className="market-section-content" role="region" aria-label={translateLive(items.find(i=>i.id===selected)!.label)}>
+  <div ref={content} id="market-section-content" className="market-section-content" data-section={selected} role="region" aria-label={translateLive(items.find(i=>i.id===selected)!.label)}>
    {selected==='open'&&<OpenExchange/>}
    {selected==='exchange'&&<CommodityExchangePanel/>}
    {selected==='credit'&&<CreditWindow embedded/>}

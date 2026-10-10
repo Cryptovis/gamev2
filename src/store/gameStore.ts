@@ -40,8 +40,8 @@ interface GameActions {
  cancelPowerProject:(id:string,commandId?:string)=>void;
  buildPlant:(kind:PlantKind,commandId?:string)=>void;
  togglePlant:(kind:PlantKind)=>void;
- postCredit:(kind:'lend'|'borrow',principal:number,apr:number,days:90|180|365,commandId?:string)=>void;
- acceptCredit:(id:string,commandId?:string)=>void;cancelCredit:(id:string,commandId?:string)=>void;
+ postCredit:(kind:'lend'|'borrow',principal:number,apr:number,days:import('../domain/expansion').CreditTerm,commandId?:string)=>void;
+ acceptCredit:(id:string,commandId?:string)=>void;repayCredit:(id:string,commandId?:string)=>void;cancelCredit:(id:string,commandId?:string)=>void;
  prepareIntegration:(id:string,kind:'language'|'ideology'|'services',commandId?:string)=>void;
  beginIntegration:(id:string,commandId?:string)=>void;dismissVictory:(id:string)=>void;
  postListing:(good:ExchangeGood,quantity:number,price:number,commandId?:string)=>void;
@@ -171,6 +171,7 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
   closeWorkspace:()=>set({selectedCountryId:null,activeTool:null,warWindowId:null,navigation:null}),
   postCredit:(kind,principal,apr,days,commandId)=>set(s=>commandWithReceipt(s,{...{type:'credit/post',kind,principal,apr,days},commandId})),
   acceptCredit:(id,commandId)=>set(s=>commandWithReceipt(s,{...{type:'credit/accept',id},commandId})),
+  repayCredit:(id,commandId)=>set(s=>commandWithReceipt(s,{type:'credit/repay',id,commandId})),
   cancelCredit:(id,commandId)=>set(s=>commandWithReceipt(s,{...{type:'credit/cancel',id},commandId})),
   prepareIntegration:(id,kind,commandId)=>set(s=>commandWithReceipt(s,{...{type:'integration/prepare',id,kind},commandId})),
   beginIntegration:(id,commandId)=>set(s=>commandWithReceipt(s,{...{type:'integration/begin',id},commandId})),

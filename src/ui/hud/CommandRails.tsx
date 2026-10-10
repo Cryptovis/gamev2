@@ -1,19 +1,19 @@
 import {MarketWindow} from '../panels/MarketWindow';
-import {recoverableLazy} from '../windows/recoverableLazy';
+import {WorldRankingsWindow} from '../panels/WorldRankingsWindow';
 import {useWorldView} from '../../store/useWorldView';
 import {activeCountries} from '../../domain/sovereignty';
 import {money} from '../formatMoney';
 import {GuideBriefing} from '../panels/GuideBriefing';
 import {CampaignVictoryProgress} from './CampaignVictoryProgress';
-const DomesticWindow=recoverableLazy(()=>import('../panels/DomesticWindow'),m=>m.DomesticWindow,'DomesticWindow');
-const DiplomaticPost=recoverableLazy(()=>import('../panels/DiplomaticPost'),m=>m.DiplomaticPost,'DiplomaticPost');
+import {DomesticWindow} from '../panels/DomesticWindow';
+import {DiplomaticPost} from '../panels/DiplomaticPost';
 import {living} from '../../engine/systems/livingEconomy';
 import {CivicArt} from '../icons/CivicArt';
 import {CommandArt} from '../icons/CommandArt';
 import {LocaleText,translateLive} from '../../i18n/localeText';
-const ResearchWindow=recoverableLazy(()=>import('../panels/ResearchWindow'),m=>m.ResearchWindow,'ResearchWindow');
-const InvestmentWindow=recoverableLazy(()=>import('../panels/InvestmentWindow'),m=>m.InvestmentWindow,'InvestmentWindow');
-const GovernanceWindow=recoverableLazy(()=>import('../panels/GovernanceWindow'),m=>m.GovernanceWindow,'GovernanceWindow');
+import {ResearchWindow} from '../panels/ResearchWindow';
+import {InvestmentWindow} from '../panels/InvestmentWindow';
+import {GovernanceWindow} from '../panels/GovernanceWindow';
 // Keep Help available even when later lazy panel downloads fail.
 import {HelpPanel} from '../panels/HelpPanel';
 import {NavigationArt} from '../icons/NavigationArt';
@@ -92,10 +92,7 @@ export function CommandRails(){
    <CampaignVictoryProgress/>
   </DraggableWindow>}
 
-  {open.has('pulse')&&<DraggableWindow id="pulse-window" kicker="LIVING WORLD" title={translateLive("World Pulse")} initialX={145} initialY={240} width={520} onClose={()=>close('pulse')}>
-   <div className="pulse-summary"><span className={activeWars.length?'danger-card':''}><CivicArt kind="war" size={38}/><small><LocaleText value={"ACTIVE WARS"}/></small><strong><LocaleText value={activeWars.length}/></strong></span><span><CivicArt kind="trade" size={38}/><small><LocaleText value={"TRADE FLOWS"}/></small><strong><LocaleText value={activeTrades.length}/></strong></span><span><CommandArt kind="intel" size={38}/><small><LocaleText value={"ACTIVE OPS"}/></small><strong><LocaleText value={activeOps.length}/></strong></span><span><CivicArt kind="bloc" size={38}/><small><LocaleText value={"BLOCS"}/></small><strong><LocaleText value={Object.values(state.blocs).length}/></strong></span><span><CivicArt kind="letter" size={38}/><small><LocaleText value={"SANCTIONED"}/></small><strong><LocaleText value={sanctions.length}/></strong></span></div>
-   <div className="world-activity-list">{activeWars.slice(0,4).map(w=><div key={w.id}><button onClick={()=>state.openWarWindow(w.id)}><LocaleText value={"WAR"}/></button><span><LocaleText value={state.countries[w.attackerId]?.name}/><LocaleText value={" ↔ "}/><LocaleText value={state.countries[w.defenderId]?.name}/></span><em><LocaleText value={w.progress.toFixed(0)}/><LocaleText value={"%"}/></em></div>)}{activeOps.slice(0,4).map(o=><div key={o.id}><b><LocaleText value={"INTEL"}/></b><span><LocaleText value={state.countries[o.sourceCountryId]?.name}/><LocaleText value={" → "}/><LocaleText value={state.countries[o.targetCountryId]?.name}/></span><em><LocaleText value={"D"}/><LocaleText value={o.completeDay}/></em></div>)}{!activeWars.length&&!activeOps.length&&<p><LocaleText value={"No major military or covert activity currently detected."}/></p>}</div>
-  </DraggableWindow>}
+  {open.has('pulse')&&<WorldRankingsWindow/>}
 
   {open.has('diplomacy')&&<DraggableWindow id="diplomacy-window" kicker="FOREIGN MINISTRY" title={translateLive("Diplomatic Inbox")} initialX={window.innerWidth-650} initialY={150} width={590} onClose={()=>close('diplomacy')}>
    <DiplomaticPost/><section className="diplomatic-messages"><header><strong><LocaleText value={"LEADER CORRESPONDENCE"}/></strong><button onClick={state.readDiplomaticMessages}><LocaleText value={"MARK READ"}/></button></header>{state.leadership.messages.map(m=><article key={m.id} className={m.tone}><small><LocaleText value={m.kind.toUpperCase()}/><LocaleText value={" · DAY "}/><LocaleText value={m.day}/><LocaleText value={" · "}/><LocaleText value={m.read?'READ':'NEW'}/></small><strong><LocaleText value={state.countries[m.senderId]?.name}/></strong><p><LocaleText value={m.text}/></p></article>)}{!state.leadership.messages.length&&<p><LocaleText value={"Friends and rivals may react to your birthday and national achievements."}/></p>}</section>

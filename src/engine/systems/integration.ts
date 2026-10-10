@@ -558,6 +558,7 @@ export function consolidateTerritory(
   const offers = e.creditOffers.map((x) => ({
     ...x,
     countryId: remap(x.countryId),
+    ...(x.targetCountryId?{targetCountryId:remap(x.targetCountryId)}:{}),
   }));
   const loans = e.loans.map((x) => ({
     ...x,
@@ -583,7 +584,8 @@ export function consolidateTerritory(
       loan.outstanding = 0;
       loan.status = "paid";
     }
-  return updateExpansion(n, { ...e, forcedTaxes, creditOffers: offers, loans });
+  const creditApplications=e.creditApplications?.map(a=>a.status==='pending'&&[a.actorId,a.lenderId,a.borrowerId].includes(id)?{...a,status:'rejected' as const,reason:'Credit requires independent, unsanctioned countries at peace.'}:a);
+  return updateExpansion(n, { ...e, forcedTaxes, creditOffers: offers, loans, ...(creditApplications?{creditApplications}:{}) });
 }
 export function processIntegration(s: GameState): GameState {
   let n = s;

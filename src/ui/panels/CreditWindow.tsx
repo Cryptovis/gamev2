@@ -1,228 +1,41 @@
-import {useWorldView} from '../../store/useWorldView';
-import { useState } from "react";
-import { useGameStore } from "../../store/gameStore";
-import {
-  expansion,
-  arrears,
-  riskRate,
-  loanTotal,
-  creditOfferStatus,
-} from "../../engine/systems/sovereignCredit";
-import { CommandWindow } from "./CommandWindow";
-import { ReviewDialog, type ReviewContent } from "./ReviewDialog";
-import { LocaleText } from "../../i18n/localeText";
-import {money as formatMoney} from '../formatMoney';
-export function CreditWindow({embedded=false}:{embedded?:boolean}={}) {
-  const s = useWorldView(),
-    e = expansion(s),
-    p = s.countries[s.playerCountryId],
-    [kind, setKind] = useState<"lend" | "borrow">("borrow"),
-    [millions, setMillions] = useState(1),
-    [apr, setApr] = useState(3),
-    [days, setDays] = useState<90 | 180 | 365>(365),
-    [review, setReview] = useState<
-      (ReviewContent & { execute: (commandId:string) => void; allowed?: boolean }) | null
-    >(null);
-  const principal = millions / 1000;
-  const status=creditOfferStatus(s,kind,principal,apr,days);
-  const money=(value:number)=>formatMoney(value,s.playerProfile.language);
-  const content = (
-    <>
-      <div className="credit-overview">
-        <article>
-          <small>
-            <LocaleText value="Spendable treasury" />
-          </small>
-          <strong>{money(p.economy.treasury)}</strong>
-        </article>
-        <article>
-          <small>
-            <LocaleText value="Fiscal balance after arrears" />
-          </small>
-          <strong>{money(p.economy.treasury - arrears(s, p.id))}</strong>
-        </article>
-        <article>
-          <small>
-            <LocaleText value="Risk-based reference APR" />
-          </small>
-          <strong>{riskRate(s, p.id).toFixed(2)}%</strong>
-        </article>
-      </div>
-      <p>
-        <LocaleText value="APR is annual interest, prorated by term. At maturity, cash is collected first, then vault gold, precious metals and resources at conservative market prices. Unpaid debt creates arrears and compulsory taxes until settled." />
-      </p>
-      <aside className="credit-status" role="status"><p><LocaleText value="Amounts are entered in USD millions. Lending reserves cash immediately; a posted offer waits for a counterparty and is not a completed loan."/></p><strong><LocaleText value="Principal"/>: {money(principal)} · <LocaleText value="Spendable treasury"/>: {money(status.treasury)} · <LocaleText value="Maximum principal"/>: {money(status.maxPrincipal)}</strong>{status.reasons.map(reason=><p key={reason}><LocaleText value={reason}/></p>)}{status.shortfall>0&&<p><LocaleText value="Treasury shortfall"/>: {money(status.shortfall)}</p>}{kind==='lend'&&Math.min(status.maxPrincipal,status.treasury)>=.001&&<button onClick={()=>setMillions(Math.floor(Math.min(status.maxPrincipal,status.treasury)*1000))}><LocaleText value="Use maximum affordable lending"/></button>}</aside>
-      <div className="credit-compose">
-        <label>
-          <LocaleText value="Offer type" />
-          <select
-            aria-label="Credit offer type"
-            value={kind}
-            onChange={(e) => setKind(e.target.value as typeof kind)}
-          >
-            <option value="borrow">
-              <LocaleText value="Request a loan" />
-            </option>
-            <option value="lend">
-              <LocaleText value="Offer lending" />
-            </option>
-          </select>
-        </label>
-        <label>
-          <LocaleText value="Principal (USD millions)" />
-          <input
-            aria-label="Credit principal millions"
-            type="number"
-            min="1"
-            value={millions}
-            onChange={(e) => setMillions(Number(e.target.value))}
-          />
-        </label>
-        <label>
-          <LocaleText value="Annual interest (%)" />
-          <input
-            aria-label="Credit APR"
-            type="number"
-            min="0"
-            max="30"
-            step=".1"
-            value={apr}
-            onChange={(e) => setApr(Number(e.target.value))}
-          />
-        </label>
-        <label>
-          <LocaleText value="Term" />
-          <select
-            aria-label="Credit duration"
-            value={days}
-            onChange={(e) => setDays(Number(e.target.value) as typeof days)}
-          >
-            {[90, 180, 365].map((d) => (
-              <option key={d} value={d}>
-                {d} <LocaleText value="days" />
-              </option>
-            ))}
-          </select>
-        </label>
-        <button
-          onClick={() =>
-            setReview({
-              title: "Publish credit terms",
-              summary:
-                "Posting these exact terms authorizes a matching country to fund the request or borrow the reserved money. An unmatched offer can be cancelled.",
-              metrics: [
-                ["Principal", money(principal)],
-                ["Spendable treasury",money(status.treasury)],
-                ["Treasury shortfall",money(status.shortfall)],
-                ["Maximum principal",money(status.maxPrincipal)],
-                ["Open offers",`${status.openOffers} / 3`],
-                [
-                  "Repayment at maturity",
-                  money(loanTotal(principal, apr, days)),
-                ],
-                ["Annual interest", `${apr}%`],
-                ["Term", `${days} days`],
-              ],
-              allowed:status.allowed,
-              warnings:status.reasons,
-              execute: (commandId) => s.postCredit(kind, principal, apr, days, commandId),
-            })
-          }
-        >
-          <LocaleText value="Review credit offer" />
-        </button>
-      </div>
-      <h3>
-        <LocaleText value="Sovereign lending & borrowing board" />
-      </h3>
-      <div className="credit-board">
-        {e.creditOffers
-          .filter((o) => o.status === "open" && o.expiresDay >= s.day)
-          .map((o) => (
-            <article key={o.id}>
-              <div>
-                <b><LocaleText value={s.countries[o.countryId].name}/></b>
-                <span>
-                  <LocaleText
-                    value={
-                      o.kind === "lend"
-                        ? "Lending available"
-                        : "Borrowing requested"
-                    }
-                  />
-                </span>
-              </div>
-              <strong>{money(o.principal)}</strong>
-              <span>
-                {o.apr}% <LocaleText value="Annual interest" /> · {o.days} <LocaleText value="days" />
-              </span>
-              <button
-                onClick={() =>
-                  setReview(
-                    o.countryId === p.id
-                      ? {
-                          title: "Cancel unmatched credit",
-                          summary:
-                            "Reserved lending cash is returned. Matched loans cannot be cancelled.",
-                          execute: (commandId) => s.cancelCredit(o.id, commandId),
-                        }
-                      : {
-                          title:
-                            o.kind === "lend"
-                              ? "Borrow from this country"
-                              : "Fund this country",
-                          summary:
-                            "Review the binding terms. Collateral can be seized at maturity; unpaid balances trigger compulsory tax collection.",
-                          metrics: [
-                            ["Partner", s.countries[o.countryId].name],
-                            ["Principal", money(o.principal)],
-                            [
-                              "Repayment at maturity",
-                              money(loanTotal(o.principal, o.apr, o.days)),
-                            ],
-                            ["Maturity day", String(s.day + o.days)],
-                          ],
-                          execute: (commandId) => s.acceptCredit(o.id, commandId),
-                        },
-                  )
-                }
-              >
-                <LocaleText
-                  value={
-                    o.countryId === p.id ? "Cancel offer" : "Review agreement"
-                  }
-                />
-              </button>
-            </article>
-          ))}
-      </div>
-      <h3>
-        <LocaleText value="Your sovereign loans" />
-      </h3>
-      {e.loans
-        .filter((l) => l.borrowerId === p.id || l.lenderId === p.id)
-        .map((l) => (
-          <article className="credit-loan" key={l.id}>
-            <b>
-              {s.countries[l.lenderId].name} → {s.countries[l.borrowerId].name}
-            </b>
-            <span>
-              {money(l.outstanding)} · <LocaleText value={l.status} /> ·{" "}
-              <LocaleText value="Due day" /> {l.dueDay}
-            </span>
-          </article>
-        ))}
-      {review && (
-        <ReviewDialog
-          {...review}
-          onCancel={() => setReview(null)}
-          onConfirm={(commandId) => {
-            review.execute(commandId);
-            setReview(null);
-          }}
-        />
-      )}
-    </>
-  );
-  return embedded?content:<CommandWindow wide title="Sovereign Credit & Monetary Fund" kicker="CAPITAL MARKETS" onClose={s.closeWorkspace}>{content}</CommandWindow>;
+import { useState } from 'react';
+import { useWorldView } from '../../store/useWorldView';
+import { expansion, arrears, riskRate, loanTotal, creditOfferStatus, creditRating, availableCreditOffers, creditApplicationPreview, repaymentPreview, creditTermDays } from '../../engine/systems/sovereignCredit';
+import type { CreditTerm } from '../../domain/expansion';
+import { CommandWindow } from './CommandWindow';
+import { ReviewDialog, type ReviewContent } from './ReviewDialog';
+import { LocaleText, translateLive } from '../../i18n/localeText';
+import { flagEmoji } from '../../data/countryThemes';
+import { money as formatMoney } from '../formatMoney';
+export function CreditWindow({ embedded = false }: {
+    embedded?: boolean;
+} = {}) {
+    const s = useWorldView(), e = expansion(s), p = s.countries[s.playerCountryId], rating = creditRating(s, p.id);
+    const [kind, setKind] = useState<'lend' | 'borrow'>('borrow'), [millions, setMillions] = useState(1000), [apr, setApr] = useState(Number(riskRate(s, p.id).toFixed(1))), [days, setDays] = useState<CreditTerm>(365);
+    const [section, setSection] = useState<'offers' | 'applications' | 'loans'>('offers');
+    const [review, setReview] = useState<(ReviewContent & {
+        allowed?: boolean;
+        execute: (id: string) => void;
+    }) | null>(null);
+    const principal = millions / 1000, status = creditOfferStatus(s, kind, principal, apr, days), money = (v: number) => formatMoney(v, s.playerProfile.language);
+    const applications = (e.creditApplications ?? []).filter(a => a.actorId === p.id || a.borrowerId === p.id || a.lenderId === p.id);
+    const loans = e.loans.filter(l => l.borrowerId === p.id || l.lenderId === p.id);
+    const partner = (id: string) => <div className="credit-partner"><span aria-hidden="true">{flagEmoji(s.countries[id].iso2)}</span><div><b><LocaleText value={s.countries[id].name}/></b><small><LocaleText value="Credit rating"/> <span className="credit-rating-grade">{creditRating(s, id).grade}</span></small></div></div>;
+    const content = <section className="credit-desk">
+  <div className="credit-overview"><article><small><LocaleText value="Spendable treasury"/></small><strong>{money(p.economy.treasury)}</strong></article><article><small><LocaleText value="Fiscal balance after arrears"/></small><strong>{money(p.economy.treasury - arrears(s, p.id))}</strong></article><article><small><LocaleText value="Credit rating"/></small><strong>{rating.grade} <small>{rating.score.toFixed(1)}/100</small></strong></article><article><small><LocaleText value="Risk-based reference APR"/></small><strong>{riskRate(s, p.id).toFixed(2)}%</strong></article></div>
+  <p><LocaleText value="Ratings use debt, liquidity, inflation, stability and repayment history. Better ratings attract more lenders and lower quoted interest."/></p>
+  <nav className="section-menu" aria-label={translateLive("Credit sections")}>{(['offers', 'applications', 'loans'] as const).map(id => <button key={id} aria-pressed={section === id} onClick={() => setSection(id)}><LocaleText value={id === 'offers' ? 'Credit offers' : id === 'applications' ? 'Your applications' : 'Loans & early repayment'}/>{id === 'applications' && applications.filter(a => a.status === 'pending').length > 0 && <b>{applications.filter(a => a.status === 'pending').length}</b>}</button>)}</nav>
+  {section === 'offers' && <>
+   <aside className="credit-status"><p><LocaleText value="Applications are assessed after three game days. Funds arrive only on approval; relations, rating and lender cash are checked again."/></p><p><LocaleText value="Low treasury can unlock a larger three-year rescue offer at a higher interest rate."/></p></aside>
+   <h3><LocaleText value="Sovereign lending & borrowing board"/></h3>
+   <div className="credit-board">{availableCreditOffers(s).map(o => { const view = creditApplicationPreview(s, o.id), own = o.countryId === p.id; return <article key={o.id} data-credit-offer={o.id}>{partner(o.countryId)}<div className="credit-terms"><strong>{money(o.principal)}</strong><span>{own ? o.apr : view.apr}% <LocaleText value="Annual interest"/> · {creditTermDays(o)} <LocaleText value="days"/></span><small><LocaleText value={o.emergency ? 'Emergency financing' : o.kind === 'lend' ? 'Lending available' : 'Borrowing requested'}/></small>{!own && <small><LocaleText value="Relations"/> {view.relation}/100</small>}</div><button onClick={() => setReview(own ? { title: 'Cancel unmatched credit', summary: 'Reserved lending cash is returned. Matched loans cannot be cancelled.', execute: id => s.cancelCredit(o.id, id) } : { title: o.kind === 'lend' ? 'Apply for credit' : 'Fund this country', summary: 'Applications are assessed after three game days. Funds arrive only on approval; relations, rating and lender cash are checked again.', metrics: [['Partner', s.countries[o.countryId].name], ['Principal', money(view.principal)], ['Annual interest', `${view.apr}%`], ['Term', `${view.days} days`], ['Repayment at maturity', money(loanTotal(view.principal, view.apr, view.days))], ['Decision day', String(view.decisionDay)]], allowed: view.allowed, warnings: [...view.reasons, ...(view.decisionReason ? ['This application may be rejected because relations or the rating are too weak.'] : [])], execute: id => s.acceptCredit(o.id, id) })}><LocaleText value={own ? 'Cancel offer' : 'Review application'}/></button></article>; })}{!availableCreditOffers(s).length && <p><LocaleText value="No credit offers are available for your current rating. Improve finances or publish a request."/></p>}</div>
+   <h3><LocaleText value="Publish credit terms"/></h3>
+   <p><LocaleText value="Amounts are entered in USD millions. Lending reserves cash immediately; a posted offer waits for a counterparty and is not a completed loan."/></p>
+   <div className="credit-compose"><label><LocaleText value="Offer type"/><select aria-label="Credit offer type" value={kind} onChange={ev => setKind(ev.target.value as typeof kind)}><option value="borrow"><LocaleText value="Request a loan"/></option><option value="lend"><LocaleText value="Offer lending"/></option></select></label><label><LocaleText value="Principal (USD millions)"/><input aria-label="Credit principal millions" type="number" min="1" value={millions} onChange={ev => setMillions(Number(ev.target.value))}/></label><label><LocaleText value="Annual interest (%)"/><input aria-label="Credit APR" type="number" min="0" max="30" step=".1" value={apr} onChange={ev => setApr(Number(ev.target.value))}/></label><label><LocaleText value="Term"/><select aria-label="Credit duration" value={days} onChange={ev => setDays(Number(ev.target.value) as CreditTerm)}>{[90, 180, 365, 730, 1095].map(d => <option key={d} value={d}>{d} <LocaleText value="days"/></option>)}</select></label><button onClick={() => setReview({ title: 'Publish credit terms', summary: 'Posting these exact terms authorizes a matching country to fund the request or borrow the reserved money. An unmatched offer can be cancelled.', metrics: [['Principal', money(principal)], ['Spendable treasury', money(status.treasury)], ['Treasury shortfall', money(status.shortfall)], ['Maximum principal', money(status.maxPrincipal)], ['Open offers', `${status.openOffers} / 3`], ['Repayment at maturity', money(loanTotal(principal, apr, days))]], allowed: status.allowed, warnings: status.reasons, execute: id => s.postCredit(kind, principal, apr, days, id) })}><LocaleText value="Review credit offer"/></button></div>
+  </>}
+  {section === 'applications' && <div className="credit-applications"><h3><LocaleText value="Your applications"/></h3>{applications.map(a => <article key={a.id} data-application={a.id}>{partner(a.lenderId === p.id ? a.borrowerId : a.lenderId)}<strong><LocaleText value={a.status === 'pending' ? 'Under review' : a.status === 'approved' ? 'Credit approved' : 'Credit rejected'}/></strong><span>{money(a.principal)} · {a.apr}% · {a.days} <LocaleText value="days"/></span>{a.status === 'pending' ? <span><LocaleText value="Decision day"/> {a.decisionDay} · {Math.max(0, a.decisionDay - s.day)} <LocaleText value="days remaining"/></span> : <p><LocaleText value={a.reason}/></p>}</article>)}{!applications.length && <p><LocaleText value="No credit applications yet."/></p>}</div>}
+  {section === 'loans' && <><h3><LocaleText value="Your sovereign loans"/></h3><p><LocaleText value="Early repayment pays principal and accrued interest only. Material repayments after seven days improve your score, at most once every thirty days."/></p><p><LocaleText value="APR is annual interest, prorated by term. At maturity, cash is collected first, then vault gold, precious metals and resources at conservative market prices. Unpaid debt creates arrears and compulsory taxes until settled."/></p>{loans.map(l => { const view = repaymentPreview(s, l.id); return <article className="credit-loan" key={l.id} data-loan={l.id}><div>{partner(l.borrowerId === p.id ? l.lenderId : l.borrowerId)}<p>{money(l.outstanding)} · <LocaleText value={l.status}/> · <LocaleText value="Due day"/> {l.dueDay}</p><small><LocaleText value={l.borrowerId === p.id ? 'Borrowed' : 'Lent'}/></small></div>{l.borrowerId === p.id && l.status !== 'paid' && <button onClick={() => setReview({ title: 'Repay sovereign loan', summary: 'Early repayment pays principal and accrued interest only. Material repayments after seven days improve your score, at most once every thirty days.', metrics: [['Payment now', money(view.amount)], ['Interest saved', money(view.interestSaved)], ['Treasury after', money(view.treasuryAfter)], ['Credit score gain', `+${view.scoreGain.toFixed(2)}`]], allowed: view.allowed, warnings: view.reasons, execute: id => s.repayCredit(l.id, id) })}><LocaleText value="Review repayment"/></button>}</article>; })}{!loans.length && <p><LocaleText value="No sovereign loans yet."/></p>}</>}
+  {review && <ReviewDialog {...review} onCancel={() => setReview(null)} onConfirm={id => { review.execute(id); setReview(null); }}/>}
+ </section>;
+    return embedded ? content : <CommandWindow wide title="Sovereign Credit & Monetary Fund" kicker="CAPITAL MARKETS" onClose={s.closeWorkspace}>{content}</CommandWindow>;
 }

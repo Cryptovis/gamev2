@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.90.0-playtest.4 — Reliable command menus & sovereign credit
+Implementation and validation: **Codex**. Branch: `dev/clear-command-090`. Save schema stays 17; new credit fields are optional, with legacy loan terms preserved. No dependency changes.
+
+- Ordinary command panels, country research/charts and tactical surfaces load with the startup graph. Tech and other menus no longer request a panel module at click time; network-blocking regressions cover desktop/mobile navigation. This increases the startup bundle; catalogue splitting and measured performance remain open.
+- Investments moves under Tech; Pilot training moves under Military, with shared engine eligibility/cost/duration previews. Country and Supply navigation use consistent capitalization, larger supplier facts and an All resources icon. Remove excess space above the Supply contracts summary.
+- World opens beside the left rail with Military, Financial and Diplomacy rankings, live metrics, player position and country links.
+- Sovereign credit shows partner flags and simulated AAA–D ratings for every country. Applications remain pending for three game days; relations, rating, sanctions, available cash and debt capacity determine approval. Strong finances broaden lender choice and lower quoted lending APR.
+- Cash-poor eligible players can receive reserved, targeted three-year rescue offers from friendly rich countries, at a higher APR. Credit remains funded by lenders, not newly created money.
+- Loans & early repayment reviews the exact accrued-interest payment and future-interest saving. Material early payments improve capped credit history with cooldown and minimum-age safeguards; unaffordable, duplicate and foreign repayments are blocked.
+- Optional credit fields survive reload, historical offers may be pruned without invalidating applications, and absorbed countries' pending applications are cancelled. All new wording covers English, Turkish, Spanish, Chinese and Russian.
+
+Validation: 600 unit tests / 75 files, TypeScript and production build passed. All 111 production browser scenarios verified: full run 108 passed, three outdated menu/atlas assertions corrected and rechecked successfully. See [playtest record](docs/PLAYTEST-090.md). GitHub CI runs independently on publication. StackBlitz/WebContainer itself is not directly exercised; no new campaign is required. V3 remains conditional on complete playability.
+
 ## 0.90.0-playtest.3 — Clear markets & policies
 Implementation and validation: **Codex**. Branch: `dev/clear-command-090`. Save schema stays 17.
 

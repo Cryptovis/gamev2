@@ -1,3 +1,6 @@
+import {InvestmentWindow} from './InvestmentWindow';
+import {CommandArt} from '../icons/CommandArt';
+import {SectionMenu} from '../windows/SectionMenu';
 import { useState } from 'react';
 import { useWorldView } from '../../store/useWorldView';
 import { CommandWindow } from './CommandWindow';
@@ -19,7 +22,8 @@ function ResearchArt({category, technologyId}: {category: TechnologyCategory; te
  return <Icon size={48}/>;
 }
 
-export function ResearchWindow() {
+export function ResearchWindow({embedded=false,readOnly=false}:{embedded?:boolean;readOnly?:boolean}={}) {
+ const [section,setSection]=useState('research');
  const s = useWorldView(), c = s.countries[s.playerCountryId];
  const [branch, setBranch] = useState<TechnologyCategory>('industry');
  const [review, setReview] = useState<string | null>(null);
@@ -29,7 +33,7 @@ export function ResearchWindow() {
  const selected = review ? technologyById[review] : null;
  const preview = selected ? researchPreview(s,c.id,selected.id) : null;
  const project = c.technology.project, projectView = researchProjectPreview(s,c.id);
- return <CommandWindow wide kicker="NATIONAL RESEARCH" title="Research & Technology Tree" onClose={s.closeWorkspace}>
+ const content=<section className="technology-sections"><SectionMenu items={[{id:"research",label:"Research & Technology Tree",icon:<CommandArt kind="technology"/>},{id:"investments",label:"Investments",icon:<CommandArt kind="investment"/>}]} selected={section} onSelect={setSection} contentId="technology-content" label="Technology sections"/><div id="technology-content">{readOnly?<p><LocaleText value="Only your country’s policies can be changed."/></p>:section==='investments'?<InvestmentWindow embedded/>:<>
   <div className="research-dashboard">
    <section className="research-overview">
     <div className="research-overview-art" aria-hidden="true"><ResearchIcon size={56}/></div>
@@ -60,5 +64,6 @@ export function ResearchWindow() {
    ['Research points saved',`${preview.points.toFixed(2)} RP`],['Research cost',`${preview.cost} RP`],['Points still needed',`${preview.missingPoints.toFixed(2)} RP`],['Estimated duration',`${preview.duration} ${translateLive('days')}`],['Research capacity / day',preview.capacity.toFixed(2)],
   ]} warnings={[...(preview.reason?[preview.reason]:[]),...preview.missingPrerequisites.map(id => technologyById[id].name),'Research points are paid upfront. Cancellation refunds 80% of unfinished work; completed research cannot be cancelled.']} allowed={preview.allowed} onCancel={() => setReview(null)} onConfirm={commandId => {s.unlockTechnology(selected.id,commandId);setReview(null);}}/>}
   {cancel&&project&&projectView&&<ReviewDialog title="Cancel research?" summary="Research points are paid upfront. Cancellation refunds 80% of unfinished work; completed research cannot be cancelled." metrics={[["Refund",`${projectView.refund.toFixed(2)} RP`]]} onCancel={() => setCancel(false)} onConfirm={commandId => {s.cancelResearch(commandId);setCancel(false);}}/>}
- </CommandWindow>;
+ </>}</div></section>;
+ return embedded?content:<CommandWindow wide kicker="NATIONAL RESEARCH" title="Research & Technology Tree" onClose={s.closeWorkspace}>{content}</CommandWindow>;
 }

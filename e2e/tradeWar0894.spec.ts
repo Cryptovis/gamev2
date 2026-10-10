@@ -23,8 +23,8 @@ test('auto assault selects 5× and advances days without fuel advice modals',asy
  await resumeFixture(page,withWarFuel(campaignFixture('en')));await page.locator('[data-guide="nation"]').first().click();await page.locator('.country-select').selectOption('GRC');await page.locator('[data-guide="tab-war"]').click();await page.locator('.declare-war').click();await page.locator('.strategic-decision-modal .confirm').click();
  const day=await page.locator('.campaign-clock strong').innerText();await page.getByRole('button',{name:'Enable auto assault',exact:true}).click();await expect(page.locator('.speed-segment button').last()).toHaveClass(/active/);await expect(page.locator('.campaign-clock strong')).not.toHaveText(day);await expect(page.locator('.war-theatre')).toContainText('one day per second');await expect(page.locator('.economic-advice-backdrop')).toHaveCount(0);
 });
-test('a failed country panel chunk fetch recovers without reloading or losing the profile',async({page})=>{
- let failed=false;
- await page.route('**/assets/CountryPanel-*.js*',route=>{if(!failed){failed=true;return route.abort('failed');}return route.continue();});
- await resumeFixture(page,campaignFixture('en'));await expect(page.locator('.command-panel')).toBeVisible();expect(failed).toBe(true);await expect(page.locator('[data-testid="error-boundary"]')).toHaveCount(0);await expect(page.locator('.brand-line')).toContainText('Browser playtest');
+test('country panel is ready at startup and remains usable with subsequent downloads blocked',async({page})=>{
+ await resumeFixture(page,campaignFixture('en'));let requests=0;
+ await page.route(/\/(assets|src)\/.*CountryPanel.*\.(js|tsx)/,route=>{requests++;return route.abort('failed');});
+ await page.locator('[data-guide="nation"]').click();await expect(page.locator('.command-panel')).toBeVisible();expect(requests).toBe(0);await expect(page.locator('[data-testid="error-boundary"]')).toHaveCount(0);await expect(page.locator('.brand-line')).toContainText('Browser playtest');
 });
