@@ -1,4 +1,4 @@
-# 0.89.0-playtest.6 — Window flow & diplomatic recovery
+# 0.89.0-playtest.7 — Focused markets & artwork recovery
 
 Branch: `dev/trade-markets-089`. Base: 0.88.0-playtest.1. Source: playtest feedback (finding trade partners, a commodity exchange, aircraft on the map, more graphics).
 
@@ -67,3 +67,11 @@ Validation: 554 unit tests, including the 365-day invariant, TypeScript and prod
 6. Drag a floating window and resize the desktop: the close header should remain on screen. National events require a choice; Escape must not close another window behind them.
 
 Validation: 555 unit tests, including the 365-day invariant, TypeScript and production build passed. All 72 Playwright browser scenarios passed locally; desktop/mobile trade and tutorial screenshots were inspected. GitHub CI runs separately on push. Existing schema-17 saves remain compatible.
+
+## Market/artwork patch 0.89.0-playtest.7 (Codex)
+1. Open MARKET at desktop/mobile widths. Select each icon section; only its content appears and the menu stays available.
+2. Use commodity-exchange and credit shortcuts from other screens; they select the same market shell. Review a credit offer and a contract without losing access to market navigation.
+3. Check mobile resource choices and space beneath horizontal pickers. Scroll content, then choose another section: its scroll starts at the top.
+4. Block atlas downloads until retries run out, restore connectivity, close/reopen Market: artwork loads without reloading the campaign. Check stale error callbacks and stalled downloads in unit regressions.
+
+Validation: 562 unit tests, TypeScript and production build passed; all 75 Playwright browser scenarios passed locally; desktop/mobile market screenshots were inspected. GitHub CI runs separately on push. Save schema stays 17. The user's latest screenshot was unavailable locally; the confirmed loader defects were reproduced independently. Other long screens still need incremental menu adoption.

@@ -1,7 +1,6 @@
+import {MarketWindow} from '../panels/MarketWindow';
 import {recoverableLazy} from '../windows/recoverableLazy';
 import {useWorldView} from '../../store/useWorldView';
-const CreditWindow=recoverableLazy(()=>import('../panels/CreditWindow'),m=>m.CreditWindow,'CreditWindow');
-const CommodityExchangePanel=recoverableLazy(()=>import('../panels/CommodityExchangePanel'),m=>m.CommodityExchangePanel,'CommodityExchangePanel');
 import {activeCountries} from '../../domain/sovereignty';
 import {money} from '../formatMoney';
 import {GuideBriefing} from '../panels/GuideBriefing';
@@ -27,7 +26,6 @@ import { useGameStore } from '../../store/gameStore';
 import { BlocIcon, CouncilIcon, DiplomacyIcon, EmbassyIcon, IntelligenceIcon, ResourceIcon, TreasuryIcon, WorldIcon } from '../icons/GameIcons';
 import { DraggableWindow } from '../windows/DraggableWindow';
 import { MapModeBar } from './MapModeBar';
-const IndustrialMarketPanel=recoverableLazy(()=>import('../panels/IndustrialMarketPanel'),m=>m.IndustrialMarketPanel,'IndustrialMarketPanel');
 const ResourceCommandWindow=recoverableLazy(()=>import('../panels/ResourceCommandWindow'),m=>m.ResourceCommandWindow,'ResourceCommandWindow');
 
 type ToolId='objectives'|'market'|'pulse'|'map'|'resources'|'sitrep'|'alerts'|'diplomacy';
@@ -40,7 +38,7 @@ export function CommandRails(){
  const state=useWorldView();
  const open=new Set(state.activeTool?[state.activeTool]:[]);
  const player=state.countries[state.playerCountryId];
- const board=useMemo(()=>getMarketBoard(state),[state.countries,state.tradeDeals]);
+
  const activeWars=Object.values(state.wars).filter(w=>w.status==='active');
  const activeTrades=Object.values(state.tradeDeals).filter(d=>d.active);
  const activeOps=Object.values(state.intelOperations).filter(o=>o.status==='active');
@@ -62,7 +60,7 @@ export function CommandRails(){
 
  return <Suspense fallback={<div className="loading-popup"><LocaleText value="Loading command…"/></div>}>
   <nav className="command-rail command-rail-left" aria-label={translateLive("World command tools")}>
-   <RailButton active={open.has('market')} badge={activeTrades.length} label="MARKET" onClick={()=>toggle('market')}><NavigationArt kind="market"/></RailButton>
+   <RailButton active={['market','exchange','credit'].some(id=>open.has(id))} badge={activeTrades.length} label="MARKET" onClick={()=>toggle('market')}><NavigationArt kind="market"/></RailButton>
    <RailButton active={open.has('pulse')} badge={activeWars.length} label="WORLD" onClick={()=>toggle('pulse')}><NavigationArt kind="world"/></RailButton>
    <RailButton active={open.has('resources')} badge={critical.length} label="SUPPLY" onClick={()=>toggle('resources')}><NavigationArt kind="alerts"/></RailButton>
   </nav>
@@ -83,8 +81,7 @@ export function CommandRails(){
   {open.has('governance')&&<GovernanceWindow/>}
   </Suspense>
   {open.has('society')&&<DomesticWindow/>}
-  {open.has('credit')&&<Suspense fallback={null}><CreditWindow/></Suspense>}
-  {open.has('exchange')&&<DraggableWindow id="commodity-exchange-window" kicker="GLOBAL ECONOMY" title={translateLive("Commodity Exchange")} initialX={96} initialY={110} width={980} onClose={()=>close('market')}><Suspense fallback={<p><LocaleText value="Loading command…"/></p>}><CommodityExchangePanel/></Suspense></DraggableWindow>}{open.has('help')&&<HelpPanel/>}
+  {(['market','exchange','credit'] as const).some(id=>open.has(id))&&<MarketWindow/>}{open.has('help')&&<HelpPanel/>}
   {open.has('map')&&<div className="left-command-dock map-command-dock"><header className="map-dock-header"><strong><LocaleText value="MAP COMMAND"/></strong><button className="map-close" data-guide="close-workspace" onClick={state.closeWorkspace} aria-label={translateLive("Close map command")}><LocaleText value={"×"}/></button></header><div className="map-dock-body"><GuideBriefing/><MapModeBar/></div></div>}
   {open.has('resources')&&<ResourceCommandWindow onClose={()=>close('resources')}/>}
 
@@ -92,12 +89,6 @@ export function CommandRails(){
    <div className="floating-progress"><span><b><LocaleText value={done}/></b><LocaleText value={" of "}/><LocaleText value={objectives.length}/><LocaleText value={" complete"}/></span><i><b style={{width:`${done/objectives.length*100}%`}}/></i></div>
    <div className="floating-objectives">{objectives.map((o,i)=><div className={o.done?'done':''} key={o.label}><b><LocaleText value={o.done?'✓':String(i+1).padStart(2,'0')}/></b><span><strong><LocaleText value={o.label}/></strong><small><LocaleText value={o.done?'Completed':'Active objective'}/></small></span></div>)}</div>
    <CampaignVictoryProgress/>
-  </DraggableWindow>}
-
-  {open.has('market')&&<DraggableWindow id="market-window" kicker="GLOBAL ECONOMY" title={translateLive("Global Commodity & Industrial Market")} initialX={110} initialY={135} width={760} onClose={()=>close('market')}>
-   <div className="floating-market">{board.map(item=><div key={item.resource}><ResourceIcon resource={item.resource} size={24}/><span><small><LocaleText value={item.resource.toUpperCase()}/></small><strong>{money(item.price)}</strong></span><em><LocaleText value={"WORLD PRICE"}/></em></div>)}</div>
-   <button className="credit-market-entry exchange-market-entry" onClick={()=>state.openTool('exchange')}><LocaleText value="Commodity Exchange"/></button><button className="credit-market-entry" onClick={()=>state.openTool('credit')}><LocaleText value="Sovereign Credit & Monetary Fund"/></button><IndustrialMarketPanel/>
-   <div className="floating-note"><LocaleText value={activeTrades.length}/><LocaleText value={" active global trade flows · prices react to world production and strategic scarcity."}/></div>
   </DraggableWindow>}
 
   {open.has('pulse')&&<DraggableWindow id="pulse-window" kicker="LIVING WORLD" title={translateLive("World Pulse")} initialX={145} initialY={240} width={520} onClose={()=>close('pulse')}>

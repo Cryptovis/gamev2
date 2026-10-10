@@ -1,4 +1,4 @@
-# The Real President — 0.89.0-playtest.6
+# The Real President — 0.89.0-playtest.7
 
 A browser-based grand-strategy prototype built with React, TypeScript, Zustand, D3 Geo and Dexie. Lead a country through its economy, resources, diplomacy, development and military conflicts. Chart.js provides economic charts; Vitest and Playwright verify gameplay and browser flows.
 
@@ -6,10 +6,10 @@ A browser-based grand-strategy prototype built with React, TypeScript, Zustand, 
 
 | Item | Current state |
 |---|---|
-| Version | **0.89.0-playtest.6 — Window flow & diplomatic recovery** |
+| Version | **0.89.0-playtest.7 — Focused markets & artwork recovery** |
 | Development branch | `dev/trade-markets-089` |
 | Save schema | 17 (0.86–0.89 add optional fields only); schemas 12–16 migrate automatically, older or newer saves are refused with a warning |
-| Validation | Local: 555 unit tests, TypeScript and production build passed; all 72 Playwright browser scenarios passed; [CI runs on pushes](https://github.com/Cryptovis/gamev2/actions) |
+| Validation | Local: 562 unit tests, TypeScript and production build passed; all 75 Playwright browser scenarios passed locally; [CI runs on pushes](https://github.com/Cryptovis/gamev2/actions) |
 | V3 | Reserved for the complete-playability milestone; the current plan builds on the existing engine |
 
 These details describe this development branch. Another branch, including `main`, can contain an older release. Check `package.json` and your checked-out branch when comparing previews.
@@ -34,6 +34,11 @@ npm run test:e2e
 `check` runs tests, TypeScript checks and the production build. Browser tests run separately against the production preview.
 
 ## Recent changelog
+
+### 0.89.0-playtest.7 — Focused markets & artwork recovery (Codex)
+- Six icon sections replace stacked market content; the menu stays visible while the selected section scrolls.
+- Failed atlas downloads retry on reopening, stalled downloads time out, and stale errors cannot hide recovered art. Mobile resource choices fit in two columns.
+- Existing supply contracts, exchange orders and sovereign credit use the same engine rules. See [changelog](CHANGELOG.md).
 
 ### 0.89.0-playtest.6 — Window flow & diplomatic recovery (Codex)
 
@@ -141,7 +146,7 @@ Delivered milestones are retained here when new releases are added. This table s
 
 | Milestone | Delivered foundation | Record |
 |---|---|---|
-| 0.89 — Trade & Markets + onboarding polish | Shared window lifecycle and local panel recovery; illustrated research and clear action blockers; monthly supply contracts, shared war fuel readiness and 5× auto assault; unified entry/setup theme and compact final review; supplier ranking and country trade desk, commodity exchange with shocks and charts, diplomatic and cargo flights on the map | [Playtest 0.89](docs/PLAYTEST-089.md) |
+| 0.89 — Trade & Markets + onboarding polish | Icon market sections and bounded artwork recovery; shared window lifecycle and local panel recovery; illustrated research and clear action blockers; monthly supply contracts, shared war fuel readiness and 5× auto assault; unified entry/setup theme and compact final review; supplier ranking and country trade desk, commodity exchange with shocks and charts, diplomatic and cargo flights on the map | [Playtest 0.89](docs/PLAYTEST-089.md) |
 | 0.88 — Politics & Victory | AI wars and the defender path, allies joining, factions and contested elections, regime crises, data-driven events with chains, campaign victory | [Playtest 0.88](docs/PLAYTEST-088.md) |
 | 0.87 — Living World | Repeat fatigue and GDP-scaled costs, one market price scale, demand-bound AI buyers, shared treaty rules, command and migration cleanup | [Playtest 0.87](docs/PLAYTEST-087.md) |
 | 0.86 — HD War Playback | Step-by-step round playback with effects and controls, battle RNG stream, scored tactical AI | [Playtest 0.86](docs/PLAYTEST-086.md) |

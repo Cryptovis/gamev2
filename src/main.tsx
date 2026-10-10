@@ -30,3 +30,5 @@ import "./ui/styles/commodityExchange.css";
 import "./ui/styles/researchReadiness.css";
 
 import "./ui/styles/windowLayers.css";
+
+import "./ui/styles/sectionMenu.css";

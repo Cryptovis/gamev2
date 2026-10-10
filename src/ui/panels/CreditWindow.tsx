@@ -12,7 +12,7 @@ import { CommandWindow } from "./CommandWindow";
 import { ReviewDialog, type ReviewContent } from "./ReviewDialog";
 import { LocaleText } from "../../i18n/localeText";
 import {money as formatMoney} from '../formatMoney';
-export function CreditWindow() {
+export function CreditWindow({embedded=false}:{embedded?:boolean}={}) {
   const s = useWorldView(),
     e = expansion(s),
     p = s.countries[s.playerCountryId],
@@ -26,13 +26,8 @@ export function CreditWindow() {
   const principal = millions / 1000;
   const status=creditOfferStatus(s,kind,principal,apr,days);
   const money=(value:number)=>formatMoney(value,s.playerProfile.language);
-  return (
-    <CommandWindow
-      wide
-      title="Sovereign Credit & Monetary Fund"
-      kicker="CAPITAL MARKETS"
-      onClose={s.closeWorkspace}
-    >
+  const content = (
+    <>
       <div className="credit-overview">
         <article>
           <small>
@@ -227,6 +222,7 @@ export function CreditWindow() {
           }}
         />
       )}
-    </CommandWindow>
+    </>
   );
+  return embedded?content:<CommandWindow wide title="Sovereign Credit & Monetary Fund" kicker="CAPITAL MARKETS" onClose={s.closeWorkspace}>{content}</CommandWindow>;
 }

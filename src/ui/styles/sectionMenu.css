@@ -1,0 +1,16 @@
+.section-menu {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:0 0 10px;flex-shrink:0;border-bottom:1px solid #73919b44;}
+.section-menu button {display:flex;align-items:center;gap:8px;min-height:52px;padding:8px 10px;border:1px solid #75909c44;border-radius:9px;background:#122e3d;color:#e0e9ec;text-align:left;font-size:12px;line-height:1.35;cursor:pointer;}
+.section-menu button[aria-pressed=true] {border-color:#e5c372;background:#355566;color:#ffe1a3;}
+.section-menu button:focus-visible {outline:2px solid #ffe1a3;outline-offset:2px;}
+#market-window .floating-command-body {display:flex;flex-direction:column;overflow:hidden;max-height:none;height:min(660px,calc(100dvh - 220px));}
+.market-section-content {min-height:0;flex:1;overflow:auto;scrollbar-gutter:stable;padding:12px 6px 12px 0;}
+.market-section-content .legacy-exchange {margin-top:0;}
+.market-section-content :is(.exchange-filters,.exchange-board,.cx-board,.trade-good-picker) {padding-bottom:8px;scrollbar-width:thin;}
+.market-section-content .exchange-filters {gap:6px;grid-template-columns:repeat(4,minmax(0,1fr));}
+.market-section-content .exchange-filters button {min-width:0;overflow-wrap:anywhere;}
+@media(max-width:700px) {
+ .section-menu {grid-template-columns:repeat(2,minmax(0,1fr));}
+ .section-menu button {font-size:11px;min-height:50px;padding:6px;}
+ #market-window .floating-command-body {height:calc(100dvh - 310px);}
+ .market-section-content .exchange-filters {grid-template-columns:repeat(2,minmax(0,1fr));}
+}

@@ -1,4 +1,4 @@
-# 0.83 audit reconciliation — 0.89.0-playtest.6
+# 0.83 audit reconciliation — 0.89.0-playtest.7
 
 Maintained by **Codex**, against `dev/trade-markets-089`. The [original audit](AUDIT-0.83.md) remains a historical record authored by Claude. Its line numbers and counts describe 0.83, not the current source. This is a source/test reconciliation, not a new full-file security audit or a repeat of every historical multi-year experiment.
 
@@ -14,6 +14,8 @@ Maintained by **Codex**, against `dev/trade-markets-089`. The [original audit](A
 | War/research clarity and part of G3 | Playtest.5: visible shared-engine war block reason; readable disabled confirmation; research cards with branch art, exact saved/cost/missing points and prerequisites; shared research duration/progress/refund previews. Cancellation and integration reuse the same refund helper. No cost, capacity or fuel threshold change. |
 
 Playtest.6 also fixes the narrow country trade header and wraps CommandRails lazy panels in local, retryable boundaries. A persistent inbox download failure leaves the campaign mounted; a fresh lazy loader and unique retry URL allow recovery after connectivity returns.
+
+Playtest.7 adds reusable section navigation to Market and bounded artwork recovery on reopening/timeouts. Only the selected market section mounts. Other long windows still need incremental navigation adoption.
 
 ## Still open or only partially addressed
 

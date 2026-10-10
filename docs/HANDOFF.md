@@ -3,9 +3,10 @@
 Bu dosya yeni bir konuşmanın ilk okuması içindir. Geçmiş konuşmayı taşımadan kaldığımız yerden devam etmeyi sağlar.
 
 ## Durum
-- Sürüm: **0.89.0-playtest.6 "Window flow & diplomatic recovery"**
+- Sürüm: **0.89.0-playtest.7 "Focused markets & artwork recovery"**
 - Dal: `dev/trade-markets-089`. Önceki playtest.5 CI (`c658ec1`) geçti; bu patch'in CI sonucu push sonrası ayrıca kontrol edilmeli.
 - `main`'e doğrudan push yok. Yeni işler `dev/<name>-0XX` dallarında yapılır.
+- Son patch: markette altı ikonlu bölüm ve resim yükleyicisinde yeniden açılış/zaman aşımı/eski hata koruması. Diğer uzun pencerelerde bu düzenin uygulanması bekliyor.
 - Kapsam (0.89): ticaret ortağı seçimi ve ülke TRADE sekmesi, emtia borsası (spread, komisyon, günlük limit, pozisyon limiti, depolama, şoklar), diplomatik jet ve kargo uçakları (harita katmanı, mesafeye göre varış süresi).
 
 ## Bekleyen işler

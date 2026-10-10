@@ -1,3 +1,4 @@
+import {AtlasImage} from './AtlasImage';
 const kinds = [
   "treasury",
   "budget",
@@ -37,9 +38,8 @@ export function CommandArt({
         flexShrink: 0,
       }}
     >
-      <img
+      <AtlasImage
         src="/assets/command/administration-atlas-078.svg"
-        alt=""
         style={{
           position: "absolute",
           maxWidth: "none",

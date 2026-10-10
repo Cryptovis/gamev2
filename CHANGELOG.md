@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.89.0-playtest.7 — Focused markets & artwork recovery
+Implementation and validation: **Codex**. Branch: `dev/trade-markets-089`. Save schema stays 17.
+
+- Replace the stacked market landing page with six icon sections: open market, commodity exchange, sovereign credit, partners, supply contracts and world prices. Only selected content mounts; the menu remains above its own scrolling content. External credit/exchange links select the same market shell. Direct shipments and recurring contracts remain available.
+- Add reusable section navigation, compact two-column mobile resource choices, and bottom spacing beneath horizontal scrollers. This starts the pattern in Market; other long game screens remain follow-up work.
+- Recover exhausted shared artwork requests when a window reopens, use a fresh retry cycle URL, ignore stale load errors and time out stalled downloads after eight seconds. Administration art now uses the same resilient atlas component. Retries remain bounded and failed artwork keeps a fallback.
+- Four new navigation labels reviewed in all five languages. No engine balance, dependency graph or save migration changes.
+
+Validation: 562 unit tests, TypeScript and production build passed; artwork regressions rechecked after the fresh-URL fix. All 75 Playwright browser scenarios passed locally; desktop/mobile market screenshots were inspected. GitHub CI runs separately on push.
+
 ## 0.89.0-playtest.6 — Window flow & diplomatic recovery
 Implementation and validation: **Codex**. Branch: `dev/trade-markets-089`. Save schema stays 17.
 

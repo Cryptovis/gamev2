@@ -144,3 +144,6 @@ Visible war block reasons and disabled styling; responsive research cards with b
 
 ## 0.89.0-playtest.6 — Window flow & diplomatic recovery (Codex)
 Delivered: shared focus/top-window Escape/tab handling and review pause ownership, page-level z-index tokens with tutorial space, local recoverable lazy command panels, and a readable country Trade Desk hero. Phase 4 G5/G6 progress is partial: specialized overlays, keyboard map navigation and full CSS cascade migration remain. Checks: [Playtest 0.89](PLAYTEST-089.md); remaining scope: [audit progress](AUDIT-PROGRESS-089.md).
+
+## 0.89.0-playtest.7 — Focused markets & artwork recovery (Codex)
+Delivered: six icon sections in one market shell, compact mobile choices, separate scroller space and bounded resilient atlas recovery. Continue this navigation pattern on other long windows after playtest feedback; remaining Phase 4 items stay in [audit progress](AUDIT-PROGRESS-089.md). Save schema and balance unchanged.
