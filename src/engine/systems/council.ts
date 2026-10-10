@@ -30,6 +30,7 @@ export function proposeCouncilResolution(state:GameState,type:CouncilResolutionT
   if(type==='ceasefire'&&!inActiveWar(state,targetId))return {...state,sitrep:[`COUNCIL // ${target.name} is not at war; no ceasefire to impose.`,...state.sitrep].slice(0,12)};
   const influence=state.council.influenceByCountry[player.id]??20; const cost=type==='sanctions'?10:type==='ceasefire'?8:6;
   if(influence<cost)return {...state,sitrep:[`COUNCIL // Not enough diplomatic influence.`,...state.sitrep].slice(0,12)};
+  if(type==='humanitarian_aid'&&player.economy.treasury<5)return {...state,sitrep:['COUNCIL // Humanitarian aid needs $5B. No influence was spent.',...state.sitrep].slice(0,12)};
   const support=supportFor(state,targetId,type); const passed=support>=55;
   const resolution:CouncilResolution={id:`GC-${type}-${targetId}-${state.day}`,type,proposerId:player.id,targetCountryId:targetId,supportPercent:support,passed,day:state.day,summary:`${type.replaceAll('_',' ')} on ${target.name}: ${support}% support`};
   let next:GameState={...state,council:{influenceByCountry:{...state.council.influenceByCountry,[player.id]:influence-cost},history:[resolution,...state.council.history].slice(0,20)}};

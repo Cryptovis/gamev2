@@ -1,3 +1,4 @@
+import {useShallow} from 'zustand/react/shallow';
 const EconomicTrends=lazy(()=>import('./EconomicTrends').then(m=>({default:m.EconomicTrends})));
 import {activeCountries} from '../../domain/sovereignty';
 import {money} from '../formatMoney';
@@ -52,7 +53,7 @@ export function CountryPanel(){
   const [tab,setTab]=useState<PanelTab>('overview');
   const [commandWindow,setCommandWindow]=useState<'dossier'|'supply'|null>(null);
   const [pendingDecision,setPendingDecision]=useState<{spec:StrategicDecisionSpec;execute:()=>void}|null>(null);
-  const state=useGameStore();
+  const state=useGameStore(useShallow(s=>{const {actionReceipt,saveMessage,mapControlCommand,mapZoomSensitivity,mapLabelScale,...view}=s;return view;}));
   useEffect(()=>{if(state.navigation?.panel==='technology'){state.openTool('research');return;}if(state.navigation&&['overview','economy','trade','production','diplomacy','military','intel','cabinet','technology','world','war'].includes(state.navigation.panel))setTab(state.navigation.panel as PanelTab);},[state.navigation?.nonce]);
   const language=state.playerProfile.language;
   const selected=state.countries[state.selectedCountryId ?? state.playerCountryId];
@@ -76,11 +77,11 @@ export function CountryPanel(){
     <select className="country-select" value={selected.id} onChange={(e)=>state.selectCountry(e.target.value)} aria-label={translateLive("Select country")}>{countryList.map((country)=><option key={country.id} value={country.id}><LocaleText value={country.name}/><LocaleText value={" ("}/><LocaleText value={country.iso2}/><LocaleText value={")"}/></option>)}</select>
     <div className="panel-title-row"><div className="country-title-identity"><span className="country-panel-flag"><LocaleText value={flagEmoji(selected.iso2)}/></span><div><h1><LocaleText value={selected.name}/></h1><p className="muted"><LocaleText value={isPlayer?'Player nation':'Observed nation'}/><LocaleText value={" · "}/><LocaleText value={humanize(selected.politics.regime)}/><LocaleText value={" · "}/><LocaleText value={selected.region || 'Global'}/></p></div></div>{selected.controllerCountryId&&<span className="occupation-badge"><LocaleText value={"CONTROLLED"}/></span>}</div>
     <div className="identity-strip"><span className="identity-with-icon"><ReligionGlyph religion={selected.society.dominantReligion}/><i><small><LocaleText value={"RELIGION"}/></small><strong><LocaleText value={humanize(selected.society.dominantReligion)}/></strong></i></span><span><small><LocaleText value={"IDEOLOGY"}/></small><strong><LocaleText value={humanize(selected.society.ideology)}/></strong></span><span><small><LocaleText value={"MILITARY"}/></small><strong><LocaleText value={selected.military.assessment.gfpRank ? `GFP #${selected.military.assessment.gfpRank}` : 'ESTIMATE'}/></strong></span></div>
-    <div className="panel-command-actions"><button onClick={()=>setCommandWindow('dossier')}><LocaleText value={tr(language,'dossier','STRATEGIC DOSSIER')}/></button><button onClick={()=>setCommandWindow('supply')}><LocaleText value={tr(language,'supply','SUPPLY COMMAND')}/></button>{!isPlayer&&<button data-guide="trade-desk" onClick={()=>setTab('trade')}><LocaleText value="TRADE DESK"/></button>}</div>
-    <div className="national-development-shortcuts">{isPlayer&&<button onClick={()=>state.openTool('investment')}><CommandArt kind="investment"/><LocaleText value="Investments & Pilot Training"/></button>}<button onClick={()=>state.navigate('governance',selected.id)}><CommandArt kind="governance"/><LocaleText value="Territories & Political Affairs"/></button></div>
+    <div className="panel-command-actions"><button onClick={()=>setCommandWindow('dossier')}><LocaleText value={tr(language,'dossier','STRATEGIC DOSSIER')}/></button><button onClick={()=>setCommandWindow('supply')}><LocaleText value={tr(language,'supply','SUPPLY COMMAND')}/></button></div>
+    {isPlayer&&<div className="national-development-shortcuts"><button onClick={()=>state.openTool('investment')}><CommandArt kind="investment"/><LocaleText value="Investments & Pilot Training"/></button></div>}
 
-    <GuideBriefing/><div className="panel-tabs panel-tabs-10 panel-tabs-11">
-      {(['overview','economy','trade','production','diplomacy','military','intel','cabinet','technology','world','war'] as PanelTab[]).map((id)=><button data-guide={'tab-'+id} key={id} data-tab={id} aria-pressed={tab===id} className={tab===id?'active':''} onClick={()=>id==='technology'?state.openTool('research'):setTab(id)}><PanelTabIcon id={id}/><span><LocaleText value={tr(language,id==='technology'?'tech':id,id==='technology'?'TECH':id.toUpperCase())}/></span></button>)}
+    <GuideBriefing/><div className="panel-tabs panel-tabs-10 panel-tabs-11"><button data-guide="tab-affairs" onClick={()=>state.navigate('governance',selected.id)}><CommandArt kind="governance" size={26}/><span><LocaleText value="Affairs"/></span></button>
+      {(['overview','economy','trade','production','diplomacy','military','intel','cabinet','technology','world','war'] as PanelTab[]).map((id)=><button data-guide={'tab-'+id} key={id} data-tab={id} aria-pressed={tab===id} className={(tab===id?'active ':'')+(id==='war'?'country-war-action':'')} onClick={()=>id==='technology'?state.openTool('research'):setTab(id)}><PanelTabIcon id={id}/><span><LocaleText value={id==='war'?(activeWar?'War command':isPlayer?'War readiness':'War planning'):tr(language,id==='technology'?'tech':id,id==='technology'?'TECH':id.toUpperCase())}/></span></button>)}
     </div>
 
     {tab==='overview'&&<>

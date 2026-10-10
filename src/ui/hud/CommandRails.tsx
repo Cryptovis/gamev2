@@ -31,7 +31,7 @@ const ResourceCommandWindow=recoverableLazy(()=>import('../panels/ResourceComman
 type ToolId='objectives'|'market'|'pulse'|'map'|'resources'|'sitrep'|'alerts'|'diplomacy';
 
 function RailButton({active,badge,label,children,onClick}:{active:boolean;badge?:number|string;label:string;children:ReactNode;onClick:()=>void}){
- return <button data-guide={'rail-'+label.toLowerCase()} className={active?'rail-button active':'rail-button'} onClick={onClick} aria-pressed={active} title={translateLive(`${label} · ${active?'Open — click to close':'Closed — click to open'}`)}><span><LocaleText value={children}/></span>{badge!==undefined&&badge!==0&&<b><LocaleText value={badge}/></b>}<small><LocaleText value={label}/></small></button>;
+ return <button data-guide={'rail-'+(label==='DIPLOMACY'?'diplo':label.toLowerCase())} className={active?'rail-button active':'rail-button'} onClick={onClick} aria-pressed={active} title={translateLive(`${label} · ${active?'Open — click to close':'Closed — click to open'}`)}><span><LocaleText value={children}/></span>{badge!==undefined&&badge!==0&&<b><LocaleText value={badge}/></b>}<small><LocaleText value={label}/></small></button>;
 }
 
 export function CommandRails(){
@@ -66,7 +66,7 @@ export function CommandRails(){
   </nav>
   <nav className={`command-rail command-rail-right ${state.selectedCountryId?'country-open':'country-closed'}`} aria-label={translateLive("Information tools")}>
    <RailButton active={open.has('objectives')} badge={`${done}/6`} label="GOALS" onClick={()=>toggle('objectives')}><NavigationArt kind="objectives"/></RailButton>
-   <RailButton active={open.has('diplomacy')} badge={living(state).letters.filter(m=>!m.read).length+state.leadership.messages.filter(m=>!m.read).length} label="DIPLO" onClick={()=>toggle('diplomacy')}><NavigationArt kind="diplomacy"/></RailButton>
+   <RailButton active={open.has('diplomacy')} badge={living(state).letters.filter(m=>!m.read).length+state.leadership.messages.filter(m=>!m.read).length} label="DIPLOMACY" onClick={()=>toggle('diplomacy')}><NavigationArt kind="diplomacy"/></RailButton>
    <RailButton active={open.has('alerts')} badge={critical.length} label="ALERTS" onClick={()=>toggle('alerts')}><NavigationArt kind="alerts"/></RailButton>
    <RailButton active={open.has('sitrep')} badge={state.sitrep.length} label="NEWS" onClick={()=>toggle('sitrep')}><NavigationArt kind="intel"/></RailButton>
   </nav>

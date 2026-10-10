@@ -48,6 +48,6 @@ export function simulatePolitics(
     ...country.politics,
     approval: clamp(country.politics.approval + approvalDelta, 0, 100),
     stability: clamp(country.politics.stability + stabilityDelta, 0, 100),
-    electionDaysRemaining: Math.max(0, country.politics.electionDaysRemaining - 1),
+    electionDaysRemaining: ['democracy','republic'].includes(country.politics.regime) ? Math.max(0, country.politics.electionDaysRemaining - 1) : country.politics.electionDaysRemaining,
   };
 }

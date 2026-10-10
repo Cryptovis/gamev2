@@ -90,6 +90,7 @@ interface GameActions {
   resolveAdvisor: (decision:'dismiss'|'pact'|1|3|5|10)=>void;
   createLongTermContract: (targetCountryId:string,resource:TradeResource,years:1|3|5|10,commandId?:string)=>void;
   dispatch: (command: GameCommand) => void;
+  dispatchWithReceipt: (command: GameCommand) => void;
   setSpeed: (speed: GameSpeed) => void;
   selectCountry: (countryId: string | null) => void;
   selectCountryByMapFeatureId: (featureId: string | number | null) => void;
@@ -219,6 +220,7 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
   resolveAdvisor: (decision) => set((state)=>decision==='dismiss'?dismissAdvisor(state):decision==='pact'?acceptAdvisorTradePact(state):acceptAdvisorContract(state,decision)),
   createLongTermContract: (targetCountryId,resource,years,commandId) => set(state=>commandWithReceipt(state,{type:'trade/createLongTermContract',targetCountryId,resource,years,commandId})),
   dispatch: (command) => set((state) => applyGameCommand(state, command)),
+  dispatchWithReceipt: (command) => set((state) => commandWithReceipt(state, command)),
   setSpeed: (speed) => set((state) => applyGameCommand(state, { type: 'clock/setSpeed', speed })),
   selectCountry: (selectedCountryId) => set(s=>({ selectedCountryId:selectedCountryId?sovereignId(s.countries,selectedCountryId):null,activeTool:null,warWindowId:null,navigation:null })),
   selectCountryByMapFeatureId: (featureId) => set((state) => {

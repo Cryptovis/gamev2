@@ -147,3 +147,8 @@ Delivered: shared focus/top-window Escape/tab handling and review pause ownershi
 
 ## 0.89.0-playtest.7 — Focused markets & artwork recovery (Codex)
 Delivered: six icon sections in one market shell, compact mobile choices, separate scroller space and bounded resilient atlas recovery. Continue this navigation pattern on other long windows after playtest feedback; remaining Phase 4 items stay in [audit progress](AUDIT-PROGRESS-089.md). Save schema and balance unchanged.
+
+## 0.90 — Clear Command (Codex)
+Delivered: section-based Affairs, shared command eligibility/cost previews, country/HUD navigation clarity, non-repeating entry quotes, keyboard map controls and integration modal lifecycle. Confirmed Antigravity findings on dependent wars, council aid affordability and election clocks are fixed. [QA reconciliation](QA-RECONCILIATION-090.md) records the claims that were already fixed or remain unmeasured; [playtest](PLAYTEST-090.md) records validation.
+
+Next priorities: measured long-save/map performance; remaining supply/investment/population previews; translation override inventory and per-language loading; remaining victory/campaign-end accessibility; campaign balance and a focused HD War AI/art/audio slice. No V3 declaration or rendering-engine migration in this release.

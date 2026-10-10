@@ -391,7 +391,18 @@ function WorldMapView() {
       <span><LocaleText value={hoveredCountry ? `${hoveredCountry.region || 'Global'} · ${hoveredCountry.military.assessment.capability.toFixed(0)} MIL` : projectionMode === 'globe' ? 'drag globe · wheel zoom · click sovereign territory' : 'drag to pan · wheel zoom · click sovereign territory'}/></span>
     </div>
     {mapMode==='relations'&&<div className="connections-legend"><span>● <LocaleText value="Active trade"/></span><span>● <LocaleText value="Embassy"/></span><span>● <LocaleText value="Non-aggression"/></span><span>● <LocaleText value="Trade pact"/></span><small><LocaleText value="A country may have several connections; select it to inspect all agreements."/></small></div>}
-    <svg ref={svgRef} data-zoom={mapZoom.toFixed(4)} aria-label={translateLive("Interactive world map")} viewBox={`0 0 ${W} ${H}`} className={projectionMode === 'globe' ? 'strategy-svg globe-svg' : 'strategy-svg flat-svg'} onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerCancel={pointerUp} onClick={selectFromSurface} shapeRendering="geometricPrecision">
+    <p id="map-keyboard-help" className="map-keyboard-hint"><LocaleText value="Arrow keys: move · + / −: zoom · Home: your country · Enter: open country"/></p>
+    <svg tabIndex={0} role="group" aria-describedby="map-keyboard-help" onKeyDown={e=>{
+      if(e.target!==e.currentTarget||e.altKey||e.ctrlKey||e.metaKey)return;
+      if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','+','=','-','_','Home','Enter'].includes(e.key))return;
+      e.preventDefault();
+      if(e.key==='Home'){focusCountry(countries[playerCountryId]);return;}
+      if(e.key==='Enter'){selectCountry(selectedCountryId??playerCountryId);return;}
+      if(['+','=','-','_'].includes(e.key)){zoomBy(['+','='].includes(e.key)?1.18:1/1.18);return;}
+      const dx=e.key==='ArrowLeft'?-40:e.key==='ArrowRight'?40:0,dy=e.key==='ArrowUp'?-40:e.key==='ArrowDown'?40:0;
+      if(projectionMode==='globe')setRotation(r=>[r[0]+dx*.2/globeZoom,Math.max(-75,Math.min(75,r[1]-dy*.17/globeZoom)),0]);
+      else setFlatPan(p=>boundPan({x:p.x+dx,y:p.y+dy},flatZoom));
+    }} ref={svgRef} data-zoom={mapZoom.toFixed(4)} aria-label={translateLive("Interactive world map")} viewBox={`0 0 ${W} ${H}`} className={projectionMode === 'globe' ? 'strategy-svg globe-svg' : 'strategy-svg flat-svg'} onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerCancel={pointerUp} onClick={selectFromSurface} shapeRendering="geometricPrecision">
       <defs>
         <pattern id="terrain-plains" width="18" height="18" patternUnits="userSpaceOnUse"><rect width="18" height="18" fill="#6d8061"/><path d="M0 14C5 11 10 16 18 12" fill="none" stroke="#9aab83" strokeOpacity=".22" strokeWidth="1"/></pattern>
         <pattern id="terrain-forest" width="14" height="14" patternUnits="userSpaceOnUse"><rect width="14" height="14" fill="#3f6b52"/><circle cx="3" cy="4" r="1.5" fill="#234936" fillOpacity=".65"/><circle cx="10" cy="9" r="1.7" fill="#2a513c" fillOpacity=".7"/></pattern>

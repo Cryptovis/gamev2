@@ -1,6 +1,6 @@
-# 0.83 audit reconciliation — 0.89.0-playtest.7
+# 0.83 audit reconciliation — updated for 0.90.0-playtest.1
 
-Maintained by **Codex**, against `dev/trade-markets-089`. The [original audit](AUDIT-0.83.md) remains a historical record authored by Claude. Its line numbers and counts describe 0.83, not the current source. This is a source/test reconciliation, not a new full-file security audit or a repeat of every historical multi-year experiment.
+Maintained by **Codex**, against `dev/clear-command-090`. The [original audit](AUDIT-0.83.md) remains a historical record authored by Claude. Its line numbers and counts describe 0.83, not the current source. This is a source/test reconciliation, not a new full-file security audit or a repeat of every historical multi-year experiment.
 
 ## Delivered foundations: do not repeat
 
@@ -21,9 +21,9 @@ Playtest.7 adds reusable section navigation to Market and bounded artwork recove
 
 | ID | Current state | Next concrete scope |
 |---|---|---|
-| G3 | Research previews covered here; other windows still contain forecasts/formulas | Move remaining supply/investment/population/top-bar forecasts to engine previews, with command-parity tests. |
+| G3 | Research and Affairs eligibility/cost/cooldown previews now share engine rules; other windows still contain forecasts/formulas | Move remaining supply/investment/population/top-bar forecasts to engine previews, with command-parity tests. |
 | G4 / G8 | New strings reviewed in all five languages; multiple catalogues still eagerly imported | Build an explicit duplicate/override inventory, then consolidate and lazy-load by language without losing saved news translations. Do not claim all old translations have been linguistically reviewed. |
-| G5 | `html.lang` updates. Shared lifecycle now covers command/floating windows, reviews, strategic decisions, war, commander/portrait, advisors and events; nested Escape/Tab/focus and receipt pause tested | Migrate remaining specialized integration/victory/campaign-end surfaces and add keyboard country navigation. |
+| G5 | `html.lang` updates. Shared lifecycle now covers command/floating windows, reviews, strategic decisions, war, commander/portrait, advisors and events; nested Escape/Tab/focus and receipt pause tested | Integration lifecycle and keyboard camera/Home/dossier access delivered in 0.90. Victory/campaign-end surfaces and richer keyboard geographic navigation remain. |
 | G6 | Page-level z-index tokens delivered; conflicting forced z-indices removed; tutorial space reserved for command/strategic windows. Local child layers remain independent | Continue the legacy CSS cascade / `@layer` migration and remaining specialized overlays. |
 | G7 | Unused-asset cleanup previously delivered; map texture conversion remains | Measure and convert the globe raster with image sampling checks. |
 | H1 | Lockfile still has the `lightningcss-wasm` alias; of 71 non-root package records, 47 lack `resolved` and `integrity` | Regenerate and verify on native Node, then verify StackBlitz separately. This patch preserves the existing dependency graph and changes only root version records. |
@@ -34,4 +34,6 @@ Playtest.7 adds reusable section navigation to Market and bounded artwork recove
 
 Balance follow-ups remain: approval baseline, democratic unrest, AI war variety and exchange/contract price consistency. The annual invariant checks collapse and non-finite values, not full campaign fairness. V3 stays the complete-playability milestone; no engine rewrite is required to continue these steps.
 
-Validation for this patch is recorded in [Playtest 0.89](PLAYTEST-089.md). Historical delivery claims above are backed by the linked release records and named current test suites; they are not a claim that every Phase 4 item is now closed.
+Historical 0.89 validation is recorded in [Playtest 0.89](PLAYTEST-089.md); current checks are in [Playtest 0.90](PLAYTEST-090.md). Historical delivery claims above are backed by the linked release records and named current test suites; they are not a claim that every Phase 4 item is now closed.
+
+0.90 continues section navigation in Affairs and records the separate Antigravity 0.40 report in [QA reconciliation](QA-RECONCILIATION-090.md). See [current validation](PLAYTEST-090.md).

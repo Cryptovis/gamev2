@@ -9,7 +9,7 @@ import { useGameStore } from '../../store/gameStore';
 import {validBirthDate,CAMPAIGN_START_DATE} from '../../engine/systems/leadership';
 import { AvatarPortrait } from '../profile/AvatarPortrait';
 import { compactMoney } from '../formatMoney';
-import { pickLeadershipQuote } from '../../data/leadershipQuotes';
+import { nextLeadershipQuote } from '../../data/leadershipQuotes';
 
 type SetupStep=1|2|3|4|'loading';
 
@@ -28,7 +28,8 @@ export function CampaignSetup(){
  const load=useGameStore(s=>s.loadLatest),saveMessage=useGameStore(s=>s.saveMessage);
  const [step,setStep]=useState<SetupStep>(1);
  const language=profile.language;
- const [quote]=useState(()=>pickLeadershipQuote(Math.random()));
+ const [quote]=useState(()=>{let previous:string|null=null;try{previous=localStorage.getItem('trp-last-leadership-quote');}catch{}return nextLeadershipQuote(Math.random(),previous);});
+ useEffect(()=>{try{localStorage.setItem('trp-last-leadership-quote',quote.id);}catch{}},[quote.id]);
  const [name,setName]=useState(profile.commanderName==='Commander'?'':profile.commanderName);
  const [avatar,setAvatar]=useState(profile.avatarId);
  const [portraitStyle,setPortraitStyle]=useState<LeaderStyle|'all'>('all');
@@ -85,7 +86,7 @@ export function CampaignSetup(){
  const stepTitle=step===1?tr(language,'step_name','Your identity'):step===2?tr(language,'step_portrait','Choose your portrait'):step===3?tr(language,'step_country','Choose your nation'):tr(language,'step_confirm','Confirm command');
 
  return <div className="campaign-setup-backdrop campaign-wizard-backdrop" style={{'--setup-primary':theme.primary,'--setup-accent':theme.accent} as CSSProperties}>
-  <section className="campaign-wizard"><aside className="setup-cover"><img src="/assets/command/campaign-cover.webp" alt=""/><span>THE REAL PRESIDENT</span><p><LocaleText value="Your country. Your choices."/></p><small>{version}</small></aside>
+  <section className="campaign-wizard"><aside className="setup-cover"><img src="/assets/command/campaign-cover.webp" alt=""/><span className="entry-tagline"><LocaleText value="Be the president you have always dreamed of."/></span><small>{version}</small></aside>
    <header className="wizard-header"><div><small><LocaleText value={"THE REAL PRESIDENT"}/><span className="wizard-release">{version}</span></small><h1><LocaleText value={stepTitle}/></h1><p><LocaleText value="Create your leader and choose a country."/></p></div><div className="wizard-stepper">{[1,2,3,4].map(n=><span key={n} className={typeof step==='number'&&step>=n?'active':''}><b><LocaleText value={n}/></b><small><LocaleText value={n===1?'IDENTITY':n===2?'PORTRAIT':n===3?'NATION':'CONFIRM'}/></small></span>)}</div></header>
 
    <div className="wizard-body">

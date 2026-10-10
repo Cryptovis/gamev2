@@ -32,3 +32,5 @@ import "./ui/styles/researchReadiness.css";
 import "./ui/styles/windowLayers.css";
 
 import "./ui/styles/sectionMenu.css";
+
+import "./ui/styles/clearCommand.css";

@@ -1,0 +1,35 @@
+/* 0.90: compact country commands and a consistent Affairs workspace. */
+.entry-backdrop .entry-art>span.entry-tagline,.campaign-wizard-backdrop .setup-cover>span.entry-tagline{font:italic 500 clamp(22px,2.1vw,30px)/1.3 Georgia,serif;letter-spacing:0;color:#f5ead0;max-width:17ch;margin-bottom:20px;text-wrap:balance}
+.command-rail .rail-button{transition:background-color .16s ease,border-color .16s ease,box-shadow .16s ease}
+.command-rail .rail-button.active{background:#354b50!important;border-color:#abc8c3!important;box-shadow:inset 0 -2px 0 #b8d8cf}
+.command-rail .rail-button.active>span,.command-rail .rail-button.active small{color:#e5f2e9!important}
+.command-rail .rail-button.active::after{display:none;content:none}
+.command-rail .rail-button small{font-size:9px!important;letter-spacing:0;overflow-wrap:anywhere}
+.command-rail .rail-button:focus-visible{outline:2px solid #e5ce94;outline-offset:3px}
+.command-panel .identity-strip{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.command-panel .identity-strip>span{text-align:left;padding:9px 8px;align-items:flex-start}
+.command-panel .identity-strip strong{white-space:normal;overflow:visible;text-overflow:clip;line-height:1.35;overflow-wrap:anywhere;font-weight:650}
+.command-panel .identity-strip small{letter-spacing:.04em;color:#adc4cd}
+.command-panel .panel-tabs button.country-war-action{grid-column:1/-1;border-color:#a55f63!important;background:#482b32!important;color:#ffe0dc!important;justify-content:center}
+.command-panel .panel-tabs button.country-war-action.active{background:#733a40!important;box-shadow:inset 0 -2px 0 #efb1a6}
+.affairs-shell{display:flex;flex-direction:column;min-height:0;gap:12px}
+.affairs-hero{display:flex;align-items:center;gap:18px;padding:16px;border:1px solid #597079;border-radius:14px;background:linear-gradient(115deg,#2b4247,#182a35)}
+.affairs-hero>div{min-width:0}.affairs-hero h2{margin:5px 0;font-size:25px}.affairs-hero p{margin:0;color:#cad9dc;font-size:13px;line-height:1.5}.affairs-hero small{color:#dacb9e;text-transform:uppercase;letter-spacing:.1em}
+.affairs-content{min-height:0;overflow:auto;scrollbar-gutter:stable;padding:4px 5px 14px 0;animation:affairs-reveal .16s ease-out}
+.affairs-actions-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:start}
+.affairs-action{padding:16px;border:1px solid #536975;border-radius:12px;background:#20323d;margin-bottom:12px;min-width:0}
+.affairs-action h3{font-size:16px;margin:0 0 9px;color:#f1e6c9}.affairs-action p{font-size:13px;line-height:1.55;color:#c0d0d8}.affairs-action dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.affairs-action dl>div{min-width:0}.affairs-action dt{font-size:11px;color:#a8c0cb}.affairs-action dd{margin:4px 0 0;font-weight:650;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.affairs-action>button{min-height:40px;width:100%;margin-top:8px}.affairs-action>button:disabled{opacity:.55;cursor:not-allowed}
+.affairs-blockers{margin:12px 0;padding:12px 12px 12px 28px;background:#3e3330;border-radius:8px;color:#f4d7a7;font-size:12px;line-height:1.6}
+.affairs-thresholds,.affairs-shell .occupation-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:14px}
+.affairs-thresholds>div,.affairs-shell .occupation-summary>span{display:flex;flex-direction:column;gap:8px;background:#20323d;border:1px solid #526873;border-radius:10px;padding:12px;font-size:12px}.affairs-thresholds strong,.affairs-shell .occupation-summary strong{font-size:21px;font-variant-numeric:tabular-nums}.affairs-thresholds small{color:#dec994}
+.affairs-guidance{line-height:1.7;color:#cedce0}.affairs-shell select{max-width:100%;min-height:40px}.affairs-shell .integration-card{border:0;padding:0}.affairs-shell .integration-requirements{margin:16px 0}.integration-requirements progress{width:100%;display:block;margin-top:8px}
+.command-window:has(.affairs-shell){display:flex;flex-direction:column;overflow:hidden}.command-window:has(.affairs-shell)>.command-window-body{min-height:0;display:flex;flex-direction:column;overflow:hidden}.command-window:has(.affairs-shell) .affairs-shell{flex:1;overflow:hidden}
+.strategy-svg:focus-visible{outline:2px solid #e5ce94;outline-offset:-5px}.map-keyboard-hint{position:absolute;left:50%;bottom:110px;transform:translateX(-50%);padding:10px 14px;background:#152831;color:#e4ece5;border-radius:9px;max-width:80vw;display:none;pointer-events:none}.world-map:has(.strategy-svg:focus-visible) .map-keyboard-hint{display:block}
+@keyframes affairs-reveal{from{opacity:.7;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:760px){.affairs-hero{padding:12px;gap:10px}.affairs-hero>.command-art{width:48px!important;height:48px!important}.affairs-hero h2{font-size:20px}.affairs-hero p{font-size:12px}.affairs-actions-grid{grid-template-columns:1fr}.affairs-thresholds,.affairs-shell .occupation-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.entry-backdrop .entry-art>span.entry-tagline,.campaign-wizard-backdrop .setup-cover>span.entry-tagline{font-size:15px;max-width:100%;margin:0;line-height:1.2}.affairs-hero small{font-size:10px}.affairs-action{padding:12px}}
+@media(prefers-reduced-motion:reduce){.affairs-content{animation:none}.command-rail .rail-button{transition:none}}
+.affairs-shell button:not(.section-menu button){border:1px solid #87a6aa;border-radius:8px;background:#36535c;color:#f1e9d7;font-family:inherit;font-weight:600;font-size:13px;line-height:1.35;padding:10px 14px;cursor:pointer}
+.affairs-shell button:not(.section-menu button):hover:not(:disabled){background:#466872;border-color:#c1d6d1}
+.affairs-shell button:not(.section-menu button):disabled{opacity:1;background:#273944;color:#a9b9bd;border-color:#50636b;cursor:not-allowed}
+.affairs-shell button:focus-visible{outline:2px solid #e5ce94;outline-offset:2px}

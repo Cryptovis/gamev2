@@ -34,3 +34,10 @@ export function pickLeadershipQuote(roll:number):LeadershipQuote {
  const bounded=Number.isFinite(roll)?Math.max(0,Math.min(1,roll)):0;
  return LEADERSHIP_QUOTES[Math.min(LEADERSHIP_QUOTES.length-1,Math.floor(bounded*LEADERSHIP_QUOTES.length))];
 }
+
+/** Presentation-only randomness; avoid an immediate repeat across wizard openings. */
+export function nextLeadershipQuote(roll:number,previousId?:string|null):LeadershipQuote {
+ const choices=LEADERSHIP_QUOTES.filter(q=>q.id!==previousId);
+ const bounded=Number.isFinite(roll)?Math.max(0,Math.min(1,roll)):0;
+ return choices[Math.min(choices.length-1,Math.floor(bounded*choices.length))];
+}

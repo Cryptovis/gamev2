@@ -45,7 +45,7 @@ export const makeInitialState = (): GameState => {
   lastAiDay: 1,
   lastStrategicReviewDay: 1,
   sitrep: [
-    'The Real President 0.83 online.',
+    'The Real President is ready.',
     'Strategic AI, covert operations and influence networks loaded alongside Strategic Command systems.',
   ],
   });

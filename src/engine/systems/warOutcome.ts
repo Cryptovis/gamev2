@@ -11,7 +11,7 @@ import { queueVictory } from './victory';
  * - If the player's home country is no longer independent, the campaign is lost (checkHomeFront).
  */
 export function settleWarOutcome(state: GameState, warId: string): GameState {
-  let next = queueVictory(state, warId);
+  let next = queueVictory(closeDependentWars(state), warId);
   const war = next.wars[warId];
   if (!war || war.status === 'active') return next;
   next = releaseCoalition(next, war);
@@ -50,4 +50,18 @@ export function checkHomeFront(state: GameState): GameState {
   if (!ruler) return state;
   const name = state.countries[ruler]?.name ?? ruler;
   return { ...state, campaignStatus: 'lost', speed: 0, sitrep: [`CAMPAIGN LOST // ${home.name} fell under ${name} control.`, ...state.sitrep].slice(0, 12) };
+}
+
+/** A conquered country cannot continue an independent front, including a second existing war. */
+export function closeDependentWars(state:GameState):GameState {
+ let next=state;
+ for(const war of Object.values(state.wars)){
+  if(war.status!=='active')continue;
+  const dependent=[war.attackerId,war.defenderId].some(id=>{const c=next.countries[id];return c&&(c.annexedBy||(c.controllerCountryId&&c.controllerCountryId!==id));});
+  if(!dependent)continue;
+  next={...next,wars:{...next.wars,[war.id]:{...war,status:'withdrawn',autoAssault:false,lastReport:'War closed because a country lost independence.'}}};
+  next=endWarRelation(next,war.attackerId,war.defenderId);
+  next=releaseCoalition(next,war);
+ }
+ return next;
 }

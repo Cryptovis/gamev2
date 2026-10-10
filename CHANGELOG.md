@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.90.0-playtest.1 — Clear Command
+Implementation, QA reconciliation and validation: **Codex**. Branch: `dev/clear-command-090`. Save schema remains 17. User-supplied Antigravity report reviewed against current code; report authorship does not imply implementation authorship.
+
+- Replace repeated artwork logo text with a localized presidential tagline. Choose a new leadership quote on each fresh wizard opening, excluding the last stored quote; retain it while moving between steps.
+- Rebuild Affairs as illustrated, bounded sections: overview, administration, integration, foreign influence and history. Show only sections appropriate to the selected country. Display actual approval/stability/military/ideology conditions, exact costs, budget shortfalls and cooldowns before action. Reviews and execution share engine-owned previews. Preparation is no longer offered for independent countries; outreach displays its actual scaled cost.
+- Add Affairs to the country menu, remove the duplicate Trade Desk shortcut, distinguish war planning/readiness with a full-width red action, and make identity labels wrap without ellipsis. Refine HUD selected borders/backgrounds, remove the redundant dot and rename DIPLO to DIPLOMACY while retaining tutorial anchors.
+- Add keyboard map movement, zoom, return-home and dossier opening with visible focus and instructions. Standalone integration uses the common modal lifecycle; embedded integration avoids an unnecessary extra window. Affairs transitions respect reduced motion. Exclude unrelated notices/map preferences from country-panel subscriptions; no measured FPS claim.
+- Close other active fronts when a participant loses independence, including stale saved fronts. Preserve the winning outcome, release defending allies and avoid another combat round. Require the proposer to fund $5B council aid before influence/vote changes. Advance election countdowns only in democracies/republics.
+- Increase the CI job budget from 10 to 15 minutes for the expanded browser suite; the previous successful run took about 9m23s. No checks are skipped.
+- Translate new messages in all five supported languages. Remove the hardcoded 0.83 version from new-campaign opening news. Preserve the Market sections/artwork recovery delivered in 0.89.7; no new dependency or lockfile graph change.
+
+Validation: 572 unit tests and TypeScript/production build passed. All 84 Playwright browser scenarios passed locally; the final visual/localization adjustments are rechecked in the nine focused 0.90 scenarios. See [playtest record](docs/PLAYTEST-090.md). [QA reconciliation](docs/QA-RECONCILIATION-090.md) distinguishes confirmed defects from obsolete and unmeasured claims. V3, audio, rendering migration, complete catalogue consolidation and deeper war AI are not part of this release.
+
 ## 0.89.0-playtest.7 — Focused markets & artwork recovery
 Implementation and validation: **Codex**. Branch: `dev/trade-markets-089`. Save schema stays 17.
 

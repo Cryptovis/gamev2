@@ -1,3 +1,4 @@
+import {affairsPreview} from './affairsPreview';
 import {cancelIndustrialContract,dismissLivingNotice,markInboxRead,setTutorialStep,toggleFacility} from './systems/playerRecords';
 import {startTacticalBattle,tacticalStartStatus,tacticalCommandStatus,combatAllowed,resolveTacticalRound,chooseTacticalOrders,playerSide} from './systems/tactical';
 import {buildPlant,togglePlant,cancelPowerProject} from './systems/energy';
@@ -278,6 +279,7 @@ export function executeCommandResult(state:GameState,command:GameCommand):Comman
  if(command.type==='credit/post'){const status=creditOfferStatus(state,command.kind,command.principal,command.apr,command.days);if(!status.allowed)return {state,status:'unavailable',message:status.reasons.join(' ')};}
  const proposal=command.type==='diplomacy/request'?diplomaticProposalStatus(state,command.id,command.kind):command.type==='diplomacy/signTradePact'?diplomaticProposalStatus(state,command.targetCountryId,'trade_pact'):null;
  if(proposal&&!proposal.allowed)return {state,status:'unavailable',message:proposal.reason};
+ const affairs=affairsPreview(state,command);if(affairs&&!affairs.allowed)return {state,status:'unavailable',message:affairs.reasons[0]};
  const next=executeGameCommand(state,command);
  const changed=next.countries!==state.countries||next.tradeDeals!==state.tradeDeals||next.world!==state.world||next.wars!==state.wars||next.production!==state.production||next.industrialContracts!==state.industrialContracts||next.industrialEconomy!==state.industrialEconomy||next.infrastructure!==state.infrastructure||next.intelOperations!==state.intelOperations||next.council!==state.council||next.leadership!==state.leadership||next.day!==state.day||next.speed!==state.speed;
  let recorded=recordReports(state,next,command.type==='time/advanceDay'?'world':'command');
