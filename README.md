@@ -9,7 +9,7 @@ A browser-based grand-strategy prototype built with React, TypeScript, Zustand, 
 | Version | **0.90.0-playtest.5 — Spacious command windows** |
 | Development branch | `dev/clear-command-090` |
 | Save schema | 17 (0.86–0.89 add optional fields; 0.90 preserves the schema); schemas 12–16 migrate automatically, older or newer saves are refused with a warning |
-| Validation | Local: 606 unit tests / 76 files, TypeScript/production build; 114 production browser scenarios verified (111 in the full run; three corrected/rechecked, with 23 focused checks); details in [Playtest 0.90](docs/PLAYTEST-090.md); [CI runs on pushes](https://github.com/Cryptovis/gamev2/actions) |
+| Validation | Local: 607 unit tests / 76 files, TypeScript/production build; 115 production browser scenarios verified (111 in the initial full run; corrected cases and the new country route checked in focused runs); details in [Playtest 0.90](docs/PLAYTEST-090.md); [CI runs on pushes](https://github.com/Cryptovis/gamev2/actions) |
 | V3 | Reserved for the complete-playability milestone; the current plan builds on the existing engine |
 
 These details describe this development branch. Another branch, including `main`, can contain an older release. Check `package.json` and your checked-out branch when comparing previews.

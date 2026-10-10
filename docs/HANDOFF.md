@@ -4,7 +4,8 @@
 
 - Geniş Tech/World/War/Production ve Supply/Market pencereleri; üst menüyü gizleyip kapatınca seçim/konumuyla geri getiren geçici gezinme geçmişi. Overview/Power/Supply ve Tech/World/War ayrı gruplar.
 - Cabinet atlas görselleri, kimlik/profil kartları, çerçeveli yan düğmeler; tarih hız kutusunun altında ve ülke düğmesi altın çerçeveli. World faaliyetleri + ilk 20 ülke, kaydırmada devamı.
-- Beş dil; şema 17, simülasyon ve bağımlılıklar değişmedi. 606 birim testi/76 dosya, TypeScript/üretim derlemesi geçti. 114 üretim senaryosu doğrulandı: tam turda 111; iki gizli üst menü seçicisi ve portre odak hatası düzeltildi, 12 + 8 + 3 odaklı test geçti. Son görüntüler incelendi; gerçek StackBlitz testi yapılmadı.
+- World → başka ülkenin War assessment geçişi gizli pencereye takılmaz. İlk CI 113/114 geçti; çift kaydırma olayının iki sayfa yüklemesi yakalandı, düzeltildi ve hızlı olay/sekme değişimi regressioni masaüstü/mobilde geçti.
+- Beş dil; şema 17, simülasyon ve bağımlılıklar değişmedi. 607 birim testi/76 dosya, TypeScript/üretim derlemesi geçti. 115 üretim senaryosu doğrulandı: tam turda 111; iki gizli üst menü seçicisi ve portre odak hatası düzeltildi, 12 + 8 + 3 + 11 + 4 odaklı test geçti. Son görüntüler incelendi; gerçek StackBlitz testi yapılmadı.
 
 
 Bu dosya yeni bir konuşmanın ilk okuması içindir. Geçmiş konuşmayı taşımadan kaldığımız yerden devam etmeyi sağlar.

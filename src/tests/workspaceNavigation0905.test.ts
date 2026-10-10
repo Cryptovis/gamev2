@@ -1,6 +1,6 @@
 import {describe,it,expect} from 'vitest';
 import {useGameStore} from '../store/gameStore';
-import {workspaceParent,type WorkspaceFrame} from '../store/workspaceNavigation';
+import {workspaceParent,workspaceVisible,type WorkspaceFrame} from '../store/workspaceNavigation';
 import {UI_CATALOG_0905} from '../i18n/uiCatalog0905';
 import {translateText} from '../i18n/localeText';
 const empty:WorkspaceFrame={activeTool:null,selectedCountryId:null,warWindowId:null,navigation:null};
@@ -38,4 +38,12 @@ it('national Power keeps a short name without changing the energy label',()=>{
  expect(translateText('en','National power')).toBe('Power');
  expect(translateText('tr','National power')).toBe('Güç');
  expect(translateText('tr','POWER')).not.toBe('Güç');
+});
+
+it('country popup follows sibling country navigation while separate child tools hide it',()=>{
+ const owner={...empty,selectedCountryId:'TUR'};
+ expect(workspaceVisible(owner,{...empty,selectedCountryId:'GRC'})).toBe(true);
+ expect(workspaceVisible(owner,{...empty,activeTool:'research'})).toBe(false);
+ expect(workspaceVisible(owner,{...empty,warWindowId:'war'})).toBe(false);
+ expect(workspaceVisible({...empty,activeTool:'pulse'},{...empty,selectedCountryId:'GRC'})).toBe(false);
 });

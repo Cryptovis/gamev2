@@ -79,11 +79,13 @@ Starting GitHub HEAD: `6f3695811a6f7834ca6091da80e8bb7a1d0160ff`; its CI run **3
 - Wider national Tech/World/War/Production and left Supply/Market/World workspaces; parent restoration and root navigation regression coverage.
 - Three-button command groups, identity/profile/Cabinet artwork, independent speed/date and gold country cards, quiet framed rails.
 - World activity summary and 20-row incremental rankings, preserving list state through country details.
-- `npm run check`: **606 unit tests / 76 files**, TypeScript and production build passed.
+- `npm run check`: **607 unit tests / 76 files**, TypeScript and production build passed.
 - Full production browser run: **111 passed / 3 failed (23.2m)**. The failures were two selectors matching retained hidden parent content and a real portrait-focus regression. Selectors now target the displayed result/dialog; lifecycle captures the opener before the parent is hidden and restores it on close.
 - **12/12 focused production scenarios passed (4.0m)**, covering the three failures, country trade, nested Escape/Tab, pause ownership and desktop/mobile parent restoration with dragged position preserved.
-- **8/8 final language/visual scenarios passed (2.1m)**; **3/3 final workspace checks passed**, including Tech → standalone research → Tech with Investments and keyboard focus preserved. Total unique browser scenarios: **114 verified**.
+- **8/8 final language/visual scenarios passed (2.1m)**; **3/3 final workspace checks passed**, including Tech → standalone research → Tech with Investments and keyboard focus preserved. The added country-switch regression brings total unique browser scenarios to **115 verified**.
 - Desktop/mobile Tech, Production, World, Supply, Market, Cabinet and profile screenshots inspected. The Cabinet atlas images all loaded. National Power uses a context-specific key so energy wording remains intact.
-- GitHub CI is checked independently after publication. WebContainer/StackBlitz remains a separate manual check. No new save schema or campaign required.
+- Initial GitHub CI (38094494139, c7af244) passed 113/114, exposing fast duplicate scroll events requesting two pages. Requests now use the committed page limit; changing ranking resets the scrollbar. The regression dispatches two rapid scroll events and checks exactly 40 rows, then 20 rows at the top after a ranking change.
+- National World → Greek War assessment reproduced an invisible popup before the fix. National frames now follow country changes while separate tools still hide their parent. **11/11 navigation/focus checks passed (2.5m)**; **4/4 final desktop/mobile/country/pagination checks passed (1.5m)**.
+- Final GitHub CI is checked independently after publication. WebContainer/StackBlitz remains a separate manual check. No new save schema or campaign required.
 
 Manual route: nation → Tech → Investments → close → Cabinet → Affairs → close (Cabinet returns); World → scroll → country → close (ranking returns); Supply/Market → review → dismiss; commander → portrait → close; confirm date below speed and right popups beside their rail. On mobile, close the full-width workspace before choosing another rail tool.

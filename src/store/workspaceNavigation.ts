@@ -13,3 +13,10 @@ export function workspaceParent(state: WorkspaceFrame & { workspaceTrail: Worksp
     ? [...state.workspaceTrail, { selectedCountryId: state.selectedCountryId, activeTool: state.activeTool, warWindowId: state.warWindowId, navigation: state.navigation }].slice(-16)
     : state.workspaceTrail;
 }
+
+/** National sections share a frame while their selected country changes. */
+export function workspaceVisible(owner:Pick<WorkspaceFrame,'activeTool'|'selectedCountryId'|'warWindowId'>,current:Pick<WorkspaceFrame,'activeTool'|'selectedCountryId'|'warWindowId'>) {
+  const countryFrame=!!owner.selectedCountryId&&!!current.selectedCountryId&&!owner.activeTool&&!current.activeTool&&!owner.warWindowId&&!current.warWindowId;
+  return countryFrame || (marketTool(owner.activeTool)&&marketTool(current.activeTool)) ||
+    (owner.activeTool===current.activeTool&&owner.selectedCountryId===current.selectedCountryId&&owner.warWindowId===current.warWindowId);
+}
