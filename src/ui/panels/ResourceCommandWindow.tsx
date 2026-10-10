@@ -12,7 +12,7 @@ export function ResourceCommandWindow({onClose,resource:initialResource}:{onClos
  const state=useWorldView();
  const [selectedResource,setSelectedResource]=useState<TradeResource|null>(initialResource??null);
  const player=state.countries[state.playerCountryId];
- return <DraggableWindow id="resource-command-window" kicker="NATIONAL ECONOMY" title={translateLive("Strategic Resources")} initialX={92} initialY={150} width={650} onClose={onClose}>
+ return <DraggableWindow expanded id="resource-command-window" kicker="NATIONAL ECONOMY" title={translateLive("Strategic Resources")} initialX={92} initialY={150} width={1100} onClose={onClose}>
   <div className="resource-command-summary">
    <span><small><LocaleText value={"FUEL"}/></small><strong><LocaleText value={player.processedResources.fuel.toFixed(1)}/></strong></span>
    <span><small><LocaleText value={"STEEL"}/></small><strong><LocaleText value={player.processedResources.steel.toFixed(1)}/></strong></span>

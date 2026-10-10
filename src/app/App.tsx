@@ -28,7 +28,7 @@ export function App(){
   const playerIso2=useGameStore((s)=>s.countries[s.playerCountryId].iso2);
   const language=useGameStore((s)=>s.playerProfile.language);
   useEffect(()=>{document.documentElement.lang=language;},[language]);
-  const selectedCountryId=useGameStore((s)=>s.selectedCountryId);
+  const selectedCountryId=useGameStore((s)=>s.selectedCountryId??[...s.workspaceTrail].reverse().find(f=>f.selectedCountryId)?.selectedCountryId);
   const mapMode=useGameStore((s)=>s.mapMode);
   const mapPresentation=useGameStore((s)=>s.mapPresentation);
   const mapProjection=useGameStore((s)=>s.mapProjection);

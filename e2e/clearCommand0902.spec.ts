@@ -13,7 +13,7 @@ for(const width of [1440,390])test(`${width}px tool windows leave rails exposed 
   await page.locator(`[data-guide="rail-${guide}"]`).click();await expect(page.locator(selector)).toBeVisible();
   const frame=await page.locator(selector).boundingBox(),left=await page.locator('.command-rail-left').boundingBox(),right=await page.locator('.map-help-cluster').boundingBox();
   if(guide==='market')for(const button of await page.locator('.section-menu button').all()){const b=await button.boundingBox(),label=await button.locator('.section-menu-label').boundingBox();expect(label!.x).toBeGreaterThanOrEqual(b!.x);expect(label!.x+label!.width).toBeLessThanOrEqual(b!.x+b!.width);}
-  expect(frame!.x).toBeGreaterThanOrEqual(left!.x+left!.width+8);expect(frame!.x+frame!.width).toBeLessThanOrEqual(right!.x-8);
+  if(width<=760&&['supply','market'].includes(guide)){expect(frame!.x).toBe(12);expect(frame!.width).toBe(width-24);}else{expect(frame!.x).toBeGreaterThanOrEqual(left!.x+left!.width+8);const dock=await page.locator('.command-rail-right').boundingBox();expect(frame!.x+frame!.width).toBeLessThanOrEqual((dock?.x??width)-8);}
   await expect(page.locator('[data-testid="error-boundary"]')).toHaveCount(0);await page.keyboard.press('Escape');
  }
  expect(await page.evaluate(()=>({y:window.scrollY,samples:(window as any).scrollSamples}))).toEqual({y:0,samples:[]});

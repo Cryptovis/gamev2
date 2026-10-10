@@ -106,7 +106,7 @@ export function CampaignTutorial() {
   useEffect(() => {
     if (t.active && state.playerProfile.setupComplete) {
       state.setSpeed(0);
-      state.closeWorkspace();
+      state.openTool(null,false);
       initialProjects.current =
         state.industrialEconomy[state.playerCountryId].projects.length;
       setPhase(t.step === 0 ? "done" : "open");
@@ -118,9 +118,7 @@ export function CampaignTutorial() {
       return;
     }
     const measure = () => {
-      const el = document.querySelector<HTMLElement>(
-        `[data-guide="${target}"]`,
-      );
+      const el = [...document.querySelectorAll<HTMLElement>(`[data-guide="${target}"]`)].find(node=>node.getClientRects().length&&getComputedStyle(node).visibility!=="hidden"&&!node.closest("[hidden]"));
       if (el) {
         // A target can be inside the viewport yet clipped by its scrolling window.
         // Reveal it in every ancestor before positioning the interactive spotlight.
@@ -311,7 +309,7 @@ export function CampaignTutorial() {
         <footer>
           <button
             onClick={() => {
-              state.closeWorkspace();
+              state.openTool(null,false);
               initialProjects.current =
                 state.industrialEconomy[state.playerCountryId].projects.length;
               state.setTutorial(t.step, false);

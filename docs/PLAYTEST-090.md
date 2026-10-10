@@ -73,3 +73,17 @@ Starting GitHub HEAD: `6f3695811a6f7834ca6091da80e8bb7a1d0160ff`; its CI run **3
 4. World: Military / Financial / Diplomacy rankings, current player position and country links. Supply: consistent labels, All resources icon and readable supplier details. Market → Supply contracts: no excessive summary gap.
 5. Market → Sovereign Credit & Monetary Fund: flags/rating/quoted rate; submit one application, check pending with unchanged treasury, resume the game clock for three days, then inspect the decision. Poor relations may reject it.
 6. Loans & early repayment: review payment, saved future interest, treasury after and history reward before confirming. If cash is low and eligibility permits, inspect the targeted higher-APR three-year rescue offers. These do not appear for every country or every financial situation.
+
+## 0.90.0-playtest.5 — Spacious command windows (Codex)
+
+- Wider national Tech/World/War/Production and left Supply/Market/World workspaces; parent restoration and root navigation regression coverage.
+- Three-button command groups, identity/profile/Cabinet artwork, independent speed/date and gold country cards, quiet framed rails.
+- World activity summary and 20-row incremental rankings, preserving list state through country details.
+- `npm run check`: **606 unit tests / 76 files**, TypeScript and production build passed.
+- Full production browser run: **111 passed / 3 failed (23.2m)**. The failures were two selectors matching retained hidden parent content and a real portrait-focus regression. Selectors now target the displayed result/dialog; lifecycle captures the opener before the parent is hidden and restores it on close.
+- **12/12 focused production scenarios passed (4.0m)**, covering the three failures, country trade, nested Escape/Tab, pause ownership and desktop/mobile parent restoration with dragged position preserved.
+- **8/8 final language/visual scenarios passed (2.1m)**; **3/3 final workspace checks passed**, including Tech → standalone research → Tech with Investments and keyboard focus preserved. Total unique browser scenarios: **114 verified**.
+- Desktop/mobile Tech, Production, World, Supply, Market, Cabinet and profile screenshots inspected. The Cabinet atlas images all loaded. National Power uses a context-specific key so energy wording remains intact.
+- GitHub CI is checked independently after publication. WebContainer/StackBlitz remains a separate manual check. No new save schema or campaign required.
+
+Manual route: nation → Tech → Investments → close → Cabinet → Affairs → close (Cabinet returns); World → scroll → country → close (ranking returns); Supply/Market → review → dismiss; commander → portrait → close; confirm date below speed and right popups beside their rail. On mobile, close the full-width workspace before choosing another rail tool.

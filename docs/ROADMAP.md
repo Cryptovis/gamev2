@@ -161,3 +161,8 @@ Delivered: execution-based commodity receipts including freight and cargo/settle
 
 ### 0.90.4 command menus / sovereign credit (Codex)
 Delivered: startup-loaded command panels; Tech investments and Military pilot training; readable/capitalized Supply and contracts; rail-adjacent World rankings. Engine-owned credit ratings, personalized quotes, delayed applications, bounded targeted rescue offers and reviewed early repayment/history rewards. Optional schema-17 fields preserve old saves. Campus/pilot previews now share execution helpers; remaining supply/population forecasts are still open. Catalogue consolidation/loading, measured startup/long-save performance and war AI/balance remain pending. V3 is not declared. Evidence: [playtest record](PLAYTEST-090.md).
+
+## 0.90.0-playtest.5 — Spacious command windows (Codex)
+
+- Expanded national/market/supply/world windows, parent navigation, grouped controls, restored world activity and incremental rankings, profile/Cabinet/HUD readability.
+- Validation: 606 unit tests/76 files, TypeScript/build and 114 production browser scenarios verified (111 full-run passes and corrected regressions rechecked in focused runs); save schema 17 and gameplay balance unchanged. Translation catalogue consolidation, remaining action previews, measured performance and war AI/balance remain separate pending work; V3 is conditional on complete playability.

@@ -38,6 +38,7 @@ function RailButton({active,badge,label,children,onClick}:{active:boolean;badge?
 export function CommandRails(){
  const state=useWorldView();
  const open=new Set(state.activeTool?[state.activeTool]:[]);
+ const mounted=new Set([...state.workspaceTrail.map(f=>f.activeTool).filter(Boolean),...open]);
  const player=state.countries[state.playerCountryId];
 
  const activeWars=Object.values(state.wars).filter(w=>w.status==='active');
@@ -55,7 +56,7 @@ export function CommandRails(){
   {label:'Reach Day 30',done:state.day>=30},
  ],[state.tradeDeals,state.intelOperations,state.blocs,state.wars,state.day,player.id,player.technology.unlocked.length]);
  const critical=MARKET_RESOURCES.map(resource=>({resource,status:resourceStrategicStatus(player,resource),days:resourceReserveDays(player,resource)})).filter(x=>x.status==='CRITICAL'||x.status==='IMPORT NEED');
- const toggle=(id:ToolId)=>state.openTool(state.activeTool===id?null:id);
+ const toggle=(id:ToolId)=>state.openTool(state.activeTool===id?null:id,false);
  const close=(_id:ToolId)=>state.closeWorkspace();
  const done=objectives.filter(x=>x.done).length;
 
@@ -74,37 +75,37 @@ export function CommandRails(){
 
   <nav className="command-rail map-help-cluster" aria-label={translateLive("Map and help tools")}>
    <RailButton active={open.has('map')} label="MAP" onClick={()=>toggle('map')}><NavigationArt kind="map"/></RailButton>
-   <RailButton active={open.has('help')} label="HELP" onClick={()=>state.openTool(state.activeTool==='help'?null:'help')}><NavigationArt kind="help"/></RailButton>
+   <RailButton active={open.has('help')} label="HELP" onClick={()=>state.openTool(state.activeTool==='help'?null:'help',false)}><NavigationArt kind="help"/></RailButton>
   </nav>
   <Suspense fallback={<div className="loading-popup"><LocaleText value="Loading command…"/></div>}>
-  {open.has('research')&&<ResearchWindow/>}
-  {open.has('investment')&&<InvestmentWindow/>}
-  {open.has('governance')&&<GovernanceWindow/>}
+  {mounted.has('research')&&<ResearchWindow/>}
+  {mounted.has('investment')&&<InvestmentWindow/>}
+  {mounted.has('governance')&&<GovernanceWindow/>}
   </Suspense>
-  {open.has('society')&&<DomesticWindow/>}
-  {(['market','exchange','credit'] as const).some(id=>open.has(id))&&<MarketWindow/>}{open.has('help')&&<HelpPanel/>}
+  {mounted.has('society')&&<DomesticWindow/>}
+  {(['market','exchange','credit'] as const).some(id=>mounted.has(id))&&<MarketWindow/>}{mounted.has('help')&&<HelpPanel/>}
   {open.has('map')&&<div className="left-command-dock map-command-dock"><header className="map-dock-header"><strong><LocaleText value="MAP COMMAND"/></strong><button className="map-close" data-guide="close-workspace" onClick={state.closeWorkspace} aria-label={translateLive("Close map command")}><LocaleText value={"×"}/></button></header><div className="map-dock-body"><GuideBriefing/><MapModeBar/></div></div>}
-  {open.has('resources')&&<ResourceCommandWindow onClose={()=>close('resources')}/>}
+  {mounted.has('resources')&&<ResourceCommandWindow onClose={()=>close('resources')}/>}
 
-  {open.has('objectives')&&<DraggableWindow id="objectives-window" kicker="CAMPAIGN / GUIDANCE" title={translateLive("Strategic Objectives")} initialX={88} initialY={170} width={470} onClose={()=>close('objectives')}>
+  {mounted.has('objectives')&&<DraggableWindow id="objectives-window" kicker="CAMPAIGN / GUIDANCE" title={translateLive("Strategic Objectives")} initialX={88} initialY={170} width={470} onClose={()=>close('objectives')}>
    <div className="floating-progress"><span><b><LocaleText value={done}/></b><LocaleText value={" of "}/><LocaleText value={objectives.length}/><LocaleText value={" complete"}/></span><i><b style={{width:`${done/objectives.length*100}%`}}/></i></div>
    <div className="floating-objectives">{objectives.map((o,i)=><div className={o.done?'done':''} key={o.label}><b><LocaleText value={o.done?'✓':String(i+1).padStart(2,'0')}/></b><span><strong><LocaleText value={o.label}/></strong><small><LocaleText value={o.done?'Completed':'Active objective'}/></small></span></div>)}</div>
    <CampaignVictoryProgress/>
   </DraggableWindow>}
 
-  {open.has('pulse')&&<WorldRankingsWindow/>}
+  {mounted.has('pulse')&&<WorldRankingsWindow/>}
 
-  {open.has('diplomacy')&&<DraggableWindow id="diplomacy-window" kicker="FOREIGN MINISTRY" title={translateLive("Diplomatic Inbox")} initialX={window.innerWidth-650} initialY={150} width={590} onClose={()=>close('diplomacy')}>
+  {mounted.has('diplomacy')&&<DraggableWindow id="diplomacy-window" kicker="FOREIGN MINISTRY" title={translateLive("Diplomatic Inbox")} initialX={window.innerWidth-650} initialY={150} width={590} onClose={()=>close('diplomacy')}>
    <DiplomaticPost/><section className="diplomatic-messages"><header><strong><LocaleText value={"LEADER CORRESPONDENCE"}/></strong><button onClick={state.readDiplomaticMessages}><LocaleText value={"MARK READ"}/></button></header>{state.leadership.messages.map(m=><article key={m.id} className={m.tone}><small><LocaleText value={m.kind.toUpperCase()}/><LocaleText value={" · DAY "}/><LocaleText value={m.day}/><LocaleText value={" · "}/><LocaleText value={m.read?'READ':'NEW'}/></small><strong><LocaleText value={state.countries[m.senderId]?.name}/></strong><p><LocaleText value={m.text}/></p></article>)}{!state.leadership.messages.length&&<p><LocaleText value={"Friends and rivals may react to your birthday and national achievements."}/></p>}</section>
    <div className="diplomatic-summary"><span><EmbassyIcon size={22}/><i><small><LocaleText value={"ACTIVE EMBASSIES"}/></small><strong><LocaleText value={embassies.length}/></strong></i></span><span><DiplomacyIcon size={22}/><i><small><LocaleText value={"PENDING OFFERS"}/></small><strong><LocaleText value={offers.length+living(state).letters.filter(x=>x.incoming&&x.status==='pending'&&x.expiresDay>=state.day).length}/></strong></i></span></div>
    <div className="diplomatic-offer-list">{offers.length?offers.map(offer=>{const sender=state.countries[offer.senderId];return <article key={offer.id}><header><b><LocaleText value={sender?.iso2??'--'}/></b><span><small><LocaleText value={offer.type==='embassy'?'EMBASSY EXCHANGE':'TRADE FRAMEWORK'}/></small><strong><LocaleText value={sender?.name??offer.senderId}/></strong></span><em><LocaleText value={"D"}/><LocaleText value={offer.expiresDay-state.day}/></em></header><p><LocaleText value={offer.message}/></p><div><button onClick={()=>state.resolveDiplomaticOffer(offer.id,false)}><LocaleText value={"DECLINE"}/></button><button className="primary" onClick={()=>state.resolveDiplomaticOffer(offer.id,true)}><LocaleText value={"ACCEPT"}/></button></div></article>}):null}</div>
   </DraggableWindow>}
 
-  {open.has('alerts')&&<DraggableWindow id="alerts-window" kicker="NATIONAL SECURITY" title={translateLive("Resource Alerts")} initialX={window.innerWidth-560} initialY={175} width={500} onClose={()=>close('alerts')}>
+  {mounted.has('alerts')&&<DraggableWindow id="alerts-window" kicker="NATIONAL SECURITY" title={translateLive("Resource Alerts")} initialX={window.innerWidth-560} initialY={175} width={500} onClose={()=>close('alerts')}>
    <div className="resource-alert-list">{MARKET_RESOURCES.map(resource=>{const status=resourceStrategicStatus(player,resource),days=resourceReserveDays(player,resource);return <div key={resource} className={status==='CRITICAL'?'critical':''}><ResourceIcon resource={resource} size={22}/><span><strong><LocaleText value={resource.toUpperCase()}/></strong><small><LocaleText value={status}/></small></span><em><LocaleText value={days>365?'365+':Math.max(0,days).toFixed(0)}/><LocaleText value={" DAYS"}/></em></div>})}</div>
   </DraggableWindow>}
 
-  {open.has('sitrep')&&<DraggableWindow id="sitrep-window" kicker="COMMAND CHANNEL" title={translateLive("News Archive")} initialX={window.innerWidth-600} initialY={220} width={540} onClose={()=>close('sitrep')}>
+  {mounted.has('sitrep')&&<DraggableWindow id="sitrep-window" kicker="COMMAND CHANNEL" title={translateLive("News Archive")} initialX={window.innerWidth-600} initialY={220} width={540} onClose={()=>close('sitrep')}>
    <div className="sitrep-archive">{(state.world.journal??state.sitrep.map((message,i)=>({id:String(i),message,day:state.day}))).map(entry=><div key={entry.id}><b><LocaleText value="Day"/> {entry.day}</b><span><NewsFlightIcon message={entry.message}/><LocaleText value={entry.message}/></span></div>)}</div>
   </DraggableWindow>}
  </Suspense>;

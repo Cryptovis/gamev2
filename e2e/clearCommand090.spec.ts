@@ -21,7 +21,7 @@ for(const width of [1440,390])test(`${width}px territory sections retain navigat
  await expect(action.locator('button')).toBeDisabled();await expect(action).toContainText('7');
  await nav.getByRole('button',{name:'Administration',exact:true}).click();await expect(page.locator('.integration-requirements')).toHaveCount(0);
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
- await expect(nav).toBeInViewport();await expect(page.locator('[data-guide="close-workspace"]').last()).toBeInViewport();
+ await expect(nav).toBeInViewport();await expect(page.locator('[data-guide="close-workspace"]:visible').last()).toBeInViewport();
  await page.screenshot({path:`test-results/territory-090-${width}.png`});
 });
 test('fresh openings rotate quotes while preserving them within a wizard',async({page})=>{
@@ -31,5 +31,5 @@ test('fresh openings rotate quotes while preserving them within a wizard',async(
 });
 test('keyboard map controls zoom, return home and open the nation without selecting a hidden country',async({page})=>{
  await resumeFixture(page,campaignFixture('en'));const map=page.locator('.strategy-svg');await map.focus();const zoom=Number(await map.getAttribute('data-zoom'));await page.keyboard.press('+');await expect.poll(async()=>Number(await map.getAttribute('data-zoom'))).toBeGreaterThan(zoom);await page.keyboard.press('ArrowRight');await page.keyboard.press('Home');await page.keyboard.press('Enter');await expect(page.locator('.country-select')).toHaveValue('TUR');
- await page.locator('[data-guide="tab-war"]').click();await expect(page.locator('.country-war-action')).toContainText('War readiness');await expect(page.locator('.country-war-action')).toHaveCSS('background-color','rgb(115, 58, 64)');
+ await page.locator('[data-guide="tab-war"]').click();await expect(page.locator('#country-section-window')).toBeVisible();await expect(page.locator('.command-panel')).toBeHidden();
 });

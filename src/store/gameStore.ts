@@ -1,3 +1,4 @@
+import {workspaceParent,type WorkspaceFrame} from './workspaceNavigation';
 import {commandReceipt} from './commandReceipt';
 import {recordEconomicHistory} from '../engine/systems/economicHistory';
 import {buildPlant,togglePlant,cancelPowerProject} from '../engine/systems/energy';
@@ -65,7 +66,8 @@ interface GameActions {
  acceptElectionOffer:(id:string,commandId?:string)=>void;
  startProgram:(kind:ProgramKind,commandId?:string)=>void;
  activeTool:string|null;
- openTool:(tool:string|null)=>void;
+ workspaceTrail:WorkspaceFrame[];
+ openTool:(tool:string|null,remember?:boolean)=>void;
  closeWorkspace:()=>void;
  warWindowId:string|null;
  openWarWindow:(id:string|null)=>void;
@@ -167,8 +169,8 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
   fundPoliticalCampaign:(id,commandId)=>set(s=>commandWithReceipt(s,{...{type:'politics/campaign',id},commandId})),
   acceptElectionOffer:(id,commandId)=>set(s=>commandWithReceipt(s,{...{type:'politics/acceptElection',id},commandId})),
   startProgram:(kind,commandId)=>set(s=>commandWithReceipt(s,{...{type:'program/start',kind},commandId})),
-  activeTool:null,warWindowId:null,openWarWindow:(warWindowId)=>set({warWindowId,selectedCountryId:null,activeTool:null}),
-  closeWorkspace:()=>set({selectedCountryId:null,activeTool:null,warWindowId:null,navigation:null}),
+  workspaceTrail:[],activeTool:null,warWindowId:null,openWarWindow:(warWindowId)=>{if(!warWindowId){get().closeWorkspace();return;}set(s=>{const next={warWindowId,selectedCountryId:null,activeTool:null,navigation:null};return {...next,workspaceTrail:workspaceParent(s,next)};});},
+  closeWorkspace:()=>set(s=>{const parent=s.workspaceTrail.at(-1);return parent?{...parent,workspaceTrail:s.workspaceTrail.slice(0,-1)}:{selectedCountryId:null,activeTool:null,warWindowId:null,navigation:null,workspaceTrail:[]};}),
   postCredit:(kind,principal,apr,days,commandId)=>set(s=>commandWithReceipt(s,{...{type:'credit/post',kind,principal,apr,days},commandId})),
   acceptCredit:(id,commandId)=>set(s=>commandWithReceipt(s,{...{type:'credit/accept',id},commandId})),
   repayCredit:(id,commandId)=>set(s=>commandWithReceipt(s,{type:'credit/repay',id,commandId})),
@@ -189,9 +191,9 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
   requestDiplomacy:(id,kind,years,commandId)=>set(s=>commandWithReceipt(s,{...{type:'diplomacy/request',id,kind,years},commandId})),
   resolveIncomingLetter:(id,accept,commandId)=>set(s=>commandWithReceipt(s,{...{type:'diplomacy/resolveLetter',id,accept},commandId})),
   readLetters:()=>set(s=>applyGameCommand(s,{type:'inbox/read',scope:'letters'})),
-  openTool:(activeTool)=>set({activeTool,selectedCountryId:null,warWindowId:null,navigation:null}),
+  openTool:(activeTool,remember=true)=>set(s=>{const next={activeTool,selectedCountryId:null,warWindowId:null,navigation:null};return {...next,workspaceTrail:workspaceParent(s,next,remember&&activeTool!==null)};}),
   actionReceipt:null,showReceipt:(actionReceipt)=>set({actionReceipt}),
-  navigation:null,navigate:(panel,countryId)=>set(s=>({activeTool:['objectives','market','pulse','map','resources','sitrep','alerts','diplomacy-inbox','help','research','investment','governance','society','credit'].includes(panel)?(panel==='diplomacy-inbox'?'diplomacy':panel):null,warWindowId:null,selectedCountryId:['objectives','market','pulse','map','resources','sitrep','alerts','diplomacy-inbox','help','research','investment','governance','society','credit'].includes(panel)?null:countryId??s.playerCountryId,navigation:{panel,countryId:countryId??s.playerCountryId,nonce:(s.navigation?.nonce??0)+1},...(countryId?{mapControlCommand:{action:'focus' as const,nonce:(s.mapControlCommand?.nonce??0)+1}}:{})})),
+  navigation:null,navigate:(panel,countryId)=>set(s=>{const next={activeTool:['objectives','market','pulse','map','resources','sitrep','alerts','diplomacy-inbox','help','research','investment','governance','society','credit'].includes(panel)?(panel==='diplomacy-inbox'?'diplomacy':panel):null,warWindowId:null,selectedCountryId:['objectives','market','pulse','map','resources','sitrep','alerts','diplomacy-inbox','help','research','investment','governance','society','credit'].includes(panel)?null:countryId??s.playerCountryId,navigation:{panel,countryId:countryId??s.playerCountryId,nonce:(s.navigation?.nonce??0)+1},...(countryId?{mapControlCommand:{action:'focus' as const,nonce:(s.mapControlCommand?.nonce??0)+1}}:{})};return {...next,workspaceTrail:workspaceParent(s,next)};}),
   setTutorial:(step,active)=>set(s=>applyGameCommand(s,{type:'tutorial/set',step,active})),
   cancelConstruction:(id,commandId)=>set(s=>commandWithReceipt(s,{...{type:'construction/cancel',id},commandId})),
   applyMembership:(id,commandId)=>set(s=>commandWithReceipt(s,{...{type:'world/membership',id},commandId})),
@@ -214,7 +216,7 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
     const fresh=makeInitialState();
     const chosen=fresh.countries[countryId] ? countryId : 'TUR';
     const country=fresh.countries[chosen];
-    const boot={...fresh,actionReceipt:null,navigation:null,activeTool:null,warWindowId:null,world:{...createWorld(fresh.countries,chosen),campaignId:crypto.randomUUID(),commandIds:[],journal:[],governance:createGovernance(fresh.countries),tutorial:{active:true,step:0,completed:false}},mapProjection:'globe',mapControlCommand:null,confirmationSkips:{},playerCountryId:chosen,selectedCountryId:chosen,leadership:createLeadership(country.economy.gdp),playerProfile:{commanderName:commanderName.trim()||'Commander',avatarId,language,setupComplete:true,nationalityCountryId:fresh.countries[nationalityCountryId??'']?nationalityCountryId:chosen,birthDate:birthDate&&validBirthDate(birthDate)?birthDate:null},council:{influenceByCountry:{[chosen]:28},history:[]},intelligenceLedger:{[chosen]:100},mapNotice:`${country.name} command established.`,sitrep:[`${commanderName.trim()||'Commander'} assumed national command of ${country.name}.`,...fresh.sitrep],saveMessage:'Campaign initialized'};let seeded=processExchange(boot,true);for(const id of ['FRA','DEU','USA','JPN','GBR'])if(id!==chosen)seeded=postCredit(seeded,'lend',1,3+Object.keys(expansion(seeded).creditOffers).length*.5,365,id);return recordEconomicHistory(seeded);
+    const boot={...fresh,workspaceTrail:[],actionReceipt:null,navigation:null,activeTool:null,warWindowId:null,world:{...createWorld(fresh.countries,chosen),campaignId:crypto.randomUUID(),commandIds:[],journal:[],governance:createGovernance(fresh.countries),tutorial:{active:true,step:0,completed:false}},mapProjection:'globe',mapControlCommand:null,confirmationSkips:{},playerCountryId:chosen,selectedCountryId:chosen,leadership:createLeadership(country.economy.gdp),playerProfile:{commanderName:commanderName.trim()||'Commander',avatarId,language,setupComplete:true,nationalityCountryId:fresh.countries[nationalityCountryId??'']?nationalityCountryId:chosen,birthDate:birthDate&&validBirthDate(birthDate)?birthDate:null},council:{influenceByCountry:{[chosen]:28},history:[]},intelligenceLedger:{[chosen]:100},mapNotice:`${country.name} command established.`,sitrep:[`${commanderName.trim()||'Commander'} assumed national command of ${country.name}.`,...fresh.sitrep],saveMessage:'Campaign initialized'};let seeded=processExchange(boot,true);for(const id of ['FRA','DEU','USA','JPN','GBR'])if(id!==chosen)seeded=postCredit(seeded,'lend',1,3+Object.keys(expansion(seeded).creditOffers).length*.5,365,id);return recordEconomicHistory(seeded);
   }),
   setLeaderIdentity:(nationalityCountryId,birthDate)=>set(state=>state.countries[nationalityCountryId]&&(!birthDate||validBirthDate(birthDate))?{playerProfile:{...state.playerProfile,nationalityCountryId,birthDate}}:{}),
   setPlayerAvatar: (avatarId) => set((state)=>({playerProfile:{...state.playerProfile,avatarId}})),
@@ -224,12 +226,12 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
   dispatch: (command) => set((state) => applyGameCommand(state, command)),
   dispatchWithReceipt: (command) => set((state) => commandWithReceipt(state, command)),
   setSpeed: (speed) => set((state) => applyGameCommand(state, { type: 'clock/setSpeed', speed })),
-  selectCountry: (selectedCountryId) => set(s=>({ selectedCountryId:selectedCountryId?sovereignId(s.countries,selectedCountryId):null,activeTool:null,warWindowId:null,navigation:null })),
+  selectCountry: (selectedCountryId) => {if(!selectedCountryId){useGameStore.getState().closeWorkspace();return;}set(s=>{const next={selectedCountryId:sovereignId(s.countries,selectedCountryId),activeTool:null,warWindowId:null,navigation:null};return {...next,workspaceTrail:workspaceParent(s,next)};});},
   selectCountryByMapFeatureId: (featureId) => set((state) => {
     const id = String(featureId ?? '');
     const match = state.countries[id] ?? activeCountries(state.countries).find((country) => country.mapNumericId === id);
     return match
-      ? { selectedCountryId: match.id,activeTool:null,warWindowId:null,navigation:null, mapNotice: `${match.name} selected — live simulation data loaded.` }
+      ? { workspaceTrail:[],selectedCountryId: match.id,activeTool:null,warWindowId:null,navigation:null, mapNotice: `${match.name} selected — live simulation data loaded.` }
       : { mapNotice: `Map feature selected. No sovereign-state profile is attached to this geometry.` };
   }),
   setMapMode: (mapMode) => set({ mapMode }),
@@ -257,7 +259,7 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
   toggleEmbargo: (targetCountryId) => set((state) => commandWithReceipt(state, { type: 'diplomacy/toggleEmbargo', targetCountryId })),
   createImport: (targetCountryId, resource: TradeResource) => set((state) => commandWithReceipt(state, { type: 'trade/createImport', targetCountryId, resource })),
   cancelTrade: (dealId) => set((state) => commandWithReceipt(state, { type: 'trade/cancel', dealId })),
-  declareWar: (targetCountryId) => set((state) => {const next=applyGameCommand(state,{type:'military/declareWar',targetCountryId});const war=Object.values(next.wars).find(w=>w.status==='active'&&((w.attackerId===state.playerCountryId&&w.defenderId===targetCountryId)||(w.defenderId===state.playerCountryId&&w.attackerId===targetCountryId)));if(!war)return {...next,actionReceipt:{title:'Decision unavailable',summary:next.sitrep[0]!==state.sitrep[0]?next.sitrep[0]:'Select another country to prepare a military operation.'}};return {...next,actionReceipt:null,warWindowId:war?.id??null,selectedCountryId:null,activeTool:null};}),
+  declareWar: (targetCountryId) => set((state) => {const next=applyGameCommand(state,{type:'military/declareWar',targetCountryId});const war=Object.values(next.wars).find(w=>w.status==='active'&&((w.attackerId===state.playerCountryId&&w.defenderId===targetCountryId)||(w.defenderId===state.playerCountryId&&w.attackerId===targetCountryId)));if(!war)return {...next,actionReceipt:{title:'Decision unavailable',summary:next.sitrep[0]!==state.sitrep[0]?next.sitrep[0]:'Select another country to prepare a military operation.'}};return {...next,actionReceipt:null,warWindowId:war?.id??null,selectedCountryId:null,activeTool:null,workspaceTrail:workspaceParent(state,{warWindowId:war.id,selectedCountryId:null,activeTool:null,navigation:null}),navigation:null};}),
   assault: (warId) => set((state) => applyGameCommand(state, { type: 'military/assault', warId })),
   setAutoAssault: (warId, enabled) => set((state) => {const war=state.wars[warId];if(!war||war.status!=='active'||(war.attackerId!==state.playerCountryId&&war.defenderId!==state.playerCountryId))return state;return {...applyGameCommand(state, { type: 'military/setAutoAssault', warId, enabled }),speed:enabled?5:state.warWindowId===warId?0:state.speed};}),
   withdraw: (warId) => set((state) => commandWithReceipt(state, { type: 'military/withdraw', warId })),
@@ -284,8 +286,8 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
       const {loadMostRecentSave}=await import('../persistence/saveGame');const loaded=await loadMostRecentSave();
       if(!loaded){set({saveMessage:'No compatible save found'});return false;}
       const resumedWar=Object.values(loaded.wars).find(w=>w.status==='active'&&w.tactical&&(w.attackerId===loaded.playerCountryId||w.defenderId===loaded.playerCountryId));
-      set({...loaded,actionReceipt:null,navigation:null,activeTool:null,warWindowId:resumedWar?.id??null,speed:0,confirmationSkips:{},mapControlCommand:null,saveMessage:`Loaded Day ${loaded.day}`});return true;
+      set({...loaded,workspaceTrail:[],actionReceipt:null,navigation:null,activeTool:null,warWindowId:resumedWar?.id??null,speed:0,confirmationSkips:{},mapControlCommand:null,saveMessage:`Loaded Day ${loaded.day}`});return true;
     }catch {set({saveMessage:'Save could not be loaded'});return false;}
   },
-  resetGame: () => set({ ...makeInitialState(),actionReceipt:null,navigation:null,activeTool:null,warWindowId:null, mapProjection:'globe', mapControlCommand:null, confirmationSkips:{}, saveMessage: 'New campaign started' }),
+  resetGame: () => set({ ...makeInitialState(),workspaceTrail:[],actionReceipt:null,navigation:null,activeTool:null,warWindowId:null, mapProjection:'globe', mapControlCommand:null, confirmationSkips:{}, saveMessage: 'New campaign started' }),
 }));

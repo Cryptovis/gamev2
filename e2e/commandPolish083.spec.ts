@@ -26,7 +26,7 @@ for(const {language,width} of [...languages.map(language=>({language,width:1440}
  const contrast=await page.locator('[data-proposal-filter="history"]').evaluate(el=>{const style=getComputedStyle(el);const luminance=(color:string)=>color.match(/\d+/g)!.slice(0,3).map(Number).map(v=>v/255).map(v=>v<=.04045?v/12.92:((v+.055)/1.055)**2.4).reduce((sum,v,i)=>sum+v*[.2126,.7152,.0722][i],0);const a=luminance(style.color),b=luminance(style.backgroundColor);return (Math.max(a,b)+.05)/(Math.min(a,b)+.05);});expect(contrast).toBeGreaterThanOrEqual(4.5);
  const colors=await page.locator('.letter-list article').evaluateAll(items=>items.map(el=>getComputedStyle(el).borderLeftColor));expect(colors[0]).not.toBe(colors[1]);
  await page.screenshot({path:`test-results/proposal-history-${language}.png`,fullPage:true});
- await page.locator('[data-guide="close-workspace"]').click();await page.locator('[data-guide="rail-supply"]').click();
+ await page.locator('[data-guide="close-workspace"]:visible').click();await page.locator('[data-guide="rail-supply"]').click();
  const header=page.locator('.resource-command-card > header').first();await expect(header).toBeVisible();
  const bounds=await header.evaluate(el=>({image:el.querySelector('.asset-thumbnail')!.getBoundingClientRect().right,text:el.querySelector('.resource-card-values')!.getBoundingClientRect().left}));expect(bounds.text).toBeGreaterThan(bounds.image);
  expect(await page.locator('.speed-segment strong').first().evaluate(el=>Number(getComputedStyle(el).fontWeight))).toBeGreaterThanOrEqual(800);

@@ -34,8 +34,8 @@ export function PlayerOptionsMenu({onClose}:{onClose:()=>void}){
  const saveMessage=useGameStore(s=>s.saveMessage);
 
  const node=<>
-  <div className="player-options-backdrop" onMouseDown={onClose}>
-   <ManagedDialog className="player-options-modal" label="National Command" onClose={onClose} layer={WINDOW_LAYERS.modal}>
+  <div className="player-options-backdrop" hidden={avatarOpen||confirmNew} onMouseDown={onClose}>
+   <ManagedDialog enabled={!avatarOpen&&!confirmNew} className="player-options-modal" label="National Command" onClose={onClose} layer={WINDOW_LAYERS.modal}>
     <header className="player-options-header">
      <div><small><LocaleText value={"COMMANDER / CAMPAIGN"}/></small><h2><LocaleText value={"National Command"}/></h2><p><LocaleText value={"Manage your profile and current campaign without cluttering the strategic HUD."}/></p></div>
      <button className="player-options-close" onClick={onClose} aria-label={translateLive("Close commander menu")}><LocaleText value={"×"}/></button>

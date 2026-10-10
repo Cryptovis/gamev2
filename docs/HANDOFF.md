@@ -1,10 +1,17 @@
 # Devir notu (yeni konuşma için)
 
+## 0.90.0-playtest.5 — Codex
+
+- Geniş Tech/World/War/Production ve Supply/Market pencereleri; üst menüyü gizleyip kapatınca seçim/konumuyla geri getiren geçici gezinme geçmişi. Overview/Power/Supply ve Tech/World/War ayrı gruplar.
+- Cabinet atlas görselleri, kimlik/profil kartları, çerçeveli yan düğmeler; tarih hız kutusunun altında ve ülke düğmesi altın çerçeveli. World faaliyetleri + ilk 20 ülke, kaydırmada devamı.
+- Beş dil; şema 17, simülasyon ve bağımlılıklar değişmedi. 606 birim testi/76 dosya, TypeScript/üretim derlemesi geçti. 114 üretim senaryosu doğrulandı: tam turda 111; iki gizli üst menü seçicisi ve portre odak hatası düzeltildi, 12 + 8 + 3 odaklı test geçti. Son görüntüler incelendi; gerçek StackBlitz testi yapılmadı.
+
+
 Bu dosya yeni bir konuşmanın ilk okuması içindir. Geçmiş konuşmayı taşımadan kaldığımız yerden devam etmeyi sağlar.
 
 ## Durum
-- Sürüm: **0.90.0-playtest.4 "Reliable command menus & sovereign credit"**
-- Dal: `dev/clear-command-090`. Kaynak: 0.89.7 (`8322a3f`). Başlangıç GitHub HEAD: `6f3695811a6f7834ca6091da80e8bb7a1d0160ff` (0.90.3), CI başarılı (38073189084). 0.90.4 CI push sonrası ayrıca doğrulanmalı.
+- Sürüm: **0.90.0-playtest.5 "Spacious command windows"**
+- Dal: `dev/clear-command-090`. Kaynak: 0.89.7 (`8322a3f`). Başlangıç GitHub HEAD: `4d3d564d5921dac391a9fc9769e1105f9e47f938` (0.90.4), CI başarılı (38086841276; 600 birim/111 tarayıcı testi). Bu sürümün CI sonucu yayın commit’i üzerinden ayrıca doğrulanır.
 - `main`'e doğrudan push yok. Yeni işler `dev/<name>-0XX` dallarında yapılır.
 - 0.90.4 (Codex): menüler başlangıçta yüklenir; Tech → Investments, Military → Pilot training; okunur Supply ve sözleşme boşluğu; sola bitişik üç World sıralaması. Kredi: bayraklar, tüm ülkelerde AAA–D, üç oyun günü başvuru, ilişki/risk retleri, hedefli 3 yıllık can simidi, erken ödeme ve sınırlı kredi geçmişi ödülü. Şema 17 yeni opsiyonel alanlarla korunur; bağımlılıklar değişmez. 600 birim testi/TypeScript/derleme geçti. 111 üretim senaryosu doğrulandı: tam tur 108 geçti, eski seçici/atlas varsayımına takılan 3 test düzeltildikten sonra 3/3 tekrar geçti. Ayrıntılar PLAYTEST-090 kaydında. Gerçek StackBlitz testi yapılmadı.
 - Önceki 0.90.3: alış/satış makbuzunda gerçek ödeme, hazine, yoldaki yük ve T+1 satış geliri; 5 sütunlu stok kartları, tek satırlı sözleşme alanları, 2 satırlı ürün seçimi, gereksiz World prices kaldırıldı. Policies vergi onayını ve mevcut bakanlık bütçesi erişimini toplar. 582 test/derleme ve 98 üretim tarayıcı senaryosu geçti; son odaklı kontroller ve sonuçlar [0.90 test kaydında](PLAYTEST-090.md). Üretim dengesi/şema/bağımlılıklar değişmedi.

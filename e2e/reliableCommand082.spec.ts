@@ -12,7 +12,7 @@ for(const viewport of [{width:1440,height:900},{width:390,height:844}]){
   await page.setViewportSize(viewport);const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));await start(page);await skip(page);
   await expect(page.locator('.command-rail-left [data-guide="rail-goals"]')).toHaveCount(0);await expect(page.locator('.command-rail-right [data-guide="rail-goals"]')).toBeVisible();
   const help=page.locator('.map-help-cluster [data-guide="rail-help"]');await expect(help).toHaveAttribute('aria-pressed','false');await help.click();await expect(help).toHaveAttribute('aria-pressed','true');
-  await page.locator('[data-guide="close-workspace"]').click();await expect(help).toHaveAttribute('aria-pressed','false');
+  await page.locator('[data-guide="close-workspace"]:visible').click();await expect(help).toHaveAttribute('aria-pressed','false');
   await page.getByRole('button',{name:'Ülkene dön',exact:true}).click();await expect(page.locator('.strategy-svg')).toHaveAttribute('data-zoom',/1\.5500/);
   await page.locator('[data-guide="nation"]').first().click();await page.locator('[data-guide="tab-economy"]').click();
   await expect(page.locator('.supplier-board')).toHaveCount(0);
@@ -20,7 +20,7 @@ for(const viewport of [{width:1440,height:900},{width:390,height:844}]){
   await expect(page.locator('#resource-command-window')).toBeVisible();await expect(page.locator('.resource-command-card')).toHaveCount(1);
   await page.locator('#resource-command-window [data-guide="close-workspace"]').click();
   // Save through the actual session UI, then load directly from campaign setup after reload.
-  await page.locator('[data-guide="close-workspace"]').click();await page.locator('.leader-avatar-button').click();
+  await page.locator('[data-guide="close-workspace"]:visible').click();await page.locator('.leader-avatar-button').click();
   await page.locator('.profile-tabs button').last().click();await page.locator('.campaign-option-actions button').first().click();
   await expect(page.locator('.campaign-save-status')).toContainText('kaydedildi');await page.reload();
   await page.locator('.load-previous').click();await expect(page.locator('.campaign-wizard')).toHaveCount(0);await expect(page.locator('.brand-line')).toContainText('Playtest');
@@ -45,7 +45,7 @@ test(`${viewport.width}px all ten tutorial lessons including funded construction
    await page.locator('[data-guide="review-dismiss"]').first().click();await expect(page.locator('.review-dialog')).toHaveCount(0);
    await expect(page.locator('.construction-list').first()).toBeVisible();
   }else{
-   await page.locator('[data-guide="tutorial-detail"]').click();
+   await page.locator('[data-guide="tutorial-detail"]:visible').click();
    const modal=await page.locator('.review-dialog').boundingBox(),guide=await page.locator('.guided-card').boundingBox();expect(guide!.y).toBeGreaterThanOrEqual(modal!.y+modal!.height);
    const ack=await page.locator('.tutorial-read').boundingBox(),nav=await page.locator('.guided-card footer').boundingBox();expect(nav!.y-ack!.y-ack!.height).toBeGreaterThanOrEqual(8);
    await page.screenshot({path:`test-results/tutorial-reading-${viewport.width}-${i}.png`,fullPage:true});
@@ -53,7 +53,7 @@ test(`${viewport.width}px all ten tutorial lessons including funded construction
    await page.locator('[data-guide="review-dismiss"]').first().click();
   }
   if(i===8)await page.locator('.command-panel').evaluate(el=>{el.scrollTop=el.scrollHeight;});
-  const close=page.locator('[data-guide="close-workspace"]');
+  const close=page.locator('[data-guide="close-workspace"]:visible');
   const card=await page.locator('.guided-card').boundingBox(),closeBox=await close.boundingBox();
   expect(card!.y).toBeGreaterThanOrEqual(closeBox!.y+closeBox!.height);
   await expect.poll(()=>close.evaluate(el=>{const b=el.getBoundingClientRect();return el.contains(document.elementFromPoint(b.x+b.width/2,b.y+b.height/2));})).toBe(true);
@@ -101,9 +101,9 @@ for(const viewport of [{width:1440,height:900},{width:390,height:844}]){
   await expect.poll(()=>close.evaluate(el=>{const b=el.getBoundingClientRect();return el.contains(document.elementFromPoint(b.x+b.width/2,b.y+b.height/2));})).toBe(true);
   await page.screenshot({path:`test-results/hotfix-map-${viewport.width}.png`,fullPage:true});await close.click();
   await page.locator('[data-guide="nation"]').first().click();await page.locator('[data-guide="tab-production"]').click();
-  const panel=page.locator('.command-panel');
+  const panel=page.locator('#country-section-window');
   const hit=await panel.evaluate(el=>{const rail=document.querySelector('.map-help-cluster')!;const a=el.getBoundingClientRect(),b=rail.getBoundingClientRect();const x=Math.max(a.left,b.left)+2,y=Math.max(a.top,b.top)+2;if(x>=Math.min(a.right,b.right)||y>=Math.min(a.bottom,b.bottom))return true;return el.contains(document.elementFromPoint(x,y));});expect(hit).toBe(true);
-  await page.locator('[data-guide="close-workspace"]').click();await page.locator('.leader-avatar-button').click();
+  await page.locator('[data-guide="close-workspace"]:visible').click();await page.locator('.leader-avatar-button').click();
   await expect(page.locator('.player-options-footer button')).toBeVisible();
   expect(await page.locator('.player-options-footer').evaluate(el=>getComputedStyle(el).backgroundColor)).toBe('rgba(0, 0, 0, 0)');
   await page.screenshot({path:`test-results/hotfix-profile-${viewport.width}.png`,fullPage:true});await page.locator('.player-options-footer button').click();
@@ -113,16 +113,16 @@ for(const viewport of [{width:1440,height:900},{width:390,height:844}]){
 test('diplomacy retry tracker and Supply/World atlas artwork',async({page})=>{
  await start(page);await skip(page);await page.locator('[data-guide="rail-diplo"]').click();
  await page.locator('.letter-compose button').click();await page.locator('[data-guide="review-confirm"]').click();await page.locator('[data-guide="review-dismiss"]').first().click();
- await expect(page.locator('.proposal-status')).toContainText('zaten gönderildi');await page.locator('.letter-compose button').click();
+ await expect(page.locator('.proposal-status:visible').filter({hasText:'zaten gönderildi'})).toContainText('zaten gönderildi');await page.locator('.letter-compose button').click();
  await expect(page.locator('.review-dialog')).toHaveCount(0);await expect(page.locator('.letter-list article[data-status="pending"]')).toHaveCount(1);await expect(page.locator('.proposal-filters .active')).toContainText('Gönderilen');
  await page.locator('.letter-list article[data-status="pending"] > button').click();
  await expect(page.locator('[data-action="embassy"]')).toContainText('takip et');await page.locator('[data-action="embassy"]').click();
- await expect(page.locator('.proposal-status')).toContainText('zaten gönderildi');await expect(page.locator('.letter-list article[data-status="pending"]')).toHaveCount(1);
- await page.locator('[data-guide="close-workspace"]').click();
+ await expect(page.locator('.proposal-status:visible').filter({hasText:'zaten gönderildi'})).toContainText('zaten gönderildi');await expect(page.locator('.letter-list article[data-status="pending"]')).toHaveCount(1);
+ await page.locator('[data-guide="close-workspace"]:visible').click();
  for(const menu of ['rail-supply','rail-world']){
   await page.locator(`[data-guide="${menu}"]`).click();const imgs=page.locator('.floating-command-window img[src*="/assets/command/"]');await expect(imgs.first()).toBeVisible();expect(await imgs.count()).toBeGreaterThan(0);
   await expect.poll(()=>imgs.evaluateAll(els=>els.every(el=>(el as HTMLImageElement).complete&&(el as HTMLImageElement).naturalWidth>0))).toBe(true);
-  await page.screenshot({path:`test-results/patch4-${menu}.png`,fullPage:true});await page.locator('[data-guide="close-workspace"]').click();
+  await page.screenshot({path:`test-results/patch4-${menu}.png`,fullPage:true});await page.locator('[data-guide="close-workspace"]:visible').click();
  }
 });
 
@@ -173,7 +173,7 @@ test('country trade proposal preserves sent receipt and market labels use consis
  await page.locator('.letter-list article[data-status="pending"] > button').click();
  await page.locator('[data-action="trade"]').click();await expect(page.locator('.strategic-decision-modal')).toBeVisible();await page.locator('.strategic-decision-modal .confirm').click();
  await expect(page.locator('.review-dialog h2')).toContainText('Karar uygulandı');await expect(page.locator('.review-dialog')).not.toContainText('Conditions changed');
- await page.locator('[data-guide="review-dismiss"]').first().click();await page.locator('[data-guide="close-workspace"]').click();
+ await page.locator('[data-guide="review-dismiss"]').first().click();await page.locator('[data-guide="close-workspace"]:visible').click();
  await page.locator('[data-guide="rail-market"]').click();await expect(page.locator('.exchange-filters')).toBeVisible();
  await expect(page.locator('.exchange-filters button').first()).toHaveText('Gıda');
 });

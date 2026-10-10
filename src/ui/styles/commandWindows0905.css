@@ -1,0 +1,68 @@
+/* Codex: spacious workspaces, quiet framed HUD and readable national identity. */
+[hidden].floating-command-window,[hidden].command-window-backdrop,[hidden].player-options-backdrop{display:none!important}
+.floating-command-window{max-width:none!important;top:var(--workspace-y)!important;max-height:calc(100dvh - var(--workspace-y) - 65px);display:flex;flex-direction:column}
+.floating-command-window>.floating-command-body{min-height:0;max-height:none;overflow:auto;overscroll-behavior:contain}
+.expanded-command-window{border-color:#b99c62;background:linear-gradient(145deg,#20333e,#14242e);box-shadow:0 22px 70px #07131bb3}
+.expanded-command-window>.floating-command-body{padding:20px}
+.expanded-command-window .research-card-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.expanded-command-window .research-overview{grid-template-columns:64px minmax(0,1fr) auto}
+.expanded-command-window .campus-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+body:has(#country-section-window:not([hidden])) .command-rail-right.country-open{right:14px!important;display:grid}
+.country-navigation-group{padding:10px 0;border-bottom:1px solid #c2a57533;grid-template-columns:repeat(3,minmax(0,1fr))!important}
+.country-navigation-group button{min-height:48px;border-radius:9px;background:linear-gradient(145deg,#283c43,#1c2d36);border:1px solid #78908b70}
+.country-navigation-group button[aria-pressed=true]{border-color:#d3b879!important;box-shadow:inset 0 -2px #d3b879}
+.command-panel .identity-strip{gap:8px;margin:14px 0}
+.command-panel .identity-strip>span{display:flex;flex-direction:column;align-items:flex-start;padding:12px 10px;gap:9px;border:1px solid #b39c6655;border-radius:12px;background:linear-gradient(140deg,#2d4145,#1b2d37)}
+.identity-strip i{font-style:normal;display:grid;gap:6px;min-width:0}
+.command-panel .identity-strip small{font-size:10px;color:#e2d5b8;letter-spacing:.03em}
+.command-panel .identity-strip strong{font-size:13px;color:#f3eee0;line-height:1.45}
+.command-panel .country-header{border-bottom:1px solid #bca36644;padding-bottom:14px}
+.clock-island{border:0!important;background:none!important;box-shadow:none!important;backdrop-filter:none!important;padding:0!important;gap:10px;align-items:stretch}
+.clock-speed-card{padding:7px;border:1px solid #a991625c;border-radius:13px;background:linear-gradient(135deg,#24373df2,#162730f2);box-shadow:0 6px 22px #07131b33;display:grid;gap:5px}
+.clock-island .speed-segment{border:0!important;background:none!important;box-shadow:none!important;padding:0!important}
+.clock-speed-card .campaign-clock{display:flex;align-items:center;justify-content:center;gap:9px;min-width:0}
+.clock-speed-card .campaign-clock small{font-size:8px;letter-spacing:.07em;color:#d5c6a4}
+.clock-speed-card .campaign-clock strong{font-size:13px;color:#f0e7d3}
+.clock-island .national-flag-card{border:1px solid #d6b66b!important;background:linear-gradient(145deg,#39403a,#202f34)!important;padding:8px 12px;box-shadow:inset 0 1px #ffe3a329,0 6px 20px #08151c33}
+.clock-island .national-flag-card strong{color:#ffe5ac;font-weight:750;letter-spacing:.02em}
+.command-rail{background:none!important;border:0!important;box-shadow:none!important;backdrop-filter:none!important;padding:0!important;gap:8px}
+.command-rail .rail-button{border:1px solid #bda67777!important;border-radius:11px!important;background:linear-gradient(145deg,#26383eea,#182a34ea)!important;box-shadow:0 4px 14px #09151f33;transition:border-color .16s,background-color .16s,transform .16s}
+.command-rail .rail-button:hover{border-color:#e5c887!important;transform:translateY(-1px)}
+.command-rail .rail-button.active{border-color:#f3cd7e!important;background:linear-gradient(145deg,#48504a,#273a40)!important;box-shadow:inset 0 -2px #efc876,0 0 13px #dfb85d22}
+#resource-command-window .resource-command-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+#resource-command-window .resource-filter{display:flex;flex-wrap:wrap;gap:8px}
+#resource-command-window .resource-filter button{flex:1;min-width:130px;min-height:44px}
+#pulse-window .floating-command-body{height:auto;overflow:auto}
+#world-ranking-content{overflow:visible}
+.world-activity{margin-bottom:16px;border:1px solid #ad95604d;padding:14px;border-radius:12px;background:#2a3a3d}
+.world-activity h3{margin:0 0 12px;color:#f1dfb7;font-size:16px}
+.world-activity-stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+.world-activity-stats>span{display:grid;gap:7px;font-size:12px;color:#cfdce0}
+.world-activity-stats b{font-size:22px;color:#ffe1a3}
+.world-active-wars{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.world-active-wars button{padding:9px;border:1px solid #b79b6a;border-radius:7px;background:#263840;color:#e8e6db;cursor:pointer}
+.ranking-table-wrap{max-height:520px;overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable}
+.player-options-modal{background:radial-gradient(ellipse at top left,#415047,#1b2e38 65%);border:1px solid #c7ab70;border-radius:20px;box-shadow:0 24px 90px #071219aa}
+.player-options-header{padding-bottom:18px;border-bottom:1px solid #c5ac7344}
+.player-options-header h2{font-size:30px;color:#f4e7c9;letter-spacing:-.025em}
+.player-options-header p{line-height:1.6;color:#cad6d7}
+.commander-profile-card{background:linear-gradient(160deg,#3a4741,#1b2e37);border:1px solid #b9a16b66;border-radius:15px;padding:22px;box-shadow:inset 0 1px #fce4ac22}
+.commander-profile-hero{margin-bottom:18px}.commander-profile-card h3{font-size:23px;color:#ffe3a6}
+.player-options-main .campaign-status-grid>span{border-radius:12px;padding:13px;background:#21353c;border:1px solid #b9a16b44}
+.player-options-main .campaign-options-section{border-radius:13px;padding:18px;background:#1b2d36;border:1px solid #70878066}
+.player-options-main input,.player-options-main select{min-height:42px;border-radius:8px}
+@media(max-width:1000px){.expanded-command-window .research-card-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.world-activity-stats{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:760px){.clock-island{display:flex!important;gap:5px}.clock-speed-card{padding:4px;align-self:flex-start}.clock-speed-card .campaign-clock small{display:none}.clock-speed-card .campaign-clock strong{font-size:11px}.clock-island .national-flag-card{padding:4px;max-width:80px}.command-overview-island{width:calc(100% - 218px)!important}.expanded-command-window>.floating-command-body{padding:12px}.expanded-command-window .research-card-grid,.expanded-command-window .campus-grid,#resource-command-window .resource-command-grid{grid-template-columns:1fr}.expanded-command-window .research-overview{grid-template-columns:48px minmax(0,1fr)}.expanded-command-window .research-throughput{grid-column:1/-1}.world-activity-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.ranking-table-wrap{max-height:440px}.identity-strip strong{font-size:12px}.player-options-header h2{font-size:24px}}
+@media(prefers-reduced-motion:reduce){.command-rail .rail-button{transition:none}.command-rail .rail-button:hover{transform:none}}
+
+.command-rail-right{transition:none}
+body:has(.review-backdrop,.strategic-decision-backdrop,.war-theatre-backdrop) :is(.floating-command-window,.command-window-backdrop,.command-panel){visibility:hidden}
+
+.floating-command-header{flex-shrink:0}
+
+.command-panel .identity-strip small{text-transform:uppercase}
+.country-section-content>button{font:inherit;font-size:13px;padding:10px 14px;border:1px solid #bda575;border-radius:8px;background:#2d4248;color:#f3e8cb;cursor:pointer;margin-top:12px}
+.country-section-content>button:hover{background:#3b5256;border-color:#e8cb89}
+.country-section-content>button:focus-visible{outline:2px solid #edcf88;outline-offset:3px}
+.country-navigation-group button{min-width:0;gap:7px;justify-content:flex-start}
+.country-navigation-group button>span:last-child{min-width:0;white-space:normal;overflow-wrap:normal;font-size:11px;line-height:1.35}

@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.90.0-playtest.5 — Spacious command windows
+Implementation and validation: **Codex**. Branch: `dev/clear-command-090`. Save schema 17, dependencies and simulation numbers unchanged.
+
+- Tech, national World, War readiness and Production open in expanded windows; left Supply, Market and World rankings also gain room. Fix width caps and right-rail placement measurements; mobile expanded frames use the available screen width.
+- Child workspaces hide their parent without discarding its component state. Close/Escape returns to the previous menu; root rail choices start a new navigation path. Nested reviews and portrait selection show only the child. Navigation history is transient and is cleared on load/new campaign.
+- Group Overview, renamed Power with a pentagonal radar icon, and Supply command. Separately group Tech, World and War readiness with equal-sized buttons. Religion, ideology and military rank cards gain legible labels/artwork; Cabinet uses the existing reliable icon atlas.
+- Restore World activities (wars, trade flows, operations, blocs and sanctions) above ranking controls. Initially render 20 countries; scrolling adds the next 20. Country details return to the previous ranking state.
+- Modernize commander profile, remove blue rail containers, frame individual buttons with selected accents, and separate the top-right country shortcut from the speed/date card. Date moves below the existing speed controls; country shortcut gets a gold accent.
+- New labels cover English, Turkish, Spanish, Chinese and Russian. The .4 credit mechanism and completed .3 market behavior are preserved.
+
+Validation: 606 unit tests / 76 files, TypeScript and production build passed. All 114 production browser scenarios verified: 111 passed in the full run; two ambiguous selectors caused by retained hidden parents and one portrait-focus regression were corrected. Twelve focused navigation/focus scenarios, eight final language/visual scenarios and three final Tech → research → Tech checks passed. Desktop/mobile screenshots inspected. GitHub CI runs independently on publication. StackBlitz itself is not directly exercised; compatible saves require no new campaign. V3 remains the complete-playability milestone.
+
+
 ## 0.90.0-playtest.4 — Reliable command menus & sovereign credit
 Implementation and validation: **Codex**. Branch: `dev/clear-command-090`. Save schema stays 17; new credit fields are optional, with legacy loan terms preserved. No dependency changes.
 

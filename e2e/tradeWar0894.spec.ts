@@ -21,7 +21,7 @@ test('war review blocks inadequate refined fuel and shows the exact shortfall',a
 });
 test('auto assault selects 5× and advances days without fuel advice modals',async({page})=>{
  await resumeFixture(page,withWarFuel(campaignFixture('en')));await page.locator('[data-guide="nation"]').first().click();await page.locator('.country-select').selectOption('GRC');await page.locator('[data-guide="tab-war"]').click();await page.locator('.declare-war').click();await page.locator('.strategic-decision-modal .confirm').click();
- const day=await page.locator('.campaign-clock strong').innerText();await page.getByRole('button',{name:'Enable auto assault',exact:true}).click();await expect(page.locator('.speed-segment button').last()).toHaveClass(/active/);await expect(page.locator('.campaign-clock strong')).not.toHaveText(day);await expect(page.locator('.war-theatre')).toContainText('one day per second');await expect(page.locator('.economic-advice-backdrop')).toHaveCount(0);
+ const day=await page.locator('.campaign-clock strong').innerText();await page.getByRole('button',{name:'Enable auto assault',exact:true}).click();await expect(page.locator('.speed-segment button').last()).toHaveClass(/active/);await expect(page.locator('.campaign-clock strong')).not.toHaveText(day);await expect(page.locator('.war-theatre[role="dialog"]')).toContainText('one day per second');await expect(page.locator('.economic-advice-backdrop')).toHaveCount(0);
 });
 test('country panel is ready at startup and remains usable with subsequent downloads blocked',async({page})=>{
  await resumeFixture(page,campaignFixture('en'));let requests=0;

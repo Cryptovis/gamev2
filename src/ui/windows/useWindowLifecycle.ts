@@ -60,9 +60,12 @@ export function useWindowLifecycle(ref:RefObject<HTMLElement|null>, {
 }: {onClose:()=>void;layer?:WindowLayer;modal?:boolean;backdrop?:boolean;pause?:boolean;enabled?:boolean;dismissible?:boolean}) {
  const close = useRef(onClose);close.current=onClose;
  const active = useRef<Entry|null>(null);
+ // Capture the opener before React hides its parent during the commit.
+ const initialFocus = useRef(typeof document==='undefined'?null:document.activeElement as HTMLElement|null);
+ const enabledNow = useRef(enabled);enabledNow.current=enabled;
  useEffect(()=>{
   const dialog=ref.current;if(!enabled||!dialog)return;
-  const previous=document.activeElement as HTMLElement|null;
+  const previous=initialFocus.current;
   const entry:Entry={dialog,surface:backdrop?dialog.parentElement??dialog:dialog,layer,order:++order,modal,dismissible,close:()=>close.current()};
   active.current=entry;
   if (!entries.size) document.addEventListener('keydown',handleKey,true);
@@ -73,12 +76,12 @@ export function useWindowLifecycle(ref:RefObject<HTMLElement|null>, {
    if (!stopWatching) stopWatching=useGameStore.subscribe(resumeWhenReleased);
    useGameStore.getState().setSpeed(0);
   }
-  if (top()===entry) focusFirst(entry);
+  if (top()===entry&&!dialog.contains(document.activeElement)) focusFirst(entry);
   return ()=>{
    const wasTop=top()===entry;
    entries.delete(entry);pauseOwners.delete(entry);active.current=null;refreshLayers();resumeWhenReleased();
    if (!entries.size) document.removeEventListener('keydown',handleKey,true);
-   if (wasTop) {
+   if (wasTop&&enabledNow.current) {
     const next=top();
     if (previous?.isConnected&&(!next||!next.modal||next.dialog.contains(previous))) previous.focus({preventScroll:true});
     else if(next)focusFirst(next);
