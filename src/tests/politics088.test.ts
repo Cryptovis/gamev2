@@ -89,7 +89,7 @@ describe('0.88 E2: elections are a seeded contest', () => {
     expect(won.campaignStatus).toBe('active');
     expect(won.countries.TUR.politics.electionDaysRemaining).toBe(ELECTION_INTERVAL);
     expect(won.countries.TUR.politics.factions!.terms).toBe(1);
-    expect(won.sitrep[0]).toMatch(/^ELECTION \/\/ Turkey government re-elected with \d+\.\d% of the vote \(opposition \d+\.\d%\)\.$/);
+    expect(won.sitrep[0]).toMatch(/^ELECTION \/\/ Türkiye government re-elected with \d+\.\d% of the vote \(opposition \d+\.\d%\)\.$/);
     expect(winProbability(expectedGovernmentShare(electionDay(5, 1).countries.TUR))).toBe(0);
     const lost = processPoliticalLayer(electionDay(5, 12345));
     expect(lost.campaignStatus).toBe('lost');

@@ -10,7 +10,7 @@ const steps = [
   ],
   [
     "Budget & reserves",
-    "Open your nation, choose Economy and check treasury, daily budget and resource reserves.",
+    "Use the flag at the top right to open your nation. Choose Economy and check treasury, daily budget and resource reserves.",
     "nation",
     "economy",
   ],

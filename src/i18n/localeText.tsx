@@ -33,7 +33,7 @@ const languages = ["tr", "es", "zh", "ru"];
 const catalogKey=(text:string)=>text.trim().replace(/\s+/g," ").toLowerCase().replaceAll("_"," ");
 const templates = new Map<string, {pattern:RegExp;value:string;slots:number[]}[]>();
 const catalogs = new Map<string, Map<string, string>>();
-catalogs.set('en',new Map(Object.entries(PLAIN_EN).map(([key,value])=>[key.toLowerCase(),value])));
+catalogs.set('en',new Map([...Object.entries(PLAIN_EN).map(([key,value])=>[key.toLowerCase(),value] as [string,string]),['turkey','Türkiye'],['turkiye','Türkiye'],['macedonia','North Macedonia']]));
 for (const language of languages) {
   const index = languages.indexOf(language),
     entries = new Map<string, string>();
@@ -73,6 +73,8 @@ for (const language of languages) {
   const countries = new Intl.DisplayNames([language], { type: "region" });
   for (const c of WORLD_COUNTRY_SEEDS)
     entries.set(c.name.toLowerCase(), countries.of(c.iso2) ?? c.name);
+  for(const key of ['turkey','turkiye','türkiye'])entries.set(key,['Türkiye','Türkiye','土耳其','Турция'][index]);
+  for(const key of ['macedonia','north macedonia'])entries.set(key,['Kuzey Makedonya','Macedonia del Norte','北马其顿','Северная Македония'][index]);
   for (const node of TECHNOLOGY_TREE)
     entries.set(node.id, entries.get(node.name.toLowerCase()) ?? node.name);
   catalogs.set(language, entries);

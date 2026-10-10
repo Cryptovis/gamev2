@@ -113,7 +113,7 @@ export function HelpPanel() {
       onClose={state.closeWorkspace}
     >
       <section className="game-notes">
-        <h3>The Real President · 0.83</h3>
+        <h3>The Real President</h3>
         <p>
           <LocaleText value="203 sovereign profiles · economy · population · resource markets · diplomacy · research · military command." />
         </p>

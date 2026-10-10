@@ -27,7 +27,7 @@ function controls(dialog:HTMLElement) {
  return [...dialog.querySelectorAll<HTMLElement>('button,a[href],input,select,textarea,[tabindex]')]
   .filter(node=>node.tabIndex>=0&&!node.matches(':disabled')&&!node.closest('[inert],[aria-hidden="true"]')&&node.getClientRects().length>0);
 }
-function focusFirst(entry:Entry) {(controls(entry.dialog)[0]??entry.dialog).focus();}
+function focusFirst(entry:Entry) {(controls(entry.dialog)[0]??entry.dialog).focus({preventScroll:true});}
 function handleKey(event:KeyboardEvent) {
  const entry = top();
  if (!entry || event.defaultPrevented) return;
@@ -39,10 +39,10 @@ function handleKey(event:KeyboardEvent) {
  const tutorial = document.querySelector<HTMLElement>('.tutorial-docked');
  const items = [...controls(entry.dialog),...(tutorial?controls(tutorial):[])];
  const first = items[0], last = items.at(-1);
- if (!first) {event.preventDefault();entry.dialog.focus();return;}
+ if (!first) {event.preventDefault();entry.dialog.focus({preventScroll:true});return;}
  const outside = !items.includes(document.activeElement as HTMLElement);
- if (event.shiftKey&&(document.activeElement===first||outside)) {event.preventDefault();last?.focus();}
- else if (!event.shiftKey&&(document.activeElement===last||outside)) {event.preventDefault();first.focus();}
+ if (event.shiftKey&&(document.activeElement===first||outside)) {event.preventDefault();last?.focus({preventScroll:true});}
+ else if (!event.shiftKey&&(document.activeElement===last||outside)) {event.preventDefault();first.focus({preventScroll:true});}
 }
 function resumeWhenReleased() {
  if (pauseOwners.size || pausedSpeed===undefined) return;
@@ -80,7 +80,7 @@ export function useWindowLifecycle(ref:RefObject<HTMLElement|null>, {
    if (!entries.size) document.removeEventListener('keydown',handleKey,true);
    if (wasTop) {
     const next=top();
-    if (previous?.isConnected&&(!next||!next.modal||next.dialog.contains(previous))) previous.focus();
+    if (previous?.isConnected&&(!next||!next.modal||next.dialog.contains(previous))) previous.focus({preventScroll:true});
     else if(next)focusFirst(next);
    }
   };

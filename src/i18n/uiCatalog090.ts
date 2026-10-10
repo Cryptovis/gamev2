@@ -1,5 +1,6 @@
 /** English keys; Turkish, Spanish, Chinese and Russian. */
 export const UI_CATALOG_090:Record<string,[string,string,string,string]>={
+'Use the flag at the top right to open your nation. Choose Economy and check treasury, daily budget and resource reserves.':['Ülkeni açmak için sağ üstteki bayrağa tıkla. Ekonomi bölümünde hazineni, günlük bütçeni ve kaynak rezervlerini incele.','Pulsa la bandera de arriba a la derecha para abrir tu país. Elige Economía y revisa el tesoro, el presupuesto diario y las reservas.','点击右上角的国旗打开你的国家。选择经济，查看国库、每日预算和资源储备。','Нажми на флаг справа вверху, чтобы открыть свою страну. Выбери экономику и проверь казну, дневной бюджет и запасы ресурсов.'],
 'Be the president you have always dreamed of.':['Hayalindeki başkan ol.','Sé el presidente que siempre has querido ser.','成为你一直梦想的总统。','Стань президентом, которым всегда мечтал быть.'],
 'History':['Geçmiş','Historial','历史','История'],
 'Shortfall':['Eksik tutar','Cantidad que falta','缺少金额','Не хватает'],

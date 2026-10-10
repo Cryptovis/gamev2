@@ -3,10 +3,11 @@
 Bu dosya yeni bir konuşmanın ilk okuması içindir. Geçmiş konuşmayı taşımadan kaldığımız yerden devam etmeyi sağlar.
 
 ## Durum
-- Sürüm: **0.90.0-playtest.1 "Clear Command"**
-- Dal: `dev/clear-command-090`. Kaynak: 0.89.7 (`8322a3f`). Bu sürümün CI sonucu push sonrası ayrıca kontrol edilmeli.
+- Sürüm: **0.90.0-playtest.2 "Market & window hotfix"**
+- Dal: `dev/clear-command-090`. Kaynak: 0.89.7 (`8322a3f`). 0.90.1 CI başarılı; yeni patch CI sonucu push sonrası ayrıca kontrol edilmeli.
 - `main`'e doğrudan push yok. Yeni işler `dev/<name>-0XX` dallarında yapılır.
-- Son patch: bölümlere ayrılmış Affairs, ortak motor koşul/maliyet önizlemesi, HUD/ülke menüsü, değişen açılış sözleri, klavye harita kontrolü; doğrulanan savaş/konsey/seçim düzeltmeleri. [0.90 test kaydı](PLAYTEST-090.md) ve [Antigravity değerlendirmesi](QA-RECONCILIATION-090.md). Market/resim kurtarma önceki sürümde mevcut; tekrar yapılmadı.
+- Son hotfix: borsa review penceresi ve engel açıklaması, Help/Supply/kredi/kontrat için başlangıç yüklemesi, scroll/focus ve rail yerleşimi, bayrak altı ülke kısayolu, güncel ülke adları ve okunur karar/tedarik başlığı. 578 birim testi/derleme ve 6 Vite-dev tarayıcı senaryosu geçti. All 90 production-preview browser scenarios passed (7.7m); final mobile-menu layout rechecked in nine focused scenarios (50.7s).
+- 0.90 major içeriği: bölümlere ayrılmış Affairs, ortak motor koşul/maliyet önizlemesi, HUD/ülke menüsü, değişen açılış sözleri, klavye harita kontrolü; doğrulanan savaş/konsey/seçim düzeltmeleri. [0.90 test kaydı](PLAYTEST-090.md) ve [Antigravity değerlendirmesi](QA-RECONCILIATION-090.md). Market/resim kurtarma önceki sürümde mevcut; tekrar yapılmadı.
 - Kapsam (0.89): ticaret ortağı seçimi ve ülke TRADE sekmesi, emtia borsası (spread, komisyon, günlük limit, pozisyon limiti, depolama, şoklar), diplomatik jet ve kargo uçakları (harita katmanı, mesafeye göre varış süresi).
 
 ## Bekleyen işler

@@ -13,6 +13,6 @@ export function recoverableLazy<M,T extends ComponentType<any>>(load:()=>Promise
   const close=useGameStore(s=>s.closeWorkspace);
   return <ErrorBoundary key={attempt} title="This window could not open." fallback={error=><CommandWindow kicker="COMMAND" title="This window could not open." onClose={close}>
    <div className="panel-load-error" role="alert" data-testid="panel-load-error"><p><LocaleText value="Your campaign remains open. Try again or close this window."/></p><pre>{error.message}</pre><button onClick={()=>setAttempt(n=>n+1)}><LocaleText value="Try again"/></button><button onClick={close}><LocaleText value="Close window"/></button></div>
-  </CommandWindow>}><Suspense fallback={<p className="panel-loading" role="status"><LocaleText value="Loading command…"/></p>}><Loaded {...props}/></Suspense></ErrorBoundary>;
+  </CommandWindow>}><Suspense fallback={<p className={moduleName==='ResourceCommandWindow'||moduleName==='HelpPanel'||/Window$/.test(moduleName)?'panel-loading panel-loading-floating':'panel-loading'} role="status"><LocaleText value="Loading command…"/></p>}><Loaded {...props}/></Suspense></ErrorBoundary>;
  };
 }

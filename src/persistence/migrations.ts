@@ -40,6 +40,8 @@ export function migrateSchema(input:GameState):GameState {
 
 /** Fills defaults added without a schema bump (new facilities, living world, academies, economic history). */
 function withCurrentDefaults(state:GameState):GameState {
+ const renamed:Record<string,{old:string;name:string}>={TUR:{old:'Turkey',name:'Türkiye'},MKD:{old:'Macedonia',name:'North Macedonia'},SWZ:{old:'eSwatini',name:'Eswatini'}};
+ state={...state,countries:Object.fromEntries(Object.entries(state.countries).map(([id,c])=>[id,renamed[id]?.old===c.name?{...c,name:renamed[id].name}:c]))};
  const defaults=createIndustrialMap(state.countries);
  const industrialEconomy=Object.fromEntries(Object.entries(state.industrialEconomy).map(([id,n])=>[id,{...n,stock:{...defaults[id]?.stock,...n.stock},facilities:{...defaults[id]?.facilities,...n.facilities},enabled:{...defaults[id]?.enabled,...n.enabled},potential:{...defaults[id]?.potential,...n.potential},deposits:{...defaults[id]?.deposits,...n.deposits}}]));
  const g=governance(state);

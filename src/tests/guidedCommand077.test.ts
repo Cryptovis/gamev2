@@ -102,7 +102,7 @@ describe("visible language catalog", () => {
     expect(translateText("tr", "Turkey")).toBe("Türkiye");
     expect(translateText("tr", "ARMOR_PLATE")).toBe("ZIRH PLAKASI");
     expect(translateText("tr", "$14.5B")).toBe("$14.5B");
-    expect(translateText("en", "Turkey")).toBe("Turkey");
+    expect(translateText("en", "Turkey")).toBe("Türkiye");
   });
   it("contains four non-English translations for every catalog entry", () => {
     for (const values of Object.values(UI_CATALOG)) {

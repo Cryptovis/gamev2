@@ -14,7 +14,8 @@ import {LocaleText,translateLive} from '../../i18n/localeText';
 const ResearchWindow=recoverableLazy(()=>import('../panels/ResearchWindow'),m=>m.ResearchWindow,'ResearchWindow');
 const InvestmentWindow=recoverableLazy(()=>import('../panels/InvestmentWindow'),m=>m.InvestmentWindow,'InvestmentWindow');
 const GovernanceWindow=recoverableLazy(()=>import('../panels/GovernanceWindow'),m=>m.GovernanceWindow,'GovernanceWindow');
-const HelpPanel=recoverableLazy(()=>import('../panels/HelpPanel'),m=>m.HelpPanel,'HelpPanel');
+// Keep Help available even when later lazy panel downloads fail.
+import {HelpPanel} from '../panels/HelpPanel';
 import {NavigationArt} from '../icons/NavigationArt';
 import {AircraftGlyph} from '../icons/AircraftIcons';
 import {newsFlightKind} from '../../map/flightPresentation';
@@ -26,7 +27,7 @@ import { useGameStore } from '../../store/gameStore';
 import { BlocIcon, CouncilIcon, DiplomacyIcon, EmbassyIcon, IntelligenceIcon, ResourceIcon, TreasuryIcon, WorldIcon } from '../icons/GameIcons';
 import { DraggableWindow } from '../windows/DraggableWindow';
 import { MapModeBar } from './MapModeBar';
-const ResourceCommandWindow=recoverableLazy(()=>import('../panels/ResourceCommandWindow'),m=>m.ResourceCommandWindow,'ResourceCommandWindow');
+import {ResourceCommandWindow} from '../panels/ResourceCommandWindow';
 
 type ToolId='objectives'|'market'|'pulse'|'map'|'resources'|'sitrep'|'alerts'|'diplomacy';
 

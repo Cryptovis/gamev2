@@ -43,7 +43,7 @@ export function CampaignSetup(){
   const fold=(text:string)=>text.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replaceAll('ı','i').trim();
   const search=fold(query);
   const all=Object.values(countries),byCode=all.filter(c=>fold(c.iso2)===search||fold(c.id)===search);
-  return (byCode.length?byCode:all.filter(c=>[c.name,translateText(language,c.name)].some(name=>fold(name).includes(search)))).sort((a,b)=>translateText(language,a.name).localeCompare(translateText(language,b.name),language));
+  return (byCode.length?byCode:all.filter(c=>[c.name,translateText(language,c.name),...(c.id==='TUR'?['Turkey','Turkiye']:c.id==='MKD'?['Macedonia']:[])].some(name=>fold(name).includes(search)))).sort((a,b)=>translateText(language,a.name).localeCompare(translateText(language,b.name),language));
  },[countries,query,language]);
  const selected=countries[countryId]??countries.TUR;
  const theme=countryThemeFor(selected.iso2);

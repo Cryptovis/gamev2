@@ -200,7 +200,7 @@ export function SupplierFinder() {
   const urgent = MARKET_RESOURCES.find((r) => resourceStrategicStatus(player, r) === 'CRITICAL') ?? MARKET_RESOURCES.find((r) => resourceStrategicStatus(player, r) === 'IMPORT NEED') ?? 'oil';
   const [good, setGood] = useState<ExchangeGood>(urgent);
   return <section className="trade-finder">
-    <header className="trade-desk-hero">
+    <header className="trade-desk-hero supplier-finder-hero">
       <CivicArt kind="trade" size={40} />
       <span><small><LocaleText value="SUPPLIER FINDER" /></small><strong><LocaleText value={`Who can sell you ${goodLabel(good).toLowerCase()}?`} /></strong><p className="trade-reason"><LocaleText value="Open routes first, then countries one trade pact away. Countries without access are collapsed." /></p></span>
     </header>

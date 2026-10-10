@@ -4,20 +4,22 @@ import {getMarketBoard} from '../../store/marketSelectors';
 import {LocaleText,translateLive} from '../../i18n/localeText';
 import {money} from '../formatMoney';
 import {NavigationArt} from '../icons/NavigationArt';
+import {CommandArt} from '../icons/CommandArt';
 import {CivicArt} from '../icons/CivicArt';
-import {ResourceIcon,TreasuryIcon} from '../icons/GameIcons';
+import {ResourceIcon} from '../icons/GameIcons';
 import {DraggableWindow} from '../windows/DraggableWindow';
 import {SectionMenu} from '../windows/SectionMenu';
 import {recoverableLazy} from '../windows/recoverableLazy';
 const OpenExchange=recoverableLazy(()=>import('./OpenExchange'),m=>m.OpenExchange,'OpenExchange');
 const CommodityExchangePanel=recoverableLazy(()=>import('./CommodityExchangePanel'),m=>m.CommodityExchangePanel,'CommodityExchangePanel');
-const CreditWindow=recoverableLazy(()=>import('./CreditWindow'),m=>m.CreditWindow,'CreditWindow');
-const IndustrialMarketPanel=recoverableLazy(()=>import('./IndustrialMarketPanel'),m=>m.IndustrialMarketPanel,'IndustrialMarketPanel');
+// Frequently used core panels travel with the shell; no click-time WebContainer fetch.
+import {CreditWindow} from './CreditWindow';
+import {IndustrialMarketPanel} from './IndustrialMarketPanel';
 const SupplierFinder=recoverableLazy(()=>import('./TradeDesk'),m=>m.SupplierFinder,'TradeDesk');
 const items=[
  {id:'open',label:'Open Market & Precious Metals',icon:<NavigationArt kind="market" size={28}/>},
  {id:'exchange',label:'Commodity Exchange',icon:<CivicArt kind="gold" size={28}/>},
- {id:'credit',label:'Sovereign Credit & Monetary Fund',icon:<TreasuryIcon size={28}/>},
+ {id:'credit',label:'Sovereign Credit & Monetary Fund',icon:<CommandArt kind="treasury" size={32}/>},
  {id:'suppliers',label:'Trade partners',icon:<CivicArt kind="trade" size={28}/>},
  {id:'contracts',label:'Supply contracts',icon:<NavigationArt kind="world" size={28}/>},
  {id:'prices',label:'World prices',icon:<NavigationArt kind="intel" size={28}/>},

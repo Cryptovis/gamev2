@@ -32,6 +32,7 @@ export function TopBar(){
  const day=useGameStore(s=>s.day);
  const speed=useGameStore(s=>s.speed);
  const setSpeed=useGameStore(s=>s.setSpeed);
+ const selectedCountryId=useGameStore(s=>s.selectedCountryId);
  const playerCountryId=useGameStore(s=>s.playerCountryId);
  const player=useGameStore(s=>s.countries[s.playerCountryId]);
  const profile=useGameStore(s=>s.playerProfile);
@@ -46,7 +47,7 @@ export function TopBar(){
  return <header className="topbar">
   <div className="command-overview-island"><div className="leader-brand">
    <button className="leader-avatar-button" onClick={()=>{useGameStore.getState().closeWorkspace();setOptionsOpen(true)}} title={translateLive("Open commander options")}><AvatarPortrait id={profile.avatarId} size={52}/><span><LocaleText value={"⋯"}/></span></button>
-   <div className="brand-block"><div className="eyebrow">THE REAL PRESIDENT</div><div className="brand-line"><strong><LocaleText value={profile.commanderName}/></strong><span className="day-chip"><LocaleText value={tr(lang,'day')}/> <LocaleText value={day}/></span></div><button data-guide="nation" className="leader-country leader-nation-link" title={translateLive("Open your nation")} onClick={()=>{setOptionsOpen(false);useGameStore.getState().selectCountry(playerCountryId)}}><LocaleText value={player.name}/><LocaleText value={" · "}/><LocaleText value={player.politics.regime.toUpperCase()}/></button></div>
+   <div className="brand-block"><div className="eyebrow">THE REAL PRESIDENT</div><div className="brand-line"><strong><LocaleText value={profile.commanderName}/></strong><span className="day-chip"><LocaleText value={tr(lang,'day')}/> <LocaleText value={day}/></span></div></div>
   </div>
 
   <div className="metrics governance-metrics" aria-label={translateLive("National command indicators")}>
@@ -60,7 +61,7 @@ export function TopBar(){
   <div className="top-actions clock-island">
    <div className="campaign-clock"><small><LocaleText value={"CAMPAIGN DATE"}/></small><strong><LocaleText value={gameDate(useGameStore.getState())}/></strong></div>
    <div className="speed-segment" aria-label={translateLive("Game speed controls")}>{speeds.map(item=><button key={item.speed} aria-pressed={item.speed===speed} className={item.speed===speed?'active':''} onClick={()=>setSpeed(item.speed)} title={translateLive(item.hint)}><strong><LocaleText value={item.label}/></strong><small><LocaleText value={item.speed===0?tr(lang,'pause'):item.hint}/></small></button>)}</div>
-   <button data-guide="nation-flag" className="national-flag-card" title={translateLive(player.name)} onClick={()=>{setOptionsOpen(false);useGameStore.getState().selectCountry(playerCountryId)}}><b><LocaleText value={flagEmoji(player.iso2)}/></b><span><small><LocaleText value={player.iso2}/></small><strong><LocaleText value={player.name}/></strong></span></button>
+   <button data-guide="nation" className="national-flag-card" aria-pressed={selectedCountryId===playerCountryId} title={translateLive("Open your nation")} aria-label={translateLive("Open your nation")} onClick={()=>{setOptionsOpen(false);useGameStore.getState().selectCountry(playerCountryId)}}><b>{flagEmoji(player.iso2)}</b><span><strong><LocaleText value={player.name}/></strong><small><LocaleText value={player.politics.regime}/></small><em><LocaleText value={"Open your nation"}/></em></span></button>
   </div>
   {optionsOpen&&<PlayerOptionsMenu onClose={()=>setOptionsOpen(false)}/>}
  </header>;

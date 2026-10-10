@@ -29,3 +29,15 @@ Owner: **Codex**. Branch: `dev/clear-command-090`. Starting release: 0.89.0-play
 - Other long windows and specialized victory/campaign-end surfaces need gradual adoption of shared navigation/accessibility.
 - Quotes avoid immediate repeats when local storage is available; denied/cleared storage falls back to random selection.
 - No online authentication, multiplayer, new renderer or sound engine. V3 remains the complete-playability milestone.
+
+## 0.90.0-playtest.2 — Market & window hotfix (Codex)
+
+- `npm run check`: **578 tests / 73 files**, TypeScript and production build passed.
+- `PLAYWRIGHT_DEV_SERVER=1 npm run test:e2e -- e2e/clearCommand0902.spec.ts`: **6 passed (36.8s)** against Vite dev, not only built chunks.
+- Purchase review and confirmation/receipt, blocked-order reason dialog, 1440px/390px rail separation, Supply/Help root scroll samples, nation hint/state/old-save name, credit/contracts/Help with click-time panel requests blocked, supplier text geometry and 16px/14px event choices covered.
+- Supplier finder, national-event and final desktop/mobile market screenshots inspected. Final market menu labels stay inside their own buttons; mobile icons sit above text. The supplier text has its own full-width column rather than wrapping beside its kicker.
+- All 90 production-preview browser scenarios passed (7.7m); final mobile-menu layout rechecked in nine focused scenarios (50.7s).
+- Previous 0.90.1 GitHub CI run **38064636235 passed**. This patch's CI is checked separately after push.
+- No new campaign required. Türkiye/North Macedonia/Eswatini refresh only known old names on load; stable country IDs and custom names remain intact.
+- Manual StackBlitz route: update `dev/clear-command-090`, confirm package version `0.90.0-playtest.2`, start Vite, resume, Market → Commodity Exchange → Review purchase; test zero quantity for reasons. Open credit/contracts, Supply and Help. Check supplier heading, flag shortcut, tutorial Budget step and national-event choices.
+- Limitation: WebContainer itself was not run here. Startup includes four core panels to remove their click-time import failures; this trades some initial loading for more reliable tool transitions. Remaining optional windows retain retries. Large translation chunks, dependency-lock cleanup and deeper war AI remain on the roadmap.

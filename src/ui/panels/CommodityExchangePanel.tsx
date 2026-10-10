@@ -166,7 +166,7 @@ export function CommodityExchangePanel() {
               {spec.physical && <LimitBar label="Strategic storage" used={preview.storageUsed} limit={preview.storageCapacity} format={units} />}
             </div>
             {preview.reasons.length > 0 && quantity > 0 && <ul className="cx-reasons">{preview.reasons.map((r) => <li key={r}><LocaleText value={r} /></li>)}</ul>}
-            <button className={`cx-submit ${side}`} disabled={!preview.allowed} onClick={openReview}><LocaleText value={side === 'buy' ? 'Review purchase' : 'Review sale'} /></button>
+            <button className={`cx-submit ${side}`} data-blocked={!preview.allowed} onClick={openReview}><LocaleText value={side === 'buy' ? 'Review purchase' : 'Review sale'} /></button>
           </div>
         </div>
       </div>
@@ -195,6 +195,7 @@ export function CommodityExchangePanel() {
         ) : <p><LocaleText value="No exchange holdings yet. Physical purchases join your strategic reserve; national consumption can draw them down." /></p>}
         {totals.daily > 0 && <p className="cx-note"><LocaleText value="Storage cost per day" />: <b>{money(totals.daily)}</b></p>}
       </section>
+      {review && <ReviewDialog {...review} onCancel={() => setReview(null)} onConfirm={(commandId) => { review.execute(commandId); setReview(null); }} />}
     </section>
   );
 }

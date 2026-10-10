@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.90.0-playtest.2 — Market & window hotfix
+Implementation and validation: **Codex**. Branch: `dev/clear-command-090`. Save schema stays 17.
+
+- Restore the missing Commodity Exchange review dialog. Both allowed and blocked orders open a review; blocked orders list the engine reasons and cannot be confirmed. Successful purchases use the existing typed command, receipt and duplicate-submit guard.
+- Load Help, Supply, credit and industrial-contract panels with the startup graph instead of fetching these frequently used panels when clicked. Other lazy panels keep bounded retries and local recovery. Floating loading indicators, scroll-free focus restoration and a non-scrolling root prevent tool transitions from moving the page.
+- Fit draggable tool frames between visible rails, including resize and dragging. Right-side tools start beside the right rail; mobile Map/Help buttons stack vertically to leave room for content. Confirmation and national-decision dialogs remain centred. Mobile market icons sit above wrapped labels so long credit titles stay inside their buttons.
+- Move the single national shortcut below the top-right flag, with country, regime, visible opening hint and selected state. Tutorial targeting and its five-language budget lesson follow this shortcut.
+- Use **Türkiye**, **North Macedonia** and **Eswatini** in country data. Known historical names in existing saves refresh without changing IDs or custom names; setup search accepts Turkey/Turkiye and Macedonia aliases. Names checked against [UN membership](https://www.un.org/en/about-us/member-states) and [Türkiye's UN record](https://www.un.org/en/about-us/member-states/turkiye).
+- Give the supplier finder a separate title/description column, replace the credit section's outline icon with treasury artwork, increase national-event option titles and consequences, and remove Help's obsolete 0.83 label.
+
+Validation: **578 unit tests / 73 files**, TypeScript and production build passed. **Six focused scenarios passed against the Vite development server**, including blocked/successful purchase reviews, desktop/mobile rail clearance, zero page scrolling on Supply/Help transitions, flag state and old-save naming, credit/contracts/Help without click-time downloads and readable decision options. All 90 production-preview browser scenarios passed (7.7m); final mobile-menu layout rechecked in nine focused scenarios (50.7s). StackBlitz itself is not directly exercised; the eager panels increase startup loading, while charts and larger optional windows remain deferred. No dependency or simulation-balance changes.
+
 ## 0.90.0-playtest.1 — Clear Command
 Implementation, QA reconciliation and validation: **Codex**. Branch: `dev/clear-command-090`. Save schema remains 17. User-supplied Antigravity report reviewed against current code; report authorship does not imply implementation authorship.
 
