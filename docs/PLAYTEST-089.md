@@ -1,10 +1,10 @@
-# 0.89.0-playtest.5 — Research & readiness clarity
+# 0.89.0-playtest.6 — Window flow & diplomatic recovery
 
 Branch: `dev/trade-markets-089`. Base: 0.88.0-playtest.1. Source: playtest feedback (finding trade partners, a commodity exchange, aircraft on the map, more graphics).
 
 ## Checks run
 
-- Previous playtest.4 GitHub CI on `dev/trade-markets-089` passed: Vitest unit suites, `tsc --noEmit`, production build and the Playwright browser scenarios.
+- Previous playtest.5 GitHub CI on `dev/trade-markets-089` passed: Vitest unit suites, `tsc --noEmit`, production build and the Playwright browser scenarios.
 - New unit suites: `flights089` (distances, travel days, delivery on arrival, pruning, caps, saves), `tradeOptions089` (tier ranking, block reasons and next steps, per-country buy/sell lists, advisor preference), `commodityExchange089` (determinism, mean reversion, shocks and decay, spread/fee/impact/freight against the preview, limits, cargo delivery, storage, P&L and settlement, AI trades, saves), `flightHooks089` (goodwill on arrival, one cargo flight per new deal plus monthly flights, AI flight limit, great-circle helpers).
 - Headless measurements: two-year exchange run with 30 shocks (21 news, 5 war, 4 events); measured daily volatility food 2.3%, oil 2.6%, gold 0.9%; median tick 17–21 ms (18.4 ms without the exchange). Strategy results over 5 worlds × 365 days: random trading −$0.21B, stockpiling food and selling into a spike −$0.10B on average (wins only when a spike comes), buying below the fundamental and selling above it +$0.83B.
 
@@ -56,3 +56,14 @@ Validation: 548 unit tests (including the 365-day invariant), TypeScript and pro
 5. Read [audit progress](AUDIT-PROGRESS-089.md) for remaining scopes. Phases 1–3 are historical deliveries; Phase 4 is only partly addressed. Save schema remains 17 and gameplay balance is unchanged.
 
 Validation: 554 unit tests, including the 365-day invariant, TypeScript and production build, and all 65 Playwright browser scenarios passed locally. All five languages were tested at 1440px and 390px; desktop/mobile research and blocked-war screenshots were inspected. GitHub CI runs separately on push.
+
+## Window/recovery patch 0.89.0-playtest.6 (Codex)
+
+1. Select another country → TRADE. The Trade Desk label and country name should be on separate lines, with relations/cargo below. Check narrow/mobile layouts too.
+2. Open DIPLO with one interrupted panel download: it retries automatically. If all fetches fail, the recovery window should retain the HUD and live campaign. Restore connectivity and click Try again; the inbox should open. Close returns to command without resetting the profile.
+3. In DIPLO, open Review proposal. Tab/Shift+Tab should cycle within the review; Escape closes that review and restores focus to its trigger. A second Escape closes the inbox and returns focus to the DIPLO rail button. Repeat commander menu → portrait picker.
+4. Select 3×, confirm a proposal and read its result receipt: speed stays paused until the receipt closes, then returns to 3×. A national event or other engine blocker must still hold the clock.
+5. Run all ten tutorial lessons at desktop/mobile widths. The lesson dock and command/review close controls must remain separate and clickable. Tutorial controls remain in the keyboard cycle during a lesson.
+6. Drag a floating window and resize the desktop: the close header should remain on screen. National events require a choice; Escape must not close another window behind them.
+
+Validation: 555 unit tests, including the 365-day invariant, TypeScript and production build passed. All 72 Playwright browser scenarios passed locally; desktop/mobile trade and tutorial screenshots were inspected. GitHub CI runs separately on push. Existing schema-17 saves remain compatible.

@@ -1,3 +1,4 @@
+import {useWindowLifecycle,WINDOW_LAYERS} from '../windows/useWindowLifecycle';
 import {retryImport} from '../retryImport';
 import {calculateSupplyNetwork} from '../../engine/systems/supplyNetwork';
 import {pilotCoverage,academyFor} from '../../engine/systems/governance';
@@ -28,35 +29,7 @@ export function WarTheatreModal() {
     if (fresh) s.openWarWindow(fresh.id);
   }, [s.wars]);
   const w = s.warWindowId ? s.wars[s.warWindowId] : null;
-  useEffect(() => {
-    if (!w) return;
-    const previous = document.activeElement as HTMLElement | null;
-    const onKey = (e: KeyboardEvent) => {
-      if (document.querySelector('.review-dialog')) return;
-      if (e.key === "Escape") s.openWarWindow(null);
-      if (e.key === "Tab") {
-        const buttons = Array.from(
-            (dialog.current?.querySelectorAll<HTMLButtonElement>(
-              "button:not(:disabled)",
-            ) ?? []),
-          ),
-          first = buttons.filter(b=>b.offsetParent!==null)[0],
-          last = buttons.filter(b=>b.offsetParent!==null).at(-1);
-        if (e.shiftKey && document.activeElement === first) {
-          e.preventDefault();
-          last?.focus();
-        } else if (!e.shiftKey && document.activeElement === last) {
-          e.preventDefault();
-          first?.focus();
-        }
-      }
-    };
-    document.addEventListener("keydown", onKey);
-    return () => {
-      document.removeEventListener("keydown", onKey);
-      previous?.focus();
-    };
-  }, [w?.id]);
+  useWindowLifecycle(dialog,{onClose:()=>s.openWarWindow(null),layer:WINDOW_LAYERS.modal,enabled:!!w});
   useEffect(()=>setTacticalView(!!w?.tactical),[w?.id]);
   if (!w) return null;
   const a = s.countries[w.attackerId],
@@ -69,6 +42,7 @@ export function WarTheatreModal() {
     <div className="war-theatre-backdrop">
       <section
         ref={dialog}
+        tabIndex={-1}
         className="war-theatre"
         role="dialog"
         aria-modal="true"

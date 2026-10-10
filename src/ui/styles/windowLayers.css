@@ -1,0 +1,27 @@
+/* Page-level layers. Local icon/progress layers retain their own small indices. */
+:root {
+ --layer-hud:100;--layer-dossier:200;--layer-workspace:300;
+ --layer-command:600;--layer-modal:650;--layer-review:700;--layer-nested:750;
+ --layer-tutorial:800;--layer-entry:10000;
+}
+.command-rail,.map-camera-hud,.topbar,.sitrep {z-index:var(--layer-hud);}
+.command-panel {z-index:var(--layer-dossier);}
+.floating-command-window,.left-command-dock.map-command-dock {z-index:var(--layer-workspace);}
+.command-window-backdrop {z-index:var(--layer-command);}
+.player-options-backdrop,.war-theatre-backdrop,.integration-overlay,.event-backdrop,.advisor-backdrop,.economic-advice-backdrop {z-index:var(--layer-modal);}
+.review-backdrop,.strategic-decision-backdrop {z-index:var(--layer-review);}
+.avatar-picker-backdrop,.campaign-confirm-backdrop,.victory-backdrop {z-index:var(--layer-nested);}
+.guided-tutorial {z-index:var(--layer-tutorial);}
+.guided-tutorial .guided-card {z-index:1;}
+.entry-backdrop {z-index:var(--layer-entry);}
+.panel-load-error pre {white-space:pre-wrap;overflow-wrap:anywhere;padding:12px;border-radius:8px;background:#14222c;font-size:12px;max-height:180px;overflow:auto;}
+.panel-load-error button {padding:10px 14px;margin:8px 8px 0 0;border:1px solid #bda36d;background:#293f44;border-radius:8px;color:#f5ddaa;cursor:pointer;}
+.panel-loading {padding:16px;color:#e0d1b0;}
+/* Reading a lesson and its window must not compete for the same bottom corner. */
+body:has(.tutorial-docked) :is(.command-window-backdrop,.strategic-decision-backdrop) {padding:16px 16px 220px;}
+body:has(.tutorial-docked) :is(.command-window,.strategic-decision-modal) {max-height:calc(100dvh - 260px);}
+
+/* Bound the complete frame; only its content scrolls. Legacy forced body heights cannot push the header off screen. */
+.command-window {display:flex;flex-direction:column;}
+.command-window-header {flex-shrink:0;}
+.command-window-body {min-height:0;flex:1;max-height:none;overflow:auto;}

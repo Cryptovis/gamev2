@@ -96,3 +96,16 @@
 .contract-duration{margin:14px 0}.contract-duration>small{display:block;margin-bottom:8px;color:var(--muted)}.contract-duration>div{display:flex;gap:8px;flex-wrap:wrap}.contract-duration button{padding:9px 16px;border:1px solid #64737a;border-radius:8px;background:#17262d;color:#e2edf0;cursor:pointer}.contract-duration button[aria-pressed="true"]{border-color:#e4c78a;background:#3a3427;color:#ffe5ad}.review-dialog button:disabled{opacity:.45;cursor:not-allowed}
 
 .supply-contract-review .review-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.supply-contract-review .contract-duration button{padding:8px 9px}.supply-contract-review footer{position:sticky;bottom:0;background:#20343b;z-index:1;padding-top:12px;border-top:1px solid #64737a}.supply-contract-review .review-notes p{font-size:13px;line-height:1.45}
+/* Explicit country header: title block above a separate facts row, even in the narrow dossier. */
+.command-panel .trade-desk .trade-country-hero {
+ display:grid;grid-template-columns:54px minmax(0,1fr);gap:14px;align-items:center;text-align:left;
+}
+.trade-country-hero .trade-desk-title {display:grid;gap:5px;min-width:0;text-align:left;}
+.trade-country-hero .trade-desk-title small {display:block;font-size:10px;letter-spacing:.1em;line-height:1.4;}
+.trade-country-hero .trade-desk-title strong {display:block;font-size:20px;line-height:1.25;overflow-wrap:anywhere;}
+.trade-country-hero .trade-desk-title p {font-size:12px;line-height:1.5;margin:0;}
+.trade-country-hero .trade-desk-facts {grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:16px;border-top:1px solid #52636a;padding-top:12px;}
+.trade-country-hero .trade-desk-facts small {font-size:9px;}
+.trade-country-hero .trade-desk-facts b {font-size:15px;}
+.trade-country-hero .trade-desk-facts em {font-size:11px;}
+.trade-country-hero > button {grid-column:1/-1;justify-self:start;max-width:100%;white-space:normal;}

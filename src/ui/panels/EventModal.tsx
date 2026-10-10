@@ -1,3 +1,5 @@
+import {ManagedDialog} from '../windows/ManagedDialog';
+import {WINDOW_LAYERS} from '../windows/useWindowLifecycle';
 import {LocaleText} from '../../i18n/localeText';
 import { useGameStore } from '../../store/gameStore';
 import { EventArtwork } from '../events/EventArtwork';
@@ -9,8 +11,8 @@ export function EventModal(){
  const event=useGameStore(s=>s.activeEvent);
  const resolveEvent=useGameStore(s=>s.resolveEvent);
  if(!event)return null;
- return <div className="event-backdrop"><section className="event-modal event-modal-v2">
+ return <div className="event-backdrop"><ManagedDialog className="event-modal event-modal-v2" label={event.title} layer={WINDOW_LAYERS.modal}>
   <div className="event-art"><EventArtwork kind={event.kind}/><div className="event-art-shade"/><span><LocaleText value={EVENT_LABEL[event.kind]??EVENT_CATALOGUE[event.kind]?.label??'NATIONAL EVENT'}/></span><b><LocaleText value={"DAY "}/><LocaleText value={event.triggeredDay}/></b></div>
   <div className="event-copy"><div className="panel-kicker"><LocaleText value={"NATIONAL DECISION REQUIRED"}/></div><h2><LocaleText value={event.title}/></h2><p><LocaleText value={event.description}/></p><div className="event-options">{event.options.map((o,i)=><button key={o.id} onClick={()=>resolveEvent(o.id)}><em><LocaleText value={"OPTION "}/><LocaleText value={String(i+1).padStart(2,'0')}/></em><strong><LocaleText value={o.label}/></strong><span><LocaleText value={o.consequenceHint}/></span></button>)}</div></div>
- </section></div>;
+ </ManagedDialog></div>;
 }

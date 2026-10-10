@@ -241,17 +241,17 @@ export function CountryTradeDesk({ country }: { country: CountryState }) {
   const goodLead = (o: TradeOption) => <AssetThumbnail asset={o.good} size={34} />;
   const goodTitle = (o: TradeOption) => <LocaleText value={goodLabel(o.good)} />;
   return <section className="trade-desk">
-    <header className="trade-desk-hero">
+    <header className="trade-desk-hero trade-country-hero">
       <CivicArt kind="trade" size={46} />
-      <span>
+      <div className="trade-desk-title">
         <small><LocaleText value="TRADE DESK" /></small>
         <strong><LocaleText value={country.name} /></strong>
         <p className={desk.hasPact ? 'trade-reason open' : 'trade-reason ' + (desk.pactStep === 'propose_pact' ? 'near' : 'closed')}><LocaleText value={desk.pactReason} /></p>
-      </span>
-      <span className="trade-desk-facts">
+      </div>
+      <div className="trade-desk-facts">
         <span><small><LocaleText value="RELATIONS" /></small><b><LocaleText value={desk.relationIndex} /><LocaleText value="/100" /></b><Meter value={desk.relationIndex} tone={desk.relationIndex < 20 ? 'red' : 'cyan'} mark={20} label="Relations" /></span>
         <span><small><LocaleText value="CARGO" /></small><b><LocaleText value={desk.travelDays} /><LocaleText value=" days" /></b><em><LocaleText value={desk.distanceKm.toLocaleString()} /><LocaleText value=" km" /></em></span>
-      </span>
+      </div>
       {desk.pactStep === 'propose_pact' && <button className="trade-action step-propose_pact" onClick={() => actions.proposePact(country)}><LocaleText value="PROPOSE TRADE PACT" /></button>}
       {(desk.pactStep === 'improve_relations' || desk.pactStep === 'pact_pending') && <button className="trade-action" onClick={() => state.navigate('diplomacy', country.id)}><LocaleText value="OPEN DIPLOMACY" /></button>}
     </header>

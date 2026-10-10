@@ -1,4 +1,4 @@
-# 0.83 audit reconciliation — 0.89.0-playtest.5
+# 0.83 audit reconciliation — 0.89.0-playtest.6
 
 Maintained by **Codex**, against `dev/trade-markets-089`. The [original audit](AUDIT-0.83.md) remains a historical record authored by Claude. Its line numbers and counts describe 0.83, not the current source. This is a source/test reconciliation, not a new full-file security audit or a repeat of every historical multi-year experiment.
 
@@ -11,7 +11,9 @@ Maintained by **Codex**, against `dev/trade-markets-089`. The [original audit](A
 | Phase 2: B9 and E1–E5 | 0.88; `aiWar088`, `politics088`, `eventsVictory088`. AI wars, defender path, political crises, event chains and victory exist. These remain foundations, not final game balance. |
 | Phase 3: F first slice, B5/B8 | 0.85–0.86; `tactical085`, `tactical086`: sized grid, schema-17 migration, symmetric terrain/depots, group contact/losses, action timeline, battle RNG and playback. B9 arrived in 0.88. See [0.85](PLAYTEST-085.md) and [0.86](PLAYTEST-086.md). |
 | G2/G9 critical fixes | `WorldMap` is memoized and geometry errors show retry; `EconomicTrends` updates the existing chart. This does not prove every subscription or rendering path is optimal. |
-| War/research clarity and part of G3 | This patch: visible shared-engine war block reason; readable disabled confirmation; research cards with branch art, exact saved/cost/missing points and prerequisites; shared research duration/progress/refund previews. Cancellation and integration reuse the same refund helper. No cost, capacity or fuel threshold change. |
+| War/research clarity and part of G3 | Playtest.5: visible shared-engine war block reason; readable disabled confirmation; research cards with branch art, exact saved/cost/missing points and prerequisites; shared research duration/progress/refund previews. Cancellation and integration reuse the same refund helper. No cost, capacity or fuel threshold change. |
+
+Playtest.6 also fixes the narrow country trade header and wraps CommandRails lazy panels in local, retryable boundaries. A persistent inbox download failure leaves the campaign mounted; a fresh lazy loader and unique retry URL allow recovery after connectivity returns.
 
 ## Still open or only partially addressed
 
@@ -19,8 +21,8 @@ Maintained by **Codex**, against `dev/trade-markets-089`. The [original audit](A
 |---|---|---|
 | G3 | Research previews covered here; other windows still contain forecasts/formulas | Move remaining supply/investment/population/top-bar forecasts to engine previews, with command-parity tests. |
 | G4 / G8 | New strings reviewed in all five languages; multiple catalogues still eagerly imported | Build an explicit duplicate/override inventory, then consolidate and lazy-load by language without losing saved news translations. Do not claim all old translations have been linguistically reviewed. |
-| G5 | `html.lang` updates; strategic/review dialogs manage focus individually | Shared modal lifecycle for remaining windows, keyboard country navigation, and keyboard regression coverage. |
-| G6 | Scoped styles added without new `!important`; existing layering debt remains | Central z-index tokens and an incremental CSS layer migration, preserving tutorial and nested-dialog ordering. |
+| G5 | `html.lang` updates. Shared lifecycle now covers command/floating windows, reviews, strategic decisions, war, commander/portrait, advisors and events; nested Escape/Tab/focus and receipt pause tested | Migrate remaining specialized integration/victory/campaign-end surfaces and add keyboard country navigation. |
+| G6 | Page-level z-index tokens delivered; conflicting forced z-indices removed; tutorial space reserved for command/strategic windows. Local child layers remain independent | Continue the legacy CSS cascade / `@layer` migration and remaining specialized overlays. |
 | G7 | Unused-asset cleanup previously delivered; map texture conversion remains | Measure and convert the globe raster with image sampling checks. |
 | H1 | Lockfile still has the `lightningcss-wasm` alias; of 71 non-root package records, 47 lack `resolved` and `integrity` | Regenerate and verify on native Node, then verify StackBlitz separately. This patch preserves the existing dependency graph and changes only root version records. |
 | H4 | New research view is readable; many older engine files remain dense | Format one touched module at a time. Keep formatting commits separate from rule changes. |

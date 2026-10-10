@@ -1,7 +1,8 @@
+import {useWindowLifecycle,WINDOW_LAYERS} from '../windows/useWindowLifecycle';
 import {reviewVisualKind} from '../icons/ReviewVisual';
 import {LocaleText,translateLive} from '../../i18n/localeText';
 import { createPortal } from 'react-dom';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { canAutoApprove, type StrategicDecisionSpec, type StrategicActionKind } from '../../domain/interaction';
 import { flagEmoji } from '../../data/countryThemes';
 import { useGameStore } from '../../store/gameStore';
@@ -22,39 +23,17 @@ export function StrategicDecisionModal({
  onCancel,
 }:{spec:StrategicDecisionSpec;onConfirm:()=>void;onCancel:()=>void}){
  const state=useGameStore();
- const speedAtOpen=useRef(state.speed);
  const dialogRef=useRef<HTMLElement>(null);
- const cancelRef=useRef(onCancel);
- cancelRef.current=onCancel;
  const submitted=useRef(false);
- useEffect(()=>{
-  const previous=document.activeElement as HTMLElement|null;
-  const dialog=dialogRef.current;
-  dialog?.querySelector<HTMLButtonElement>('button')?.focus();
-  const keydown=(event:KeyboardEvent)=>{
-   if(event.key==='Escape'){event.preventDefault();event.stopPropagation();cancelRef.current();}
-   if(event.key!=='Tab'||!dialog)return;
-   const controls=Array.from(dialog.querySelectorAll<HTMLElement>('button:not(:disabled),input:not(:disabled),[tabindex="0"]'));
-   const first=controls[0],last=controls[controls.length-1];
-   if(event.shiftKey&&(document.activeElement===first||!dialog.contains(document.activeElement))){event.preventDefault();last?.focus();}
-   else if(!event.shiftKey&&(document.activeElement===last||!dialog.contains(document.activeElement))){event.preventDefault();first?.focus();}
-  };
-  document.addEventListener('keydown',keydown,true);
-  return ()=>{document.removeEventListener('keydown',keydown,true);if(previous?.isConnected)previous.focus();};
- },[]);
+ useWindowLifecycle(dialogRef,{onClose:onCancel,layer:WINDOW_LAYERS.review,pause:true});
  const player=state.countries[state.playerCountryId];
  const target=state.countries[spec.targetCountryId];
  const [autoApprove,setAutoApprove]=useState(false);
- useEffect(()=>{
-  const resume=speedAtOpen.current;
-  if(resume!==0)state.setSpeed(0);
-  return ()=>{const current=useGameStore.getState();if(resume!==0&&!current.activeAdvisor&&!current.activeEvent&&!current.world.tutorial.active)current.setSpeed(resume);};
- },[]);
  if(!player||!target)return null;
 
  const tone=spec.tone??'neutral';
  const node=<div className="strategic-decision-backdrop" onMouseDown={onCancel}>
-  <section ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="strategic-decision-title" className={'strategic-decision-modal tone-'+tone} onMouseDown={e=>e.stopPropagation()}>
+  <section ref={dialogRef} tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby="strategic-decision-title" className={'strategic-decision-modal tone-'+tone} onMouseDown={e=>e.stopPropagation()}>
    <aside className="strategic-decision-visual">
     <div className="strategic-decision-emblem"><DecisionVisual kind={spec.kind}/></div>
     <div className="strategic-decision-flags"><span><LocaleText value={flagEmoji(player.iso2)}/></span><i><LocaleText value={"→"}/></i><span><LocaleText value={flagEmoji(target.iso2)}/></span></div>

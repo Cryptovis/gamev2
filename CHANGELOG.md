@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.89.0-playtest.6 — Window flow & diplomatic recovery
+Implementation and validation: **Codex**. Branch: `dev/trade-markets-089`. Save schema stays 17.
+
+- Fix the country Trade Desk hero: separate title lines and a full-width relations/cargo row, with readable font sizes and wrapped country names.
+- Extend transient module retries to all lazy panels in CommandRails, including DiplomaticPost. Keep module selection after the raw import so cache-busted named exports remain valid. Persistent panel errors get a local recovery window; manual retry recreates the rejected React.lazy loader and uses fresh retry URLs. The root campaign stays mounted. Programming errors remain visible and no page reload is forced.
+- Share focus restoration, keyboard cycling, top-window Escape and bounded stacking across command/floating windows, reviews, strategic decisions, war, commander/portrait dialogs, advisor and economic advice, and national events. Mandatory events cannot be dismissed with Escape; their choices stay keyboard-accessible.
+- Nested reviews keep one pause owner across confirmation → receipt and resume the prior speed only after the final owner and engine blockers release.
+- Centralize page-level z-index tokens, remove conflicting forced command/avatar z-index overrides, reserve tutorial space for command/strategic windows, keep command headers on screen while content scrolls, and clamp dragged windows after resizing. Full legacy CSS cascade migration and remaining specialized windows are still open audit work.
+- New recovery text is translated in all five languages. No gameplay balance or dependency graph changes.
+
+Validation: 555 unit tests, including the 365-day invariant, TypeScript and production build passed. All 72 Playwright browser scenarios passed locally; desktop/mobile trade and tutorial screenshots were inspected. GitHub CI runs separately on push.
+
 ## 0.89.0-playtest.5 — Research & readiness clarity
 Implementation and validation: **Codex**. Branch: `dev/trade-markets-089`. Save schema stays 17.
 

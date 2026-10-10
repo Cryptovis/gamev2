@@ -2,7 +2,7 @@ import { Component, Fragment, type ErrorInfo, type ReactNode } from 'react';
 import { LocaleText } from '../i18n/localeText';
 
 interface Action { label: string; onClick: () => void }
-interface Props { children: ReactNode; title: string; actions?: Action[] }
+interface Props { children: ReactNode; title: string; actions?: Action[]; fallback?: (error:Error)=>ReactNode }
 interface State { error: Error | null; attempt: number }
 
 /**
@@ -23,6 +23,7 @@ export class ErrorBoundary extends Component<Props, State> {
   render() {
     const { error, attempt } = this.state;
     if (!error) return <Fragment key={attempt}>{this.props.children}</Fragment>;
+    if (this.props.fallback) return this.props.fallback(error);
     return (
       <div className="error-boundary" role="alert" data-testid="error-boundary">
         <h3><LocaleText value={this.props.title} /></h3>

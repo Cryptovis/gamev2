@@ -28,3 +28,5 @@ import "./ui/styles/setupScreen.css";
 import "./ui/styles/commodityExchange.css";
 
 import "./ui/styles/researchReadiness.css";
+
+import "./ui/styles/windowLayers.css";

@@ -1,3 +1,5 @@
+import {ManagedDialog} from '../windows/ManagedDialog';
+import {WINDOW_LAYERS} from '../windows/useWindowLifecycle';
 import { useGameStore } from "../../store/gameStore";
 import { LocaleText } from "../../i18n/localeText";
 import { living } from "../../engine/systems/livingEconomy";
@@ -48,7 +50,7 @@ export function EconomicAdvice() {
   const d = advice[kind];
   return (
     <div className="economic-advice-backdrop">
-      <section className="economic-advice" role="dialog" aria-modal="true">
+      <ManagedDialog className="economic-advice" label={d.title} onClose={()=>s.dismissAdvice(kind)} layer={WINDOW_LAYERS.modal}>
         <small>
           <LocaleText value="CABINET RECOMMENDATION" />
         </small>
@@ -78,7 +80,7 @@ export function EconomicAdvice() {
         <small>
           <LocaleText value="No spending occurs here. Review and confirm any action on the next screen. Restore warnings from Help." />
         </small>
-      </section>
+      </ManagedDialog>
     </div>
   );
 }

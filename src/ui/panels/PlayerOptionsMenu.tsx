@@ -1,3 +1,5 @@
+import {ManagedDialog} from '../windows/ManagedDialog';
+import {WINDOW_LAYERS} from '../windows/useWindowLifecycle';
 import {retryFailedImages} from '../icons/reliableImage';
 import {activeCountries} from '../../domain/sovereignty';
 import {LocaleText,translateLive} from '../../i18n/localeText';
@@ -33,7 +35,7 @@ export function PlayerOptionsMenu({onClose}:{onClose:()=>void}){
 
  const node=<>
   <div className="player-options-backdrop" onMouseDown={onClose}>
-   <section className="player-options-modal" onMouseDown={e=>e.stopPropagation()}>
+   <ManagedDialog className="player-options-modal" label="National Command" onClose={onClose} layer={WINDOW_LAYERS.modal}>
     <header className="player-options-header">
      <div><small><LocaleText value={"COMMANDER / CAMPAIGN"}/></small><h2><LocaleText value={"National Command"}/></h2><p><LocaleText value={"Manage your profile and current campaign without cluttering the strategic HUD."}/></p></div>
      <button className="player-options-close" onClick={onClose} aria-label={translateLive("Close commander menu")}><LocaleText value={"×"}/></button>
@@ -79,11 +81,11 @@ export function PlayerOptionsMenu({onClose}:{onClose:()=>void}){
       </footer>
      </div>
     </div>
-   </section>
+   </ManagedDialog>
   </div>
 
   {avatarOpen&&<AvatarPicker onClose={()=>setAvatarOpen(false)}/>}
-  {confirmNew&&<div className="campaign-confirm-backdrop" onMouseDown={()=>setConfirmNew(false)}><section className="campaign-confirm-card" onMouseDown={e=>e.stopPropagation()}><small><LocaleText value={"NEW CAMPAIGN"}/></small><h3><LocaleText value={"Leave the current command?"}/></h3><p><LocaleText value={"Your current campaign is not deleted, but the active session will return to the campaign setup screen. Save first if you want to keep this state."}/></p><div><button onClick={()=>setConfirmNew(false)}><LocaleText value={"CANCEL"}/></button><button className="danger" onClick={()=>{resetGame();setConfirmNew(false);onClose();}}><LocaleText value={"START NEW CAMPAIGN"}/></button></div></section></div>}
+  {confirmNew&&<div className="campaign-confirm-backdrop" onMouseDown={()=>setConfirmNew(false)}><ManagedDialog className="campaign-confirm-card" label="Leave the current command?" onClose={()=>setConfirmNew(false)} layer={WINDOW_LAYERS.nested}><small><LocaleText value={"NEW CAMPAIGN"}/></small><h3><LocaleText value={"Leave the current command?"}/></h3><p><LocaleText value={"Your current campaign is not deleted, but the active session will return to the campaign setup screen. Save first if you want to keep this state."}/></p><div><button onClick={()=>setConfirmNew(false)}><LocaleText value={"CANCEL"}/></button><button className="danger" onClick={()=>{resetGame();setConfirmNew(false);onClose();}}><LocaleText value={"START NEW CAMPAIGN"}/></button></div></ManagedDialog></div>}
  </>;
 
  return typeof document==='undefined'?node:createPortal(node,document.body);

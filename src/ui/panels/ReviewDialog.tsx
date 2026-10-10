@@ -1,5 +1,6 @@
+import {useWindowLifecycle,WINDOW_LAYERS} from '../windows/useWindowLifecycle';
 import {LocaleText,translateLive} from '../../i18n/localeText';
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { createPortal } from "react-dom";
 import { useGameStore } from "../../store/gameStore";
 import {ReviewVisual,reviewVisualKind,type ReviewVisualKind} from '../icons/ReviewVisual';
@@ -34,56 +35,13 @@ export function ReviewDialog({
 } & ReviewContent) {
   const ref = useRef<HTMLElement>(null),
     submitted = useRef(false),
-    commandId=useRef(crypto.randomUUID()),
-    cancel = useRef(onCancel);
-  cancel.current = onCancel;
-  useEffect(() => {
-    const s = useGameStore.getState(),
-      speed = s.speed,
-      previous = document.activeElement as HTMLElement | null;
-    s.setSpeed(0);
-    ref.current?.querySelector<HTMLButtonElement>("button")?.focus();
-    const key = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        e.preventDefault();
-        cancel.current();
-      }
-      if (e.key === "Tab") {
-        const controls = Array.from(
-            ref.current?.querySelectorAll<HTMLButtonElement>(
-              "button:not(:disabled)",
-            ) ?? [],
-          ),
-          first = controls[0],
-          last = controls[controls.length - 1];
-        if (e.shiftKey && document.activeElement === first) {
-          e.preventDefault();
-          last?.focus();
-        } else if (!e.shiftKey && document.activeElement === last) {
-          e.preventDefault();
-          first?.focus();
-        }
-      }
-    };
-    document.addEventListener("keydown", key);
-    return () => {
-      document.removeEventListener("keydown", key);
-      const now = useGameStore.getState();
-      if (
-        speed &&
-        now.speed === 0 &&
-        !now.activeAdvisor &&
-        !now.activeEvent &&
-        !now.world.tutorial.active
-      )
-        now.setSpeed(speed);
-      if (previous?.isConnected) previous.focus();
-    };
-  }, []);
+    commandId=useRef(crypto.randomUUID());
+  useWindowLifecycle(ref,{onClose:onCancel,layer:WINDOW_LAYERS.review,pause:true});
   return createPortal(
     <div className="review-backdrop">
       <section
         ref={ref}
+        tabIndex={-1}
         role="dialog"
         aria-modal="true"
         aria-label={translateLive(title)}

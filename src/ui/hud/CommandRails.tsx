@@ -1,33 +1,34 @@
+import {recoverableLazy} from '../windows/recoverableLazy';
 import {useWorldView} from '../../store/useWorldView';
-const CreditWindow=lazy(()=>import('../panels/CreditWindow').then(m=>({default:m.CreditWindow})));
-const CommodityExchangePanel=lazy(()=>import('../panels/CommodityExchangePanel').then(m=>({default:m.CommodityExchangePanel})));
+const CreditWindow=recoverableLazy(()=>import('../panels/CreditWindow'),m=>m.CreditWindow,'CreditWindow');
+const CommodityExchangePanel=recoverableLazy(()=>import('../panels/CommodityExchangePanel'),m=>m.CommodityExchangePanel,'CommodityExchangePanel');
 import {activeCountries} from '../../domain/sovereignty';
 import {money} from '../formatMoney';
 import {GuideBriefing} from '../panels/GuideBriefing';
 import {CampaignVictoryProgress} from './CampaignVictoryProgress';
-const DomesticWindow=lazy(()=>import('../panels/DomesticWindow').then(m=>({default:m.DomesticWindow})));
-const DiplomaticPost=lazy(()=>import('../panels/DiplomaticPost').then(m=>({default:m.DiplomaticPost})));
+const DomesticWindow=recoverableLazy(()=>import('../panels/DomesticWindow'),m=>m.DomesticWindow,'DomesticWindow');
+const DiplomaticPost=recoverableLazy(()=>import('../panels/DiplomaticPost'),m=>m.DiplomaticPost,'DiplomaticPost');
 import {living} from '../../engine/systems/livingEconomy';
 import {CivicArt} from '../icons/CivicArt';
 import {CommandArt} from '../icons/CommandArt';
 import {LocaleText,translateLive} from '../../i18n/localeText';
-const ResearchWindow=lazy(()=>import('../panels/ResearchWindow').then(m=>({default:m.ResearchWindow})));
-const InvestmentWindow=lazy(()=>import('../panels/InvestmentWindow').then(m=>({default:m.InvestmentWindow})));
-const GovernanceWindow=lazy(()=>import('../panels/GovernanceWindow').then(m=>({default:m.GovernanceWindow})));
-const HelpPanel=lazy(()=>import('../panels/HelpPanel').then(m=>({default:m.HelpPanel})));
+const ResearchWindow=recoverableLazy(()=>import('../panels/ResearchWindow'),m=>m.ResearchWindow,'ResearchWindow');
+const InvestmentWindow=recoverableLazy(()=>import('../panels/InvestmentWindow'),m=>m.InvestmentWindow,'InvestmentWindow');
+const GovernanceWindow=recoverableLazy(()=>import('../panels/GovernanceWindow'),m=>m.GovernanceWindow,'GovernanceWindow');
+const HelpPanel=recoverableLazy(()=>import('../panels/HelpPanel'),m=>m.HelpPanel,'HelpPanel');
 import {NavigationArt} from '../icons/NavigationArt';
 import {AircraftGlyph} from '../icons/AircraftIcons';
 import {newsFlightKind} from '../../map/flightPresentation';
 /** 0.89: diplomatic and trade news lines carry a small jet or freighter icon. */
 function NewsFlightIcon({message}:{message:string}){const kind=newsFlightKind(message);return kind?<span className="news-flight-icon"><AircraftGlyph kind={kind} size={13}/></span>:null;}
-import {lazy,Suspense,useEffect, useMemo, useState, type ReactNode } from 'react';
+import {Suspense,useEffect, useMemo, useState, type ReactNode } from 'react';
 import { MARKET_RESOURCES, getMarketBoard, resourceReserveDays, resourceStrategicStatus } from '../../store/marketSelectors';
 import { useGameStore } from '../../store/gameStore';
 import { BlocIcon, CouncilIcon, DiplomacyIcon, EmbassyIcon, IntelligenceIcon, ResourceIcon, TreasuryIcon, WorldIcon } from '../icons/GameIcons';
 import { DraggableWindow } from '../windows/DraggableWindow';
 import { MapModeBar } from './MapModeBar';
-const IndustrialMarketPanel=lazy(()=>import('../panels/IndustrialMarketPanel').then(m=>({default:m.IndustrialMarketPanel})));
-const ResourceCommandWindow=lazy(()=>import('../panels/ResourceCommandWindow').then(m=>({default:m.ResourceCommandWindow})));
+const IndustrialMarketPanel=recoverableLazy(()=>import('../panels/IndustrialMarketPanel'),m=>m.IndustrialMarketPanel,'IndustrialMarketPanel');
+const ResourceCommandWindow=recoverableLazy(()=>import('../panels/ResourceCommandWindow'),m=>m.ResourceCommandWindow,'ResourceCommandWindow');
 
 type ToolId='objectives'|'market'|'pulse'|'map'|'resources'|'sitrep'|'alerts'|'diplomacy';
 

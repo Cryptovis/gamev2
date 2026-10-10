@@ -1,3 +1,4 @@
+let retryUrlSequence=0;
 /** Retry a brief module fetch failure without reloading the campaign or hiding programming errors. */
 export async function retryImport<T>(load:()=>Promise<T>,wait:(ms:number)=>Promise<void>=ms=>new Promise(resolve=>setTimeout(resolve,ms)),moduleName?:string):Promise<T> {
   let failedUrl:URL|undefined;
@@ -5,7 +6,7 @@ export async function retryImport<T>(load:()=>Promise<T>,wait:(ms:number)=>Promi
     try {
       // Browsers can cache a failed module request. A new URL gives a known panel one fresh fetch.
       if(failedUrl) {
-        const url=new URL(failedUrl);url.searchParams.set('trp-retry',String(attempt));
+        const url=new URL(failedUrl);url.searchParams.set('trp-retry',String(++retryUrlSequence));
         return await import(/* @vite-ignore */ url.href) as T;
       }
       return await load();

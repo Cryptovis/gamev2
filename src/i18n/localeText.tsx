@@ -1,3 +1,4 @@
+import {UI_CATALOG_089_L} from './uiCatalog089L';
 import {UI_CATALOG_FLOW} from './uiCatalogFlow083';
 import {UI_CATALOG_087_A} from './uiCatalog087A';
 import {UI_CATALOG_087_B} from './uiCatalog087B';
@@ -64,6 +65,7 @@ for (const language of languages) {
   // Reviewed supply/war wording also replaces old machine-translated contract notices.
   for(const [key,values] of Object.entries(UI_CATALOG_089_J))entries.set(catalogKey(key),values[index]);
   for(const [key,values] of Object.entries(UI_CATALOG_089_K))entries.set(catalogKey(key),values[index]);
+  for(const [key,values] of Object.entries(UI_CATALOG_089_L))entries.set(catalogKey(key),values[index]);
   const countries = new Intl.DisplayNames([language], { type: "region" });
   for (const c of WORLD_COUNTRY_SEEDS)
     entries.set(c.name.toLowerCase(), countries.of(c.iso2) ?? c.name);
