@@ -6,7 +6,7 @@ for(const active of [true,false])test(`relation map preserves colors with active
  s.tradeDeals={trade:{id:'trade',sellerId:'FRA',buyerId:'TUR',resource:'food',quantityPerDay:1,pricePerUnit:.01,active}};
  s.industrialContracts={contract:{id:'contract',sellerId:'TUR',buyerId:'DEU',good:'steel',quantity:1,price:.01,nextDeliveryDay:30,expiresDay:365,active,missedDeliveries:0}};
  s.embassies={france:{id:'france',countryA:'TUR',countryB:'FRA',openedDay:1,level:1},spain:{id:'spain',countryA:'ESP',countryB:'TUR',openedDay:1,level:1}};
- s.countries.TUR.diplomacy.relations.DEU.treaties=[];
+ s.countries.TUR.diplomacy.relations.DEU={score:0,status:'neutral',treaties:[],sanctions:false};
  await resumeFixture(page,s);
  const country=(name:string)=>page.locator('.country-shape').filter({has:page.locator('title',{hasText:new RegExp(`^${name}$`)})}).first();
  await expect(country('France')).toHaveAttribute('fill',active?'#4ca775':'#599fc9');

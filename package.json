@@ -1,7 +1,7 @@
 {
   "name": "alpyx-global-command",
   "private": true,
-  "version": "0.90.0-playtest.6",
+  "version": "0.90.0-playtest.7",
   "type": "module",
   "scripts": {
     "dev": "vite",

@@ -1,3 +1,4 @@
+import {applyDiplomacySnapshot} from './diplomacySnapshot';
 import type { CountryState } from '../domain/game';
 import { countryStateSchema } from '../domain/gameSchema';
 import { WORLD_COUNTRY_SEEDS } from './worldCountryCatalog';
@@ -38,20 +39,4 @@ function build(seed: (typeof WORLD_COUNTRY_SEEDS)[number]): CountryState {
 const list = WORLD_COUNTRY_SEEDS.map(build);
 const countries = Object.fromEntries(list.map((country) => [country.id, country]));
 
-function setRelation(a: string, b: string, score: number) {
-  if (!countries[a] || !countries[b]) return;
-  const status = score >= 65 ? 'ally' : score >= 20 ? 'friendly' : score <= -50 ? 'hostile' : 'neutral';
-  countries[a].diplomacy.relations[b] = { score, status, treaties: [], sanctions: false };
-  countries[b].diplomacy.relations[a] = { score, status, treaties: [], sanctions: false };
-}
-
-// A small set of authored relations seeds gameplay; all other bilateral relations begin neutral and are created lazily.
-setRelation('TUR','GRC',8); setRelation('TUR','BGR',24); setRelation('TUR','GEO',35); setRelation('TUR','ARM',5);
-setRelation('TUR','AZE',62); setRelation('TUR','IRN',12); setRelation('TUR','IRQ',18); setRelation('TUR','SYR',-18);
-setRelation('TUR','RUS',4); setRelation('TUR','UKR',20); setRelation('TUR','DEU',32); setRelation('TUR','USA',30);
-if (countries.TUR?.diplomacy.relations.BGR && countries.BGR?.diplomacy.relations.TUR) {
-  countries.TUR.diplomacy.relations.BGR.treaties.push('trade');
-  countries.BGR.diplomacy.relations.TUR.treaties.push('trade');
-}
-
-export const initialCountries = countries;
+export const initialCountries = applyDiplomacySnapshot(countries);

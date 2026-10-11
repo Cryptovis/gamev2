@@ -99,3 +99,7 @@ Manual route: nation → Tech → Investments → close → Cabinet → Affairs 
 - Three-year connection scan median ~0.89 ms versus ~0.016 ms including index build. Supply timing varies; no universal startup/menu/camera speedup is claimed. No direct StackBlitz run; compatible saves continue without a new campaign. V3 is not declared.
 
 Manual route: continue an existing save → Map → Relations → move/zoom the map; Supply → expand/collapse extra suppliers with mouse and Enter → open a route/review → close back to Supply. Existing playtest.5 window-return behavior is preserved.
+
+## 0.90.0-playtest.7 — Command intelligence (Codex)
+
+Compact independent buy/sell forms, national alert categories and populated opening news. Offline source-linked contemporary diplomacy and Relations map colors; existing saves are not reseeded. See [sources/coverage](DIPLOMACY-SNAPSHOT-0907.md). 621 unit tests / 78 files (including the 365-day invariant), TypeScript and production build passed. Full production browser run: 127/128 passed (17.1m); the sole failure was an obsolete mobile rail-exposure expectation, updated for expanded Alerts. All 9 affected desktop/mobile scenarios passed again (1.4m), covering all 128 unique scenarios. Final mobile screenshots were inspected. Exact-head remote CI is checked after publication; actual StackBlitz testing was not performed. Broader bilateral research and actual StackBlitz/device checks remain follow-ups. V3 remains the complete-playability milestone.

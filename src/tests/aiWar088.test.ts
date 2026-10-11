@@ -166,6 +166,8 @@ describe('0.88 allies join the defender (audit E5)', () => {
   /** Türkiye (player) attacks Greece; Bulgaria is allied to Greece. Seed 0 makes the first join roll 0.24 (< 0.8). */
   function alliedDefender() {
     let s = makeInitialState();
+    // Isolate this authored coalition from real-world opening alliances.
+    for (const country of Object.values(s.countries)) country.diplomacy.relations = {};
     s = addTreaty({ ...s, simulationSeed: 0 }, 'GRC', 'BGR', 'alliance');
     return s;
   }

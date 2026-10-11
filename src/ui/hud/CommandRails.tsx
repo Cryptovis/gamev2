@@ -17,10 +17,8 @@ import {GovernanceWindow} from '../panels/GovernanceWindow';
 // Keep Help available even when later lazy panel downloads fail.
 import {HelpPanel} from '../panels/HelpPanel';
 import {NavigationArt} from '../icons/NavigationArt';
-import {AircraftGlyph} from '../icons/AircraftIcons';
-import {newsFlightKind} from '../../map/flightPresentation';
-/** 0.89: diplomatic and trade news lines carry a small jet or freighter icon. */
-function NewsFlightIcon({message}:{message:string}){const kind=newsFlightKind(message);return kind?<span className="news-flight-icon"><AircraftGlyph kind={kind} size={13}/></span>:null;}
+import {CommandAlerts,CommandNews} from '../panels/CommandIntelligence';
+import {commandAlerts,newsEntries} from '../../store/commandIntelligence';
 import {Suspense,useEffect, useMemo, useState, type ReactNode } from 'react';
 import { MARKET_RESOURCES, getMarketBoard, resourceReserveDays, resourceStrategicStatus } from '../../store/marketSelectors';
 import { useGameStore } from '../../store/gameStore';
@@ -69,8 +67,8 @@ export function CommandRails(){
   <nav className={`command-rail command-rail-right ${state.selectedCountryId?'country-open':'country-closed'}`} aria-label={translateLive("Information tools")}>
    <RailButton active={open.has('objectives')} badge={`${done}/6`} label="GOALS" onClick={()=>toggle('objectives')}><NavigationArt kind="objectives"/></RailButton>
    <RailButton active={open.has('diplomacy')} badge={living(state).letters.filter(m=>!m.read).length+state.leadership.messages.filter(m=>!m.read).length} label="DIPLOMACY" onClick={()=>toggle('diplomacy')}><NavigationArt kind="diplomacy"/></RailButton>
-   <RailButton active={open.has('alerts')} badge={critical.length} label="ALERTS" onClick={()=>toggle('alerts')}><NavigationArt kind="alerts"/></RailButton>
-   <RailButton active={open.has('sitrep')} badge={state.sitrep.length} label="NEWS" onClick={()=>toggle('sitrep')}><NavigationArt kind="intel"/></RailButton>
+   <RailButton active={open.has('alerts')} badge={commandAlerts(state).length} label="ALERTS" onClick={()=>toggle('alerts')}><NavigationArt kind="alerts"/></RailButton>
+   <RailButton active={open.has('sitrep')} badge={newsEntries(state).length} label="NEWS" onClick={()=>toggle('sitrep')}><NavigationArt kind="intel"/></RailButton>
   </nav>
 
   <nav className="command-rail map-help-cluster" aria-label={translateLive("Map and help tools")}>
@@ -101,12 +99,7 @@ export function CommandRails(){
    <div className="diplomatic-offer-list">{offers.length?offers.map(offer=>{const sender=state.countries[offer.senderId];return <article key={offer.id}><header><b><LocaleText value={sender?.iso2??'--'}/></b><span><small><LocaleText value={offer.type==='embassy'?'EMBASSY EXCHANGE':'TRADE FRAMEWORK'}/></small><strong><LocaleText value={sender?.name??offer.senderId}/></strong></span><em><LocaleText value={"D"}/><LocaleText value={offer.expiresDay-state.day}/></em></header><p><LocaleText value={offer.message}/></p><div><button onClick={()=>state.resolveDiplomaticOffer(offer.id,false)}><LocaleText value={"DECLINE"}/></button><button className="primary" onClick={()=>state.resolveDiplomaticOffer(offer.id,true)}><LocaleText value={"ACCEPT"}/></button></div></article>}):null}</div>
   </DraggableWindow>}
 
-  {mounted.has('alerts')&&<DraggableWindow id="alerts-window" kicker="NATIONAL SECURITY" title={translateLive("Resource Alerts")} initialX={window.innerWidth-560} initialY={175} width={500} onClose={()=>close('alerts')}>
-   <div className="resource-alert-list">{MARKET_RESOURCES.map(resource=>{const status=resourceStrategicStatus(player,resource),days=resourceReserveDays(player,resource);return <div key={resource} className={status==='CRITICAL'?'critical':''}><ResourceIcon resource={resource} size={22}/><span><strong><LocaleText value={resource.toUpperCase()}/></strong><small><LocaleText value={status}/></small></span><em><LocaleText value={days>365?'365+':Math.max(0,days).toFixed(0)}/><LocaleText value={" DAYS"}/></em></div>})}</div>
-  </DraggableWindow>}
-
-  {mounted.has('sitrep')&&<DraggableWindow id="sitrep-window" kicker="COMMAND CHANNEL" title={translateLive("News Archive")} initialX={window.innerWidth-600} initialY={220} width={540} onClose={()=>close('sitrep')}>
-   <div className="sitrep-archive">{(state.world.journal??state.sitrep.map((message,i)=>({id:String(i),message,day:state.day}))).map(entry=><div key={entry.id}><b><LocaleText value="Day"/> {entry.day}</b><span><NewsFlightIcon message={entry.message}/><LocaleText value={entry.message}/></span></div>)}</div>
-  </DraggableWindow>}
+  {mounted.has('alerts')&&<DraggableWindow expanded id="alerts-window" kicker="COMMAND CHANNEL" title={translateLive("National Alerts")} initialX={window.innerWidth-640} initialY={175} width={580} onClose={()=>close('alerts')}><CommandAlerts/></DraggableWindow>}
+  {mounted.has('sitrep')&&<DraggableWindow expanded id="sitrep-window" kicker="COMMAND CHANNEL" title={translateLive("News Archive")} initialX={window.innerWidth-680} initialY={170} width={620} onClose={()=>close('sitrep')}><CommandNews/></DraggableWindow>}
  </Suspense>;
 }

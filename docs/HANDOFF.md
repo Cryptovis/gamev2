@@ -1,5 +1,12 @@
 # Devir notu (yeni konuşma için)
 
+## 0.90.0-playtest.7 — Codex
+
+- Open Market alış/satış sütunları ve bağımsız miktarlar; kaynak/finans/güvenlik/iç politika/diplomasi uyarıları; başlangıç özeti ve boş journal düzeltmesi.
+- Kaynaklı çağdaş başlangıç diplomasisi; Türkiye–Azerbaycan 90/ittifak. [Kapsam ve kaynaklar](DIPLOMACY-SNAPSHOT-0907.md). Mevcut kayıtlar korunur; yeni diplomasi başlangıcı yeni oyunda geçerlidir.
+- Önceki çalışma ortamı kesintiden sonra .6 görüntüsüne geri döndü: yayınlanmamış ilk .7 değişiklikleri/logları kayboldu. Dört istek yeniden uygulandı; önceki test sonuçları bu çalışma için kullanılmaz.
+- Son kodda 621 birim testi/78 dosya (365 gün invariant dahil), TypeScript/build geçti. Tam tarayıcı turu 127/128 (17,1 dk); tek hata eski mobil rail beklentisiydi, düzeltildi. Son mobil Market CSS düzeltmesi dahil etkilenen 9 test yeniden geçti (1,4 dk); 128 benzersiz senaryo doğrulandı. Son görseller incelendi. CI yayın HEAD’i üzerinden kontrol edilir; gerçek StackBlitz testi yapılmadı. Şema 17, bağımlılıklar aynı; V3 kesinleştirilmedi.
+
 ## 0.90.0-playtest.6 — Codex
 
 - Kullanıcının seçtiği kapsam: performans ölçümü. 1/366/1096. gün gerçek seeded kayıtlarıyla motor, save, açılış, menü ve kamera ölçümleri; komutlar ve sonuçlar [performans kaydında](PERFORMANCE-0906.md).
@@ -17,8 +24,8 @@
 Bu dosya yeni bir konuşmanın ilk okuması içindir. Geçmiş konuşmayı taşımadan kaldığımız yerden devam etmeyi sağlar.
 
 ## Durum
-- Sürüm: **0.90.0-playtest.6 "Measured performance"**
-- Dal: `dev/clear-command-090`. Kaynak: 0.89.7 (`8322a3f`). Başlangıç GitHub HEAD: `4d3d564d5921dac391a9fc9769e1105f9e47f938` (0.90.4), CI başarılı (38086841276; 600 birim/111 tarayıcı testi). Playtest.5 GitHub HEAD `2adaceba` ve CI 38095471126 completed/success olarak doğrulandı. Playtest.6 CI sonucu yayın commit’i üzerinden ayrıca doğrulanır.
+- Sürüm: **0.90.0-playtest.7 "Command intelligence"**
+- Dal: `dev/clear-command-090`. Kaynak: 0.89.7 (`8322a3f`). Başlangıç GitHub HEAD: `4d3d564d5921dac391a9fc9769e1105f9e47f938` (0.90.4), CI başarılı (38086841276; 600 birim/111 tarayıcı testi). Playtest.5 GitHub HEAD `2adaceba` ve CI 38095471126 completed/success olarak doğrulandı. Playtest.6 GitHub HEAD `44f03ca86aac053e06f15309361a99a1af2cddca`; CI 38119416063 completed/success olarak doğrulandı.
 - `main`'e doğrudan push yok. Yeni işler `dev/<name>-0XX` dallarında yapılır.
 - 0.90.4 (Codex): menüler başlangıçta yüklenir; Tech → Investments, Military → Pilot training; okunur Supply ve sözleşme boşluğu; sola bitişik üç World sıralaması. Kredi: bayraklar, tüm ülkelerde AAA–D, üç oyun günü başvuru, ilişki/risk retleri, hedefli 3 yıllık can simidi, erken ödeme ve sınırlı kredi geçmişi ödülü. Şema 17 yeni opsiyonel alanlarla korunur; bağımlılıklar değişmez. 600 birim testi/TypeScript/derleme geçti. 111 üretim senaryosu doğrulandı: tam tur 108 geçti, eski seçici/atlas varsayımına takılan 3 test düzeltildikten sonra 3/3 tekrar geçti. Ayrıntılar PLAYTEST-090 kaydında. Gerçek StackBlitz testi yapılmadı.
 - Önceki 0.90.3: alış/satış makbuzunda gerçek ödeme, hazine, yoldaki yük ve T+1 satış geliri; 5 sütunlu stok kartları, tek satırlı sözleşme alanları, 2 satırlı ürün seçimi, gereksiz World prices kaldırıldı. Policies vergi onayını ve mevcut bakanlık bütçesi erişimini toplar. 582 test/derleme ve 98 üretim tarayıcı senaryosu geçti; son odaklı kontroller ve sonuçlar [0.90 test kaydında](PLAYTEST-090.md). Üretim dengesi/şema/bağımlılıklar değişmedi.

@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.90.0-playtest.7 — Command intelligence
+Implementation and validation: **Codex**. Branch: `dev/clear-command-090`. Save schema 17 and dependencies unchanged.
+
+- Compact two-column Open Market on desktop; stacked mobile layout, independent purchase/sale quantities and existing engine review/receipt flows.
+- National Alerts filters resources, finance, security, domestic politics and diplomacy with icons, severity and contextual inspection. Presentation thresholds do not change engine rules.
+- News has an actual campaign briefing and history. Empty journal no longer hides starting messages; untimestamped messages do not acquire a fabricated current date.
+- Source-linked offline starting diplomacy: NATO alliances, EU economic integration, regional cooperation and selected bilateral allies/rivals. Numeric scores are authored game estimates, not official ratings. Existing saves are preserved; contemporary scenario data is not a reconstruction of January 2026. [Coverage and sources](docs/DIPLOMACY-SNAPSHOT-0907.md).
+- Relations map adds alliance/friendly/hostile colors while preserving active-trade and embassy precedence. Isolate authored coalition/map tests from opening alliances. CI job budget increases to 20 minutes for the expanded browser suite.
+
+Validation: 621 unit tests / 78 files (including the 365-day invariant), TypeScript and production build passed. Full production browser run: 127/128 passed (17.1m); the sole failure was an obsolete mobile rail-exposure expectation, updated for expanded Alerts. All 9 affected desktop/mobile scenarios passed again (1.4m), covering all 128 unique scenarios. Final mobile screenshots were inspected. Exact-head remote CI is checked after publication; actual StackBlitz testing was not performed. V3 remains conditional on complete playability.
+
 ## 0.90.0-playtest.6 — Measured performance
 Implementation and validation: **Codex**. Branch: `dev/clear-command-090`. Save schema 17, simulation rules and dependencies unchanged.
 

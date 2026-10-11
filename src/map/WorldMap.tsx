@@ -123,7 +123,7 @@ function WorldMapView() {
     const relation = player?.diplomacy.relations[country.id];
     const controlled = country.controllerCountryId === player?.id;
     if (mapMode === 'political') return country.id === player?.id || controlled ? '#d9ad48' : stablePoliticalColor(country.id);
-    if (mapMode==='relations'){if(country.id===player.id)return '#edc570';return connections?.tradePartners.has(id)?'#4ca775':connections?.embassyPartners.has(id)?'#599fc9':relation?.treaties.includes('nonAggression')?'#ac82cb':relation?.treaties.includes('trade')?'#ccab5d':'#526f80';}
+    if (mapMode==='relations'){if(country.id===player.id)return '#edc570';return connections?.tradePartners.has(id)?'#4ca775':connections?.embassyPartners.has(id)?'#599fc9':relation?.treaties.includes('nonAggression')?'#ac82cb':relation?.treaties.includes('trade')?'#ccab5d':relation?.treaties.includes('alliance')?'#77c7b5':(relation?.score??0)<=-50?'#ce7075':(relation?.score??0)>=20?'#8fbc8b':'#526f80';}
     if (mapMode === 'diplomacy') return country.id === player?.id ? '#d9ad48' : relation?.status === 'ally' ? '#3aa9ba' : relation?.status === 'friendly' ? '#4c936c' : relation?.status === 'hostile' || relation?.status === 'war' ? '#ad4952' : '#50616f';
     if (mapMode === 'resources') {
       const stock = country.resources.food + country.resources.oil * 1.7 + country.resources.iron + country.resources.uranium * 12;
@@ -392,7 +392,7 @@ function WorldMapView() {
       <strong><LocaleText value={hoveredCountry?.name ?? selectedCountry?.name ?? 'WORLD COMMAND'}/></strong>
       <span><LocaleText value={hoveredCountry ? `${hoveredCountry.region || 'Global'} · ${hoveredCountry.military.assessment.capability.toFixed(0)} MIL` : projectionMode === 'globe' ? 'drag globe · wheel zoom · click sovereign territory' : 'drag to pan · wheel zoom · click sovereign territory'}/></span>
     </div>
-    {mapMode==='relations'&&<div className="connections-legend"><span>● <LocaleText value="Active trade"/></span><span>● <LocaleText value="Embassy"/></span><span>● <LocaleText value="Non-aggression"/></span><span>● <LocaleText value="Trade pact"/></span><small><LocaleText value="A country may have several connections; select it to inspect all agreements."/></small></div>}
+    {mapMode==='relations'&&<div className="connections-legend"><span>● <LocaleText value="Active trade"/></span><span>● <LocaleText value="Embassy"/></span><span>● <LocaleText value="Non-aggression"/></span><span>● <LocaleText value="Trade pact"/></span><span>● <LocaleText value="Alliance treaty"/></span><span>● <LocaleText value="Friendly relations"/></span><span>● <LocaleText value="Hostile relations"/></span><small><LocaleText value="A country may have several connections; select it to inspect all agreements."/></small></div>}
     <p id="map-keyboard-help" className="map-keyboard-hint"><LocaleText value="Arrow keys: move · + / −: zoom · Home: your country · Enter: open country"/></p>
     <svg tabIndex={0} role="group" aria-describedby="map-keyboard-help" onKeyDown={e=>{
       if(e.target!==e.currentTarget||e.altKey||e.ctrlKey||e.metaKey)return;

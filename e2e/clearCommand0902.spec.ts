@@ -6,14 +6,14 @@ test('exchange purchase review opens, confirms once, and explains a blocked orde
  await page.getByRole('button',{name:'Review purchase',exact:true}).click();await expect(page.getByRole('dialog',{name:'Review exchange purchase'})).toBeVisible();await expect(page.locator('[data-guide="review-confirm"]')).toBeEnabled();await page.locator('[data-guide="review-confirm"]').click();await expect(page.locator('.review-confirmation')).toHaveCount(0);await expect(page.locator('.review-result')).toBeVisible();await page.locator('.review-result [data-guide="review-dismiss"]').first().click();
  await page.getByRole('spinbutton',{name:'Exchange order quantity'}).fill('0');await page.getByRole('button',{name:'Review purchase',exact:true}).click();await expect(page.locator('.review-dialog')).toBeVisible();await expect(page.locator('[data-guide="review-confirm"]')).toBeDisabled();await expect(page.locator('.review-notes')).not.toBeEmpty();
 });
-for(const width of [1440,390])test(`${width}px tool windows leave rails exposed and opening Supply/Help never scrolls the page`,async({page})=>{
+for(const width of [1440,390])test(`${width}px compact tool windows preserve rails; expanded mobile windows fit and never scroll the page`,async({page})=>{
  await page.setViewportSize({width,height:900});await resumeFixture(page,campaignFixture('en'));
  await page.evaluate(()=>{(window as any).scrollSamples=[];document.addEventListener('scroll',()=>{(window as any).scrollSamples.push([window.scrollX,window.scrollY]);},true);});
  for(const [guide,selector] of [['supply','#resource-command-window'],['help','#help-window'],['alerts','#alerts-window'],['market','#market-window']]){
   await page.locator(`[data-guide="rail-${guide}"]`).click();await expect(page.locator(selector)).toBeVisible();
   const frame=await page.locator(selector).boundingBox(),left=await page.locator('.command-rail-left').boundingBox(),right=await page.locator('.map-help-cluster').boundingBox();
   if(guide==='market')for(const button of await page.locator('.section-menu button').all()){const b=await button.boundingBox(),label=await button.locator('.section-menu-label').boundingBox();expect(label!.x).toBeGreaterThanOrEqual(b!.x);expect(label!.x+label!.width).toBeLessThanOrEqual(b!.x+b!.width);}
-  if(width<=760&&['supply','market'].includes(guide)){expect(frame!.x).toBe(12);expect(frame!.width).toBe(width-24);}else{expect(frame!.x).toBeGreaterThanOrEqual(left!.x+left!.width+8);const dock=await page.locator('.command-rail-right').boundingBox();expect(frame!.x+frame!.width).toBeLessThanOrEqual((dock?.x??width)-8);}
+  if(width<=760&&['supply','market','alerts'].includes(guide)){expect(frame!.x).toBe(12);expect(frame!.width).toBe(width-24);}else{expect(frame!.x).toBeGreaterThanOrEqual(left!.x+left!.width+8);const dock=await page.locator('.command-rail-right').boundingBox();expect(frame!.x+frame!.width).toBeLessThanOrEqual((dock?.x??width)-8);}
   await expect(page.locator('[data-testid="error-boundary"]')).toHaveCount(0);await page.keyboard.press('Escape');
  }
  expect(await page.evaluate(()=>({y:window.scrollY,samples:(window as any).scrollSamples}))).toEqual({y:0,samples:[]});

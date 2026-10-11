@@ -40,3 +40,5 @@ import "./ui/styles/marketPolicies0903.css";
 import "./ui/styles/commandCredit0904.css";
 
 import "./ui/styles/commandWindows0905.css";
+
+import "./ui/styles/commandIntelligence0907.css";

@@ -25,6 +25,7 @@ export function OpenExchange() {
     p = s.countries[s.playerCountryId],
     [good, setGood] = useState<ExchangeGood>("gold"),
     [quantity, setQuantity] = useState(1),
+    [saleQuantity, setSaleQuantity] = useState(1),
     [ask, setAsk] = useState(0),
     [bankQty, setBankQty] = useState(0.1),
     [review, setReview] = useState<
@@ -91,6 +92,8 @@ export function OpenExchange() {
           <LocaleText value="Requires components, factories, technology and daily production time. Imported vehicles require strong relations, a trade pact and alliance." />
         </p>
       )}
+      <div className="exchange-columns">
+      <section className="exchange-buy" aria-label={translateLive("Buy from sellers")}><h4><LocaleText value="Buy from sellers"/></h4>
       <label>
         <LocaleText value="Quantity" />
         <input
@@ -164,10 +167,12 @@ export function OpenExchange() {
           </p>
         )}
       </div>
-      <section className="listing-form">
+      </section>
+      <section className="exchange-sell" aria-label={translateLive("Sell from reserves")}><section className="listing-form">
         <h4>
           <LocaleText value="Sell on the open market" />
         </h4>
+        <label><LocaleText value="Quantity"/><input aria-label={translateLive("Open market sale quantity")} type="number" min=".001" max="100000" step=".1" value={saleQuantity} onChange={e=>setSaleQuantity(Math.max(.001,Number(e.target.value)||.001))}/></label>
         <label>
           <LocaleText value="Ask per unit (USD)" />
           <input
@@ -183,7 +188,7 @@ export function OpenExchange() {
         </label>
         <strong>{money(price)}</strong>
         <button
-          disabled={quantity > exportableStock(s, p.id, good)}
+          disabled={saleQuantity > exportableStock(s, p.id, good)}
           onClick={() =>
             setReview({
               title: "Publish sale listing",
@@ -191,11 +196,11 @@ export function OpenExchange() {
                 "Goods move into reserved inventory for up to 60 days. Cancel to return unsold stock. The asking price does not guarantee a buyer.",
               metrics: [
                 ["Product", label(good)],
-                ["Reserved quantity", quantity.toFixed(3)],
+                ["Reserved quantity", saleQuantity.toFixed(3)],
                 ["Ask per unit", money(price)],
-                ["Potential proceeds", money(quantity * price)],
+                ["Potential proceeds", money(saleQuantity * price)],
               ],
-              execute: (commandId) => s.postListing(good, quantity, price, commandId),
+              execute: (commandId) => s.postListing(good, saleQuantity, price, commandId),
             })
           }
         >
@@ -233,6 +238,7 @@ export function OpenExchange() {
           </article>
         ))}
       </div>
+      </section></div>
       {vault && (
         <section className="gold-vault">
           <AssetThumbnail asset="gold" size={64} />
