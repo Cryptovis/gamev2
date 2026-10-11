@@ -103,3 +103,12 @@ Manual route: continue an existing save → Map → Relations → move/zoom the 
 ## 0.90.0-playtest.7 — Command intelligence (Codex)
 
 Compact independent buy/sell forms, national alert categories and populated opening news. Offline source-linked contemporary diplomacy and Relations map colors; existing saves are not reseeded. See [sources/coverage](DIPLOMACY-SNAPSHOT-0907.md). 621 unit tests / 78 files (including the 365-day invariant), TypeScript and production build passed. Full production browser run: 127/128 passed (17.1m); the sole failure was an obsolete mobile rail-exposure expectation, updated for expanded Alerts. All 9 affected desktop/mobile scenarios passed again (1.4m), covering all 128 unique scenarios. Final mobile screenshots were inspected. Exact-head remote CI is checked after publication; actual StackBlitz testing was not performed. Broader bilateral research and actual StackBlitz/device checks remain follow-ups. V3 remains the complete-playability milestone.
+
+
+## 0.90.0-playtest.8 — Compact workspaces (Codex)
+
+Compact commander HUD and World rankings with ten visible rows and scroll access to every country; denser Supply cards, a readable Trade Desk hero, illustrated Society and Infrastructure workspaces. Existing parent-return and reviewed investment flows are preserved. Save schema 17, simulation rules and dependencies unchanged.
+
+622 unit tests / 79 files, TypeScript and production build passed. All 8 final focused production-browser scenarios passed (2.2m), covering 390/1440/2048 px, five languages, all ranking pages, Supply readability, Society/Infrastructure and parent/review return. The local full run was interrupted at scenario 58 after finding two Supply font-size failures and one mobile bottom-padding failure; these real UI issues were corrected and covered by the final focused run. The full 134-scenario suite runs in exact-head GitHub CI after publication. Final desktop/mobile screenshots inspected; actual StackBlitz testing was not performed. V3 remains conditional on complete playability.
+
+Manual route: World → each ranking → scroll past ten countries → country → close; Supply → all resources / one resource → suppliers; nation → Power → Trade / Society → close → Supply command → Infrastructure → review / cancel. Check compact desktop spacing, mobile frame edges and bottom padding. Existing saves require no new campaign.

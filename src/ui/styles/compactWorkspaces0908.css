@@ -1,0 +1,122 @@
+/* Codex: compact workspaces with room for labels, scrolling and the last row. */
+@media(min-width:1101px){
+ .command-overview-island{width:auto;max-width:calc(100% - 420px);gap:10px;padding:8px 10px}
+ .command-overview-island .leader-brand{flex:0 1 180px;gap:8px}
+ .command-overview-island .governance-metrics{flex:0 1 auto;grid-template-columns:repeat(4,max-content)}
+ .governance-metrics .top-metric{padding:4px 9px}
+ .leader-avatar-button .portrait-generated{width:44px!important;height:50px!important}
+}
+#pulse-window .floating-command-header{padding:10px 14px}
+#pulse-window>.floating-command-body{height:auto;padding:12px 14px 20px;overflow:auto;flex:0 1 auto}
+#pulse-window .world-activity{padding:10px 12px;margin:0 0 10px;background:linear-gradient(135deg,#2b3e42,#1c3039);border-color:#b89d685c}
+#pulse-window .world-activity h3{font-size:15px;margin:0 0 8px;color:#ffe2a3}
+#pulse-window .world-activity-stats{gap:6px 12px}
+#pulse-window .world-activity-stats>span{display:flex;align-items:center;justify-content:space-between;gap:7px;font-size:11px;line-height:1.35}
+#pulse-window .world-activity-stats b{font-size:20px}
+#pulse-window .section-menu{gap:6px;padding-bottom:8px}
+#pulse-window .section-menu button{min-height:40px;padding:6px 9px;font-size:11px}
+#pulse-window .section-menu .command-art{width:26px!important;height:26px!important}
+#pulse-window .ranking-summary{padding:8px 0;gap:18px;font-size:12px}
+#pulse-window .data-note{margin:0 0 8px;padding:7px 9px;font-size:11px;line-height:1.4;color:#c5d7dd}
+#pulse-window .ranking-table-wrap{max-height:none;flex-shrink:0;border:1px solid #6d929355;border-radius:8px;scrollbar-gutter:stable;scroll-padding-top:34px}
+#pulse-window .ranking-table{font-size:12px;line-height:22px}
+#pulse-window .ranking-table th,#pulse-window .ranking-table td{padding:5px 8px}
+#pulse-window .ranking-table th{z-index:1;color:#f1dfb9}
+#pulse-window .ranking-table tbody tr:nth-child(even){background:#8eafbb0a}
+#pulse-window .ranking-table .player-row{background:#e5c37222}
+#pulse-window .ranking-table button{padding:0;line-height:22px;max-width:235px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#pulse-window .ranking-table button:hover{color:#ffe1a3}
+#pulse-window .ranking-table-wrap:focus-visible{outline:2px solid #e4c17b;outline-offset:2px}
+#resource-command-window>.floating-command-body{padding:14px 16px 22px;container-type:inline-size}
+#resource-command-window .resource-command-summary{gap:8px}
+#resource-command-window .resource-filter{gap:6px;margin:10px 0}
+#resource-command-window .resource-filter button{flex:0 1 auto;min-width:0;min-height:38px;padding:6px 10px;font-size:11px;letter-spacing:.015em}
+#resource-command-window .resource-command-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;align-items:start}
+#resource-command-window .resource-command-card{min-width:0;padding:11px;border-radius:12px}
+#resource-command-window .resource-command-card>header{gap:7px}
+#resource-command-window .resource-command-card>header .resource-card-values{min-width:0}
+#resource-command-window .resource-command-meta{font-size:11px;gap:8px}
+#resource-command-window .trade-row{padding:7px;grid-template-columns:26px minmax(0,1fr);grid-template-areas:'lead main' 'stats stats' 'action action';gap:6px}
+#resource-command-window .trade-row-main strong{font-size:12px;line-height:1.35}
+#resource-command-window .trade-reason{font-size:11px}
+#resource-command-window .trade-row-stats{gap:6px 10px}
+#resource-command-window .trade-row-stat small{font-size:10px}
+#resource-command-window .trade-row-stat b{font-size:12px}
+#resource-command-window .trade-row-stat em{font-size:10px}
+#resource-command-window .trade-action{justify-self:stretch;min-height:32px;padding:6px 8px}
+#resource-command-window .trade-action-none{display:none}
+@container(min-width:980px){#resource-command-window .resource-command-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@container(max-width:540px){#resource-command-window .resource-command-grid{grid-template-columns:1fr}}
+#resource-command-window .resource-command-grid:has(>article:only-child){grid-template-columns:1fr;max-width:640px}
+.command-window.country-dossier-window{width:min(920px,calc(100vw - 32px))!important}
+.command-window.national-supply-window{width:min(980px,calc(100vw - 32px))!important}
+:is(.country-dossier-window,.national-supply-window) .command-window-header{padding:16px 20px}
+:is(.country-dossier-window,.national-supply-window) .command-window-header h2{font-size:28px}
+:is(.country-dossier-window,.national-supply-window) .command-window-header p{font-size:12px;color:#c4d4da}
+:is(.country-dossier-window,.national-supply-window) .command-window-body{padding:16px 20px 24px}
+:is(.country-dossier-window,.national-supply-window) .command-subtabs{gap:6px;margin-bottom:14px;flex-wrap:wrap}
+:is(.country-dossier-window,.national-supply-window) .command-subtabs button{font-size:11px;min-width:0;min-height:36px;padding:8px 14px;color:#d0dce0;letter-spacing:.035em}
+.trade-desk .trade-shortfall-hero{display:grid;grid-template-columns:46px minmax(0,1fr);text-align:left;gap:12px;padding:12px 14px}
+.trade-shortfall-hero .trade-desk-title{display:grid;gap:5px;min-width:0;text-align:left}
+.trade-shortfall-hero .trade-desk-title small{display:block;font-size:10px;line-height:1.3;color:#ecd291}
+.trade-shortfall-hero .trade-desk-title strong{display:block;font-size:18px;line-height:1.3;white-space:normal}
+.trade-shortfall-hero .trade-desk-title p{margin:0;font-size:12px;line-height:1.5;color:#c5d7de}
+.country-dossier-window .trade-reason{font-size:11px;line-height:1.4}
+.country-dossier-window .trade-row-main strong{font-size:13px}
+.country-dossier-window .trade-row-stat small{font-size:9px;color:#bacfd7}
+.country-dossier-window .trade-row-stat b{font-size:12px}
+.country-dossier-window .trade-row-stat em{font-size:10px;color:#b9cdd5}
+.country-dossier-window .trade-action{font-size:10px;min-height:32px}
+.dossier-society{display:grid;gap:14px}
+.society-identity-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.society-identity-grid article{display:flex;align-items:center;gap:12px;padding:14px;border:1px solid #b7a17255;border-radius:12px;background:linear-gradient(140deg,#304348,#172d36)}
+.society-identity-grid article>span{display:grid;gap:5px;min-width:0}
+.society-identity-grid small{font-size:10px;color:#dac9a6;letter-spacing:.04em}
+.society-identity-grid strong{text-transform:capitalize;font-size:18px;color:#f5eee0}
+.society-composition{padding:14px;border:1px solid #91b0b344;border-radius:12px;background:#1a303b}
+.society-composition h3{margin:0 0 12px;font-size:11px;color:#e5d5b4;letter-spacing:.04em;line-height:1.5}
+.society-composition>div{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:14px}
+.society-composition header,.society-indicators header{display:flex;align-items:center;gap:8px;justify-content:space-between;font-size:12px;color:#dfebed}
+.society-composition header span{text-transform:capitalize}
+.dossier-society progress{display:block;width:100%;height:7px;margin-top:10px;border:0;border-radius:99px;overflow:hidden;appearance:none;background:#0d2632}
+.dossier-society progress::-webkit-progress-bar{background:#0d2632;border-radius:99px}
+.dossier-society progress::-webkit-progress-value{background:linear-gradient(90deg,#599eb2,#d3b571);border-radius:99px}
+.dossier-society progress::-moz-progress-bar{background:#76b5c4;border-radius:99px}
+.society-indicators{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.society-indicators article{padding:12px;border:1px solid #91b0b344;border-radius:10px;background:#1b313d}
+.society-indicators header>span:not(.command-art){flex:1;min-width:0}
+.society-indicators header strong{color:#ffe1a3;font-size:15px}
+.national-supply-window .supply-summary{grid-template-columns:repeat(3,88px) minmax(0,1fr);gap:10px;margin-bottom:14px}
+.national-supply-window .supply-ring{width:80px;height:80px}
+.national-supply-window .supply-ring small{color:#c4d9df;font-size:9px}
+.national-supply-window .supply-bottleneck{padding:12px}
+.national-supply-window .supply-bottleneck small{font-size:10px;color:#d6d7c5}
+.national-supply-window .supply-bottleneck span{font-size:11px;color:#c1d2da}
+.national-supply-window .infrastructure-summary{gap:8px;margin-bottom:12px}
+.national-supply-window .infrastructure-summary small{font-size:10px;color:#d1dfe1}
+.national-supply-window .infrastructure-grid{gap:10px}
+.national-supply-window .infrastructure-grid article{padding:14px;gap:10px;background:linear-gradient(145deg,#203d48,#112832);border-color:#94acae55}
+.national-supply-window .infrastructure-grid header{justify-content:flex-start}
+.national-supply-window .infrastructure-grid header>span{flex:1;min-width:0}
+.national-supply-window .infrastructure-grid header small{font-size:11px;letter-spacing:.02em;color:#d3e1e2}
+.national-supply-window .infrastructure-grid header em{font-size:9px}
+.national-supply-window .infrastructure-grid p{min-height:0;font-size:12px;line-height:1.5;color:#c5d7de}
+.national-supply-window .infrastructure-grid button{min-height:36px;font-size:11px}
+.national-supply-window .infrastructure-grid button small{font-size:10px;color:#e3cca2}
+.national-supply-window .supply-investment-note{font-size:12px;line-height:1.5;color:#c4d7de}
+@media(max-width:760px){
+ #pulse-window .world-activity-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #pulse-window .section-menu{grid-template-columns:1fr}
+ #pulse-window .section-menu button{min-height:36px}
+ .society-identity-grid,.society-indicators,.national-supply-window .infrastructure-grid{grid-template-columns:1fr}
+ .national-supply-window .supply-summary{grid-template-columns:repeat(3,1fr)}
+ .national-supply-window .supply-bottleneck{grid-column:1/-1}
+ :is(.country-dossier-window,.national-supply-window) .command-window-body{padding:12px 14px 22px}
+ .trade-shortfall-hero .trade-desk-title strong{font-size:16px}
+ .infrastructure-art{width:40px;height:40px;flex-shrink:0}
+}
+
+#pulse-window .world-active-wars{max-height:100px;overflow:auto;overscroll-behavior:contain}
+.command-window-backdrop:has(>.country-dossier-window),.command-window-backdrop:has(>.national-supply-window){padding:16px;grid-template-columns:minmax(0,1fr)}
+
+#pulse-window .floating-command-body>.world-activity,#world-ranking-content{flex-shrink:0}

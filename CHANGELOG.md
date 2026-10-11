@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.90.0-playtest.8 — Compact workspaces
+Implementation and validation: **Codex**. Branch: `dev/clear-command-090`.
+
+- Fit the top-left HUD to its contents; remove the oversized brand/metric spacing on desktop.
+- Narrow World to 940 px, compact activities and ranking controls, measure the translated first ten rows for the table viewport. Continue scrolling through all 203 countries; preserve ranking/country return state and bottom padding. Small screens scroll the workspace as needed.
+- Use three Supply resource cards per row when the body has at least 980 px, two at intermediate widths and one on small screens. Compact filters and supplier rows without dropping prices, relations or cargo information.
+- Bound Dossier to 920 px and Supply command to 980 px; keep mobile frames within the viewport. Trade Desk artwork and heading now form a left-aligned title block instead of running together at the right edge.
+- Society separates religious/ideological identity, estimated religious composition and five icon indicators. Infrastructure adds repo-native road, rail, port and hub illustrations with clearer labels and capacity bars; existing reviewed investments are retained.
+- Correct context-specific Power, Delivery and visible supply/society labels in all five languages. Compact commander HUD and World rankings with ten visible rows and scroll access to every country; denser Supply cards, a readable Trade Desk hero, illustrated Society and Infrastructure workspaces. Existing parent-return and reviewed investment flows are preserved. Save schema 17, simulation rules and dependencies unchanged.
+
+Validation: 622 unit tests / 79 files, TypeScript and production build passed. All 8 final focused production-browser scenarios passed (2.2m), covering 390/1440/2048 px, five languages, all ranking pages, Supply readability, Society/Infrastructure and parent/review return. The local full run was interrupted at scenario 58 after finding two Supply font-size failures and one mobile bottom-padding failure; these real UI issues were corrected and covered by the final focused run. The full 134-scenario suite runs in exact-head GitHub CI after publication. Final desktop/mobile screenshots inspected; actual StackBlitz testing was not performed. V3 remains conditional on complete playability.
+
 ## 0.90.0-playtest.7 — Command intelligence
 Implementation and validation: **Codex**. Branch: `dev/clear-command-090`. Save schema 17 and dependencies unchanged.
 

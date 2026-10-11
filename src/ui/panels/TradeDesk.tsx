@@ -226,7 +226,7 @@ export function CountryTradeDesk({ country }: { country: CountryState }) {
   const [years,setYears]=useState<1|3|5|10>(1);
     const needs = MARKET_RESOURCES.filter((r) => ['CRITICAL', 'IMPORT NEED'].includes(resourceStrategicStatus(player, r)));
     return <section className="trade-desk">
-      <header className="trade-desk-hero"><CivicArt kind="trade" size={46} /><span><small><LocaleText value="TRADE DESK" /></small><strong><LocaleText value="Best suppliers for your shortfalls" /></strong><p><LocaleText value="Select another country to see what you can buy from it and sell to it." /></p></span></header>
+      <header className="trade-desk-hero trade-shortfall-hero"><CivicArt kind="trade" size={46} /><span className="trade-desk-title"><small><LocaleText value="TRADE DESK" /></small><strong><LocaleText value="Best suppliers for your shortfalls" /></strong><p><LocaleText value="Select another country to see what you can buy from it and sell to it." /></p></span></header>
       {needs.length ? needs.map((r) => <div key={r} className="trade-desk-section">
         <div className="trade-desk-subhead"><AssetThumbnail asset={r} size={26} /><LocaleText value={RAW_LABEL[r].toUpperCase()} /><em><LocaleText value={resourceStrategicStatus(player, r)} /></em></div>
         <SupplierRanking good={r} limit={3} />

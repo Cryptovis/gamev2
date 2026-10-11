@@ -1,5 +1,6 @@
 import {LocaleText,translateLive} from '../../i18n/localeText';
 import {ReviewDialog} from './ReviewDialog';
+import {InfrastructureIcon} from '../icons/InfrastructureIcon';
 import {AssetThumbnail} from '../icons/AssetThumbnail';
 import { useMemo, useState, type CSSProperties } from 'react';
 import type { CountryState, InfrastructureAsset, WarState } from '../../domain/game';
@@ -29,11 +30,11 @@ export function SupplyCommandWindow({country,war,onClose}:{country:CountryState;
  const frontSupply=war?(war.attackerId===country.id?war.attackerSupply:war.defenderSupply):supply.supplyScore;
  const exhaustion=war?(war.attackerId===country.id?war.attackerExhaustion:war.defenderExhaustion):0;
 
- return <CommandWindow kicker="LOGISTICS / SUPPLY COMMAND" title={translateLive(country.name+' Supply Network')} subtitle={war?terrain.toUpperCase()+' theatre · active front logistics':'National strategic logistics picture'} onClose={onClose} wide>
-  <div className="command-subtabs">{(['network','infrastructure','reserves','front'] as SupplyTab[]).map((id)=><button key={id} className={tab===id?'active':''} onClick={()=>setTab(id)}><LocaleText value={id.toUpperCase()}/></button>)}</div>
+ return <CommandWindow kicker="LOGISTICS / SUPPLY COMMAND" title={`${translateLive(country.name)} · ${translateLive('Supply Network')}`} subtitle={war?terrain.toUpperCase()+' theatre · active front logistics':'National strategic logistics picture'} onClose={onClose} wide className="national-supply-window">
+  <div className="command-subtabs">{(['network','infrastructure','reserves','front'] as SupplyTab[]).map((id)=><button key={id} className={tab===id?'active':''} onClick={()=>setTab(id)}><LocaleText value={id[0].toUpperCase()+id.slice(1)}/></button>)}</div>
 
   <div className="supply-summary">
-   <Ring value={supply.supplyScore} label="DELIVERY"/>
+   <Ring value={supply.supplyScore} label="Delivery"/>
    <Ring value={supply.logisticsEfficiency} label="LOGISTICS"/>
    <Ring value={supply.infrastructure} label="INFRA"/>
    <div className={'supply-bottleneck '+(supply.bottleneck!=='none'?'warning':'')}><small><LocaleText value={"PRIMARY BOTTLENECK"}/></small><strong><LocaleText value={supply.bottleneck.toUpperCase()}/></strong><span><LocaleText value={"Front demand "}/><LocaleText value={supply.frontDemand.toFixed(0)}/><LocaleText value={"/100"}/></span></div>
@@ -62,8 +63,8 @@ export function SupplyCommandWindow({country,war,onClose}:{country:CountryState;
    ] as [InfrastructureAsset,string,number][]).map(([asset,label,value])=>{
     const rule=infrastructureInvestmentRule(asset),cost=infrastructureInvestmentCost(state,country.id,asset);
     const disabled=!isPlayer||(asset==='ports'&&(infra?.ports??0)<=0)||country.economy.treasury<cost||value>=100;
-    return <article key={asset}>
-     <header><span><small><LocaleText value={label.toUpperCase()}/></small><strong><LocaleText value={value.toFixed(0)}/><LocaleText value={"%"}/></strong></span><em><LocaleText value={asset==='ports'&&(infra?.ports??0)<=0?'LANDLOCKED':'ACTIVE'}/></em></header>
+    return <article key={asset} data-infrastructure={asset}>
+     <header><InfrastructureIcon asset={asset}/><span><small><LocaleText value={label.toUpperCase()}/></small><strong><LocaleText value={value.toFixed(0)}/><LocaleText value={"%"}/></strong></span><em><LocaleText value={asset==='ports'&&(infra?.ports??0)<=0?'LANDLOCKED':'ACTIVE'}/></em></header>
      <i><b style={{width:pct(value)+'%'}}/></i>
      <p><LocaleText value={asset==='roads'?'Road quality affects domestic movement and last-mile supply.':asset==='rail'?'Rail capacity supports heavy strategic transport and wartime reinforcement.':asset==='ports'?'Ports support maritime logistics and overseas access.':'Supply hubs organize depots, reserves and front distribution.'}/></p>
      {isPlayer&&<button disabled={disabled} onClick={()=>setInvestment(asset)}><LocaleText value={"INVEST +"}/><LocaleText value={rule.gain}/> <small><LocaleText value={'-'+formatCostB(cost)}/></small></button>}

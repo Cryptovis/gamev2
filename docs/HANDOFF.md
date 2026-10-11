@@ -1,5 +1,13 @@
 # Devir notu (yeni konuşma için)
 
+## 0.90.0-playtest.8 — Codex
+
+- Üst sol HUD içerik kadar geniş; World 940 px, kompakt faaliyetler ve 10 görünür satır. Tüm 203 ülke kaydırmada erişilebilir; sıralama/ülke dönüş durumu ve alt boşluk korunur.
+- Supply yeterli genişlikte 3 sütun, ara genişlikte 2, mobilde 1. Dossier 920 px: ayrı hizalı Trade Desk başlığı, ikonlu Society kimliği ve göstergeleri. Supply command 980 px: yol/demiryolu/liman/depo SVG ikonları ve okunur kartlar. Mobil çerçeveler ekran içinde.
+- Güç/Teslimat ve görünür Society/Supply çevirileri beş dilde düzeltildi. Şema 17, ekonomi/oyun kuralları ve bağımlılıklar değişmedi; mevcut kayıtlar devam eder.
+- 622 unit tests / 79 files, TypeScript and production build passed. All 8 final focused production-browser scenarios passed (2.2m), covering 390/1440/2048 px, five languages, all ranking pages, Supply readability, Society/Infrastructure and parent/review return. The local full run was interrupted at scenario 58 after finding two Supply font-size failures and one mobile bottom-padding failure; these real UI issues were corrected and covered by the final focused run. The full 134-scenario suite runs in exact-head GitHub CI after publication. Final desktop/mobile screenshots inspected; actual StackBlitz testing was not performed. V3 remains conditional on complete playability.
+- Başlangıç GitHub HEAD `87b7c22baa8dbb6db9aba28c0d22cb398c21c1fc` (.7), CI 38144692593 completed/success doğrulandı. Yerel mirror geçmişi farklı: native push/force push yapılmaz.
+
 ## 0.90.0-playtest.7 — Codex
 
 - Open Market alış/satış sütunları ve bağımsız miktarlar; kaynak/finans/güvenlik/iç politika/diplomasi uyarıları; başlangıç özeti ve boş journal düzeltmesi.
@@ -24,7 +32,7 @@
 Bu dosya yeni bir konuşmanın ilk okuması içindir. Geçmiş konuşmayı taşımadan kaldığımız yerden devam etmeyi sağlar.
 
 ## Durum
-- Sürüm: **0.90.0-playtest.7 "Command intelligence"**
+- Sürüm: **0.90.0-playtest.8 "Compact workspaces"**
 - Dal: `dev/clear-command-090`. Kaynak: 0.89.7 (`8322a3f`). Başlangıç GitHub HEAD: `4d3d564d5921dac391a9fc9769e1105f9e47f938` (0.90.4), CI başarılı (38086841276; 600 birim/111 tarayıcı testi). Playtest.5 GitHub HEAD `2adaceba` ve CI 38095471126 completed/success olarak doğrulandı. Playtest.6 GitHub HEAD `44f03ca86aac053e06f15309361a99a1af2cddca`; CI 38119416063 completed/success olarak doğrulandı.
 - `main`'e doğrudan push yok. Yeni işler `dev/<name>-0XX` dallarında yapılır.
 - 0.90.4 (Codex): menüler başlangıçta yüklenir; Tech → Investments, Military → Pilot training; okunur Supply ve sözleşme boşluğu; sola bitişik üç World sıralaması. Kredi: bayraklar, tüm ülkelerde AAA–D, üç oyun günü başvuru, ilişki/risk retleri, hedefli 3 yıllık can simidi, erken ödeme ve sınırlı kredi geçmişi ödülü. Şema 17 yeni opsiyonel alanlarla korunur; bağımlılıklar değişmez. 600 birim testi/TypeScript/derleme geçti. 111 üretim senaryosu doğrulandı: tam tur 108 geçti, eski seçici/atlas varsayımına takılan 3 test düzeltildikten sonra 3/3 tekrar geçti. Ayrıntılar PLAYTEST-090 kaydında. Gerçek StackBlitz testi yapılmadı.
