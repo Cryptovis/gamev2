@@ -1,7 +1,7 @@
 {
   "name": "alpyx-global-command",
   "private": true,
-  "version": "0.90.0-playtest.5",
+  "version": "0.90.0-playtest.6",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -10,7 +10,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "check": "npm run test && npm run build",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "measure:engine": "vitest run --config performance/vitest.config.ts",
+    "measure:browser": "playwright test --config performance/playwright.config.ts"
   },
   "dependencies": {
     "chart.js": "4.5.1",

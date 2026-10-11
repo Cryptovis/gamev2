@@ -166,6 +166,7 @@ function TradeRow({ option, leading, title, maxAvailable, onAction, demand }: { 
  */
 export function SupplierRanking({ good, limit = 4 }: { good: ExchangeGood; limit?: number }) {
   const state = useGameStore();
+  const [showMore,setShowMore]=useState(false);
   const actions = useTradeActions();
   const ranked = useMemo(() => rankSuppliers(state, state.playerCountryId, good), [state.day, state.countries, state.tradeDeals, state.world.living, state.industrialEconomy, state.production, good]);
   const relevant = ranked.filter((o) => o.tier <= 1);
@@ -179,9 +180,9 @@ export function SupplierRanking({ good, limit = 4 }: { good: ExchangeGood; limit
     title={<LocaleText value={state.countries[o.sellerId]?.name ?? o.sellerId} />} />;
   return <div className="trade-ranking">
     {shown.length ? shown.map(row) : <p className="trade-empty"><LocaleText value="No supplier with surplus can trade with you yet. Improve relations or propose a trade pact below." /></p>}
-    {hidden.length > 0 && <details className="trade-more">
+    {hidden.length > 0 && <details className="trade-more" onToggle={e=>setShowMore(e.currentTarget.open)}>
       <summary><LocaleText value={`Show ${hidden.length} more countries without access`} /></summary>
-      {hidden.slice(0, 30).map(row)}
+      {showMore&&hidden.slice(0, 30).map(row)}
     </details>}
     {noSurplus > 0 && <small className="trade-footnote"><LocaleText value={`${noSurplus} countries have no exportable surplus`} /></small>}
     {actions.element}

@@ -1,4 +1,4 @@
-# The Real President — 0.90.0-playtest.5
+# The Real President — 0.90.0-playtest.6
 
 A browser-based grand-strategy prototype built with React, TypeScript, Zustand, D3 Geo and Dexie. Lead a country through its economy, resources, diplomacy, development and military conflicts. Chart.js provides economic charts; Vitest and Playwright verify gameplay and browser flows.
 
@@ -6,10 +6,10 @@ A browser-based grand-strategy prototype built with React, TypeScript, Zustand, 
 
 | Item | Current state |
 |---|---|
-| Version | **0.90.0-playtest.5 — Spacious command windows** |
+| Version | **0.90.0-playtest.6 — Measured performance** |
 | Development branch | `dev/clear-command-090` |
 | Save schema | 17 (0.86–0.89 add optional fields; 0.90 preserves the schema); schemas 12–16 migrate automatically, older or newer saves are refused with a warning |
-| Validation | Local: 607 unit tests / 76 files, TypeScript/production build; 115 production browser scenarios verified (111 in the initial full run; corrected cases and the new country route checked in focused runs); details in [Playtest 0.90](docs/PLAYTEST-090.md); [CI runs on pushes](https://github.com/Cryptovis/gamev2/actions) |
+| Validation | Local: 610 unit tests / 77 files, TypeScript/production build; 118 production browser scenarios and engine/before-after production measurements passed. [Measurements](docs/PERFORMANCE-0906.md), [Playtest 0.90](docs/PLAYTEST-090.md); [CI runs on pushes](https://github.com/Cryptovis/gamev2/actions) |
 | V3 | Reserved for the complete-playability milestone; the current plan builds on the existing engine |
 
 These details describe this development branch. Another branch, including `main`, can contain an older release. Check `package.json` and your checked-out branch when comparing previews.
@@ -31,9 +31,15 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-`check` runs tests, TypeScript checks and the production build. Browser tests run separately against the production preview.
+`check` runs tests, TypeScript checks and the production build. Browser tests run separately against the production preview. Optional `npm run measure:engine` and `npm run measure:browser` write local performance reports; run browser measurements separately from other builds/tests. See [measurement method](docs/PERFORMANCE-0906.md).
 
 ## Recent changelog
+
+### 0.90.0-playtest.6 — Measured performance (Codex)
+
+- Repeatable engine and production-browser measurements cover fresh, one-year and three-year seeded campaigns, saves, menus and camera input.
+- Index Relations-map connections once per ledger change; collapsed supplier disclosures create rows only when opened. Ranking, prices and actions retain their existing rules.
+- [Measured results and limits](docs/PERFORMANCE-0906.md): approximately 0.89 → 0.016 ms for three-year connection lookup; Supply timings remain variable. Save schema 17, balance and dependencies stay unchanged.
 
 ### 0.90.0-playtest.5 — Spacious command windows (Codex)
 
@@ -178,7 +184,7 @@ Delivered milestones are retained here when new releases are added. This table s
 
 | Milestone | Delivered foundation | Record |
 |---|---|---|
-| 0.90 — Clear Command | Spacious workspaces with parent return navigation, framed HUD and world activity/list scrolling; illustrated Affairs and shared action gates; reliable command panels, separated investments/pilots, World rankings and rated/delayed sovereign credit with early repayment; market review/window hotfix, compact trading choices and execution receipts, Policies, national flag shortcut, current country names, readable events, quote rotation, keyboard map controls and verified simulation fixes | [Playtest 0.90](docs/PLAYTEST-090.md) |
+| 0.90 — Clear Command | Repeatable long-campaign performance measurements, indexed map connections and deferred supplier disclosures; spacious workspaces with parent return navigation, framed HUD and world activity/list scrolling; illustrated Affairs and shared action gates; reliable command panels, separated investments/pilots, World rankings and rated/delayed sovereign credit with early repayment; market review/window hotfix, compact trading choices and execution receipts, Policies, national flag shortcut, current country names, readable events, quote rotation, keyboard map controls and verified simulation fixes | [Playtest 0.90](docs/PLAYTEST-090.md) |
 | 0.89 — Trade & Markets + onboarding polish | Icon market sections and bounded artwork recovery; shared window lifecycle and local panel recovery; illustrated research and clear action blockers; monthly supply contracts, shared war fuel readiness and 5× auto assault; unified entry/setup theme and compact final review; supplier ranking and country trade desk, commodity exchange with shocks and charts, diplomatic and cargo flights on the map | [Playtest 0.89](docs/PLAYTEST-089.md) |
 | 0.88 — Politics & Victory | AI wars and the defender path, allies joining, factions and contested elections, regime crises, data-driven events with chains, campaign victory | [Playtest 0.88](docs/PLAYTEST-088.md) |
 | 0.87 — Living World | Repeat fatigue and GDP-scaled costs, one market price scale, demand-bound AI buyers, shared treaty rules, command and migration cleanup | [Playtest 0.87](docs/PLAYTEST-087.md) |

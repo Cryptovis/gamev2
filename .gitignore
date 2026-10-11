@@ -8,3 +8,6 @@ playwright-report/
 
 # Local agent worktrees
 .claude/worktrees/
+
+# Reproducible machine-specific measurement output
+performance/results/

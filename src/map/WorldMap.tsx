@@ -15,6 +15,7 @@ import { MICROSTATE_POINTS } from '../data/microstates';
 import { terrainForCountry } from '../engine/systems/warfare';
 import { FlightLayer, FlightTransit, type FlightProjector } from './FlightLayer';
 import { visibleOnGlobe } from './flightPath';
+import { connectionIndex } from './connectionIndex';
 
 const W = 1200;
 const H = 700;
@@ -82,6 +83,7 @@ function WorldMapView() {
   const projectionMode = useGameStore((s) => s.mapProjection);
   const mapControlCommand = useGameStore((s)=>s.mapControlCommand);
   const playerCountryId = useGameStore((s) => s.playerCountryId);
+  const connections=useMemo(()=>mapMode==='relations'?connectionIndex(playerCountryId,tradeDeals,contracts,embassies):null,[mapMode,playerCountryId,tradeDeals,contracts,embassies]);
   const selectCountry = useGameStore((s) => s.selectCountry);
   const setMapNotice = useGameStore((s) => s.setMapNotice);
 
@@ -121,7 +123,7 @@ function WorldMapView() {
     const relation = player?.diplomacy.relations[country.id];
     const controlled = country.controllerCountryId === player?.id;
     if (mapMode === 'political') return country.id === player?.id || controlled ? '#d9ad48' : stablePoliticalColor(country.id);
-    if (mapMode==='relations'){if(country.id===player.id)return '#edc570';const flow=Object.values(tradeDeals).some(d=>d.active&&((d.buyerId===player.id&&d.sellerId===id)||(d.sellerId===player.id&&d.buyerId===id)))||Object.values(contracts).some(d=>d.active&&((d.buyerId===player.id&&d.sellerId===id)||(d.sellerId===player.id&&d.buyerId===id)));const embassy=Object.values(embassies).some(e=>(e.countryA===player.id&&e.countryB===id)||(e.countryB===player.id&&e.countryA===id));return flow?'#4ca775':embassy?'#599fc9':relation?.treaties.includes('nonAggression')?'#ac82cb':relation?.treaties.includes('trade')?'#ccab5d':'#526f80';}
+    if (mapMode==='relations'){if(country.id===player.id)return '#edc570';return connections?.tradePartners.has(id)?'#4ca775':connections?.embassyPartners.has(id)?'#599fc9':relation?.treaties.includes('nonAggression')?'#ac82cb':relation?.treaties.includes('trade')?'#ccab5d':'#526f80';}
     if (mapMode === 'diplomacy') return country.id === player?.id ? '#d9ad48' : relation?.status === 'ally' ? '#3aa9ba' : relation?.status === 'friendly' ? '#4c936c' : relation?.status === 'hostile' || relation?.status === 'war' ? '#ad4952' : '#50616f';
     if (mapMode === 'resources') {
       const stock = country.resources.food + country.resources.oil * 1.7 + country.resources.iron + country.resources.uranium * 12;

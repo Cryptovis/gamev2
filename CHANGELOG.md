@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.90.0-playtest.6 — Measured performance
+Implementation and validation: **Codex**. Branch: `dev/clear-command-090`. Save schema 17, simulation rules and dependencies unchanged.
+
+- Add opt-in engine and production-browser measurement commands for day-1, one-year and three-year seeded campaigns. Record tick, snapshot/validation, entry/resume, Market/World/Supply and camera distributions with explicit sample counts and environment limits.
+- Relations-map colors use a ledger index instead of scanning trade/contract/embassy records for every polygon. Memoize until the relevant inputs change; preserve color precedence and inactive-record semantics. Three-year all-country lookup median: approximately 0.89 → 0.016 ms, including index construction.
+- Collapsed supplier disclosures defer up to 30 extra rows each until expanded. Mouse collapse/expansion and keyboard reopening preserve routes and actions. Browser latency samples remain variable; no consistent Supply or startup speedup is claimed.
+- Preserve the full historical releases/milestones and record further performance scopes in [the measurement report](docs/PERFORMANCE-0906.md). No new UI wording or translation changes are needed.
+
+Validation: 610 unit tests / 77 files, TypeScript and production build passed. Engine and both production-browser measurement runs passed; all 118 production browser correctness scenarios passed (15.6m). Remote CI is verified after publication. Actual StackBlitz/device performance remains a follow-up; compatible saves need no new campaign. V3 remains conditional on complete playability.
+
 ## 0.90.0-playtest.5 — Spacious command windows
 Implementation and validation: **Codex**. Branch: `dev/clear-command-090`. Save schema 17, dependencies and simulation numbers unchanged.
 

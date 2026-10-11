@@ -89,3 +89,13 @@ Starting GitHub HEAD: `6f3695811a6f7834ca6091da80e8bb7a1d0160ff`; its CI run **3
 - Final GitHub CI is checked independently after publication. WebContainer/StackBlitz remains a separate manual check. No new save schema or campaign required.
 
 Manual route: nation → Tech → Investments → close → Cabinet → Affairs → close (Cabinet returns); World → scroll → country → close (ranking returns); Supply/Market → review → dismiss; commander → portrait → close; confirm date below speed and right popups beside their rail. On mobile, close the full-width workspace before choosing another rail tool.
+
+## 0.90.0-playtest.6 — Measured performance (Codex)
+
+- User-selected scope: measured startup/menu/long-save performance. Compare fresh, one-year and three-year seeded campaigns; keep simulation, schema 17 and dependency graph unchanged.
+- Add `measure:engine` and `measure:browser`; opt-in output is ignored machine-specific JSON. Method, all measured distributions and limits: [performance record](PERFORMANCE-0906.md).
+- Index map Relations connections and defer collapsed supplier rows. Unit coverage checks legacy-result parity, stale-ledger replacement and linear record access. Browser regressions cover active/inactive trade/contract/embassy precedence and supplier disclosure mouse/keyboard behavior.
+- `npm run check`: **610 unit tests / 77 files**, TypeScript and production build passed. Final engine measurement passed (21.9s); baseline and candidate production-browser measurement probes passed (1.1m / 1.0m). Full **118/118 production browser scenarios passed (15.6m)**.
+- Three-year connection scan median ~0.89 ms versus ~0.016 ms including index build. Supply timing varies; no universal startup/menu/camera speedup is claimed. No direct StackBlitz run; compatible saves continue without a new campaign. V3 is not declared.
+
+Manual route: continue an existing save → Map → Relations → move/zoom the map; Supply → expand/collapse extra suppliers with mouse and Enter → open a route/review → close back to Supply. Existing playtest.5 window-return behavior is preserved.

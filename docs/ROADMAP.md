@@ -166,3 +166,9 @@ Delivered: startup-loaded command panels; Tech investments and Military pilot tr
 
 - Expanded national/market/supply/world windows, parent navigation, grouped controls, restored world activity and incremental rankings, profile/Cabinet/HUD readability.
 - Validation: 607 unit tests/76 files, TypeScript/build and 115 production browser scenarios verified (111 initial full-run passes, corrected regressions and a new cross-country route rechecked in focused runs); save schema 17 and gameplay balance unchanged. Translation catalogue consolidation, remaining action previews, measured performance and war AI/balance remain separate pending work; V3 is conditional on complete playability.
+
+## 0.90.0-playtest.6 — Measured performance (Codex)
+
+- Delivered measurement slice: seeded day-1/366/1096 engine, snapshot/validation and production entry/resume/menu/camera probes; indexed Relations connections and deferred collapsed supplier rows.
+- [Measured distributions](PERFORMANCE-0906.md) establish a cheaper connection lookup, with varying Supply/browser timings. This does not close performance work. Next: StackBlitz/mobile, Supply CPU traces/larger samples, geographic raster and flight/war-heavy campaigns; translation override inventory before per-language splitting.
+- 610 unit tests/77 files and TypeScript/build passed; all 118 production browser correctness scenarios passed (15.6m). Save schema 17, simulation rules and dependencies unchanged. Remaining action previews and war AI/balance stay separate; V3 remains conditional on complete playability.

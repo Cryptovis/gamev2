@@ -1,5 +1,11 @@
 # Devir notu (yeni konuşma için)
 
+## 0.90.0-playtest.6 — Codex
+
+- Kullanıcının seçtiği kapsam: performans ölçümü. 1/366/1096. gün gerçek seeded kayıtlarıyla motor, save, açılış, menü ve kamera ölçümleri; komutlar ve sonuçlar [performans kaydında](PERFORMANCE-0906.md).
+- Relations haritası bağlantı indeksi; kapalı tedarik ayrıntılarında ertelenen satırlar. Üç yıllık bağlantı kontrolü ~0,89 → 0,016 ms; genel Supply/açılış hızlanması doğrulanmış değil.
+- 610 birim testi/77 dosya, TypeScript/build ve ölçüm koşuları geçti. 118/118 üretim tarayıcı senaryosu geçti (15,6 dk); CI yayın HEAD’i üzerinden ayrıca doğrulanır. Şema 17, denge ve bağımlılıklar korunuyor.
+
 ## 0.90.0-playtest.5 — Codex
 
 - Geniş Tech/World/War/Production ve Supply/Market pencereleri; üst menüyü gizleyip kapatınca seçim/konumuyla geri getiren geçici gezinme geçmişi. Overview/Power/Supply ve Tech/World/War ayrı gruplar.
@@ -11,8 +17,8 @@
 Bu dosya yeni bir konuşmanın ilk okuması içindir. Geçmiş konuşmayı taşımadan kaldığımız yerden devam etmeyi sağlar.
 
 ## Durum
-- Sürüm: **0.90.0-playtest.5 "Spacious command windows"**
-- Dal: `dev/clear-command-090`. Kaynak: 0.89.7 (`8322a3f`). Başlangıç GitHub HEAD: `4d3d564d5921dac391a9fc9769e1105f9e47f938` (0.90.4), CI başarılı (38086841276; 600 birim/111 tarayıcı testi). Bu sürümün CI sonucu yayın commit’i üzerinden ayrıca doğrulanır.
+- Sürüm: **0.90.0-playtest.6 "Measured performance"**
+- Dal: `dev/clear-command-090`. Kaynak: 0.89.7 (`8322a3f`). Başlangıç GitHub HEAD: `4d3d564d5921dac391a9fc9769e1105f9e47f938` (0.90.4), CI başarılı (38086841276; 600 birim/111 tarayıcı testi). Playtest.5 GitHub HEAD `2adaceba` ve CI 38095471126 completed/success olarak doğrulandı. Playtest.6 CI sonucu yayın commit’i üzerinden ayrıca doğrulanır.
 - `main`'e doğrudan push yok. Yeni işler `dev/<name>-0XX` dallarında yapılır.
 - 0.90.4 (Codex): menüler başlangıçta yüklenir; Tech → Investments, Military → Pilot training; okunur Supply ve sözleşme boşluğu; sola bitişik üç World sıralaması. Kredi: bayraklar, tüm ülkelerde AAA–D, üç oyun günü başvuru, ilişki/risk retleri, hedefli 3 yıllık can simidi, erken ödeme ve sınırlı kredi geçmişi ödülü. Şema 17 yeni opsiyonel alanlarla korunur; bağımlılıklar değişmez. 600 birim testi/TypeScript/derleme geçti. 111 üretim senaryosu doğrulandı: tam tur 108 geçti, eski seçici/atlas varsayımına takılan 3 test düzeltildikten sonra 3/3 tekrar geçti. Ayrıntılar PLAYTEST-090 kaydında. Gerçek StackBlitz testi yapılmadı.
 - Önceki 0.90.3: alış/satış makbuzunda gerçek ödeme, hazine, yoldaki yük ve T+1 satış geliri; 5 sütunlu stok kartları, tek satırlı sözleşme alanları, 2 satırlı ürün seçimi, gereksiz World prices kaldırıldı. Policies vergi onayını ve mevcut bakanlık bütçesi erişimini toplar. 582 test/derleme ve 98 üretim tarayıcı senaryosu geçti; son odaklı kontroller ve sonuçlar [0.90 test kaydında](PLAYTEST-090.md). Üretim dengesi/şema/bağımlılıklar değişmedi.
@@ -21,11 +27,13 @@ Bu dosya yeni bir konuşmanın ilk okuması içindir. Geçmiş konuşmayı taş�
 - Kapsam (0.89): ticaret ortağı seçimi ve ülke TRADE sekmesi, emtia borsası (spread, komisyon, günlük limit, pozisyon limiti, depolama, şoklar), diplomatik jet ve kargo uçakları (harita katmanı, mesafeye göre varış süresi).
 
 ## Bekleyen işler
-1. **Faz 4 (teknik borç):** tek çeviri kataloğu, CSS katmanları, z-index ölçeği, modal hook, motor önizleme fonksiyonları, harita dokusu, Prettier, docs arşivi, demo hesap hash'i. Araştırma önizlemesi/iade hesabı playtest.5’te birleştirildi. Playtest.6 ortak pencere yönetimi, katman değişkenleri ve panel indirme kurtarmasını ekledi; kalan kapsam ve kanıtlar: [audit ilerleme kaydı](AUDIT-PROGRESS-089.md).
+- Performans ilk ölçüm dilimi 0.90.6’da hazır: StackBlitz/mobil, Supply spike CPU profili, coğrafi raster ve yoğun uçuş/savaş kayıtları ayrı takip kapsamı. [Sonuçlar](PERFORMANCE-0906.md).
+1. **Faz 4 (teknik borç):** tek çeviri kataloğu, CSS katmanları, z-index ölçeği, modal hook, motor önizleme fonksiyonları, harita dokusu, Prettier, docs arşivi, demo hesap hash'i. Araştırma önizlemesi/iade hesabı 0.89.0-playtest.5’te birleştirildi. 0.89.0-playtest.6 ortak pencere yönetimi, katman değişkenleri ve panel indirme kurtarmasını ekledi; kalan kapsam ve kanıtlar: [audit ilerleme kaydı](AUDIT-PROGRESS-089.md).
 2. **Oyun testinden gelen denge hotfix'leri:** approval baseline, AI savaş çeşitliliği, demokrasilerde huzursuzluk, borsa fiyat düzeyi tutarlılığı. Kullanıcı geri bildirimi toplanıp tek bir hotfix sürümünde işlenecek.
 3. **Bağımlılık/lock bakımı:** package-lock değişiklikleri kaynağı ve bağımlılık grafiği incelenmeden yayınlanmamalı. StackBlitz yerel değişiklikleri korunmalı; temiz kurulum için mevcut lock ile `npm ci` kullanılır.
 
 ## Ortam notları
+- Codex 0.90.6 yerel Chromium: `/workspace/scratch/0add3a506d52/browser-runtime/chromium-0906`. Eski yürütülebilir dosya başlatılamadı; mevcut Brotli paketinden temiz kopya çıkarıldı. Ölçümler ve 118 senaryo bu kopyayla geçti. Yol geçicidir; yeni oturumda önce kullanılabilirliğini doğrula.
 - Aşağıdaki 403/stub notları önceki Claude ortamına aittir. Codex ortamında `npm ci --ignore-scripts`, TypeScript/build ve yerel Chromium ile Playwright çalışıyor; bu kısıtları başka ortamlara genelleme.
 - Sandbox'ta `npm install` 403 veriyor. Testler `bun test src/tests/<dosya>` ile yerelde çalıştırılır.
 - `tsc` ve Playwright yalnızca CI'da (`.github/workflows/ci.yml`) çalışır. CI log indirme 403 veriyor. Hata okumak için `gh api repos/.../check-runs/<id>/annotations` kullanılır.
