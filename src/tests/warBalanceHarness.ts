@@ -2,7 +2,7 @@ import type {BattlefieldTerrain, CountryState, GameState, WarState} from '../dom
 import type {TacticalOrder, TacticalSide} from '../domain/tactical';
 import {makeInitialState} from '../data/initialState';
 import {emptyLosses, getWarPreview, resolveCombatRound, terrainForCountry} from '../engine/systems/warfare';
-import {chooseTacticalOrders, resolveTacticalRound, startTacticalBattle} from '../engine/systems/tactical';
+import {chooseSingleRoundOrders, cellDistance, resolveStandingRound, resolveTacticalRound, startTacticalBattle} from '../engine/systems/tactical';
 import {academyFor, governance} from '../engine/systems/governance';
 import {tickGame} from '../engine/tick';
 import {openWar} from '../engine/systems/warRules';
@@ -111,38 +111,48 @@ export function runAuto(spec: ScenarioSpec, seed: number, days = 90): AutoResult
   };
 }
 
-export interface TacticalResult { rounds: number; progress: number; status: WarState['status']; reversals: Record<TacticalSide, number>; moves: Record<TacticalSide, number>; captures: Record<TacticalSide, number> }
+export interface TacticalResult { rounds: number; progress: number; status: WarState['status']; reversals: Record<TacticalSide, number>; moves: Record<TacticalSide, number>; captures: Record<TacticalSide, number>; goalSwitches: Record<TacticalSide, number>; heldRounds: Record<TacticalSide, number> }
 
 /**
- * A tactical battle where both sides use the game's tactical AI (the attacker plays as the "player" side with
- * standing orders, exactly as auto mode does). Counts back-and-forth moves (a unit returning to the sector it
- * left the round before) as a measure of plan inconsistency.
+ * A tactical battle where both sides are commanded by AI. The attacker plays the "player" side: `planner` uses its
+ * standing multi-round plan (auto mode); `single` uses the single-round AI, for comparison. The defender is always the
+ * game's opponent AI. Plan consistency is measured as goal switches: rounds in which a side's movement heads for a
+ * different objective than the round before, and back-and-forth moves (returning to the sector left the round before).
  */
-export function runTactical(spec: ScenarioSpec, seed: number, rounds = 20, choose: (s: GameState, id: string, side: TacticalSide) => TacticalOrder[] = chooseTacticalOrders): TacticalResult {
+export function runTactical(spec: ScenarioSpec, seed: number, rounds = 20, attackerAi: 'planner' | 'single' = 'planner'): TacticalResult {
   const setup = scenarioState(spec, seed);
   let state = {...setup.state, playerCountryId: setup.attackerId};
   state = startTacticalBattle(state, setup.warId);
-  const reversals = {attacker: 0, defender: 0}, moves = {attacker: 0, defender: 0}, captures = {attacker: 0, defender: 0};
-  const lastFrom = new Map<string, number>();
+  const reversals = {attacker: 0, defender: 0}, moves = {attacker: 0, defender: 0}, captures = {attacker: 0, defender: 0}, goalSwitches = {attacker: 0, defender: 0}, heldRounds = {attacker: 0, defender: 0};
+  const lastFrom = new Map<string, number>(), lastGoal: Record<TacticalSide, number | null> = {attacker: null, defender: null};
   let played = 0;
   for (let r = 0; r < rounds; r++) {
     state = {...state, day: state.day + 1};
     const w = state.wars[setup.warId];
     if (w.status !== 'active' || !w.tactical) break;
-    const next = resolveTacticalRound(state, setup.warId, choose(state, setup.warId, 'attacker'), w.tactical.round);
+    const next = attackerAi === 'planner' ? resolveStandingRound(state, setup.warId) : resolveTacticalRound(state, setup.warId, chooseSingleRoundOrders(state, setup.warId, 'attacker'), w.tactical.round);
     if (next === state) break;
     state = next; played++;
-    const event = state.wars[setup.warId].tactical?.events.at(-1);
-    for (const action of event?.actions ?? []) {
+    const b = state.wars[setup.warId].tactical!, event = b.events.at(-1)!;
+    const pull: Record<TacticalSide, Map<number, number>> = {attacker: new Map(), defender: new Map()};
+    for (const action of event.actions) {
       if (action.kind === 'capture') captures[action.side]++;
       if (action.kind !== 'move' || !action.unitId) continue;
       moves[action.side]++;
       if (lastFrom.get(action.unitId) === action.to) reversals[action.side]++;
       lastFrom.set(action.unitId, action.from!);
+      for (const o of b.objectives) pull[action.side].set(o, (pull[action.side].get(o) ?? 0) + cellDistance(b, action.from!, o) - cellDistance(b, action.to!, o));
+    }
+    for (const side of ['attacker', 'defender'] as const) {
+      const ranked = [...pull[side]].filter(([, v]) => v > 0).sort((x, y) => y[1] - x[1] || x[0] - y[0]);
+      const goal = ranked[0]?.[0] ?? null;
+      if (goal !== null && lastGoal[side] !== null && goal !== lastGoal[side]) goalSwitches[side]++;
+      if (goal !== null) lastGoal[side] = goal;
+      heldRounds[side] += event.objectives.filter(h => h === side).length;
     }
   }
   const w = state.wars[setup.warId];
-  return {rounds: played, progress: w.progress, status: w.status, reversals, moves, captures};
+  return {rounds: played, progress: w.progress, status: w.status, reversals, moves, captures, goalSwitches, heldRounds};
 }
 
 export const BALANCE_SEEDS = Array.from({length: 24}, (_, i) => (0x9e3779b1 * (i + 1)) >>> 0);

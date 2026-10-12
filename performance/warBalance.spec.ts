@@ -13,17 +13,18 @@ test('measure paired war-balance scenarios',()=>{
    meanEndDay:ended.length?+mean(ended.map(r=>r.endDay!)).toFixed(1):null,attackerLoss:+mean(runs.map(r=>r.attackerLosses)).toFixed(4),defenderLoss:+mean(runs.map(r=>r.defenderLosses)).toFixed(4),
    attackerFuel:+mean(runs.map(r=>r.attackerFuelUsed)).toFixed(1),defenderFuel:+mean(runs.map(r=>r.defenderFuelUsed)).toFixed(1),air:+runs[0].air.toFixed(1),supply:runs[0].supply.map(v=>+v.toFixed(1))};
  });
- const tactical=['equal · plains','equal · mountain','attacker 1.5× forces'].map(name=>{
-  const spec=SCENARIOS.find(s=>s.name===name)!,runs=BALANCE_SEEDS.slice(0,12).map(seed=>runTactical(spec,seed,20));
-  const moves=(side:'attacker'|'defender')=>runs.reduce((n,r)=>n+r.moves[side],0),rev=(side:'attacker'|'defender')=>runs.reduce((n,r)=>n+r.reversals[side],0);
-  return {scenario:name,meanRounds:mean(runs.map(r=>r.rounds)),meanProgress:+mean(runs.map(r=>r.progress)).toFixed(2),
-   reversalRate:{attacker:+(rev('attacker')/Math.max(1,moves('attacker'))).toFixed(3),defender:+(rev('defender')/Math.max(1,moves('defender'))).toFixed(3)},
-   captures:{attacker:runs.reduce((n,r)=>n+r.captures.attacker,0),defender:runs.reduce((n,r)=>n+r.captures.defender,0)}};
- });
+ const tactical=['equal · plains','equal · mountain','attacker 1.5× forces'].flatMap(name=>(['single','planner'] as const).map(ai=>{
+  const spec=SCENARIOS.find(s=>s.name===name)!,runs=BALANCE_SEEDS.slice(0,12).map(seed=>runTactical(spec,seed,20,ai));
+  const sum=(f:(r:typeof runs[number])=>number)=>runs.reduce((n,r)=>n+f(r),0);
+  return {scenario:name,attackerAi:ai,meanRounds:mean(runs.map(r=>r.rounds)),meanProgress:+mean(runs.map(r=>r.progress)).toFixed(2),
+   goalSwitchesPerRound:{attacker:+(sum(r=>r.goalSwitches.attacker)/sum(r=>r.rounds)).toFixed(3),defender:+(sum(r=>r.goalSwitches.defender)/sum(r=>r.rounds)).toFixed(3)},
+   reversalRate:{attacker:+(sum(r=>r.reversals.attacker)/Math.max(1,sum(r=>r.moves.attacker))).toFixed(3),defender:+(sum(r=>r.reversals.defender)/Math.max(1,sum(r=>r.moves.defender))).toFixed(3)},
+   objectiveRoundsHeld:{attacker:sum(r=>r.heldRounds.attacker),defender:sum(r=>r.heldRounds.defender)},captures:{attacker:sum(r=>r.captures.attacker),defender:sum(r=>r.captures.defender)}};
+ }));
  const small=BALANCE_SEEDS.slice(0,6).map(seed=>runSmallEconomyDefense(seed));
  for(const r of small)console.log(`[small] ${JSON.stringify(r)}`);
  for(const r of auto)console.log(`[war] ${r.scenario.padEnd(36)} Δ30 ${String(r.meanDelta30).padStart(7)} [${r.minDelta30}, ${r.maxDelta30}] V/D/A ${r.victories}/${r.defeats}/${r.ongoing} end ${r.meanEndDay} loss ${r.attackerLoss}/${r.defenderLoss} fuel ${r.attackerFuel}/${r.defenderFuel} air ${r.air} supply ${r.supply}`);
- for(const r of tactical)console.log(`[tactical] ${r.scenario.padEnd(24)} rounds ${r.meanRounds} progress ${r.meanProgress} reversal ${JSON.stringify(r.reversalRate)} captures ${JSON.stringify(r.captures)}`);
+ for(const r of tactical)console.log(`[tactical] ${r.scenario.padEnd(22)} ${r.attackerAi.padEnd(7)} rounds ${r.meanRounds} progress ${r.meanProgress} switches ${JSON.stringify(r.goalSwitchesPerRound)} reversal ${JSON.stringify(r.reversalRate)} held ${JSON.stringify(r.objectiveRoundsHeld)}`);
  const label=(process.env.PERFORMANCE_LABEL??'current').replace(/[^a-zA-Z0-9_-]/g,'_');
  mkdirSync('performance/results',{recursive:true});writeFileSync(`performance/results/war-balance-${label}.json`,JSON.stringify({seeds:BALANCE_SEEDS.length,auto,tactical,small},null,1)+'\n');
  expect(auto.length).toBe(SCENARIOS.length);
