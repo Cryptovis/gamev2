@@ -37,4 +37,4 @@ body{font-variant-numeric:tabular-nums lining-nums}
 .command-rail .rail-button small{letter-spacing:0;white-space:normal;hyphens:auto;overflow-wrap:break-word;line-height:1.05;text-align:center;max-width:100%}
 .map-help-cluster .rail-button small{white-space:nowrap}
 /* Desktop HUD stays compact at 10 px: long translated metric labels (e.g. Russian) wrap to a second line. */
-.command-overview-island .governance-metrics .top-metric small{letter-spacing:.02em;white-space:normal;max-width:11ch;line-height:1.1;overflow-wrap:break-word}
+.command-overview-island .governance-metrics .top-metric small{letter-spacing:0;white-space:normal;max-width:13ch;line-height:1.1;overflow-wrap:normal}
