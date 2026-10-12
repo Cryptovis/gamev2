@@ -57,7 +57,7 @@ test('Phase 2 typography and layout review',async({browser})=>{
   const context=await browser.newContext({viewport:{width:vp.width,height:vp.height},reducedMotion:'reduce'});const page=await context.newPage();
   for(const screen of SCREENS){
    const key=`${vp.language}-${vp.width}-${screen.name}`;
-   try{await resumeFixture(page,campaignFixture(vp.language));await expect(page.locator('.country-shape').first()).toBeAttached();await screen.open(page);await page.waitForTimeout(250);}
+   try{const s=campaignFixture(vp.language);s.selectedCountryId=null;await resumeFixture(page,s);await expect(page.locator('.country-shape').first()).toBeAttached();await screen.open(page);await page.waitForTimeout(250);}
    catch(error){report[key]={skipped:String(error).slice(0,160)};continue;}
    report[key]=await audit(page);
    await page.screenshot({path:`test-results/visual/${key}.png`});

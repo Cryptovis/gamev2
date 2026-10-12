@@ -61,7 +61,7 @@ test('country panel returns from National power with its tab, scroll and focus',
 });
 
 for(const language of LANGUAGES)test(`${language} shows Rule of Nations untranslated in the title, header and help`,async({page})=>{
- await resumeFixture(page,campaignFixture(language));
+ const s=campaignFixture(language);s.selectedCountryId=null;await resumeFixture(page,s);
  await expect(page).toHaveTitle('Rule of Nations');
  await expect(page.locator('.brand-block .eyebrow')).toHaveText('Rule of Nations');
  await page.locator('[data-guide="rail-help"]').click();await expect(page.locator('#help-window .game-notes h3')).toHaveText('Rule of Nations');
@@ -73,6 +73,6 @@ test('entry and setup screens carry the Rule of Nations mark over the cover art'
  await expect(page.locator('.entry-art .brand-mark')).toHaveAttribute('translate','no');
  await expect(page.locator('.entry-art .brand-mark-emblem')).toHaveText('RON');
  await page.locator('[data-entry="demo"]').click();await page.locator('[data-entry="new-game"]').click();
- await expect(page.locator('.setup-cover .brand-mark')).toContainText('Rule of Nations');await expect(page.locator('.wizard-header small')).toContainText('Rule of Nations');
+ await expect(page.locator('.setup-cover .brand-mark')).toContainText('Rule of Nations');await expect(page.locator('.wizard-header > div > small').first()).toContainText('Rule of Nations');
  await page.screenshot({path:'test-results/ron-setup-091.png'});
 });
