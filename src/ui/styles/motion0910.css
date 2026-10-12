@@ -1,5 +1,5 @@
 /*
- * 0.91 window motion. One shared fade for windows, dialogs and their backdrops, so screens no longer
+ * playtest.10 window motion. One shared fade for windows, dialogs and their backdrops, so screens no longer
  * pop in as stacked layers. Opacity only: positions and sizes never animate, so layout, focus and
  * hit-testing are identical with and without motion. A parent window that was hidden for a child
  * fades back in when it is shown again, because the animation restarts when display returns.

@@ -7,7 +7,7 @@ import indexHtml from '../../index.html?raw';
 const uiSources=import.meta.glob<string>(['../ui/**/*.tsx','../app/**/*.tsx'],{query:'?raw',import:'default',eager:true});
 const LANGUAGES=['en','tr','es','zh','ru'];
 
-describe('0.91 store subscriptions',()=>{
+describe('playtest.10 store subscriptions',()=>{
  it('no UI component subscribes to the whole store',()=>{
   // Parameterless useGameStore() re-renders on every store change; use a selector, useStoreView or useWorldView.
   const broad=Object.entries(uiSources).filter(([,source])=>/useGameStore\(\s*\)/.test(source)).map(([file])=>file);
@@ -15,7 +15,7 @@ describe('0.91 store subscriptions',()=>{
  });
 });
 
-describe('0.91 Rule of Nations',()=>{
+describe('playtest.10 Rule of Nations',()=>{
  it('keeps the name untranslated in every language, including legacy save messages',()=>{
   for(const language of LANGUAGES){
    for(const text of ['Rule of Nations is ready.','Rule of Nations — economy, people and diplomacy.','The Real President is ready.','The Real President 0.83 online.']){

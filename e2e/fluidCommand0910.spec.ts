@@ -74,7 +74,7 @@ test('entry and setup screens carry the Rule of Nations mark over the cover art'
  await expect(page.locator('.entry-art .brand-mark-emblem')).toHaveText('RON');
  await page.locator('[data-entry="demo"]').click();await page.locator('[data-entry="new-game"]').click();
  await expect(page.locator('.setup-cover .brand-mark')).toContainText('Rule of Nations');await expect(page.locator('.wizard-header > div > small').first()).toContainText('Rule of Nations');
- await page.screenshot({path:'test-results/ron-setup-091.png'});
+ await page.screenshot({path:'test-results/ron-setup-0910.png'});
 });
 
 for(const [language,width] of [['en',1440],['tr',390],['ru',1440]] as const)test(`${language} ${width}px text is at least 10px, tabs use natural case and nothing overflows the page`,async({page})=>{

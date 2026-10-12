@@ -1,5 +1,5 @@
-/** 0.91 Rule of Nations: the brand name is a proper noun and stays untranslated in every language. */
-export const UI_CATALOG_091:Record<string,[string,string,string,string]>={
+/** playtest.10 Rule of Nations: the brand name is a proper noun and stays untranslated in every language. */
+export const UI_CATALOG_0910:Record<string,[string,string,string,string]>={
  'Rule of Nations is ready.':['Rule of Nations hazır.','Rule of Nations está listo.','Rule of Nations 已准备就绪。','Rule of Nations готов.'],
  'Rule of Nations — economy, people and diplomacy.':['Rule of Nations — ekonomi, halk ve diplomasi.','Rule of Nations — economía, sociedad y diplomacia.','Rule of Nations——经济、民生与外交。','Rule of Nations — экономика, общество и дипломатия.'],
  // Messages stored in saves from earlier versions show the current name.
@@ -38,6 +38,20 @@ export const UI_CATALOG_091:Record<string,[string,string,string,string]>={
  'Secured supply contracts':['Güvenceli tedarik sözleşmeleri','Contratos de suministro asegurados','已锁定的供应合同','Гарантированные контракты на поставку'],
  'Strategic equipment stockpiles':['Stratejik ekipman stokları','Reservas de equipo estratégico','战略装备储备','Стратегические запасы техники'],
  'Strategic resource position':['Stratejik kaynak durumu','Posición de recursos estratégicos','战略资源态势','Положение со стратегическими ресурсами'],
+ // Country panel tabs: natural case (earlier Turkish, Spanish and Russian labels were capitals).
+ 'Overview':['Genel','Resumen','概览','Обзор'],
+ 'Affairs':['Yönetim','Asuntos','事务','Дела'],
+ 'Economy':['Ekonomi','Economía','经济','Экономика'],
+ 'Diplomacy':['Diplomasi','Diplomacia','外交','Дипломатия'],
+ 'Military':['Askeri','Militar','军事','Армия'],
+ 'Cabinet':['Kabine','Gabinete','内阁','Кабинет'],
+ // Map readout and status line: replace machine-translated labels found in the playtest.10 review.
+ 'WORLD COMMAND':['DÜNYA KOMUTASI','MANDO MUNDIAL','全球指挥','МИРОВОЕ КОМАНДОВАНИЕ'],
+ 'GLOBE':['KÜRE','GLOBO','地球仪','ГЛОБУС'],
+ 'FLAT':['DÜZ','PLANO','平面','ПЛОСКАЯ'],
+ 'PLAYER':['OYUNCU','JUGADOR','玩家','ИГРОК'],
+ 'drag globe · wheel zoom · click sovereign territory':['küreyi sürükle · tekerlekle yakınlaştır · ülkeye tıkla','arrastra el globo · rueda para acercar · haz clic en un territorio','拖动地球 · 滚轮缩放 · 点击主权领土','перетащите глобус · колесо — масштаб · щёлкните по стране'],
+ 'drag to pan · wheel zoom · click sovereign territory':['sürükleyerek kaydır · tekerlekle yakınlaştır · ülkeye tıkla','arrastra para desplazar · rueda para acercar · haz clic en un territorio','拖动平移 · 滚轮缩放 · 点击主权领土','перетащите для сдвига · колесо — масштаб · щёлкните по стране'],
  // "Drag" is the window handle hint (the old Russian text read "fight").
  'DRAG':['SÜRÜKLE','ARRASTRAR','拖动','ПЕРЕТАЩИТЬ'],
 };

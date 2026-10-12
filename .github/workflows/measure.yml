@@ -37,7 +37,7 @@ jobs:
         run: npm run measure:renders 2>&1 | tee measure-output.txt; exit ${PIPESTATUS[0]}
       - name: Focused browser specs
         if: env.SUITE == 'e2e'
-        run: npx playwright test fluidCommand091 reliableFoundation0909 commandWindows0905 2>&1 | tee measure-output.txt; exit ${PIPESTATUS[0]}
+        run: npx playwright test fluidCommand0910 reliableFoundation0909 commandWindows0905 2>&1 | tee measure-output.txt; exit ${PIPESTATUS[0]}
       - name: Visual review
         if: env.SUITE == 'visual'
         run: npx playwright test --config performance/visual.config.ts 2>&1 | tee measure-output.txt; exit ${PIPESTATUS[0]}
