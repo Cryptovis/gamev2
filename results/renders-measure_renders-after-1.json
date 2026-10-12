@@ -1,0 +1,3582 @@
+{
+  "version": "0.90.0-playtest.9",
+  "browser": "149.0.7827.55",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "windowMs": 6200,
+  "campaignDay": 31,
+  "reports": [
+    {
+      "scenario": "map only",
+      "commits": 159,
+      "totalRenders": 2279,
+      "totalSelfMs": 151.2,
+      "topByRenders": [
+        {
+          "name": "LocaleText",
+          "renders": 1592,
+          "selfMs": 10.9
+        },
+        {
+          "name": "FlightLayerView",
+          "renders": 159,
+          "selfMs": 92.1
+        },
+        {
+          "name": "AtlasImage",
+          "renders": 104,
+          "selfMs": 0.6
+        },
+        {
+          "name": "RailButton",
+          "renders": 72,
+          "selfMs": 0.7
+        },
+        {
+          "name": "NavigationArt",
+          "renders": 72,
+          "selfMs": 0
+        },
+        {
+          "name": "AircraftShape",
+          "renders": 46,
+          "selfMs": 0
+        },
+        {
+          "name": "CargoPlaneShape",
+          "renders": 46,
+          "selfMs": 0.1
+        },
+        {
+          "name": "Metric",
+          "renders": 32,
+          "selfMs": 0.1
+        },
+        {
+          "name": "CommandArt",
+          "renders": 32,
+          "selfMs": 0.2
+        },
+        {
+          "name": "App",
+          "renders": 8,
+          "selfMs": 1.1
+        },
+        {
+          "name": "CampaignEntry",
+          "renders": 8,
+          "selfMs": 0.3
+        },
+        {
+          "name": "TopBar",
+          "renders": 8,
+          "selfMs": 2
+        },
+        {
+          "name": "AvatarPortrait",
+          "renders": 8,
+          "selfMs": 0.2
+        },
+        {
+          "name": "CommandRails",
+          "renders": 8,
+          "selfMs": 2.5
+        },
+        {
+          "name": "EventModal",
+          "renders": 8,
+          "selfMs": 0.1
+        },
+        {
+          "name": "RegimeCrisisModal",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "AdvisorModal",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "EconomicAdvice",
+          "renders": 8,
+          "selfMs": 0.1
+        },
+        {
+          "name": "CampaignOverlay",
+          "renders": 8,
+          "selfMs": 0.3
+        },
+        {
+          "name": "CampaignTutorial",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "ActionReceipt",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "WarTheatreModal",
+          "renders": 8,
+          "selfMs": 0.1
+        },
+        {
+          "name": "VictoryScroll",
+          "renders": 8,
+          "selfMs": 0.1
+        },
+        {
+          "name": "WorldMapView",
+          "renders": 6,
+          "selfMs": 39.6
+        },
+        {
+          "name": "FlightTransitView",
+          "renders": 6,
+          "selfMs": 0.1
+        }
+      ],
+      "topBySelfMs": [
+        {
+          "name": "FlightLayerView",
+          "renders": 159,
+          "selfMs": 92.1
+        },
+        {
+          "name": "WorldMapView",
+          "renders": 6,
+          "selfMs": 39.6
+        },
+        {
+          "name": "LocaleText",
+          "renders": 1592,
+          "selfMs": 10.9
+        },
+        {
+          "name": "CommandRails",
+          "renders": 8,
+          "selfMs": 2.5
+        },
+        {
+          "name": "TopBar",
+          "renders": 8,
+          "selfMs": 2
+        },
+        {
+          "name": "App",
+          "renders": 8,
+          "selfMs": 1.1
+        },
+        {
+          "name": "RailButton",
+          "renders": 72,
+          "selfMs": 0.7
+        },
+        {
+          "name": "AtlasImage",
+          "renders": 104,
+          "selfMs": 0.6
+        },
+        {
+          "name": "CampaignEntry",
+          "renders": 8,
+          "selfMs": 0.3
+        },
+        {
+          "name": "CampaignOverlay",
+          "renders": 8,
+          "selfMs": 0.3
+        },
+        {
+          "name": "CommandArt",
+          "renders": 32,
+          "selfMs": 0.2
+        },
+        {
+          "name": "AvatarPortrait",
+          "renders": 8,
+          "selfMs": 0.2
+        },
+        {
+          "name": "CargoPlaneShape",
+          "renders": 46,
+          "selfMs": 0.1
+        },
+        {
+          "name": "Metric",
+          "renders": 32,
+          "selfMs": 0.1
+        },
+        {
+          "name": "EventModal",
+          "renders": 8,
+          "selfMs": 0.1
+        }
+      ]
+    },
+    {
+      "scenario": "market",
+      "commits": 74,
+      "totalRenders": 2914,
+      "totalSelfMs": 194.7,
+      "topByRenders": [
+        {
+          "name": "LocaleText",
+          "renders": 1880,
+          "selfMs": 28.7
+        },
+        {
+          "name": "AtlasImage",
+          "renders": 280,
+          "selfMs": 0.8
+        },
+        {
+          "name": "AssetThumbnail",
+          "renders": 176,
+          "selfMs": 0.9
+        },
+        {
+          "name": "FlightLayerView",
+          "renders": 74,
+          "selfMs": 57.3
+        },
+        {
+          "name": "RailButton",
+          "renders": 72,
+          "selfMs": 4.6
+        },
+        {
+          "name": "NavigationArt",
+          "renders": 72,
+          "selfMs": 0.5
+        },
+        {
+          "name": "AircraftShape",
+          "renders": 46,
+          "selfMs": 0
+        },
+        {
+          "name": "CargoPlaneShape",
+          "renders": 46,
+          "selfMs": 0.2
+        },
+        {
+          "name": "CivicArt",
+          "renders": 40,
+          "selfMs": 0
+        },
+        {
+          "name": "Metric",
+          "renders": 32,
+          "selfMs": 0.1
+        },
+        {
+          "name": "CommandArt",
+          "renders": 32,
+          "selfMs": 0
+        },
+        {
+          "name": "App",
+          "renders": 8,
+          "selfMs": 0.6
+        },
+        {
+          "name": "CampaignEntry",
+          "renders": 8,
+          "selfMs": 0.2
+        },
+        {
+          "name": "TopBar",
+          "renders": 8,
+          "selfMs": 5.8
+        },
+        {
+          "name": "AvatarPortrait",
+          "renders": 8,
+          "selfMs": 0.1
+        },
+        {
+          "name": "CommandRails",
+          "renders": 8,
+          "selfMs": 9.9
+        },
+        {
+          "name": "MarketWindow",
+          "renders": 8,
+          "selfMs": 0.8
+        },
+        {
+          "name": "DraggableWindow",
+          "renders": 8,
+          "selfMs": 3
+        },
+        {
+          "name": "GuideBriefing",
+          "renders": 8,
+          "selfMs": 0.2
+        },
+        {
+          "name": "SectionMenu",
+          "renders": 8,
+          "selfMs": 1.5
+        },
+        {
+          "name": "OpenExchange",
+          "renders": 8,
+          "selfMs": 11.5
+        },
+        {
+          "name": "EventModal",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "RegimeCrisisModal",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "AdvisorModal",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "EconomicAdvice",
+          "renders": 8,
+          "selfMs": 0.1
+        }
+      ],
+      "topBySelfMs": [
+        {
+          "name": "WorldMapView",
+          "renders": 6,
+          "selfMs": 67.3
+        },
+        {
+          "name": "FlightLayerView",
+          "renders": 74,
+          "selfMs": 57.3
+        },
+        {
+          "name": "LocaleText",
+          "renders": 1880,
+          "selfMs": 28.7
+        },
+        {
+          "name": "OpenExchange",
+          "renders": 8,
+          "selfMs": 11.5
+        },
+        {
+          "name": "CommandRails",
+          "renders": 8,
+          "selfMs": 9.9
+        },
+        {
+          "name": "TopBar",
+          "renders": 8,
+          "selfMs": 5.8
+        },
+        {
+          "name": "RailButton",
+          "renders": 72,
+          "selfMs": 4.6
+        },
+        {
+          "name": "DraggableWindow",
+          "renders": 8,
+          "selfMs": 3
+        },
+        {
+          "name": "SectionMenu",
+          "renders": 8,
+          "selfMs": 1.5
+        },
+        {
+          "name": "AssetThumbnail",
+          "renders": 176,
+          "selfMs": 0.9
+        },
+        {
+          "name": "AtlasImage",
+          "renders": 280,
+          "selfMs": 0.8
+        },
+        {
+          "name": "MarketWindow",
+          "renders": 8,
+          "selfMs": 0.8
+        },
+        {
+          "name": "App",
+          "renders": 8,
+          "selfMs": 0.6
+        },
+        {
+          "name": "NavigationArt",
+          "renders": 72,
+          "selfMs": 0.5
+        },
+        {
+          "name": "CampaignOverlay",
+          "renders": 8,
+          "selfMs": 0.3
+        }
+      ]
+    },
+    {
+      "scenario": "world",
+      "commits": 135,
+      "totalRenders": 2671,
+      "totalSelfMs": 164.6,
+      "topByRenders": [
+        {
+          "name": "LocaleText",
+          "renders": 1928,
+          "selfMs": 18.1
+        },
+        {
+          "name": "FlightLayerView",
+          "renders": 135,
+          "selfMs": 75.9
+        },
+        {
+          "name": "AtlasImage",
+          "renders": 128,
+          "selfMs": 0.5
+        },
+        {
+          "name": "RailButton",
+          "renders": 72,
+          "selfMs": 1.1
+        },
+        {
+          "name": "NavigationArt",
+          "renders": 72,
+          "selfMs": 0.2
+        },
+        {
+          "name": "CommandArt",
+          "renders": 56,
+          "selfMs": 0.1
+        },
+        {
+          "name": "AircraftShape",
+          "renders": 46,
+          "selfMs": 0
+        },
+        {
+          "name": "CargoPlaneShape",
+          "renders": 46,
+          "selfMs": 0.3
+        },
+        {
+          "name": "Metric",
+          "renders": 32,
+          "selfMs": 0
+        },
+        {
+          "name": "App",
+          "renders": 8,
+          "selfMs": 3.8
+        },
+        {
+          "name": "CampaignEntry",
+          "renders": 8,
+          "selfMs": 0.1
+        },
+        {
+          "name": "TopBar",
+          "renders": 8,
+          "selfMs": 1.2
+        },
+        {
+          "name": "AvatarPortrait",
+          "renders": 8,
+          "selfMs": 0.1
+        },
+        {
+          "name": "CommandRails",
+          "renders": 8,
+          "selfMs": 2.5
+        },
+        {
+          "name": "WorldRankingsWindow",
+          "renders": 8,
+          "selfMs": 15.8
+        },
+        {
+          "name": "DraggableWindow",
+          "renders": 8,
+          "selfMs": 0.5
+        },
+        {
+          "name": "GuideBriefing",
+          "renders": 8,
+          "selfMs": 0.2
+        },
+        {
+          "name": "SectionMenu",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "EventModal",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "RegimeCrisisModal",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "AdvisorModal",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "EconomicAdvice",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "CampaignOverlay",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "CampaignTutorial",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "ActionReceipt",
+          "renders": 8,
+          "selfMs": 0
+        }
+      ],
+      "topBySelfMs": [
+        {
+          "name": "FlightLayerView",
+          "renders": 135,
+          "selfMs": 75.9
+        },
+        {
+          "name": "WorldMapView",
+          "renders": 6,
+          "selfMs": 43.7
+        },
+        {
+          "name": "LocaleText",
+          "renders": 1928,
+          "selfMs": 18.1
+        },
+        {
+          "name": "WorldRankingsWindow",
+          "renders": 8,
+          "selfMs": 15.8
+        },
+        {
+          "name": "App",
+          "renders": 8,
+          "selfMs": 3.8
+        },
+        {
+          "name": "CommandRails",
+          "renders": 8,
+          "selfMs": 2.5
+        },
+        {
+          "name": "TopBar",
+          "renders": 8,
+          "selfMs": 1.2
+        },
+        {
+          "name": "RailButton",
+          "renders": 72,
+          "selfMs": 1.1
+        },
+        {
+          "name": "AtlasImage",
+          "renders": 128,
+          "selfMs": 0.5
+        },
+        {
+          "name": "DraggableWindow",
+          "renders": 8,
+          "selfMs": 0.5
+        },
+        {
+          "name": "FlightTransitView",
+          "renders": 6,
+          "selfMs": 0.4
+        },
+        {
+          "name": "CargoPlaneShape",
+          "renders": 46,
+          "selfMs": 0.3
+        },
+        {
+          "name": "NavigationArt",
+          "renders": 72,
+          "selfMs": 0.2
+        },
+        {
+          "name": "GuideBriefing",
+          "renders": 8,
+          "selfMs": 0.2
+        },
+        {
+          "name": "CommandArt",
+          "renders": 56,
+          "selfMs": 0.1
+        }
+      ]
+    },
+    {
+      "scenario": "supply",
+      "commits": 122,
+      "totalRenders": 4882,
+      "totalSelfMs": 285.5,
+      "topByRenders": [
+        {
+          "name": "LocaleText",
+          "renders": 3584,
+          "selfMs": 32.1
+        },
+        {
+          "name": "Meter",
+          "renders": 192,
+          "selfMs": 0.8
+        },
+        {
+          "name": "AtlasImage",
+          "renders": 176,
+          "selfMs": 0.4
+        },
+        {
+          "name": "FlightLayerView",
+          "renders": 122,
+          "selfMs": 50.4
+        },
+        {
+          "name": "TradeRow",
+          "renders": 96,
+          "selfMs": 9
+        },
+        {
+          "name": "ActionButton",
+          "renders": 96,
+          "selfMs": 0.1
+        },
+        {
+          "name": "NavigationArt",
+          "renders": 80,
+          "selfMs": 0.2
+        },
+        {
+          "name": "RailButton",
+          "renders": 72,
+          "selfMs": 2.1
+        },
+        {
+          "name": "ResourceIcon",
+          "renders": 64,
+          "selfMs": 0
+        },
+        {
+          "name": "AssetThumbnail",
+          "renders": 64,
+          "selfMs": 0.4
+        },
+        {
+          "name": "AircraftShape",
+          "renders": 46,
+          "selfMs": 0.1
+        },
+        {
+          "name": "CargoPlaneShape",
+          "renders": 46,
+          "selfMs": 0.5
+        },
+        {
+          "name": "Metric",
+          "renders": 32,
+          "selfMs": 0.1
+        },
+        {
+          "name": "CommandArt",
+          "renders": 32,
+          "selfMs": 0
+        },
+        {
+          "name": "SupplierRanking",
+          "renders": 32,
+          "selfMs": 131.2
+        },
+        {
+          "name": "App",
+          "renders": 8,
+          "selfMs": 0.8
+        },
+        {
+          "name": "CampaignEntry",
+          "renders": 8,
+          "selfMs": 0.3
+        },
+        {
+          "name": "TopBar",
+          "renders": 8,
+          "selfMs": 1.2
+        },
+        {
+          "name": "AvatarPortrait",
+          "renders": 8,
+          "selfMs": 0.1
+        },
+        {
+          "name": "CommandRails",
+          "renders": 8,
+          "selfMs": 2.5
+        },
+        {
+          "name": "ResourceCommandWindow",
+          "renders": 8,
+          "selfMs": 2.3
+        },
+        {
+          "name": "DraggableWindow",
+          "renders": 8,
+          "selfMs": 0.5
+        },
+        {
+          "name": "GuideBriefing",
+          "renders": 8,
+          "selfMs": 0.1
+        },
+        {
+          "name": "EventModal",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "RegimeCrisisModal",
+          "renders": 8,
+          "selfMs": 0.1
+        }
+      ],
+      "topBySelfMs": [
+        {
+          "name": "SupplierRanking",
+          "renders": 32,
+          "selfMs": 131.2
+        },
+        {
+          "name": "FlightLayerView",
+          "renders": 122,
+          "selfMs": 50.4
+        },
+        {
+          "name": "WorldMapView",
+          "renders": 6,
+          "selfMs": 49.8
+        },
+        {
+          "name": "LocaleText",
+          "renders": 3584,
+          "selfMs": 32.1
+        },
+        {
+          "name": "TradeRow",
+          "renders": 96,
+          "selfMs": 9
+        },
+        {
+          "name": "CommandRails",
+          "renders": 8,
+          "selfMs": 2.5
+        },
+        {
+          "name": "ResourceCommandWindow",
+          "renders": 8,
+          "selfMs": 2.3
+        },
+        {
+          "name": "RailButton",
+          "renders": 72,
+          "selfMs": 2.1
+        },
+        {
+          "name": "TopBar",
+          "renders": 8,
+          "selfMs": 1.2
+        },
+        {
+          "name": "Meter",
+          "renders": 192,
+          "selfMs": 0.8
+        },
+        {
+          "name": "App",
+          "renders": 8,
+          "selfMs": 0.8
+        },
+        {
+          "name": "CargoPlaneShape",
+          "renders": 46,
+          "selfMs": 0.5
+        },
+        {
+          "name": "DraggableWindow",
+          "renders": 8,
+          "selfMs": 0.5
+        },
+        {
+          "name": "AtlasImage",
+          "renders": 176,
+          "selfMs": 0.4
+        },
+        {
+          "name": "AssetThumbnail",
+          "renders": 64,
+          "selfMs": 0.4
+        }
+      ]
+    },
+    {
+      "scenario": "goals",
+      "commits": 164,
+      "totalRenders": 2692,
+      "totalSelfMs": 160.1,
+      "topByRenders": [
+        {
+          "name": "LocaleText",
+          "renders": 1976,
+          "selfMs": 11.1
+        },
+        {
+          "name": "FlightLayerView",
+          "renders": 164,
+          "selfMs": 84.8
+        },
+        {
+          "name": "AtlasImage",
+          "renders": 104,
+          "selfMs": 0.4
+        },
+        {
+          "name": "RailButton",
+          "renders": 72,
+          "selfMs": 1.2
+        },
+        {
+          "name": "NavigationArt",
+          "renders": 72,
+          "selfMs": 0.3
+        },
+        {
+          "name": "AircraftShape",
+          "renders": 46,
+          "selfMs": 0
+        },
+        {
+          "name": "CargoPlaneShape",
+          "renders": 46,
+          "selfMs": 0.2
+        },
+        {
+          "name": "Metric",
+          "renders": 32,
+          "selfMs": 0
+        },
+        {
+          "name": "CommandArt",
+          "renders": 32,
+          "selfMs": 0
+        },
+        {
+          "name": "App",
+          "renders": 8,
+          "selfMs": 2.5
+        },
+        {
+          "name": "CampaignEntry",
+          "renders": 8,
+          "selfMs": 0.5
+        },
+        {
+          "name": "TopBar",
+          "renders": 8,
+          "selfMs": 1.3
+        },
+        {
+          "name": "AvatarPortrait",
+          "renders": 8,
+          "selfMs": 0.3
+        },
+        {
+          "name": "CommandRails",
+          "renders": 8,
+          "selfMs": 2.6
+        },
+        {
+          "name": "DraggableWindow",
+          "renders": 8,
+          "selfMs": 0.5
+        },
+        {
+          "name": "GuideBriefing",
+          "renders": 8,
+          "selfMs": 0.1
+        },
+        {
+          "name": "CampaignVictoryProgress",
+          "renders": 8,
+          "selfMs": 1.8
+        },
+        {
+          "name": "EventModal",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "RegimeCrisisModal",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "AdvisorModal",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "EconomicAdvice",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "CampaignOverlay",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "CampaignTutorial",
+          "renders": 8,
+          "selfMs": 0.1
+        },
+        {
+          "name": "ActionReceipt",
+          "renders": 8,
+          "selfMs": 0.1
+        },
+        {
+          "name": "WarTheatreModal",
+          "renders": 8,
+          "selfMs": 0
+        }
+      ],
+      "topBySelfMs": [
+        {
+          "name": "FlightLayerView",
+          "renders": 164,
+          "selfMs": 84.8
+        },
+        {
+          "name": "WorldMapView",
+          "renders": 6,
+          "selfMs": 52
+        },
+        {
+          "name": "LocaleText",
+          "renders": 1976,
+          "selfMs": 11.1
+        },
+        {
+          "name": "CommandRails",
+          "renders": 8,
+          "selfMs": 2.6
+        },
+        {
+          "name": "App",
+          "renders": 8,
+          "selfMs": 2.5
+        },
+        {
+          "name": "CampaignVictoryProgress",
+          "renders": 8,
+          "selfMs": 1.8
+        },
+        {
+          "name": "TopBar",
+          "renders": 8,
+          "selfMs": 1.3
+        },
+        {
+          "name": "RailButton",
+          "renders": 72,
+          "selfMs": 1.2
+        },
+        {
+          "name": "CampaignEntry",
+          "renders": 8,
+          "selfMs": 0.5
+        },
+        {
+          "name": "DraggableWindow",
+          "renders": 8,
+          "selfMs": 0.5
+        },
+        {
+          "name": "AtlasImage",
+          "renders": 104,
+          "selfMs": 0.4
+        },
+        {
+          "name": "NavigationArt",
+          "renders": 72,
+          "selfMs": 0.3
+        },
+        {
+          "name": "AvatarPortrait",
+          "renders": 8,
+          "selfMs": 0.3
+        },
+        {
+          "name": "FlightTransitView",
+          "renders": 6,
+          "selfMs": 0.3
+        },
+        {
+          "name": "CargoPlaneShape",
+          "renders": 46,
+          "selfMs": 0.2
+        }
+      ]
+    },
+    {
+      "scenario": "diplomacy",
+      "commits": 154,
+      "totalRenders": 4306,
+      "totalSelfMs": 153.4,
+      "topByRenders": [
+        {
+          "name": "LocaleText",
+          "renders": 3536,
+          "selfMs": 30.4
+        },
+        {
+          "name": "FlightLayerView",
+          "renders": 154,
+          "selfMs": 63
+        },
+        {
+          "name": "AtlasImage",
+          "renders": 120,
+          "selfMs": 1.1
+        },
+        {
+          "name": "RailButton",
+          "renders": 72,
+          "selfMs": 0.7
+        },
+        {
+          "name": "NavigationArt",
+          "renders": 72,
+          "selfMs": 0.1
+        },
+        {
+          "name": "AircraftShape",
+          "renders": 46,
+          "selfMs": 0.1
+        },
+        {
+          "name": "CargoPlaneShape",
+          "renders": 46,
+          "selfMs": 0.1
+        },
+        {
+          "name": "Metric",
+          "renders": 32,
+          "selfMs": 0
+        },
+        {
+          "name": "CommandArt",
+          "renders": 32,
+          "selfMs": 0
+        },
+        {
+          "name": "CivicArt",
+          "renders": 16,
+          "selfMs": 0.1
+        },
+        {
+          "name": "Svg",
+          "renders": 16,
+          "selfMs": 0.1
+        },
+        {
+          "name": "App",
+          "renders": 8,
+          "selfMs": 0.7
+        },
+        {
+          "name": "CampaignEntry",
+          "renders": 8,
+          "selfMs": 0.3
+        },
+        {
+          "name": "TopBar",
+          "renders": 8,
+          "selfMs": 5.3
+        },
+        {
+          "name": "AvatarPortrait",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "CommandRails",
+          "renders": 8,
+          "selfMs": 2.4
+        },
+        {
+          "name": "DraggableWindow",
+          "renders": 8,
+          "selfMs": 0.3
+        },
+        {
+          "name": "GuideBriefing",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "DiplomaticPost",
+          "renders": 8,
+          "selfMs": 8.3
+        },
+        {
+          "name": "EmbassyIcon",
+          "renders": 8,
+          "selfMs": 0.1
+        },
+        {
+          "name": "DiplomacyIcon",
+          "renders": 8,
+          "selfMs": 0.1
+        },
+        {
+          "name": "EventModal",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "RegimeCrisisModal",
+          "renders": 8,
+          "selfMs": 0.2
+        },
+        {
+          "name": "AdvisorModal",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "EconomicAdvice",
+          "renders": 8,
+          "selfMs": 0.1
+        }
+      ],
+      "topBySelfMs": [
+        {
+          "name": "FlightLayerView",
+          "renders": 154,
+          "selfMs": 63
+        },
+        {
+          "name": "WorldMapView",
+          "renders": 6,
+          "selfMs": 39.4
+        },
+        {
+          "name": "LocaleText",
+          "renders": 3536,
+          "selfMs": 30.4
+        },
+        {
+          "name": "DiplomaticPost",
+          "renders": 8,
+          "selfMs": 8.3
+        },
+        {
+          "name": "TopBar",
+          "renders": 8,
+          "selfMs": 5.3
+        },
+        {
+          "name": "CommandRails",
+          "renders": 8,
+          "selfMs": 2.4
+        },
+        {
+          "name": "AtlasImage",
+          "renders": 120,
+          "selfMs": 1.1
+        },
+        {
+          "name": "RailButton",
+          "renders": 72,
+          "selfMs": 0.7
+        },
+        {
+          "name": "App",
+          "renders": 8,
+          "selfMs": 0.7
+        },
+        {
+          "name": "CampaignEntry",
+          "renders": 8,
+          "selfMs": 0.3
+        },
+        {
+          "name": "DraggableWindow",
+          "renders": 8,
+          "selfMs": 0.3
+        },
+        {
+          "name": "RegimeCrisisModal",
+          "renders": 8,
+          "selfMs": 0.2
+        },
+        {
+          "name": "WarTheatreModal",
+          "renders": 8,
+          "selfMs": 0.2
+        },
+        {
+          "name": "FlightTransitView",
+          "renders": 6,
+          "selfMs": 0.2
+        },
+        {
+          "name": "NavigationArt",
+          "renders": 72,
+          "selfMs": 0.1
+        }
+      ]
+    },
+    {
+      "scenario": "alerts",
+      "commits": 171,
+      "totalRenders": 2691,
+      "totalSelfMs": 173.3,
+      "topByRenders": [
+        {
+          "name": "LocaleText",
+          "renders": 1816,
+          "selfMs": 13.9
+        },
+        {
+          "name": "AtlasImage",
+          "renders": 176,
+          "selfMs": 0.7
+        },
+        {
+          "name": "FlightLayerView",
+          "renders": 171,
+          "selfMs": 95.8
+        },
+        {
+          "name": "CommandArt",
+          "renders": 96,
+          "selfMs": 0.2
+        },
+        {
+          "name": "RailButton",
+          "renders": 72,
+          "selfMs": 0.7
+        },
+        {
+          "name": "NavigationArt",
+          "renders": 72,
+          "selfMs": 0
+        },
+        {
+          "name": "AircraftShape",
+          "renders": 46,
+          "selfMs": 0.1
+        },
+        {
+          "name": "CargoPlaneShape",
+          "renders": 46,
+          "selfMs": 0.3
+        },
+        {
+          "name": "Metric",
+          "renders": 32,
+          "selfMs": 0
+        },
+        {
+          "name": "App",
+          "renders": 8,
+          "selfMs": 0.6
+        },
+        {
+          "name": "CampaignEntry",
+          "renders": 8,
+          "selfMs": 0.2
+        },
+        {
+          "name": "TopBar",
+          "renders": 8,
+          "selfMs": 4.4
+        },
+        {
+          "name": "AvatarPortrait",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "CommandRails",
+          "renders": 8,
+          "selfMs": 4.9
+        },
+        {
+          "name": "DraggableWindow",
+          "renders": 8,
+          "selfMs": 1.2
+        },
+        {
+          "name": "GuideBriefing",
+          "renders": 8,
+          "selfMs": 0.1
+        },
+        {
+          "name": "CommandAlerts",
+          "renders": 8,
+          "selfMs": 1.8
+        },
+        {
+          "name": "ResourceIcon",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "AssetThumbnail",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "EventModal",
+          "renders": 8,
+          "selfMs": 0.2
+        },
+        {
+          "name": "RegimeCrisisModal",
+          "renders": 8,
+          "selfMs": 0.1
+        },
+        {
+          "name": "AdvisorModal",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "EconomicAdvice",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "CampaignOverlay",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "CampaignTutorial",
+          "renders": 8,
+          "selfMs": 0
+        }
+      ],
+      "topBySelfMs": [
+        {
+          "name": "FlightLayerView",
+          "renders": 171,
+          "selfMs": 95.8
+        },
+        {
+          "name": "WorldMapView",
+          "renders": 6,
+          "selfMs": 47.9
+        },
+        {
+          "name": "LocaleText",
+          "renders": 1816,
+          "selfMs": 13.9
+        },
+        {
+          "name": "CommandRails",
+          "renders": 8,
+          "selfMs": 4.9
+        },
+        {
+          "name": "TopBar",
+          "renders": 8,
+          "selfMs": 4.4
+        },
+        {
+          "name": "CommandAlerts",
+          "renders": 8,
+          "selfMs": 1.8
+        },
+        {
+          "name": "DraggableWindow",
+          "renders": 8,
+          "selfMs": 1.2
+        },
+        {
+          "name": "AtlasImage",
+          "renders": 176,
+          "selfMs": 0.7
+        },
+        {
+          "name": "RailButton",
+          "renders": 72,
+          "selfMs": 0.7
+        },
+        {
+          "name": "App",
+          "renders": 8,
+          "selfMs": 0.6
+        },
+        {
+          "name": "CargoPlaneShape",
+          "renders": 46,
+          "selfMs": 0.3
+        },
+        {
+          "name": "CommandArt",
+          "renders": 96,
+          "selfMs": 0.2
+        },
+        {
+          "name": "CampaignEntry",
+          "renders": 8,
+          "selfMs": 0.2
+        },
+        {
+          "name": "EventModal",
+          "renders": 8,
+          "selfMs": 0.2
+        },
+        {
+          "name": "AircraftShape",
+          "renders": 46,
+          "selfMs": 0.1
+        }
+      ]
+    },
+    {
+      "scenario": "help",
+      "commits": 152,
+      "totalRenders": 2920,
+      "totalSelfMs": 149.6,
+      "topByRenders": [
+        {
+          "name": "LocaleText",
+          "renders": 2216,
+          "selfMs": 17.1
+        },
+        {
+          "name": "FlightLayerView",
+          "renders": 152,
+          "selfMs": 72.6
+        },
+        {
+          "name": "AtlasImage",
+          "renders": 104,
+          "selfMs": 0.3
+        },
+        {
+          "name": "RailButton",
+          "renders": 72,
+          "selfMs": 1.2
+        },
+        {
+          "name": "NavigationArt",
+          "renders": 72,
+          "selfMs": 0.2
+        },
+        {
+          "name": "AircraftShape",
+          "renders": 46,
+          "selfMs": 0
+        },
+        {
+          "name": "CargoPlaneShape",
+          "renders": 46,
+          "selfMs": 0.4
+        },
+        {
+          "name": "Metric",
+          "renders": 32,
+          "selfMs": 0.1
+        },
+        {
+          "name": "CommandArt",
+          "renders": 32,
+          "selfMs": 0
+        },
+        {
+          "name": "App",
+          "renders": 8,
+          "selfMs": 1.2
+        },
+        {
+          "name": "CampaignEntry",
+          "renders": 8,
+          "selfMs": 0.5
+        },
+        {
+          "name": "TopBar",
+          "renders": 8,
+          "selfMs": 1.1
+        },
+        {
+          "name": "AvatarPortrait",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "CommandRails",
+          "renders": 8,
+          "selfMs": 5.6
+        },
+        {
+          "name": "HelpPanel",
+          "renders": 8,
+          "selfMs": 2.1
+        },
+        {
+          "name": "DraggableWindow",
+          "renders": 8,
+          "selfMs": 0.2
+        },
+        {
+          "name": "GuideBriefing",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "EventModal",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "RegimeCrisisModal",
+          "renders": 8,
+          "selfMs": 0.2
+        },
+        {
+          "name": "AdvisorModal",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "EconomicAdvice",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "CampaignOverlay",
+          "renders": 8,
+          "selfMs": 0.1
+        },
+        {
+          "name": "CampaignTutorial",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "ActionReceipt",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "WarTheatreModal",
+          "renders": 8,
+          "selfMs": 0
+        }
+      ],
+      "topBySelfMs": [
+        {
+          "name": "FlightLayerView",
+          "renders": 152,
+          "selfMs": 72.6
+        },
+        {
+          "name": "WorldMapView",
+          "renders": 6,
+          "selfMs": 46.4
+        },
+        {
+          "name": "LocaleText",
+          "renders": 2216,
+          "selfMs": 17.1
+        },
+        {
+          "name": "CommandRails",
+          "renders": 8,
+          "selfMs": 5.6
+        },
+        {
+          "name": "HelpPanel",
+          "renders": 8,
+          "selfMs": 2.1
+        },
+        {
+          "name": "RailButton",
+          "renders": 72,
+          "selfMs": 1.2
+        },
+        {
+          "name": "App",
+          "renders": 8,
+          "selfMs": 1.2
+        },
+        {
+          "name": "TopBar",
+          "renders": 8,
+          "selfMs": 1.1
+        },
+        {
+          "name": "CampaignEntry",
+          "renders": 8,
+          "selfMs": 0.5
+        },
+        {
+          "name": "CargoPlaneShape",
+          "renders": 46,
+          "selfMs": 0.4
+        },
+        {
+          "name": "AtlasImage",
+          "renders": 104,
+          "selfMs": 0.3
+        },
+        {
+          "name": "FlightTransitView",
+          "renders": 6,
+          "selfMs": 0.3
+        },
+        {
+          "name": "NavigationArt",
+          "renders": 72,
+          "selfMs": 0.2
+        },
+        {
+          "name": "DraggableWindow",
+          "renders": 8,
+          "selfMs": 0.2
+        },
+        {
+          "name": "RegimeCrisisModal",
+          "renders": 8,
+          "selfMs": 0.2
+        }
+      ]
+    },
+    {
+      "scenario": "nation/economy",
+      "commits": 159,
+      "totalRenders": 10040,
+      "totalSelfMs": 190.9,
+      "topByRenders": [
+        {
+          "name": "LocaleText",
+          "renders": 8816,
+          "selfMs": 42.2
+        },
+        {
+          "name": "AtlasImage",
+          "renders": 264,
+          "selfMs": 0.9
+        },
+        {
+          "name": "FlightLayerView",
+          "renders": 159,
+          "selfMs": 90.8
+        },
+        {
+          "name": "CommandArt",
+          "renders": 144,
+          "selfMs": 1.2
+        },
+        {
+          "name": "PanelTabIcon",
+          "renders": 96,
+          "selfMs": 0.1
+        },
+        {
+          "name": "RailButton",
+          "renders": 72,
+          "selfMs": 0.7
+        },
+        {
+          "name": "NavigationArt",
+          "renders": 72,
+          "selfMs": 0.1
+        },
+        {
+          "name": "AircraftShape",
+          "renders": 46,
+          "selfMs": 0.1
+        },
+        {
+          "name": "CargoPlaneShape",
+          "renders": 46,
+          "selfMs": 0
+        },
+        {
+          "name": "Metric",
+          "renders": 32,
+          "selfMs": 0
+        },
+        {
+          "name": "ResourceCard",
+          "renders": 32,
+          "selfMs": 0.6
+        },
+        {
+          "name": "ResourceIcon",
+          "renders": 32,
+          "selfMs": 0.1
+        },
+        {
+          "name": "AssetThumbnail",
+          "renders": 32,
+          "selfMs": 0.3
+        },
+        {
+          "name": "CivicArt",
+          "renders": 16,
+          "selfMs": 0
+        },
+        {
+          "name": "PopulationPanel",
+          "renders": 9,
+          "selfMs": 2.9
+        },
+        {
+          "name": "App",
+          "renders": 8,
+          "selfMs": 1.5
+        },
+        {
+          "name": "CampaignEntry",
+          "renders": 8,
+          "selfMs": 0.4
+        },
+        {
+          "name": "TopBar",
+          "renders": 8,
+          "selfMs": 1
+        },
+        {
+          "name": "AvatarPortrait",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "CountryPanel",
+          "renders": 8,
+          "selfMs": 3.3
+        },
+        {
+          "name": "ReligionGlyph",
+          "renders": 8,
+          "selfMs": 0.1
+        },
+        {
+          "name": "PowerChartIcon",
+          "renders": 8,
+          "selfMs": 0.1
+        },
+        {
+          "name": "GuideBriefing",
+          "renders": 8,
+          "selfMs": 0.1
+        },
+        {
+          "name": "CountrySectionFrame",
+          "renders": 8,
+          "selfMs": 0.2
+        },
+        {
+          "name": "EconomicTrends",
+          "renders": 8,
+          "selfMs": 1.5
+        }
+      ],
+      "topBySelfMs": [
+        {
+          "name": "FlightLayerView",
+          "renders": 159,
+          "selfMs": 90.8
+        },
+        {
+          "name": "LocaleText",
+          "renders": 8816,
+          "selfMs": 42.2
+        },
+        {
+          "name": "WorldMapView",
+          "renders": 6,
+          "selfMs": 39.1
+        },
+        {
+          "name": "CountryPanel",
+          "renders": 8,
+          "selfMs": 3.3
+        },
+        {
+          "name": "PopulationPanel",
+          "renders": 9,
+          "selfMs": 2.9
+        },
+        {
+          "name": "CommandRails",
+          "renders": 8,
+          "selfMs": 2.2
+        },
+        {
+          "name": "App",
+          "renders": 8,
+          "selfMs": 1.5
+        },
+        {
+          "name": "EconomicTrends",
+          "renders": 8,
+          "selfMs": 1.5
+        },
+        {
+          "name": "CommandArt",
+          "renders": 144,
+          "selfMs": 1.2
+        },
+        {
+          "name": "TopBar",
+          "renders": 8,
+          "selfMs": 1
+        },
+        {
+          "name": "AtlasImage",
+          "renders": 264,
+          "selfMs": 0.9
+        },
+        {
+          "name": "WarTheatreModal",
+          "renders": 8,
+          "selfMs": 0.8
+        },
+        {
+          "name": "RailButton",
+          "renders": 72,
+          "selfMs": 0.7
+        },
+        {
+          "name": "ResourceCard",
+          "renders": 32,
+          "selfMs": 0.6
+        },
+        {
+          "name": "CampaignEntry",
+          "renders": 8,
+          "selfMs": 0.4
+        }
+      ]
+    },
+    {
+      "scenario": "nation/policies",
+      "commits": 159,
+      "totalRenders": 9568,
+      "totalSelfMs": 187.8,
+      "topByRenders": [
+        {
+          "name": "LocaleText",
+          "renders": 8432,
+          "selfMs": 51.9
+        },
+        {
+          "name": "AtlasImage",
+          "renders": 248,
+          "selfMs": 0.8
+        },
+        {
+          "name": "FlightLayerView",
+          "renders": 159,
+          "selfMs": 74.1
+        },
+        {
+          "name": "CommandArt",
+          "renders": 152,
+          "selfMs": 2.3
+        },
+        {
+          "name": "PanelTabIcon",
+          "renders": 96,
+          "selfMs": 0
+        },
+        {
+          "name": "RailButton",
+          "renders": 72,
+          "selfMs": 0.4
+        },
+        {
+          "name": "NavigationArt",
+          "renders": 72,
+          "selfMs": 0.3
+        },
+        {
+          "name": "AircraftShape",
+          "renders": 46,
+          "selfMs": 0.1
+        },
+        {
+          "name": "CargoPlaneShape",
+          "renders": 46,
+          "selfMs": 0
+        },
+        {
+          "name": "Metric",
+          "renders": 32,
+          "selfMs": 0.1
+        },
+        {
+          "name": "CivicArt",
+          "renders": 24,
+          "selfMs": 0
+        },
+        {
+          "name": "PopulationPanel",
+          "renders": 9,
+          "selfMs": 4.2
+        },
+        {
+          "name": "App",
+          "renders": 8,
+          "selfMs": 0.8
+        },
+        {
+          "name": "CampaignEntry",
+          "renders": 8,
+          "selfMs": 0.3
+        },
+        {
+          "name": "TopBar",
+          "renders": 8,
+          "selfMs": 1.2
+        },
+        {
+          "name": "AvatarPortrait",
+          "renders": 8,
+          "selfMs": 0.1
+        },
+        {
+          "name": "CountryPanel",
+          "renders": 8,
+          "selfMs": 4.9
+        },
+        {
+          "name": "ReligionGlyph",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "PowerChartIcon",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "GuideBriefing",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "CountrySectionFrame",
+          "renders": 8,
+          "selfMs": 0.1
+        },
+        {
+          "name": "CabinetIcon",
+          "renders": 8,
+          "selfMs": 0.1
+        },
+        {
+          "name": "Svg",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "CommandRails",
+          "renders": 8,
+          "selfMs": 2.5
+        },
+        {
+          "name": "EventModal",
+          "renders": 8,
+          "selfMs": 0
+        }
+      ],
+      "topBySelfMs": [
+        {
+          "name": "FlightLayerView",
+          "renders": 159,
+          "selfMs": 74.1
+        },
+        {
+          "name": "LocaleText",
+          "renders": 8432,
+          "selfMs": 51.9
+        },
+        {
+          "name": "WorldMapView",
+          "renders": 6,
+          "selfMs": 43
+        },
+        {
+          "name": "CountryPanel",
+          "renders": 8,
+          "selfMs": 4.9
+        },
+        {
+          "name": "PopulationPanel",
+          "renders": 9,
+          "selfMs": 4.2
+        },
+        {
+          "name": "CommandRails",
+          "renders": 8,
+          "selfMs": 2.5
+        },
+        {
+          "name": "CommandArt",
+          "renders": 152,
+          "selfMs": 2.3
+        },
+        {
+          "name": "TopBar",
+          "renders": 8,
+          "selfMs": 1.2
+        },
+        {
+          "name": "AtlasImage",
+          "renders": 248,
+          "selfMs": 0.8
+        },
+        {
+          "name": "App",
+          "renders": 8,
+          "selfMs": 0.8
+        },
+        {
+          "name": "RailButton",
+          "renders": 72,
+          "selfMs": 0.4
+        },
+        {
+          "name": "NavigationArt",
+          "renders": 72,
+          "selfMs": 0.3
+        },
+        {
+          "name": "CampaignEntry",
+          "renders": 8,
+          "selfMs": 0.3
+        },
+        {
+          "name": "ActionReceipt",
+          "renders": 8,
+          "selfMs": 0.2
+        },
+        {
+          "name": "FlightTransitView",
+          "renders": 6,
+          "selfMs": 0.2
+        }
+      ]
+    },
+    {
+      "scenario": "nation/trade",
+      "commits": 164,
+      "totalRenders": 10004,
+      "totalSelfMs": 252.8,
+      "topByRenders": [
+        {
+          "name": "LocaleText",
+          "renders": 8776,
+          "selfMs": 53.4
+        },
+        {
+          "name": "AtlasImage",
+          "renders": 248,
+          "selfMs": 0.8
+        },
+        {
+          "name": "FlightLayerView",
+          "renders": 164,
+          "selfMs": 85.3
+        },
+        {
+          "name": "CommandArt",
+          "renders": 144,
+          "selfMs": 0.2
+        },
+        {
+          "name": "PanelTabIcon",
+          "renders": 96,
+          "selfMs": 0
+        },
+        {
+          "name": "RailButton",
+          "renders": 72,
+          "selfMs": 0.5
+        },
+        {
+          "name": "NavigationArt",
+          "renders": 72,
+          "selfMs": 0.4
+        },
+        {
+          "name": "Meter",
+          "renders": 48,
+          "selfMs": 0.4
+        },
+        {
+          "name": "AircraftShape",
+          "renders": 46,
+          "selfMs": 0
+        },
+        {
+          "name": "CargoPlaneShape",
+          "renders": 46,
+          "selfMs": 0.4
+        },
+        {
+          "name": "Metric",
+          "renders": 32,
+          "selfMs": 0.1
+        },
+        {
+          "name": "CivicArt",
+          "renders": 24,
+          "selfMs": 0.1
+        },
+        {
+          "name": "TradeRow",
+          "renders": 24,
+          "selfMs": 2.3
+        },
+        {
+          "name": "ActionButton",
+          "renders": 24,
+          "selfMs": 0.1
+        },
+        {
+          "name": "App",
+          "renders": 8,
+          "selfMs": 0.8
+        },
+        {
+          "name": "CampaignEntry",
+          "renders": 8,
+          "selfMs": 0.2
+        },
+        {
+          "name": "TopBar",
+          "renders": 8,
+          "selfMs": 1.1
+        },
+        {
+          "name": "AvatarPortrait",
+          "renders": 8,
+          "selfMs": 0.2
+        },
+        {
+          "name": "CountryPanel",
+          "renders": 8,
+          "selfMs": 5.3
+        },
+        {
+          "name": "ReligionGlyph",
+          "renders": 8,
+          "selfMs": 0.1
+        },
+        {
+          "name": "PowerChartIcon",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "GuideBriefing",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "CountrySectionFrame",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "CountryTradeDesk",
+          "renders": 8,
+          "selfMs": 2.2
+        },
+        {
+          "name": "AssetThumbnail",
+          "renders": 8,
+          "selfMs": 0
+        }
+      ],
+      "topBySelfMs": [
+        {
+          "name": "FlightLayerView",
+          "renders": 164,
+          "selfMs": 85.3
+        },
+        {
+          "name": "LocaleText",
+          "renders": 8776,
+          "selfMs": 53.4
+        },
+        {
+          "name": "WorldMapView",
+          "renders": 6,
+          "selfMs": 51.3
+        },
+        {
+          "name": "SupplierRanking",
+          "renders": 8,
+          "selfMs": 44.8
+        },
+        {
+          "name": "CountryPanel",
+          "renders": 8,
+          "selfMs": 5.3
+        },
+        {
+          "name": "TradeRow",
+          "renders": 24,
+          "selfMs": 2.3
+        },
+        {
+          "name": "CountryTradeDesk",
+          "renders": 8,
+          "selfMs": 2.2
+        },
+        {
+          "name": "CommandRails",
+          "renders": 8,
+          "selfMs": 2.2
+        },
+        {
+          "name": "TopBar",
+          "renders": 8,
+          "selfMs": 1.1
+        },
+        {
+          "name": "AtlasImage",
+          "renders": 248,
+          "selfMs": 0.8
+        },
+        {
+          "name": "App",
+          "renders": 8,
+          "selfMs": 0.8
+        },
+        {
+          "name": "RailButton",
+          "renders": 72,
+          "selfMs": 0.5
+        },
+        {
+          "name": "NavigationArt",
+          "renders": 72,
+          "selfMs": 0.4
+        },
+        {
+          "name": "Meter",
+          "renders": 48,
+          "selfMs": 0.4
+        },
+        {
+          "name": "CargoPlaneShape",
+          "renders": 46,
+          "selfMs": 0.4
+        }
+      ]
+    },
+    {
+      "scenario": "nation/production",
+      "commits": 112,
+      "totalRenders": 14776,
+      "totalSelfMs": 229,
+      "topByRenders": [
+        {
+          "name": "LocaleText",
+          "renders": 12680,
+          "selfMs": 76.8
+        },
+        {
+          "name": "AtlasImage",
+          "renders": 464,
+          "selfMs": 5.4
+        },
+        {
+          "name": "AssetThumbnail",
+          "renders": 232,
+          "selfMs": 0.5
+        },
+        {
+          "name": "CommandArt",
+          "renders": 144,
+          "selfMs": 0.2
+        },
+        {
+          "name": "IndustryIcon",
+          "renders": 144,
+          "selfMs": 0.4
+        },
+        {
+          "name": "Svg",
+          "renders": 144,
+          "selfMs": 0.2
+        },
+        {
+          "name": "FlightLayerView",
+          "renders": 112,
+          "selfMs": 50.5
+        },
+        {
+          "name": "PanelTabIcon",
+          "renders": 96,
+          "selfMs": 0
+        },
+        {
+          "name": "EquipmentGlyph",
+          "renders": 96,
+          "selfMs": 0.3
+        },
+        {
+          "name": "RailButton",
+          "renders": 72,
+          "selfMs": 0.7
+        },
+        {
+          "name": "NavigationArt",
+          "renders": 72,
+          "selfMs": 0.3
+        },
+        {
+          "name": "PowerPlantArt",
+          "renders": 48,
+          "selfMs": 0.5
+        },
+        {
+          "name": "AircraftShape",
+          "renders": 46,
+          "selfMs": 0
+        },
+        {
+          "name": "CargoPlaneShape",
+          "renders": 46,
+          "selfMs": 0.3
+        },
+        {
+          "name": "Metric",
+          "renders": 32,
+          "selfMs": 0
+        },
+        {
+          "name": "CivicArt",
+          "renders": 32,
+          "selfMs": 0.1
+        },
+        {
+          "name": "TankIcon",
+          "renders": 32,
+          "selfMs": 0
+        },
+        {
+          "name": "GuideBriefing",
+          "renders": 16,
+          "selfMs": 0
+        },
+        {
+          "name": "PersonnelIcon",
+          "renders": 16,
+          "selfMs": 0.1
+        },
+        {
+          "name": "ArtilleryIcon",
+          "renders": 16,
+          "selfMs": 0
+        },
+        {
+          "name": "JetIcon",
+          "renders": 16,
+          "selfMs": 0
+        },
+        {
+          "name": "ShipIcon",
+          "renders": 16,
+          "selfMs": 0.1
+        },
+        {
+          "name": "App",
+          "renders": 8,
+          "selfMs": 0.8
+        },
+        {
+          "name": "CampaignEntry",
+          "renders": 8,
+          "selfMs": 0.3
+        },
+        {
+          "name": "TopBar",
+          "renders": 8,
+          "selfMs": 1
+        }
+      ],
+      "topBySelfMs": [
+        {
+          "name": "LocaleText",
+          "renders": 12680,
+          "selfMs": 76.8
+        },
+        {
+          "name": "WorldMapView",
+          "renders": 6,
+          "selfMs": 62.8
+        },
+        {
+          "name": "FlightLayerView",
+          "renders": 112,
+          "selfMs": 50.5
+        },
+        {
+          "name": "IndustrialPanel",
+          "renders": 8,
+          "selfMs": 7.2
+        },
+        {
+          "name": "ProductionPanel",
+          "renders": 8,
+          "selfMs": 7
+        },
+        {
+          "name": "AtlasImage",
+          "renders": 464,
+          "selfMs": 5.4
+        },
+        {
+          "name": "CountryPanel",
+          "renders": 8,
+          "selfMs": 5.2
+        },
+        {
+          "name": "EnergyPanel",
+          "renders": 8,
+          "selfMs": 3.8
+        },
+        {
+          "name": "CommandRails",
+          "renders": 8,
+          "selfMs": 2.6
+        },
+        {
+          "name": "TopBar",
+          "renders": 8,
+          "selfMs": 1
+        },
+        {
+          "name": "App",
+          "renders": 8,
+          "selfMs": 0.8
+        },
+        {
+          "name": "RailButton",
+          "renders": 72,
+          "selfMs": 0.7
+        },
+        {
+          "name": "FlightTransitView",
+          "renders": 6,
+          "selfMs": 0.6
+        },
+        {
+          "name": "AssetThumbnail",
+          "renders": 232,
+          "selfMs": 0.5
+        },
+        {
+          "name": "PowerPlantArt",
+          "renders": 48,
+          "selfMs": 0.5
+        }
+      ]
+    },
+    {
+      "scenario": "nation/diplomacy",
+      "commits": 159,
+      "totalRenders": 9447,
+      "totalSelfMs": 182.8,
+      "topByRenders": [
+        {
+          "name": "LocaleText",
+          "renders": 8360,
+          "selfMs": 56.1
+        },
+        {
+          "name": "AtlasImage",
+          "renders": 232,
+          "selfMs": 0.5
+        },
+        {
+          "name": "FlightLayerView",
+          "renders": 159,
+          "selfMs": 75
+        },
+        {
+          "name": "CommandArt",
+          "renders": 144,
+          "selfMs": 0.4
+        },
+        {
+          "name": "PanelTabIcon",
+          "renders": 96,
+          "selfMs": 0
+        },
+        {
+          "name": "RailButton",
+          "renders": 72,
+          "selfMs": 0.3
+        },
+        {
+          "name": "NavigationArt",
+          "renders": 72,
+          "selfMs": 0.3
+        },
+        {
+          "name": "AircraftShape",
+          "renders": 46,
+          "selfMs": 2.1
+        },
+        {
+          "name": "CargoPlaneShape",
+          "renders": 46,
+          "selfMs": 0
+        },
+        {
+          "name": "Metric",
+          "renders": 32,
+          "selfMs": 0.1
+        },
+        {
+          "name": "CivicArt",
+          "renders": 16,
+          "selfMs": 0
+        },
+        {
+          "name": "App",
+          "renders": 8,
+          "selfMs": 0.6
+        },
+        {
+          "name": "CampaignEntry",
+          "renders": 8,
+          "selfMs": 0.3
+        },
+        {
+          "name": "TopBar",
+          "renders": 8,
+          "selfMs": 1.3
+        },
+        {
+          "name": "AvatarPortrait",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "CountryPanel",
+          "renders": 8,
+          "selfMs": 6.2
+        },
+        {
+          "name": "ReligionGlyph",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "PowerChartIcon",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "GuideBriefing",
+          "renders": 8,
+          "selfMs": 0.1
+        },
+        {
+          "name": "CountrySectionFrame",
+          "renders": 8,
+          "selfMs": 0.1
+        },
+        {
+          "name": "DiplomacyPanel",
+          "renders": 8,
+          "selfMs": 1.3
+        },
+        {
+          "name": "CommandRails",
+          "renders": 8,
+          "selfMs": 2.5
+        },
+        {
+          "name": "EventModal",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "RegimeCrisisModal",
+          "renders": 8,
+          "selfMs": 0.2
+        },
+        {
+          "name": "AdvisorModal",
+          "renders": 8,
+          "selfMs": 0
+        }
+      ],
+      "topBySelfMs": [
+        {
+          "name": "FlightLayerView",
+          "renders": 159,
+          "selfMs": 75
+        },
+        {
+          "name": "LocaleText",
+          "renders": 8360,
+          "selfMs": 56.1
+        },
+        {
+          "name": "WorldMapView",
+          "renders": 6,
+          "selfMs": 35
+        },
+        {
+          "name": "CountryPanel",
+          "renders": 8,
+          "selfMs": 6.2
+        },
+        {
+          "name": "CommandRails",
+          "renders": 8,
+          "selfMs": 2.5
+        },
+        {
+          "name": "AircraftShape",
+          "renders": 46,
+          "selfMs": 2.1
+        },
+        {
+          "name": "TopBar",
+          "renders": 8,
+          "selfMs": 1.3
+        },
+        {
+          "name": "DiplomacyPanel",
+          "renders": 8,
+          "selfMs": 1.3
+        },
+        {
+          "name": "App",
+          "renders": 8,
+          "selfMs": 0.6
+        },
+        {
+          "name": "AtlasImage",
+          "renders": 232,
+          "selfMs": 0.5
+        },
+        {
+          "name": "CommandArt",
+          "renders": 144,
+          "selfMs": 0.4
+        },
+        {
+          "name": "RailButton",
+          "renders": 72,
+          "selfMs": 0.3
+        },
+        {
+          "name": "NavigationArt",
+          "renders": 72,
+          "selfMs": 0.3
+        },
+        {
+          "name": "CampaignEntry",
+          "renders": 8,
+          "selfMs": 0.3
+        },
+        {
+          "name": "RegimeCrisisModal",
+          "renders": 8,
+          "selfMs": 0.2
+        }
+      ]
+    },
+    {
+      "scenario": "nation/military",
+      "commits": 161,
+      "totalRenders": 9977,
+      "totalSelfMs": 196.3,
+      "topByRenders": [
+        {
+          "name": "LocaleText",
+          "renders": 8656,
+          "selfMs": 51.2
+        },
+        {
+          "name": "AtlasImage",
+          "renders": 296,
+          "selfMs": 0.6
+        },
+        {
+          "name": "FlightLayerView",
+          "renders": 161,
+          "selfMs": 87.4
+        },
+        {
+          "name": "CommandArt",
+          "renders": 160,
+          "selfMs": 0.4
+        },
+        {
+          "name": "PanelTabIcon",
+          "renders": 96,
+          "selfMs": 0.2
+        },
+        {
+          "name": "RailButton",
+          "renders": 72,
+          "selfMs": 0.7
+        },
+        {
+          "name": "NavigationArt",
+          "renders": 72,
+          "selfMs": 0.5
+        },
+        {
+          "name": "UnitStat",
+          "renders": 48,
+          "selfMs": 1.5
+        },
+        {
+          "name": "AssetThumbnail",
+          "renders": 48,
+          "selfMs": 0.4
+        },
+        {
+          "name": "AircraftShape",
+          "renders": 46,
+          "selfMs": 0.2
+        },
+        {
+          "name": "CargoPlaneShape",
+          "renders": 46,
+          "selfMs": 0.1
+        },
+        {
+          "name": "Metric",
+          "renders": 32,
+          "selfMs": 0.2
+        },
+        {
+          "name": "CivicArt",
+          "renders": 16,
+          "selfMs": 0
+        },
+        {
+          "name": "JetIcon",
+          "renders": 16,
+          "selfMs": 0
+        },
+        {
+          "name": "App",
+          "renders": 8,
+          "selfMs": 0.7
+        },
+        {
+          "name": "CampaignEntry",
+          "renders": 8,
+          "selfMs": 0.2
+        },
+        {
+          "name": "TopBar",
+          "renders": 8,
+          "selfMs": 1.2
+        },
+        {
+          "name": "AvatarPortrait",
+          "renders": 8,
+          "selfMs": 0.1
+        },
+        {
+          "name": "CountryPanel",
+          "renders": 8,
+          "selfMs": 5.3
+        },
+        {
+          "name": "ReligionGlyph",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "PowerChartIcon",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "GuideBriefing",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "CountrySectionFrame",
+          "renders": 8,
+          "selfMs": 0.1
+        },
+        {
+          "name": "SectionMenu",
+          "renders": 8,
+          "selfMs": 0.2
+        },
+        {
+          "name": "RecruitmentPanel",
+          "renders": 8,
+          "selfMs": 1.1
+        }
+      ],
+      "topBySelfMs": [
+        {
+          "name": "FlightLayerView",
+          "renders": 161,
+          "selfMs": 87.4
+        },
+        {
+          "name": "LocaleText",
+          "renders": 8656,
+          "selfMs": 51.2
+        },
+        {
+          "name": "WorldMapView",
+          "renders": 6,
+          "selfMs": 40.6
+        },
+        {
+          "name": "CountryPanel",
+          "renders": 8,
+          "selfMs": 5.3
+        },
+        {
+          "name": "CommandRails",
+          "renders": 8,
+          "selfMs": 2.7
+        },
+        {
+          "name": "UnitStat",
+          "renders": 48,
+          "selfMs": 1.5
+        },
+        {
+          "name": "TopBar",
+          "renders": 8,
+          "selfMs": 1.2
+        },
+        {
+          "name": "RecruitmentPanel",
+          "renders": 8,
+          "selfMs": 1.1
+        },
+        {
+          "name": "RailButton",
+          "renders": 72,
+          "selfMs": 0.7
+        },
+        {
+          "name": "App",
+          "renders": 8,
+          "selfMs": 0.7
+        },
+        {
+          "name": "AtlasImage",
+          "renders": 296,
+          "selfMs": 0.6
+        },
+        {
+          "name": "NavigationArt",
+          "renders": 72,
+          "selfMs": 0.5
+        },
+        {
+          "name": "CommandArt",
+          "renders": 160,
+          "selfMs": 0.4
+        },
+        {
+          "name": "AssetThumbnail",
+          "renders": 48,
+          "selfMs": 0.4
+        },
+        {
+          "name": "PanelTabIcon",
+          "renders": 96,
+          "selfMs": 0.2
+        }
+      ]
+    },
+    {
+      "scenario": "nation/technology",
+      "commits": 116,
+      "totalRenders": 10228,
+      "totalSelfMs": 178.9,
+      "topByRenders": [
+        {
+          "name": "LocaleText",
+          "renders": 8968,
+          "selfMs": 52.5
+        },
+        {
+          "name": "AtlasImage",
+          "renders": 296,
+          "selfMs": 2.5
+        },
+        {
+          "name": "CommandArt",
+          "renders": 160,
+          "selfMs": 0.2
+        },
+        {
+          "name": "FlightLayerView",
+          "renders": 116,
+          "selfMs": 61.1
+        },
+        {
+          "name": "PanelTabIcon",
+          "renders": 96,
+          "selfMs": 0.4
+        },
+        {
+          "name": "RailButton",
+          "renders": 72,
+          "selfMs": 0.9
+        },
+        {
+          "name": "NavigationArt",
+          "renders": 72,
+          "selfMs": 0.1
+        },
+        {
+          "name": "ResearchArt",
+          "renders": 48,
+          "selfMs": 0
+        },
+        {
+          "name": "AssetThumbnail",
+          "renders": 48,
+          "selfMs": 0.5
+        },
+        {
+          "name": "AircraftShape",
+          "renders": 46,
+          "selfMs": 0
+        },
+        {
+          "name": "CargoPlaneShape",
+          "renders": 46,
+          "selfMs": 1.1
+        },
+        {
+          "name": "Metric",
+          "renders": 32,
+          "selfMs": 0
+        },
+        {
+          "name": "CivicArt",
+          "renders": 16,
+          "selfMs": 0.1
+        },
+        {
+          "name": "GuideBriefing",
+          "renders": 16,
+          "selfMs": 0
+        },
+        {
+          "name": "App",
+          "renders": 8,
+          "selfMs": 0.5
+        },
+        {
+          "name": "CampaignEntry",
+          "renders": 8,
+          "selfMs": 0.4
+        },
+        {
+          "name": "TopBar",
+          "renders": 8,
+          "selfMs": 1.7
+        },
+        {
+          "name": "AvatarPortrait",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "CountryPanel",
+          "renders": 8,
+          "selfMs": 4.2
+        },
+        {
+          "name": "ReligionGlyph",
+          "renders": 8,
+          "selfMs": 0.2
+        },
+        {
+          "name": "PowerChartIcon",
+          "renders": 8,
+          "selfMs": 0.2
+        },
+        {
+          "name": "CountrySectionFrame",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "DraggableWindow",
+          "renders": 8,
+          "selfMs": 0.5
+        },
+        {
+          "name": "ResearchWindow",
+          "renders": 8,
+          "selfMs": 2.1
+        },
+        {
+          "name": "SectionMenu",
+          "renders": 8,
+          "selfMs": 0
+        }
+      ],
+      "topBySelfMs": [
+        {
+          "name": "FlightLayerView",
+          "renders": 116,
+          "selfMs": 61.1
+        },
+        {
+          "name": "LocaleText",
+          "renders": 8968,
+          "selfMs": 52.5
+        },
+        {
+          "name": "WorldMapView",
+          "renders": 6,
+          "selfMs": 46.4
+        },
+        {
+          "name": "CountryPanel",
+          "renders": 8,
+          "selfMs": 4.2
+        },
+        {
+          "name": "AtlasImage",
+          "renders": 296,
+          "selfMs": 2.5
+        },
+        {
+          "name": "CommandRails",
+          "renders": 8,
+          "selfMs": 2.3
+        },
+        {
+          "name": "ResearchWindow",
+          "renders": 8,
+          "selfMs": 2.1
+        },
+        {
+          "name": "TopBar",
+          "renders": 8,
+          "selfMs": 1.7
+        },
+        {
+          "name": "CargoPlaneShape",
+          "renders": 46,
+          "selfMs": 1.1
+        },
+        {
+          "name": "RailButton",
+          "renders": 72,
+          "selfMs": 0.9
+        },
+        {
+          "name": "FlightTransitView",
+          "renders": 6,
+          "selfMs": 0.6
+        },
+        {
+          "name": "AssetThumbnail",
+          "renders": 48,
+          "selfMs": 0.5
+        },
+        {
+          "name": "App",
+          "renders": 8,
+          "selfMs": 0.5
+        },
+        {
+          "name": "DraggableWindow",
+          "renders": 8,
+          "selfMs": 0.5
+        },
+        {
+          "name": "PanelTabIcon",
+          "renders": 96,
+          "selfMs": 0.4
+        }
+      ]
+    },
+    {
+      "scenario": "nation/world",
+      "commits": 111,
+      "totalRenders": 12119,
+      "totalSelfMs": 220.6,
+      "topByRenders": [
+        {
+          "name": "LocaleText",
+          "renders": 10952,
+          "selfMs": 95.5
+        },
+        {
+          "name": "AtlasImage",
+          "renders": 272,
+          "selfMs": 1.6
+        },
+        {
+          "name": "CommandArt",
+          "renders": 144,
+          "selfMs": 0.1
+        },
+        {
+          "name": "FlightLayerView",
+          "renders": 111,
+          "selfMs": 59.5
+        },
+        {
+          "name": "PanelTabIcon",
+          "renders": 96,
+          "selfMs": 0.1
+        },
+        {
+          "name": "NavigationArt",
+          "renders": 96,
+          "selfMs": 0.5
+        },
+        {
+          "name": "RailButton",
+          "renders": 72,
+          "selfMs": 0.9
+        },
+        {
+          "name": "AircraftShape",
+          "renders": 46,
+          "selfMs": 0.1
+        },
+        {
+          "name": "CargoPlaneShape",
+          "renders": 46,
+          "selfMs": 0.5
+        },
+        {
+          "name": "Metric",
+          "renders": 32,
+          "selfMs": 0
+        },
+        {
+          "name": "CivicArt",
+          "renders": 24,
+          "selfMs": 0.1
+        },
+        {
+          "name": "GuideBriefing",
+          "renders": 16,
+          "selfMs": 0.3
+        },
+        {
+          "name": "Svg",
+          "renders": 16,
+          "selfMs": 0
+        },
+        {
+          "name": "App",
+          "renders": 8,
+          "selfMs": 0.6
+        },
+        {
+          "name": "CampaignEntry",
+          "renders": 8,
+          "selfMs": 0.2
+        },
+        {
+          "name": "TopBar",
+          "renders": 8,
+          "selfMs": 1.3
+        },
+        {
+          "name": "AvatarPortrait",
+          "renders": 8,
+          "selfMs": 0.1
+        },
+        {
+          "name": "CountryPanel",
+          "renders": 8,
+          "selfMs": 4.2
+        },
+        {
+          "name": "ReligionGlyph",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "PowerChartIcon",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "CountrySectionFrame",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "DraggableWindow",
+          "renders": 8,
+          "selfMs": 0.5
+        },
+        {
+          "name": "WorldInstitutionsPanel",
+          "renders": 8,
+          "selfMs": 7
+        },
+        {
+          "name": "AssetThumbnail",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "CouncilIcon",
+          "renders": 8,
+          "selfMs": 2
+        }
+      ],
+      "topBySelfMs": [
+        {
+          "name": "LocaleText",
+          "renders": 10952,
+          "selfMs": 95.5
+        },
+        {
+          "name": "FlightLayerView",
+          "renders": 111,
+          "selfMs": 59.5
+        },
+        {
+          "name": "WorldMapView",
+          "renders": 6,
+          "selfMs": 42.3
+        },
+        {
+          "name": "WorldInstitutionsPanel",
+          "renders": 8,
+          "selfMs": 7
+        },
+        {
+          "name": "CountryPanel",
+          "renders": 8,
+          "selfMs": 4.2
+        },
+        {
+          "name": "CommandRails",
+          "renders": 8,
+          "selfMs": 2.3
+        },
+        {
+          "name": "CouncilIcon",
+          "renders": 8,
+          "selfMs": 2
+        },
+        {
+          "name": "AtlasImage",
+          "renders": 272,
+          "selfMs": 1.6
+        },
+        {
+          "name": "TopBar",
+          "renders": 8,
+          "selfMs": 1.3
+        },
+        {
+          "name": "RailButton",
+          "renders": 72,
+          "selfMs": 0.9
+        },
+        {
+          "name": "App",
+          "renders": 8,
+          "selfMs": 0.6
+        },
+        {
+          "name": "NavigationArt",
+          "renders": 96,
+          "selfMs": 0.5
+        },
+        {
+          "name": "CargoPlaneShape",
+          "renders": 46,
+          "selfMs": 0.5
+        },
+        {
+          "name": "DraggableWindow",
+          "renders": 8,
+          "selfMs": 0.5
+        },
+        {
+          "name": "GuideBriefing",
+          "renders": 16,
+          "selfMs": 0.3
+        }
+      ]
+    },
+    {
+      "scenario": "nation/war",
+      "commits": 156,
+      "totalRenders": 9476,
+      "totalSelfMs": 177.3,
+      "topByRenders": [
+        {
+          "name": "LocaleText",
+          "renders": 8384,
+          "selfMs": 39.2
+        },
+        {
+          "name": "AtlasImage",
+          "renders": 232,
+          "selfMs": 0.5
+        },
+        {
+          "name": "FlightLayerView",
+          "renders": 156,
+          "selfMs": 86.8
+        },
+        {
+          "name": "CommandArt",
+          "renders": 144,
+          "selfMs": 0.3
+        },
+        {
+          "name": "PanelTabIcon",
+          "renders": 96,
+          "selfMs": 0
+        },
+        {
+          "name": "RailButton",
+          "renders": 72,
+          "selfMs": 0.4
+        },
+        {
+          "name": "NavigationArt",
+          "renders": 72,
+          "selfMs": 0.1
+        },
+        {
+          "name": "AircraftShape",
+          "renders": 46,
+          "selfMs": 0
+        },
+        {
+          "name": "CargoPlaneShape",
+          "renders": 46,
+          "selfMs": 0.3
+        },
+        {
+          "name": "Metric",
+          "renders": 32,
+          "selfMs": 0
+        },
+        {
+          "name": "CivicArt",
+          "renders": 16,
+          "selfMs": 0.1
+        },
+        {
+          "name": "GuideBriefing",
+          "renders": 16,
+          "selfMs": 0
+        },
+        {
+          "name": "App",
+          "renders": 8,
+          "selfMs": 0.7
+        },
+        {
+          "name": "CampaignEntry",
+          "renders": 8,
+          "selfMs": 0.3
+        },
+        {
+          "name": "TopBar",
+          "renders": 8,
+          "selfMs": 0.8
+        },
+        {
+          "name": "AvatarPortrait",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "CountryPanel",
+          "renders": 8,
+          "selfMs": 9.1
+        },
+        {
+          "name": "ReligionGlyph",
+          "renders": 8,
+          "selfMs": 0.1
+        },
+        {
+          "name": "PowerChartIcon",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "CountrySectionFrame",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "DraggableWindow",
+          "renders": 8,
+          "selfMs": 0.3
+        },
+        {
+          "name": "CommandRails",
+          "renders": 8,
+          "selfMs": 4.1
+        },
+        {
+          "name": "EventModal",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "RegimeCrisisModal",
+          "renders": 8,
+          "selfMs": 0
+        },
+        {
+          "name": "AdvisorModal",
+          "renders": 8,
+          "selfMs": 0
+        }
+      ],
+      "topBySelfMs": [
+        {
+          "name": "FlightLayerView",
+          "renders": 156,
+          "selfMs": 86.8
+        },
+        {
+          "name": "LocaleText",
+          "renders": 8384,
+          "selfMs": 39.2
+        },
+        {
+          "name": "WorldMapView",
+          "renders": 6,
+          "selfMs": 33.6
+        },
+        {
+          "name": "CountryPanel",
+          "renders": 8,
+          "selfMs": 9.1
+        },
+        {
+          "name": "CommandRails",
+          "renders": 8,
+          "selfMs": 4.1
+        },
+        {
+          "name": "TopBar",
+          "renders": 8,
+          "selfMs": 0.8
+        },
+        {
+          "name": "App",
+          "renders": 8,
+          "selfMs": 0.7
+        },
+        {
+          "name": "AtlasImage",
+          "renders": 232,
+          "selfMs": 0.5
+        },
+        {
+          "name": "RailButton",
+          "renders": 72,
+          "selfMs": 0.4
+        },
+        {
+          "name": "CommandArt",
+          "renders": 144,
+          "selfMs": 0.3
+        },
+        {
+          "name": "CargoPlaneShape",
+          "renders": 46,
+          "selfMs": 0.3
+        },
+        {
+          "name": "CampaignEntry",
+          "renders": 8,
+          "selfMs": 0.3
+        },
+        {
+          "name": "DraggableWindow",
+          "renders": 8,
+          "selfMs": 0.3
+        },
+        {
+          "name": "FlightTransitView",
+          "renders": 6,
+          "selfMs": 0.3
+        },
+        {
+          "name": "NavigationArt",
+          "renders": 72,
+          "selfMs": 0.1
+        }
+      ]
+    }
+  ]
+}
