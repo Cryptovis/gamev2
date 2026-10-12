@@ -8,11 +8,14 @@ const {version}=JSON.parse(readFileSync(new URL('../package.json',import.meta.ur
  * Phase 2 render attribution. Runs only against the RON_PROFILE=1 build (unminified React
  * profiling bundle, see vite.config.ts and performance/renders.config.ts). A minimal DevTools
  * hook counts the function components that actually rendered in each commit: a fiber rendered
- * in a commit when its actualStartTime is later than the previous commit. Timings include the
+ * in a commit when its actualStartTime is later than the previous commit and its props or hook
+ * state object changed (parents that merely pass work down keep both). Timings include the
  * probe's own overhead and are only used for relative comparison between builds.
  */
 const probe=()=>{
- type Fiber={tag:number;type:any;child:Fiber|null;sibling:Fiber|null;actualStartTime?:number;selfBaseDuration?:number};
+ type Fiber={tag:number;type:any;child:Fiber|null;sibling:Fiber|null;alternate:Fiber|null;memoizedProps:unknown;memoizedState:unknown;actualStartTime?:number;selfBaseDuration?:number};
+ // Ancestors that only pass work down to a child are cloned with identical props/state; only count fibers that actually re-ran.
+ const ran=(f:Fiber)=>!f.alternate||f.memoizedProps!==f.alternate.memoizedProps||f.memoizedState!==f.alternate.memoizedState;
  const w=window as any;let last=performance.now();
  const stats:Record<string,{renders:number;selfMs:number}>={};
  w.__ronRenders={recording:false,commits:0,stats,reset(){this.commits=0;for(const k of Object.keys(stats))delete stats[k];last=performance.now();}};
@@ -29,7 +32,7 @@ const probe=()=>{
     while(stack.length){
      const f=stack.pop()!;
      // 0 function, 1 class, 11 forwardRef, 14 memo, 15 simple memo
-     if([0,1,11,14,15].includes(f.tag)&&(f.actualStartTime??-1)>=last){const n=nameOf(f);if(n){const s=stats[n]??={renders:0,selfMs:0};s.renders++;s.selfMs+=f.selfBaseDuration??0;}}
+     if([0,1,11,14,15].includes(f.tag)&&(f.actualStartTime??-1)>=last&&ran(f)){const n=nameOf(f);if(n){const s=stats[n]??={renders:0,selfMs:0};s.renders++;s.selfMs+=f.selfBaseDuration??0;}}
      if(f.sibling)stack.push(f.sibling);if(f.child)stack.push(f.child);
     }
    }
