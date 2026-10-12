@@ -1,0 +1,199 @@
+
+> alpyx-global-command@0.90.0-playtest.9 check
+> npm run test && npm run build
+
+
+> alpyx-global-command@0.90.0-playtest.9 test
+> vitest run
+
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.0.3 [39m[90m/home/runner/work/gamev2/gamev2[39m
+
+ [32m✓[39m src/tests/realPresident079.test.ts [2m([22m[2m26 tests[22m[2m)[22m[33m 598[2mms[22m[39m
+ [32m✓[39m src/tests/commodityExchange089.test.ts [2m([22m[2m15 tests[22m[2m)[22m[33m 3856[2mms[22m[39m
+   [32m✓[39m 0.89 commodity exchange — prices [2m(4)[22m
+     [33m[2m✓[22m[39m opens deterministically with bounded history, without consuming the simulation seed[33m 327[2mms[22m[39m
+     [33m[2m✓[22m[39m reverts toward the fundamental after a dislocation[33m 410[2mms[22m[39m
+     [33m[2m✓[22m[39m turns a drought into a food shock that raises the price and then decays[33m 1000[2mms[22m[39m
+   [32m✓[39m 0.89 commodity exchange — world and saves [2m(3)[22m
+     [33m[2m✓[22m[39m lets AI countries trade under the same rules inside the daily tick[33m 1571[2mms[22m[39m
+     [33m[2m✓[22m[39m accepts saves with and without the exchange and rejects corrupted exchange state[33m 321[2mms[22m[39m
+ [32m✓[39m src/tests/eventsVictory088.test.ts [2m([22m[2m18 tests[22m[2m)[22m[33m 12610[2mms[22m[39m
+   [32m✓[39m 0.88 audit E3: event catalogue [2m(8)[22m
+     [33m[2m✓[22m[39m every kind from an older save still resolves with its saved option ids[33m 306[2mms[22m[39m
+   [32m✓[39m 0.88 audit E3: advisor pacing [2m(3)[22m
+     [33m[2m✓[22m[39m a headless year has 4–12 events (0.87: 4) and at most 13 advisor pop-ups[33m 11834[2mms[22m[39m
+ [32m✓[39m src/tests/sovereign080.test.ts [2m([22m[2m23 tests[22m[2m)[22m[33m 624[2mms[22m[39m
+ [32m✓[39m src/tests/politics088.test.ts [2m([22m[2m16 tests[22m[2m)[22m[33m 6191[2mms[22m[39m
+   [32m✓[39m 0.88 E2: elections are a seeded contest [2m(4)[22m
+     [33m[2m✓[22m[39m makes a narrow loss possible at 47% approval and a narrow win possible at 43%[33m 5449[2mms[22m[39m
+ [32m✓[39m src/tests/aiWar088.test.ts [2m([22m[2m16 tests[22m[2m)[22m[33m 308[2mms[22m[39m
+ [32m✓[39m src/tests/audit084Economy.test.ts [2m([22m[2m12 tests[22m[2m)[22m[33m 2587[2mms[22m[39m
+   [32m✓[39m 0.84 economy audit fixes [2m(12)[22m
+     [33m[2m✓[22m[39m C8: per-country draft produces exactly the legacy result and stays deterministic[33m 1963[2mms[22m[39m
+     [33m[2m✓[22m[39m C9: listing and buying leave reference prices unchanged, so pricing once per call is exact[33m 481[2mms[22m[39m
+ [32m✓[39m src/tests/flightHooks089.test.ts [2m([22m[2m17 tests[22m[2m)[22m[33m 2271[2mms[22m[39m
+   [32m✓[39m 0.89 diplomatic missions fly and their goodwill lands on arrival [2m(3)[22m
+     [33m[2m✓[22m[39m lands inside the daily tick: relations differ from a no-mission campaign only from the arrival day[33m 322[2mms[22m[39m
+   [32m✓[39m 0.89 AI flights are rate-limited; player flights always show [2m(3)[22m
+     [33m[2m✓[22m[39m never has more than the AI limit in any window during a headless campaign[33m 1638[2mms[22m[39m
+[90mstderr[2m | src/tests/diplomacyParity087.test.ts[2m > [22m[2m0.87 D12: separate intel dice, bounded history, pacts that follow relations[2m > [22m[2maccepts saves with and without the new optional relation fields
+[22m[39mSave could not be migrated from schema 17.
+Save could not be migrated from schema 17.
+
+ [32m✓[39m src/tests/diplomacyParity087.test.ts [2m([22m[2m12 tests[22m[2m)[22m[33m 4553[2mms[22m[39m
+   [32m✓[39m 0.87 D12: separate intel dice, bounded history, pacts that follow relations [2m(6)[22m
+     [33m[2m✓[22m[39m rolls success and detection independently[33m 3444[2mms[22m[39m
+     [33m[2m✓[22m[39m runs in the daily tick for AI pairs[33m 808[2mms[22m[39m
+ [32m✓[39m src/tests/audit084Politics.test.ts [2m([22m[2m17 tests[22m[2m)[22m[33m 653[2mms[22m[39m
+ [32m✓[39m src/tests/economyPressure087.test.ts [2m([22m[2m16 tests[22m[2m)[22m[33m 4236[2mms[22m[39m
+   [32m✓[39m C4: high tax is not a free lunch [2m(2)[22m
+     [33m[2m✓[22m[39m no longer lets 60% tax plus daily activity spam hold approval at the ceiling[33m 3963[2mms[22m[39m
+ [32m✓[39m src/tests/decisions076.test.ts [2m([22m[2m20 tests[22m[2m)[22m[33m 748[2mms[22m[39m
+ [32m✓[39m src/tests/tradeOptions089.test.ts [2m([22m[2m11 tests[22m[2m)[22m[33m 1824[2mms[22m[39m
+   [32m✓[39m 0.89 trade discovery: supplier ranking [2m(6)[22m
+     [33m[2m✓[22m[39m ranks eligible partners above every ineligible one, tier by tier[33m 1644[2mms[22m[39m
+ [32m✓[39m src/tests/commandCredit0904.test.ts [2m([22m[2m18 tests[22m[2m)[22m[33m 671[2mms[22m[39m
+[90mstderr[2m | src/tests/reliableCommand082.test.ts[2m > [22m[2m0.82 reliable commands and saves[2m > [22m[2mrejects malformed shapes and non-finite values without throwing
+[22m[39mSave could not be migrated from schema 17.
+
+[90mstderr[2m | src/tests/reliableCommand082.test.ts[2m > [22m[2m0.82 reliable commands and saves[2m > [22m[2mloads a previous compatible record when the newest is incompatible
+[22m[39mSave schema 99 is newer than this game (17).
+Skipping incompatible save (unnamed): schema 99 failed migration or validation
+
+[90mstderr[2m | src/tests/reliableCommand082.test.ts[2m > [22m[2m0.82 funded multi-day research[2m > [22m[2mrejects unknown and invalid research projects before loading
+[22m[39mSave could not be migrated from schema 17.
+Save could not be migrated from schema 17.
+
+ [32m✓[39m src/tests/reliableCommand082.test.ts [2m([22m[2m28 tests[22m[2m)[22m[33m 756[2mms[22m[39m
+ [32m✓[39m src/tests/civicCommand078.test.ts [2m([22m[2m16 tests[22m[2m)[22m[33m 467[2mms[22m[39m
+ [32m✓[39m src/tests/poweredWorld081.test.ts [2m([22m[2m18 tests[22m[2m)[22m[33m 545[2mms[22m[39m
+ [32m✓[39m src/tests/industrialMarket087.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 167[2mms[22m[39m
+[90mstderr[2m | src/tests/tactical083.test.ts[2m > [22m[2m0.83 tactical orders[2m > [22m[2mrejects corrupt tactical saves rather than granting forces or accepting future events
+[22m[39mSave could not be migrated from schema 17.
+Save could not be migrated from schema 17.
+Save could not be migrated from schema 17.
+
+ [32m✓[39m src/tests/tactical083.test.ts [2m([22m[2m17 tests[22m[2m)[22m[33m 634[2mms[22m[39m
+ [32m✓[39m src/tests/audit084War.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 232[2mms[22m[39m
+ [32m✓[39m src/tests/tactical085.test.ts [2m([22m[2m13 tests[22m[2m)[22m[33m 400[2mms[22m[39m
+[90mstderr[2m | src/tests/industrial074.test.ts[2m > [22m[2mindustrial exchange and secured supply[2m > [22m[2msnapshots and migrates v12 without losing old production and infrastructure
+[22m[39mSave schema 99 is newer than this game (17).
+
+ [32m✓[39m src/tests/industrial074.test.ts [2m([22m[2m13 tests[22m[2m)[22m[33m 424[2mms[22m[39m
+ [32m✓[39m src/tests/reliableFoundation0909.test.ts [2m([22m[2m13 tests[22m[2m)[22m[33m 1811[2mms[22m[39m
+   [32m✓[39m Phase 1 save integrity [2m(8)[22m
+     [33m[2m✓[22m[39m schema 12 keeps country fields and war state through load-save-load[33m 321[2mms[22m[39m
+ [32m✓[39m src/tests/tradeWar0894.test.ts [2m([22m[2m14 tests[22m[2m)[22m[33m 356[2mms[22m[39m
+ [32m✓[39m src/tests/clearCommand090.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 110[2mms[22m[39m
+ [32m✓[39m src/tests/audit084Integration.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 1668[2mms[22m[39m
+   [32m✓[39m 0.84 audit integration fixes [2m(6)[22m
+     [33m[2m✓[22m[39m spreads weekly AI imports across sellers instead of over-committing one supplier[33m 1587[2mms[22m[39m
+ [32m✓[39m src/tests/commandIntelligence0907.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 291[2mms[22m[39m
+ [32m✓[39m src/tests/tactical086.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 281[2mms[22m[39m
+ [32m✓[39m src/tests/guidedCommand077.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 252[2mms[22m[39m
+ [32m✓[39m src/tests/flights089.test.ts [2m([22m[2m7 tests[22m[2m)[22m[33m 392[2mms[22m[39m
+[90mstderr[2m | src/tests/commandFeedback082.test.ts[2m > [22m[2mrejects a corrupt future trade warning timestamp on load
+[22m[39mSave could not be migrated from schema 17.
+
+ [32m✓[39m src/tests/commandFeedback082.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 294[2mms[22m[39m
+ [32m✓[39m src/tests/stabilization0731.test.ts [2m([22m[2m16 tests[22m[2m)[22m[32m 91[2mms[22m[39m
+[90mstderr[2m | src/tests/commandPath087.test.ts[2m > [22m[2m0.87 A6: schema migration table[2m > [22m[2mrefuses saves older than the oldest supported schema or newer than the game
+[22m[39mSave schema 11 is older than the oldest supported schema (12).
+Save schema 18 is newer than this game (17).
+
+[90mstderr[2m | src/tests/commandPath087.test.ts[2m > [22m[2m0.87 A6: schema migration table[2m > [22m[2mstops at a step that cannot apply instead of skipping it
+[22m[39mSave could not be migrated from schema 12.
+
+ [32m✓[39m src/tests/commandPath087.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 195[2mms[22m[39m
+ [32m✓[39m src/tests/marketPolicies0903.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 97[2mms[22m[39m
+ [32m✓[39m src/tests/audit084Persistence.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 617[2mms[22m[39m
+   [32m✓[39m 0.84 per-campaign autosaves (A1) [2m(3)[22m
+     [33m[2m✓[22m[39m prunes the oldest autosaves beyond the limit per owner, leaving manual saves alone[33m 304[2mms[22m[39m
+ [32m✓[39m src/tests/production072.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 115[2mms[22m[39m
+ [32m✓[39m src/tests/leadership074.test.ts [2m([22m[2m7 tests[22m[2m)[22m[33m 2540[2mms[22m[39m
+   [32m✓[39m leader identity, annual celebrations and correspondence [2m(7)[22m
+     [33m[2m✓[22m[39m runs the complete expanded simulation deterministically and keeps resources nonnegative[33m 2451[2mms[22m[39m
+ [32m✓[39m src/tests/strategicSystems.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 80[2mms[22m[39m
+ [32m✓[39m src/tests/infrastructure073.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 93[2mms[22m[39m
+ [32m✓[39m src/tests/researchReadiness0895.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 105[2mms[22m[39m
+ [32m✓[39m src/tests/workspaceNavigation0905.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+ [32m✓[39m src/tests/longRunInvariants.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 9511[2mms[22m[39m
+   [32m✓[39m long-run world invariants (365 days, default campaign, no player policy) [2m(1)[22m
+     [33m[2m✓[22m[39m keeps the world economy finite and solvent without a global oil, food or treasury collapse[33m 9508[2mms[22m[39m
+ [32m✓[39m src/tests/flowCommand083.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 130[2mms[22m[39m
+ [32m✓[39m src/tests/commandPolish083.test.ts [2m([22m[2m10 tests[22m[2m)[22m[33m 312[2mms[22m[39m
+ [32m✓[39m src/tests/mapConnections0906.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 16[2mms[22m[39m
+ [32m✓[39m src/tests/livingWorld.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 65[2mms[22m[39m
+[90mstderr[2m | src/tests/economicHistory083.test.ts[2m > [22m[2m0.83 retained economic history[2m > [22m[2mrejects nonfinite, unordered and future history
+[22m[39mSave could not be migrated from schema 17.
+Save could not be migrated from schema 17.
+Save could not be migrated from schema 17.
+
+ [32m✓[39m src/tests/economicHistory083.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 287[2mms[22m[39m
+ [32m✓[39m src/tests/fluidCommand091.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 18[2mms[22m[39m
+ [32m✓[39m src/tests/economy085.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 59[2mms[22m[39m
+ [32m✓[39m src/tests/camera075.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+ [32m✓[39m src/tests/livingDiplomacy071.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 80[2mms[22m[39m
+ [32m✓[39m src/tests/marketImages0897.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+ [32m✓[39m src/tests/diplomacyTrade.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 104[2mms[22m[39m
+ [32m✓[39m src/tests/mapLabels0731.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m src/tests/relationsV2.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 58[2mms[22m[39m
+ [32m✓[39m src/tests/clearCommand0902.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 111[2mms[22m[39m
+ [32m✓[39m src/tests/eventsAi.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 65[2mms[22m[39m
+ [32m✓[39m src/tests/warfareV2.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 49[2mms[22m[39m
+ [32m✓[39m src/tests/demoFlow.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 133[2mms[22m[39m
+ [32m✓[39m src/tests/i18nArtifacts.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 22[2mms[22m[39m
+ [32m✓[39m src/tests/strategicDecision0731.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 61[2mms[22m[39m
+ [32m✓[39m src/tests/tradeContracts.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 46[2mms[22m[39m
+ [32m✓[39m src/tests/commands.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 116[2mms[22m[39m
+ [32m✓[39m src/tests/microstates0731.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [32m✓[39m src/tests/warfare.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 35[2mms[22m[39m
+ [32m✓[39m src/tests/advisor.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 36[2mms[22m[39m
+ [32m✓[39m src/tests/market.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 47[2mms[22m[39m
+ [32m✓[39m src/tests/livingEconomyAI.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 54[2mms[22m[39m
+ [32m✓[39m src/tests/systems.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+ [32m✓[39m src/tests/leadershipQuotes.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+ [32m✓[39m src/tests/supplyNetwork.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 42[2mms[22m[39m
+ [32m✓[39m src/tests/tick.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 89[2mms[22m[39m
+ [32m✓[39m src/tests/compactMoney.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 18[2mms[22m[39m
+ [32m✓[39m src/tests/mapSelection.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32m✓[39m src/tests/worldDynamics.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 49[2mms[22m[39m
+ [32m✓[39m src/tests/selectors.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32m✓[39m src/tests/compactWorkspaces0908.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m src/tests/clock.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32m✓[39m src/tests/nationIdentity.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32m✓[39m src/tests/windowFlow0896.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m src/tests/rng.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 4[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m81 passed[39m[22m[90m (81)[39m
+[2m      Tests [22m [1m[32m638 passed[39m[22m[90m (638)[39m
+[2m   Start at [22m 13:05:25
+[2m   Duration [22m 93.85s[2m (tests 78%, import 19%, transform 3%)[22m
+
+[2m    Isolate [22m [33m81 workers spawned[39m[2m · ~101ms startup each (spawn + environment, per file)[22m
+[2m            [22m [2mat least ~8.12s faster with [22m[33misolate: false[39m[2m — reuses workers across files instead of one per file[22m
+
+
+> alpyx-global-command@0.90.0-playtest.9 build
+> tsc --noEmit && vite build
+
+[36mvite v8.3.2 [32mbuilding client environment for production...[36m[39m
+transforming...
+✓ 500 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                0.56 kB │ gzip:   0.34 kB
+dist/assets/geographic.worker-DYEE_g7b.js     18.09 kB
+dist/assets/index-Be9xkZ4T.css               307.57 kB │ gzip:  60.95 kB
+dist/assets/surfaceRaster-CMIOA2oT.js          1.09 kB │ gzip:   0.61 kB
+dist/assets/index-7EJeXHnV.js              2,325.07 kB │ gzip: 769.91 kB
+
+[33m[33m[INEFFECTIVE_DYNAMIC_IMPORT] [0msrc/persistence/saveGame.ts is dynamically imported by src/engine/autosaveWrite.ts, src/store/gameStore.ts but also statically imported by src/ui/panels/CampaignEntry.tsx, dynamic import will not move module into another chunk.
+[39m
+[33m[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+[32m✓ built in 3.21s[39m
