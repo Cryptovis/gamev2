@@ -8,6 +8,7 @@ import { LocaleText, translateLive } from '../../i18n/localeText';
 import { EXCHANGE_GOODS, letterCost } from '../../engine/systems/livingEconomy';
 import { countryTradeOptions, rankSuppliers, type SaleOption, type TradeOption } from '../../engine/systems/tradeOptions';
 import { useGameStore } from '../../store/gameStore';
+import {useWorldView} from '../../store/useWorldView';
 import { MARKET_RESOURCES, resourceStrategicStatus } from '../../store/marketSelectors';
 import { money } from '../formatMoney';
 import { AssetThumbnail } from '../icons/AssetThumbnail';
@@ -45,7 +46,7 @@ type Dialog = ReviewContent & { actions?:Array<{label:string;onClick:()=>void;di
 
 /** Turns a route's next step into a button and, where the action costs money, a review dialog. */
 function useTradeActions() {
-  const state = useGameStore();
+  const state = useWorldView();
   const [dialog, setDialog] = useState<Dialog | null>(null);
   const player = state.countries[state.playerCountryId];
   const [contract,setContract]=useState<{partnerId:string;resource:TradeResource}|null>(null);
@@ -165,7 +166,7 @@ function TradeRow({ option, leading, title, maxAvailable, onAction, demand }: { 
  * without access are collapsed behind "Show N more countries without access".
  */
 export function SupplierRanking({ good, limit = 4 }: { good: ExchangeGood; limit?: number }) {
-  const state = useGameStore();
+  const state = useWorldView();
   const [showMore,setShowMore]=useState(false);
   const actions = useTradeActions();
   const ranked = useMemo(() => rankSuppliers(state, state.playerCountryId, good), [state.day, state.countries, state.tradeDeals, state.world.living, state.industrialEconomy, state.production, good]);
@@ -194,7 +195,7 @@ export function SupplierRanking({ good, limit = 4 }: { good: ExchangeGood; limit
  * player's most urgent raw-resource shortfall.
  */
 export function SupplierFinder() {
-  const state = useGameStore();
+  const state = useWorldView();
   const player = state.countries[state.playerCountryId];
   const [contract,setContract]=useState<{partnerId:string;resource:TradeResource}|null>(null);
   const [years,setYears]=useState<1|3|5|10>(1);
@@ -214,7 +215,7 @@ export function SupplierFinder() {
 
 /** The "Trade" tab of the country panel: what the player can buy from and sell to the selected country. */
 export function CountryTradeDesk({ country }: { country: CountryState }) {
-  const state = useGameStore();
+  const state = useWorldView();
   const actions = useTradeActions();
   const isPlayer = country.id === state.playerCountryId;
   const desk = useMemo(() => (isPlayer ? null : countryTradeOptions(state, country.id)), [isPlayer, country.id, state.day, state.countries, state.tradeDeals, state.world.living, state.industrialEconomy, state.production]);

@@ -5,28 +5,38 @@ import { LocaleText, translateLive } from "../../i18n/localeText";
 import { Suspense, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useGameStore } from "../../store/gameStore";
+import {useWorldView} from '../../store/useWorldView';
 import { flagEmoji } from "../../data/countryThemes";
 import { coalitionSupport, getWarPreview } from "../../engine/systems/warfare";
 import { AssetThumbnail } from "../icons/AssetThumbnail";
 import {tacticalStartStatus} from '../../engine/systems/tactical';
 import {ErrorBoundary} from '../ErrorBoundary';
 import {TacticalBattlefield} from './TacticalBattlefield';
+// Always mounted: watches the war list to open new player wars, and mounts the
+// full-state command body only while a war window is open.
 export function WarTheatreModal() {
-  const s = useGameStore(),
-    [tacticalView, setTacticalView] = useState(false),
-    dialog = useRef<HTMLElement>(null),
-    seen = useRef(new Set(Object.keys(s.wars)));
+  const wars = useGameStore((s) => s.wars),
+    playerCountryId = useGameStore((s) => s.playerCountryId),
+    openWarWindow = useGameStore((s) => s.openWarWindow),
+    open = useGameStore((s) => !!(s.warWindowId && s.wars[s.warWindowId])),
+    seen = useRef(new Set(Object.keys(wars)));
   useEffect(() => {
-    const fresh = Object.values(s.wars).find(
+    const fresh = Object.values(wars).find(
       (w) =>
         !seen.current.has(w.id) &&
         w.status === "active" &&
-        (w.attackerId === s.playerCountryId ||
-          w.defenderId === s.playerCountryId),
+        (w.attackerId === playerCountryId ||
+          w.defenderId === playerCountryId),
     );
-    seen.current = new Set(Object.keys(s.wars));
-    if (fresh) s.openWarWindow(fresh.id);
-  }, [s.wars]);
+    seen.current = new Set(Object.keys(wars));
+    if (fresh) openWarWindow(fresh.id);
+  }, [wars]);
+  return open ? <WarCommand /> : null;
+}
+function WarCommand() {
+  const s = useWorldView(),
+    [tacticalView, setTacticalView] = useState(false),
+    dialog = useRef<HTMLElement>(null);
   const w = s.warWindowId ? s.wars[s.warWindowId] : null;
   useWindowLifecycle(dialog,{onClose:()=>s.openWarWindow(null),layer:WINDOW_LAYERS.modal,enabled:!!w});
   useEffect(()=>setTacticalView(!!w?.tactical),[w?.id]);

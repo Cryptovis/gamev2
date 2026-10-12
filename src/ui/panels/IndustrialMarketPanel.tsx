@@ -9,13 +9,13 @@ import type {IndustrialGood} from '../../domain/industrial';
 import {GOODS} from '../../data/industrialCatalog';
 import {goodStock} from '../../engine/systems/industrialEconomy';
 import {industrialPrice,industrialQuote,industrialOrderError,canTradeIndustrial} from '../../engine/systems/industrialMarket';
-import {useGameStore} from '../../store/gameStore';
+import {useWorldView} from '../../store/useWorldView';
 import {IndustryIcon} from '../icons/GameIcons';
 import {SupplierFinder} from './TradeDesk';
 
 export function IndustrialMarketPanel({contractsOnly=false}:{contractsOnly?:boolean}={}){
  const [cancelId,setCancelId]=useState<string|null>(null);
- const state=useGameStore(),player=state.countries[state.playerCountryId];
+ const state=useWorldView(),player=state.countries[state.playerCountryId];
  const [good,setGood]=useState<IndustrialGood>('water'),[partner,setPartner]=useState(''),[direction,setDirection]=useState<'buy'|'sell'>('buy'),[quantity,setQuantity]=useState(5),[years,setYears]=useState<0|1|3|5|10>(0),[review,setReview]=useState(false);
  const eligible=activeCountries(state.countries).filter(c=>canTradeIndustrial(state,direction==='buy'?c.id:player.id,direction==='buy'?player.id:c.id,good));
  const target=eligible.find(c=>c.id===partner)??eligible[0];

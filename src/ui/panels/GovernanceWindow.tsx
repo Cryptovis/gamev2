@@ -1,6 +1,7 @@
+import {useGameStore} from '../../store/gameStore';
 import {useState} from 'react';
 import {activeCountries} from '../../domain/sovereignty';
-import {useGameStore} from '../../store/gameStore';
+import {useWorldView} from '../../store/useWorldView';
 import {governance,occupationFor,politicalChance,CANDIDATES} from '../../engine/systems/governance';
 import {LocaleText,translateLive} from '../../i18n/localeText';
 import {CommandWindow} from './CommandWindow';
@@ -11,8 +12,8 @@ import {AffairsAction} from './AffairsAction';
 import {ReviewDialog} from './ReviewDialog';
 
 export function GovernanceWindow() {
- const s=useGameStore(),g=governance(s),p=s.countries[s.playerCountryId];
- const [selected,setSelected]=useState(s.navigation?.countryId??p.id),[section,setSection]=useState('overview'),[recipient,setRecipient]=useState(''),[offer,setOffer]=useState(false);
+ const s=useWorldView(),g=governance(s),p=s.countries[s.playerCountryId];
+ const [selected,setSelected]=useState(()=>useGameStore.getState().navigation?.countryId??p.id),[section,setSection]=useState('overview'),[recipient,setRecipient]=useState(''),[offer,setOffer]=useState(false);
  const c=s.countries[selected]??p,o=occupationFor(s,c.id),mine=o?.controllerId===p.id,history=g.occupations[c.id]?.election;
  const items=[{id:'overview',label:'Overview',icon:<CommandArt kind="governance"/>},...(mine?[{id:'administration',label:'Administration',icon:<CommandArt kind="cabinet"/>},{id:'integration',label:'Territory integration',icon:<CommandArt kind="world"/>}]:c.id!==p.id?[{id:'influence',label:'Foreign political influence',icon:<CommandArt kind="diplomacy"/>}]:[]),{id:'history',label:'History',icon:<CommandArt kind="intel"/>}];
  const current=items.some(x=>x.id===section)?section:'overview';

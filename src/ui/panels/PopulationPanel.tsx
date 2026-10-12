@@ -2,7 +2,7 @@ import {CivicArt} from '../icons/CivicArt';
 import { arrears } from "../../engine/systems/sovereignCredit";
 import { useState, useEffect } from "react";
 import type { CountryState } from "../../domain/game";
-import { useGameStore } from "../../store/gameStore";
+import {useWorldView} from '../../store/useWorldView';
 import { LocaleText } from "../../i18n/localeText";
 import {
   populationForecast,
@@ -12,7 +12,7 @@ import { simulateResources } from "../../engine/systems/resources";
 import { ReviewDialog } from "./ReviewDialog";
 import { money } from "../formatMoney";
 export function PopulationPanel({ country: c, policyOnly=false, showPolicy=true }: { country: CountryState; policyOnly?:boolean; showPolicy?:boolean }) {
-  const s = useGameStore(),
+  const s = useWorldView(),
     own = c.id === s.playerCountryId,
     [tax, setTax] = useState(c.economy.taxRate),
     [review, setReview] = useState(false),
@@ -119,7 +119,7 @@ export function PopulationPanel({ country: c, policyOnly=false, showPolicy=true 
   );
 }
 export function RecruitmentPanel() {
-  const s = useGameStore(),
+  const s = useWorldView(),
     c = s.countries[s.playerCountryId],
     [count, setCount] = useState(10000),
     [review, setReview] = useState(false),

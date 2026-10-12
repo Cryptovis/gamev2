@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import type { FlightKind } from '../../domain/flights';
 
 /**
@@ -31,9 +32,10 @@ export function CargoPlaneShape() {
   </>;
 }
 
-export function AircraftShape({ kind }: { kind: FlightKind }) {
+// Static vector shapes; memoised because the flight layer re-renders them on every animation frame.
+export const AircraftShape = memo(function AircraftShape({ kind }: { kind: FlightKind }) {
   return kind === 'diplomatic' ? <BusinessJetShape/> : <CargoPlaneShape/>;
-}
+});
 
 /** Standalone inline icon (HUD lists, news lines). Drawn nose-up-right like a departing aircraft. */
 export function AircraftGlyph({ kind, size = 14, title }: { kind: FlightKind; size?: number; title?: string }) {

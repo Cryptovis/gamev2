@@ -22,12 +22,10 @@ export function StrategicDecisionModal({
  onConfirm,
  onCancel,
 }:{spec:StrategicDecisionSpec;onConfirm:()=>void;onCancel:()=>void}){
- const state=useGameStore();
+ const player=useGameStore(s=>s.countries[s.playerCountryId]),target=useGameStore(s=>s.countries[spec.targetCountryId]),setConfirmationSkip=useGameStore(s=>s.setConfirmationSkip);
  const dialogRef=useRef<HTMLElement>(null);
  const submitted=useRef(false);
  useWindowLifecycle(dialogRef,{onClose:onCancel,layer:WINDOW_LAYERS.review,pause:true});
- const player=state.countries[state.playerCountryId];
- const target=state.countries[spec.targetCountryId];
  const [autoApprove,setAutoApprove]=useState(false);
  if(!player||!target)return null;
 
@@ -59,7 +57,7 @@ export function StrategicDecisionModal({
      <span><strong><LocaleText value={"Automatically approve similar decisions this session"}/></strong><small><LocaleText value={"You can still review other strategic action types individually."}/></small></span>
     </label>:<p className="strategic-review-required"><LocaleText value={"This decision always requires your explicit confirmation."}/></p>}
 
-    <footer><button onClick={onCancel}><LocaleText value={"CANCEL"}/></button><button className={'confirm '+(tone==='danger'?'danger':'')} disabled={spec.allowed===false} aria-describedby={spec.allowed===false?"strategic-block-reason":undefined} onClick={()=>{if(submitted.current)return;submitted.current=true;if(autoApprove&&canAutoApprove(spec.kind))state.setConfirmationSkip(spec.kind,true);const before=useGameStore.getState();onConfirm();const after=useGameStore.getState();const changed=after.countries!==before.countries||after.tradeDeals!==before.tradeDeals||after.wars!==before.wars||after.embassies!==before.embassies||after.blocs!==before.blocs||after.world!==before.world;if(spec.kind!=='declare_war'&&after.actionReceipt===before.actionReceipt)after.showReceipt({visual:reviewVisualKind(spec.kind.replaceAll('_',' ')),title:changed?'Decision executed':'Decision unavailable',summary:changed?(after.sitrep[0]!==before.sitrep[0]?after.sitrep[0]:spec.title+' completed.'): 'Conditions changed. Review budget, relations and existing agreements before trying again.',metrics:[["Treasury after",`$${after.countries[after.playerCountryId].economy.treasury.toFixed(3)}B`]]});}}><LocaleText value={spec.allowed===false?"Action unavailable":spec.confirmLabel}/></button></footer>
+    <footer><button onClick={onCancel}><LocaleText value={"CANCEL"}/></button><button className={'confirm '+(tone==='danger'?'danger':'')} disabled={spec.allowed===false} aria-describedby={spec.allowed===false?"strategic-block-reason":undefined} onClick={()=>{if(submitted.current)return;submitted.current=true;if(autoApprove&&canAutoApprove(spec.kind))setConfirmationSkip(spec.kind,true);const before=useGameStore.getState();onConfirm();const after=useGameStore.getState();const changed=after.countries!==before.countries||after.tradeDeals!==before.tradeDeals||after.wars!==before.wars||after.embassies!==before.embassies||after.blocs!==before.blocs||after.world!==before.world;if(spec.kind!=='declare_war'&&after.actionReceipt===before.actionReceipt)after.showReceipt({visual:reviewVisualKind(spec.kind.replaceAll('_',' ')),title:changed?'Decision executed':'Decision unavailable',summary:changed?(after.sitrep[0]!==before.sitrep[0]?after.sitrep[0]:spec.title+' completed.'): 'Conditions changed. Review budget, relations and existing agreements before trying again.',metrics:[["Treasury after",`$${after.countries[after.playerCountryId].economy.treasury.toFixed(3)}B`]]});}}><LocaleText value={spec.allowed===false?"Action unavailable":spec.confirmLabel}/></button></footer>
    </div>
   </section>
  </div>;

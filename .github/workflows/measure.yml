@@ -1,7 +1,7 @@
 name: Measure
 
 # Measurement and visual review runs, started by pushing a branch named
-# measure/renders-<label> or measure/visual-<label>. Not a release gate: CI (ci.yml) remains the gate.
+# measure/renders-<label>, measure/visual-<label> or measure/check-<label> (unit tests, types and build only). Not a release gate: CI (ci.yml) remains the gate.
 # Results (JSON, screenshots, console output) are committed to results/<branch> so they can be
 # reviewed without artifact downloads.
 on:
@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     env:
-      SUITE: ${{ startsWith(github.ref_name, 'measure/visual') && 'visual' || 'renders' }}
+      SUITE: ${{ startsWith(github.ref_name, 'measure/visual') && 'visual' || startsWith(github.ref_name, 'measure/check') && 'check' || 'renders' }}
       PERFORMANCE_LABEL: ${{ github.ref_name }}
     steps:
       - uses: actions/checkout@v4
@@ -26,7 +26,11 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Unit tests, types and build
+        if: env.SUITE == 'check'
+        run: npm run check 2>&1 | tee measure-output.txt; exit ${PIPESTATUS[0]}
       - run: npx playwright install --with-deps chromium
+        if: env.SUITE != 'check'
       - name: Render attribution
         if: env.SUITE == 'renders'
         run: npm run measure:renders 2>&1 | tee measure-output.txt; exit ${PIPESTATUS[0]}

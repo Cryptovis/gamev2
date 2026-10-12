@@ -12,14 +12,14 @@ import { shouldConfirmAction, type StrategicActionKind, type StrategicDecisionSp
 import { strategicDecisionSpec, type StrategicDecisionContext } from '../../engine/systems/strategicDecision';
 import { StrategicDecisionModal } from './StrategicDecisionModal';
 import { flagEmoji } from '../../data/countryThemes';
-import { useGameStore } from '../../store/gameStore';
+import {useWorldView} from '../../store/useWorldView';
 import { BlocIcon, DiplomacyIcon, EmbassyIcon, ResourceIcon, WarIcon } from '../icons/GameIcons';
 
 const resources:TradeResource[]=['food','oil','iron','uranium'];
 const humanize=(value:string)=>value.replaceAll('_',' ').replace(/\b\w/g,(m)=>m.toUpperCase());
 
 export function DiplomacyPanel({selectedId}:{selectedId:string}){
- const state=useGameStore();
+ const state=useWorldView();
  const [pendingDecision,setPendingDecision]=useState<{spec:StrategicDecisionSpec;execute:()=>void}|null>(null);
  const player=state.countries[state.playerCountryId];
  const selected=state.countries[selectedId];

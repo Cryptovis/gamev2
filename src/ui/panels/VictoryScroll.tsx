@@ -2,11 +2,16 @@ import {ManagedDialog} from "../windows/ManagedDialog";
 import {WINDOW_LAYERS} from "../windows/useWindowLifecycle";
 import { createPortal } from "react-dom";
 import { useGameStore } from "../../store/gameStore";
+import {useWorldView} from '../../store/useWorldView';
 import { pendingVictory } from "../../engine/systems/victory";
 import { VICTORY_QUOTES } from "../../data/victoryQuotes";
 import { LocaleText } from "../../i18n/localeText";
+// Always mounted: only the pending war id is watched until a victory notice is due.
 export function VictoryScroll() {
-  const s = useGameStore(),
+  return useGameStore((s) => pendingVictory(s)?.warId ?? null) ? <VictoryNotice /> : null;
+}
+function VictoryNotice() {
+  const s = useWorldView(),
     v = pendingVictory(s);
   if (!v) return null;
   const q = VICTORY_QUOTES[v.quote] ?? VICTORY_QUOTES[0],
