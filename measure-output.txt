@@ -1,0 +1,33 @@
+
+> rule-of-nations@0.90.0-playtest.11 measure:war
+> vitest run --config performance/war.vitest.config.ts
+
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.0.3 [39m[90m/home/runner/work/gamev2/gamev2[39m
+
+[90mstdout[2m | performance/warBalance.spec.ts[2m > [22m[2mmeasure paired war-balance scenarios
+[22m[39m[war] equal · plains                       Δ30  -0.934 [-1.55, -0.331] V/D/A 0/24/0 end 55.6 loss 0.0696/0.0589 fuel 141.6/0 air 0 supply 52.6,59.7
+[war] equal · urban                        Δ30  -5.029 [-5.556, -4.545] V/D/A 0/24/0 end 20 loss 0.0341/0.0173 fuel 51.1/0 air 0 supply 47.3,53.7
+[war] equal · mountain                     Δ30  -7.181 [-7.692, -6.667] V/D/A 0/24/0 end 14 loss 0.029/0.0106 fuel 35.8/0 air 0 supply 36.7,41.7
+[war] equal · forest                       Δ30  -4.344 [-5, -3.704] V/D/A 0/24/0 end 23.1 loss 0.0367/0.0209 fuel 59.2/0 air 0 supply 43.8,49.7
+[war] equal · desert                       Δ30  -2.761 [-3.333, -2.164] V/D/A 0/24/0 end 35.2 loss 0.0488/0.0349 fuel 89.9/0 air 0 supply 44.5,50.6
+[war] equal · coastal                      Δ30  -3.585 [-4.167, -3.113] V/D/A 0/24/0 end 28 loss 0.0413/0.0267 fuel 71.8/0 air 0 supply 48.1,54.6
+[war] attacker air superiority · plains    Δ30   6.715 [5.556, 7.692] V/D/A 24/0/0 end 15 loss 0.075/0.0237 fuel 64.7/0 air 100 supply 54.5,61.2
+[war] defender air superiority · plains    Δ30  -6.855 [-7.692, -5.882] V/D/A 0/24/0 end 14.7 loss 0.0227/0.0733 fuel 24.4/0 air -100 supply 53.9,62.1
+[war] attacker low supply                  Δ30  -4.507 [-5.263, -4] V/D/A 0/24/0 end 22.3 loss 0.0359/0.02 fuel 57.1/0 air 0 supply 42.2,61.3
+[war] attacker 1.5× forces                 Δ30   2.897 [2.224, 3.448] V/D/A 24/0/0 end 35.4 loss 0.0364/0.0466 fuel 125/0 air 0 supply 50.1,60.7
+[war] attacker exhausted (50)              Δ30  -5.978 [-6.667, -5.263] V/D/A 0/24/0 end 16.8 loss 0.0269/0.0152 fuel 43.1/0 air 0 supply 54.2,61.6
+[war] attacker without fuel                Δ30 -16.667 [-16.667, -16.667] V/D/A 0/24/0 end 6 loss 0.0159/0.0033 fuel 0/0 air -1.4 supply 22.5,62.1
+[war] defender without fuel                Δ30  15.972 [14.286, 16.667] V/D/A 24/0/0 end 6.3 loss 0.0047/0.0138 fuel 16.2/0 air 1.4 supply 54.6,25.8
+[tactical] equal · plains           rounds 20 progress -24.09 reversal {"attacker":0,"defender":0} captures {"attacker":0,"defender":12}
+[tactical] equal · mountain         rounds 14 progress -100 reversal {"attacker":0,"defender":0} captures {"attacker":6,"defender":10}
+[tactical] attacker 1.5× forces     rounds 20 progress 50.89 reversal {"attacker":0,"defender":0} captures {"attacker":0,"defender":12}
+
+ [32m✓[39m performance/warBalance.spec.ts [2m([22m[2m1 test[22m[2m)[22m[33m 2258[2mms[22m[39m
+   [33m[2m✓[22m[39m measure paired war-balance scenarios[33m 2257[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m   Start at [22m 15:55:42
+[2m   Duration [22m 2.73s[2m (tests 85%, transform 11%, import 4%)[22m
+

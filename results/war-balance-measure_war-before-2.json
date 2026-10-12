@@ -1,0 +1,293 @@
+{
+ "seeds": 24,
+ "auto": [
+  {
+   "scenario": "equal · plains",
+   "meanDelta30": -0.934,
+   "minDelta30": -1.55,
+   "maxDelta30": -0.331,
+   "victories": 0,
+   "defeats": 24,
+   "ongoing": 0,
+   "meanEndDay": 55.6,
+   "attackerLoss": 0.0696,
+   "defenderLoss": 0.0589,
+   "attackerFuel": 141.6,
+   "defenderFuel": 0,
+   "air": 0,
+   "supply": [
+    52.6,
+    59.7
+   ]
+  },
+  {
+   "scenario": "equal · urban",
+   "meanDelta30": -5.029,
+   "minDelta30": -5.556,
+   "maxDelta30": -4.545,
+   "victories": 0,
+   "defeats": 24,
+   "ongoing": 0,
+   "meanEndDay": 20,
+   "attackerLoss": 0.0341,
+   "defenderLoss": 0.0173,
+   "attackerFuel": 51.1,
+   "defenderFuel": 0,
+   "air": 0,
+   "supply": [
+    47.3,
+    53.7
+   ]
+  },
+  {
+   "scenario": "equal · mountain",
+   "meanDelta30": -7.181,
+   "minDelta30": -7.692,
+   "maxDelta30": -6.667,
+   "victories": 0,
+   "defeats": 24,
+   "ongoing": 0,
+   "meanEndDay": 14,
+   "attackerLoss": 0.029,
+   "defenderLoss": 0.0106,
+   "attackerFuel": 35.8,
+   "defenderFuel": 0,
+   "air": 0,
+   "supply": [
+    36.7,
+    41.7
+   ]
+  },
+  {
+   "scenario": "equal · forest",
+   "meanDelta30": -4.344,
+   "minDelta30": -5,
+   "maxDelta30": -3.704,
+   "victories": 0,
+   "defeats": 24,
+   "ongoing": 0,
+   "meanEndDay": 23.1,
+   "attackerLoss": 0.0367,
+   "defenderLoss": 0.0209,
+   "attackerFuel": 59.2,
+   "defenderFuel": 0,
+   "air": 0,
+   "supply": [
+    43.8,
+    49.7
+   ]
+  },
+  {
+   "scenario": "equal · desert",
+   "meanDelta30": -2.761,
+   "minDelta30": -3.333,
+   "maxDelta30": -2.164,
+   "victories": 0,
+   "defeats": 24,
+   "ongoing": 0,
+   "meanEndDay": 35.2,
+   "attackerLoss": 0.0488,
+   "defenderLoss": 0.0349,
+   "attackerFuel": 89.9,
+   "defenderFuel": 0,
+   "air": 0,
+   "supply": [
+    44.5,
+    50.6
+   ]
+  },
+  {
+   "scenario": "equal · coastal",
+   "meanDelta30": -3.585,
+   "minDelta30": -4.167,
+   "maxDelta30": -3.113,
+   "victories": 0,
+   "defeats": 24,
+   "ongoing": 0,
+   "meanEndDay": 28,
+   "attackerLoss": 0.0413,
+   "defenderLoss": 0.0267,
+   "attackerFuel": 71.8,
+   "defenderFuel": 0,
+   "air": 0,
+   "supply": [
+    48.1,
+    54.6
+   ]
+  },
+  {
+   "scenario": "attacker air superiority · plains",
+   "meanDelta30": 6.715,
+   "minDelta30": 5.556,
+   "maxDelta30": 7.692,
+   "victories": 24,
+   "defeats": 0,
+   "ongoing": 0,
+   "meanEndDay": 15,
+   "attackerLoss": 0.075,
+   "defenderLoss": 0.0237,
+   "attackerFuel": 64.7,
+   "defenderFuel": 0,
+   "air": 100,
+   "supply": [
+    54.5,
+    61.2
+   ]
+  },
+  {
+   "scenario": "defender air superiority · plains",
+   "meanDelta30": -6.855,
+   "minDelta30": -7.692,
+   "maxDelta30": -5.882,
+   "victories": 0,
+   "defeats": 24,
+   "ongoing": 0,
+   "meanEndDay": 14.7,
+   "attackerLoss": 0.0227,
+   "defenderLoss": 0.0733,
+   "attackerFuel": 24.4,
+   "defenderFuel": 0,
+   "air": -100,
+   "supply": [
+    53.9,
+    62.1
+   ]
+  },
+  {
+   "scenario": "attacker low supply",
+   "meanDelta30": -4.507,
+   "minDelta30": -5.263,
+   "maxDelta30": -4,
+   "victories": 0,
+   "defeats": 24,
+   "ongoing": 0,
+   "meanEndDay": 22.3,
+   "attackerLoss": 0.0359,
+   "defenderLoss": 0.02,
+   "attackerFuel": 57.1,
+   "defenderFuel": 0,
+   "air": 0,
+   "supply": [
+    42.2,
+    61.3
+   ]
+  },
+  {
+   "scenario": "attacker 1.5× forces",
+   "meanDelta30": 2.897,
+   "minDelta30": 2.224,
+   "maxDelta30": 3.448,
+   "victories": 24,
+   "defeats": 0,
+   "ongoing": 0,
+   "meanEndDay": 35.4,
+   "attackerLoss": 0.0364,
+   "defenderLoss": 0.0466,
+   "attackerFuel": 125,
+   "defenderFuel": 0,
+   "air": 0,
+   "supply": [
+    50.1,
+    60.7
+   ]
+  },
+  {
+   "scenario": "attacker exhausted (50)",
+   "meanDelta30": -5.978,
+   "minDelta30": -6.667,
+   "maxDelta30": -5.263,
+   "victories": 0,
+   "defeats": 24,
+   "ongoing": 0,
+   "meanEndDay": 16.8,
+   "attackerLoss": 0.0269,
+   "defenderLoss": 0.0152,
+   "attackerFuel": 43.1,
+   "defenderFuel": 0,
+   "air": 0,
+   "supply": [
+    54.2,
+    61.6
+   ]
+  },
+  {
+   "scenario": "attacker without fuel",
+   "meanDelta30": -16.667,
+   "minDelta30": -16.667,
+   "maxDelta30": -16.667,
+   "victories": 0,
+   "defeats": 24,
+   "ongoing": 0,
+   "meanEndDay": 6,
+   "attackerLoss": 0.0159,
+   "defenderLoss": 0.0033,
+   "attackerFuel": 0,
+   "defenderFuel": 0,
+   "air": -1.4,
+   "supply": [
+    22.5,
+    62.1
+   ]
+  },
+  {
+   "scenario": "defender without fuel",
+   "meanDelta30": 15.972,
+   "minDelta30": 14.286,
+   "maxDelta30": 16.667,
+   "victories": 24,
+   "defeats": 0,
+   "ongoing": 0,
+   "meanEndDay": 6.3,
+   "attackerLoss": 0.0047,
+   "defenderLoss": 0.0138,
+   "attackerFuel": 16.2,
+   "defenderFuel": 0,
+   "air": 1.4,
+   "supply": [
+    54.6,
+    25.8
+   ]
+  }
+ ],
+ "tactical": [
+  {
+   "scenario": "equal · plains",
+   "meanRounds": 20,
+   "meanProgress": -24.09,
+   "reversalRate": {
+    "attacker": 0,
+    "defender": 0
+   },
+   "captures": {
+    "attacker": 0,
+    "defender": 12
+   }
+  },
+  {
+   "scenario": "equal · mountain",
+   "meanRounds": 14,
+   "meanProgress": -100,
+   "reversalRate": {
+    "attacker": 0,
+    "defender": 0
+   },
+   "captures": {
+    "attacker": 6,
+    "defender": 10
+   }
+  },
+  {
+   "scenario": "attacker 1.5× forces",
+   "meanRounds": 20,
+   "meanProgress": 50.89,
+   "reversalRate": {
+    "attacker": 0,
+    "defender": 0
+   },
+   "captures": {
+    "attacker": 0,
+    "defender": 12
+   }
+  }
+ ]
+}
