@@ -1,0 +1,53 @@
+
+> rule-of-nations@0.90.0-playtest.11 measure:war
+> vitest run --config performance/war.vitest.config.ts
+
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.0.3 [39m[90m/home/runner/work/gamev2/gamev2[39m
+
+[90mstdout[2m | performance/warBalance.spec.ts[2m > [22m[2mmeasure paired war-balance scenarios
+[22m[39m[small] {"pair":"GEO→ARM","days":18,"status":"withdrawn","minTreasury":4.003253234668121,"arrearsDays":0,"worstRating":58.94374993948226,"rescueOfferDay":null,"rescueApplied":false,"rescueApproved":false,"bankrupt":false}
+[small] {"pair":"GEO→ARM","days":18,"status":"withdrawn","minTreasury":4.003253234668121,"arrearsDays":0,"worstRating":58.946343119015594,"rescueOfferDay":null,"rescueApplied":false,"rescueApproved":false,"bankrupt":false}
+[small] {"pair":"GEO→ARM","days":18,"status":"withdrawn","minTreasury":4.003253234668121,"arrearsDays":0,"worstRating":58.94525074873731,"rescueOfferDay":null,"rescueApplied":false,"rescueApproved":false,"bankrupt":false}
+[small] {"pair":"GEO→ARM","days":18,"status":"withdrawn","minTreasury":4.003253234668121,"arrearsDays":0,"worstRating":58.9425359935381,"rescueOfferDay":null,"rescueApplied":false,"rescueApproved":false,"bankrupt":false}
+[small] {"pair":"AZE→ARM","days":12,"status":"victory","minTreasury":4.003253234668121,"arrearsDays":0,"worstRating":53.018755165656074,"rescueOfferDay":null,"rescueApplied":false,"rescueApproved":false,"bankrupt":false}
+[small] {"pair":"AZE→ARM","days":12,"status":"victory","minTreasury":4.003253234668121,"arrearsDays":0,"worstRating":53.02132507034905,"rescueOfferDay":null,"rescueApplied":false,"rescueApproved":false,"bankrupt":false}
+[small] {"pair":"AZE→ARM","days":11,"status":"victory","minTreasury":4.003253234668121,"arrearsDays":0,"worstRating":53.036689794012894,"rescueOfferDay":null,"rescueApplied":false,"rescueApproved":false,"bankrupt":false}
+[small] {"pair":"AZE→ARM","days":11,"status":"victory","minTreasury":4.003253234668121,"arrearsDays":0,"worstRating":53.03453068168742,"rescueOfferDay":null,"rescueApplied":false,"rescueApproved":false,"bankrupt":false}
+[small] {"pair":"GEO→ARM low cash","days":18,"status":"withdrawn","minTreasury":0.26325323466812134,"arrearsDays":0,"worstRating":45.09917530882303,"rescueOfferDay":null,"rescueApplied":false,"rescueApproved":false,"bankrupt":false}
+[small] {"pair":"GEO→ARM low cash","days":18,"status":"withdrawn","minTreasury":0.26325323466812134,"arrearsDays":0,"worstRating":45.09917554074516,"rescueOfferDay":null,"rescueApplied":false,"rescueApproved":false,"bankrupt":false}
+[small] {"pair":"GEO→ARM low cash","days":18,"status":"withdrawn","minTreasury":0.26325323466812134,"arrearsDays":0,"worstRating":45.09920929361646,"rescueOfferDay":null,"rescueApplied":false,"rescueApproved":false,"bankrupt":false}
+[small] {"pair":"GEO→ARM low cash","days":18,"status":"withdrawn","minTreasury":0.26325323466812134,"arrearsDays":0,"worstRating":45.099209523896654,"rescueOfferDay":null,"rescueApplied":false,"rescueApproved":false,"bankrupt":false}
+[small] {"pair":"RUS→GEO low cash","days":6,"status":"victory","minTreasury":0.33395361345514557,"arrearsDays":0,"worstRating":39.21675869483716,"rescueOfferDay":null,"rescueApplied":false,"rescueApproved":false,"bankrupt":false}
+[small] {"pair":"RUS→GEO low cash","days":6,"status":"victory","minTreasury":0.33395361345514557,"arrearsDays":0,"worstRating":39.21698601665507,"rescueOfferDay":null,"rescueApplied":false,"rescueApproved":false,"bankrupt":false}
+[small] {"pair":"RUS→GEO low cash","days":6,"status":"victory","minTreasury":0.33395361345514557,"arrearsDays":0,"worstRating":39.2180577314626,"rescueOfferDay":null,"rescueApplied":false,"rescueApproved":false,"bankrupt":false}
+[small] {"pair":"RUS→GEO low cash","days":6,"status":"victory","minTreasury":0.33395361345514557,"arrearsDays":0,"worstRating":39.21593980188383,"rescueOfferDay":null,"rescueApplied":false,"rescueApproved":false,"bankrupt":false}
+[war] equal · plains                       Δ30   0.314 [-0.306, 0.919] V/D/A 0/24/0 end 57.3 loss 0.067/0.0644 fuel 146/36.5 air 0 supply 54.9,57.2
+[war] equal · urban                        Δ30  -4.811 [-5.556, -4.167] V/D/A 0/24/0 end 20.9 loss 0.0334/0.0188 fuel 53.5/13.4 air 0 supply 49.4,51.5
+[war] equal · mountain                     Δ30  -8.044 [-9.091, -7.692] V/D/A 0/24/0 end 12.5 loss 0.0243/0.0099 fuel 32/8 air 0 supply 38.4,40
+[war] equal · forest                       Δ30  -3.889 [-4.545, -3.333] V/D/A 0/24/0 end 25.9 loss 0.0386/0.0244 fuel 66.2/16.6 air 0 supply 45.7,47.6
+[war] equal · desert                       Δ30  -1.651 [-2.259, -1.044] V/D/A 0/24/0 end 46.9 loss 0.0616/0.0481 fuel 119.6/30 air 0 supply 46.1,48
+[war] equal · coastal                      Δ30  -2.813 [-3.333, -2.211] V/D/A 0/24/0 end 34.4 loss 0.0479/0.0341 fuel 88/22 air 0 supply 50.1,52.2
+[war] attacker air superiority · plains    Δ30   8.951 [7.692, 10] V/D/A 24/0/0 end 11.2 loss 0.0085/0.0253 fuel 28.8/7.2 air 100 supply 56.9,60.2
+[war] defender air superiority · plains    Δ30  -8.161 [-9.091, -7.692] V/D/A 0/24/0 end 12.3 loss 0.0249/0.0095 fuel 31.6/7.9 air -100 supply 57.7,59.3
+[war] attacker air superiority · mountain  Δ30  -1.522 [-2.132, -0.813] V/D/A 0/24/0 end 25.9 loss 0.0319/0.0341 fuel 66.5/16.6 air 100 supply 38,40.4
+[war] attacker low supply                  Δ30   -4.07 [-4.762, -3.571] V/D/A 0/24/0 end 24.7 loss 0.0373/0.0232 fuel 63.3/15.9 air 0 supply 44,58.7
+[war] attacker 1.5× forces                 Δ30   3.605 [3.029, 4.167] V/D/A 24/0/0 end 28 loss 0.0273/0.0394 fuel 99/17.9 air 0 supply 52.9,58.7
+[war] attacker exhausted (50)              Δ30  -5.576 [-6.25, -5] V/D/A 0/24/0 end 18 loss 0.027/0.017 fuel 46.2/11.6 air 0 supply 56.7,59.1
+[war] attacker without fuel                Δ30   -17.5 [-20, -16.667] V/D/A 0/24/0 end 5.8 loss 0.0153/0.0032 fuel 0/3.7 air -1.4 supply 23.6,59.6
+[war] defender without fuel                Δ30  10.972 [10, 11.111] V/D/A 24/0/0 end 9.1 loss 0.0064/0.0219 fuel 23.5/0 air 2.2 supply 56.9,24.2
+[tactical] equal · plains         single  rounds 20 progress 8.72 switches {"attacker":0.171,"defender":0.138} reversal {"attacker":0.036,"defender":0.026} held {"attacker":129,"defender":22}
+[tactical] equal · plains         planner rounds 20 progress -7.71 switches {"attacker":0.008,"defender":0.008} reversal {"attacker":0,"defender":0.044} held {"attacker":220,"defender":207}
+[tactical] equal · mountain       single  rounds 13.083333333333334 progress -100 switches {"attacker":0.242,"defender":0.096} reversal {"attacker":0.037,"defender":0.01} held {"attacker":108,"defender":16}
+[tactical] equal · mountain       planner rounds 12.833333333333334 progress -100 switches {"attacker":0.039,"defender":0} reversal {"attacker":0,"defender":0} held {"attacker":124,"defender":112}
+[tactical] attacker 1.5× forces   single  rounds 20 progress 66.64 switches {"attacker":0.179,"defender":0.154} reversal {"attacker":0.047,"defender":0.042} held {"attacker":121,"defender":22}
+[tactical] attacker 1.5× forces   planner rounds 20 progress 11.64 switches {"attacker":0.013,"defender":0.013} reversal {"attacker":0,"defender":0.023} held {"attacker":222,"defender":205}
+
+ [32m✓[39m performance/warBalance.spec.ts [2m([22m[2m1 test[22m[2m)[22m[33m 12870[2mms[22m[39m
+   [33m[2m✓[22m[39m measure paired war-balance scenarios[33m 12866[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m   Start at [22m 16:12:15
+[2m   Duration [22m 13.91s[2m (tests 94%, transform 5%, import 1%)[22m
+
