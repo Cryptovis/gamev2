@@ -1,0 +1,185 @@
+
+> rule-of-nations@0.90.0-playtest.10 test:e2e
+> playwright test
+
+[WebServer] [INEFFECTIVE_DYNAMIC_IMPORT] src/persistence/saveGame.ts is dynamically imported by src/engine/autosaveWrite.ts, src/store/gameStore.ts but also statically imported by src/ui/panels/CampaignEntry.tsx, dynamic import will not move module into another chunk.
+[WebServer] 
+[WebServer] [plugin builtin:vite-reporter] 
+[WebServer] (!) Some chunks are larger than 500 kB after minification. Consider:
+[WebServer] - Using dynamic import() to code-split the application
+[WebServer] - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+[WebServer] - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+[WebServer] [PLUGIN_TIMINGS] JavaScript callbacks ran for 1.5s of this 3.1s build (48%).
+[WebServer] 1 callback is listed without a time. Its calls overlapped, so the time inside one call includes work from other calls. To find its cost, profile the build with `node --cpu-prof`:
+[WebServer]   - plugin vite:css transform (25 calls)
+[WebServer] See https://rolldown.rs/reference/InputOptions.checks#bundlertimings for more details.
+[WebServer] 
+
+Running 158 tests using 1 worker
+···················FFFFF·······························F························
+··············································································
+
+  1) e2e/commandCredit0904.spec.ts:27:55 › en credit and ranking navigation translates with consistent display case 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "uppercase"
+    Received: "none"
+
+      26 | });
+      27 | for(const lang of ['en','tr','es','zh','ru'] as const)test(`${lang} credit and ranking navigation translates with consistent display case`,async({page})=>{
+    > 28 |  const s=creditFixture();s.playerProfile.language=lang;await resumeFixture(page,s);await page.locator('[data-guide="nation"]').click();expect(await page.locator('.panel-tabs button span').last().evaluate(el=>getComputedStyle(el).textTransform)).toBe('uppercase');
+         |                                                                                                                                                                                                                                                      ^
+      29 |  await page.locator('[data-guide="tab-technology"]').click();await page.locator('.technology-sections .section-menu button').last().click();await expect(page.locator('[data-development="investments"]')).toBeVisible();await page.keyboard.press('Escape');await page.locator('[data-guide="rail-market"]').click();await page.locator('#market-window>.floating-command-body>.section-menu button').nth(2).click();await expect(page.locator('.credit-desk')).toBeVisible();await expect(page.locator('.credit-partner>span').first()).toHaveText('🇫🇷');await expect(page.locator('.credit-rating-grade').first()).not.toBeEmpty();if(lang!=='en')await expect(page.locator('.credit-desk')).not.toContainText('Applications are assessed after three game days.');
+      30 | });
+      31 | test('credit applies once, stays pending with unchanged cash, then approval arrives as game days pass',async({page})=>{
+        at /home/runner/work/gamev2/gamev2/e2e/commandCredit0904.spec.ts:28:246
+
+    Error Context: test-results/commandCredit0904-en-credi-01f8b-ith-consistent-display-case/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/commandCredit0904-en-credi-01f8b-ith-consistent-display-case/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/commandCredit0904-en-credi-01f8b-ith-consistent-display-case/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) e2e/commandCredit0904.spec.ts:27:55 › tr credit and ranking navigation translates with consistent display case 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "uppercase"
+    Received: "none"
+
+      26 | });
+      27 | for(const lang of ['en','tr','es','zh','ru'] as const)test(`${lang} credit and ranking navigation translates with consistent display case`,async({page})=>{
+    > 28 |  const s=creditFixture();s.playerProfile.language=lang;await resumeFixture(page,s);await page.locator('[data-guide="nation"]').click();expect(await page.locator('.panel-tabs button span').last().evaluate(el=>getComputedStyle(el).textTransform)).toBe('uppercase');
+         |                                                                                                                                                                                                                                                      ^
+      29 |  await page.locator('[data-guide="tab-technology"]').click();await page.locator('.technology-sections .section-menu button').last().click();await expect(page.locator('[data-development="investments"]')).toBeVisible();await page.keyboard.press('Escape');await page.locator('[data-guide="rail-market"]').click();await page.locator('#market-window>.floating-command-body>.section-menu button').nth(2).click();await expect(page.locator('.credit-desk')).toBeVisible();await expect(page.locator('.credit-partner>span').first()).toHaveText('🇫🇷');await expect(page.locator('.credit-rating-grade').first()).not.toBeEmpty();if(lang!=='en')await expect(page.locator('.credit-desk')).not.toContainText('Applications are assessed after three game days.');
+      30 | });
+      31 | test('credit applies once, stays pending with unchanged cash, then approval arrives as game days pass',async({page})=>{
+        at /home/runner/work/gamev2/gamev2/e2e/commandCredit0904.spec.ts:28:246
+
+    Error Context: test-results/commandCredit0904-tr-credi-b923d-ith-consistent-display-case/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/commandCredit0904-tr-credi-b923d-ith-consistent-display-case/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/commandCredit0904-tr-credi-b923d-ith-consistent-display-case/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) e2e/commandCredit0904.spec.ts:27:55 › es credit and ranking navigation translates with consistent display case 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "uppercase"
+    Received: "none"
+
+      26 | });
+      27 | for(const lang of ['en','tr','es','zh','ru'] as const)test(`${lang} credit and ranking navigation translates with consistent display case`,async({page})=>{
+    > 28 |  const s=creditFixture();s.playerProfile.language=lang;await resumeFixture(page,s);await page.locator('[data-guide="nation"]').click();expect(await page.locator('.panel-tabs button span').last().evaluate(el=>getComputedStyle(el).textTransform)).toBe('uppercase');
+         |                                                                                                                                                                                                                                                      ^
+      29 |  await page.locator('[data-guide="tab-technology"]').click();await page.locator('.technology-sections .section-menu button').last().click();await expect(page.locator('[data-development="investments"]')).toBeVisible();await page.keyboard.press('Escape');await page.locator('[data-guide="rail-market"]').click();await page.locator('#market-window>.floating-command-body>.section-menu button').nth(2).click();await expect(page.locator('.credit-desk')).toBeVisible();await expect(page.locator('.credit-partner>span').first()).toHaveText('🇫🇷');await expect(page.locator('.credit-rating-grade').first()).not.toBeEmpty();if(lang!=='en')await expect(page.locator('.credit-desk')).not.toContainText('Applications are assessed after three game days.');
+      30 | });
+      31 | test('credit applies once, stays pending with unchanged cash, then approval arrives as game days pass',async({page})=>{
+        at /home/runner/work/gamev2/gamev2/e2e/commandCredit0904.spec.ts:28:246
+
+    Error Context: test-results/commandCredit0904-es-credi-34734-ith-consistent-display-case/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/commandCredit0904-es-credi-34734-ith-consistent-display-case/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/commandCredit0904-es-credi-34734-ith-consistent-display-case/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) e2e/commandCredit0904.spec.ts:27:55 › zh credit and ranking navigation translates with consistent display case 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "uppercase"
+    Received: "none"
+
+      26 | });
+      27 | for(const lang of ['en','tr','es','zh','ru'] as const)test(`${lang} credit and ranking navigation translates with consistent display case`,async({page})=>{
+    > 28 |  const s=creditFixture();s.playerProfile.language=lang;await resumeFixture(page,s);await page.locator('[data-guide="nation"]').click();expect(await page.locator('.panel-tabs button span').last().evaluate(el=>getComputedStyle(el).textTransform)).toBe('uppercase');
+         |                                                                                                                                                                                                                                                      ^
+      29 |  await page.locator('[data-guide="tab-technology"]').click();await page.locator('.technology-sections .section-menu button').last().click();await expect(page.locator('[data-development="investments"]')).toBeVisible();await page.keyboard.press('Escape');await page.locator('[data-guide="rail-market"]').click();await page.locator('#market-window>.floating-command-body>.section-menu button').nth(2).click();await expect(page.locator('.credit-desk')).toBeVisible();await expect(page.locator('.credit-partner>span').first()).toHaveText('🇫🇷');await expect(page.locator('.credit-rating-grade').first()).not.toBeEmpty();if(lang!=='en')await expect(page.locator('.credit-desk')).not.toContainText('Applications are assessed after three game days.');
+      30 | });
+      31 | test('credit applies once, stays pending with unchanged cash, then approval arrives as game days pass',async({page})=>{
+        at /home/runner/work/gamev2/gamev2/e2e/commandCredit0904.spec.ts:28:246
+
+    Error Context: test-results/commandCredit0904-zh-credi-9b55d-ith-consistent-display-case/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/commandCredit0904-zh-credi-9b55d-ith-consistent-display-case/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/commandCredit0904-zh-credi-9b55d-ith-consistent-display-case/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  5) e2e/commandCredit0904.spec.ts:27:55 › ru credit and ranking navigation translates with consistent display case 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "uppercase"
+    Received: "none"
+
+      26 | });
+      27 | for(const lang of ['en','tr','es','zh','ru'] as const)test(`${lang} credit and ranking navigation translates with consistent display case`,async({page})=>{
+    > 28 |  const s=creditFixture();s.playerProfile.language=lang;await resumeFixture(page,s);await page.locator('[data-guide="nation"]').click();expect(await page.locator('.panel-tabs button span').last().evaluate(el=>getComputedStyle(el).textTransform)).toBe('uppercase');
+         |                                                                                                                                                                                                                                                      ^
+      29 |  await page.locator('[data-guide="tab-technology"]').click();await page.locator('.technology-sections .section-menu button').last().click();await expect(page.locator('[data-development="investments"]')).toBeVisible();await page.keyboard.press('Escape');await page.locator('[data-guide="rail-market"]').click();await page.locator('#market-window>.floating-command-body>.section-menu button').nth(2).click();await expect(page.locator('.credit-desk')).toBeVisible();await expect(page.locator('.credit-partner>span').first()).toHaveText('🇫🇷');await expect(page.locator('.credit-rating-grade').first()).not.toBeEmpty();if(lang!=='en')await expect(page.locator('.credit-desk')).not.toContainText('Applications are assessed after three game days.');
+      30 | });
+      31 | test('credit applies once, stays pending with unchanged cash, then approval arrives as game days pass',async({page})=>{
+        at /home/runner/work/gamev2/gamev2/e2e/commandCredit0904.spec.ts:28:246
+
+    Error Context: test-results/commandCredit0904-ru-credi-767c7-ith-consistent-display-case/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/commandCredit0904-ru-credi-767c7-ith-consistent-display-case/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/commandCredit0904-ru-credi-767c7-ith-consistent-display-case/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  6) e2e/compactWorkspaces0908.spec.ts:5:2 › 1440px ru compact World, Supply and national workspaces 
+
+    Error: expect(received).toBeLessThan(expected)
+
+    Expected: < 780
+    Received:   801.328125
+
+       8 |   await resumeFixture(page,campaignFixture(language));
+       9 |   if(width>1100){
+    > 10 |    const overview=await page.locator('.command-overview-island').boundingBox();expect(overview!.width).toBeLessThan(780);
+         |                                                                                                        ^
+      11 |    await expect(page.locator('.top-metric')).toHaveCount(4);
+      12 |   }
+      13 |   await page.locator('[data-guide="rail-world"]').click();
+        at /home/runner/work/gamev2/gamev2/e2e/compactWorkspaces0908.spec.ts:10:104
+
+    Error Context: test-results/compactWorkspaces0908-1440-2ab9a-ply-and-national-workspaces/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/compactWorkspaces0908-1440-2ab9a-ply-and-national-workspaces/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/compactWorkspaces0908-1440-2ab9a-ply-and-national-workspaces/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  6 failed
+    e2e/commandCredit0904.spec.ts:27:55 › en credit and ranking navigation translates with consistent display case 
+    e2e/commandCredit0904.spec.ts:27:55 › tr credit and ranking navigation translates with consistent display case 
+    e2e/commandCredit0904.spec.ts:27:55 › es credit and ranking navigation translates with consistent display case 
+    e2e/commandCredit0904.spec.ts:27:55 › zh credit and ranking navigation translates with consistent display case 
+    e2e/commandCredit0904.spec.ts:27:55 › ru credit and ranking navigation translates with consistent display case 
+    e2e/compactWorkspaces0908.spec.ts:5:2 › 1440px ru compact World, Supply and national workspaces 
+  152 passed (15.9m)

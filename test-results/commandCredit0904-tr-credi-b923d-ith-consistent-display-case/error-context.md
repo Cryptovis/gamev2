@@ -1,0 +1,731 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: commandCredit0904.spec.ts >> tr credit and ranking navigation translates with consistent display case
+- Location: e2e/commandCredit0904.spec.ts:27:55
+
+# Error details
+
+```
+Error: expect(received).toBe(expected) // Object.is equality
+
+Expected: "uppercase"
+Received: "none"
+```
+
+# Page snapshot
+
+```yaml
+- main [ref=e3]:
+  - generic [ref=e4]:
+    - generic:
+      - strong: Türkiye
+      - generic: küreyi sürükle · tekerlekle yakınlaştır · ülkeye tıkla
+    - group "Interactive world map" [ref=e5]:
+      - generic [ref=e8]:
+        - generic "Tanzanya" [ref=e9] [cursor=pointer]
+        - generic "Batı Sahra" [ref=e10] [cursor=pointer]
+        - generic "Kanada" [ref=e11] [cursor=pointer]
+        - generic "Amerika Birleşik Devletleri" [ref=e12] [cursor=pointer]
+        - generic "Kazakistan" [ref=e13] [cursor=pointer]
+        - generic "Özbekistan" [ref=e14] [cursor=pointer]
+        - generic "Endonezya" [ref=e15] [cursor=pointer]
+        - generic "Kongo - Kinşasa" [ref=e16] [cursor=pointer]
+        - generic "Somali" [ref=e17] [cursor=pointer]
+        - generic "Kenya" [ref=e18] [cursor=pointer]
+        - generic "Sudan" [ref=e19] [cursor=pointer]
+        - generic "Çad" [ref=e20] [cursor=pointer]
+        - generic "Haiti" [ref=e21] [cursor=pointer]
+        - generic "Dominik Cumhuriyeti" [ref=e22] [cursor=pointer]
+        - generic "Rusya" [ref=e23] [cursor=pointer]
+        - generic "Norveç" [ref=e24] [cursor=pointer]
+        - generic "Grönland" [ref=e25] [cursor=pointer]
+        - generic "Fransız Güney Toprakları" [ref=e26] [cursor=pointer]
+        - generic "Güney Afrika" [ref=e27] [cursor=pointer]
+        - generic "Lesotho" [ref=e28] [cursor=pointer]
+        - generic "Brezilya" [ref=e29] [cursor=pointer]
+        - generic "Venezuela" [ref=e30] [cursor=pointer]
+        - generic "Guyana" [ref=e31] [cursor=pointer]
+        - generic "Surinam" [ref=e32] [cursor=pointer]
+        - generic "Fransa" [ref=e33] [cursor=pointer]
+        - generic "Porto Riko" [ref=e34] [cursor=pointer]
+        - generic "Zimbabve" [ref=e35] [cursor=pointer]
+        - generic "Botsvana" [ref=e36] [cursor=pointer]
+        - generic "Namibya" [ref=e37] [cursor=pointer]
+        - generic "Senegal" [ref=e38] [cursor=pointer]
+        - generic "Mali" [ref=e39] [cursor=pointer]
+        - generic "Moritanya" [ref=e40] [cursor=pointer]
+        - generic "Benin" [ref=e41] [cursor=pointer]
+        - generic "Nijer" [ref=e42] [cursor=pointer]
+        - generic "Nijerya" [ref=e43] [cursor=pointer]
+        - generic "Kamerun" [ref=e44] [cursor=pointer]
+        - generic "Togo" [ref=e45] [cursor=pointer]
+        - generic "Gana" [ref=e46] [cursor=pointer]
+        - generic "Côte d’Ivoire" [ref=e47] [cursor=pointer]
+        - generic "Gine" [ref=e48] [cursor=pointer]
+        - generic "Gine-Bissau" [ref=e49] [cursor=pointer]
+        - generic "Liberya" [ref=e50] [cursor=pointer]
+        - generic "Sierra Leone" [ref=e51] [cursor=pointer]
+        - generic "Burkina Faso" [ref=e52] [cursor=pointer]
+        - generic "Orta Afrika Cumhuriyeti" [ref=e53] [cursor=pointer]
+        - generic "Kongo - Brazavil" [ref=e54] [cursor=pointer]
+        - generic "Gabon" [ref=e55] [cursor=pointer]
+        - generic "Ekvator Ginesi" [ref=e56] [cursor=pointer]
+        - generic "Zambiya" [ref=e57] [cursor=pointer]
+        - generic "Malavi" [ref=e58] [cursor=pointer]
+        - generic "Mozambik" [ref=e59] [cursor=pointer]
+        - generic "Esvatini" [ref=e60] [cursor=pointer]
+        - generic "Angola" [ref=e61] [cursor=pointer]
+        - generic "Burundi" [ref=e62] [cursor=pointer]
+        - generic "İsrail" [ref=e63] [cursor=pointer]
+        - generic "Lübnan" [ref=e64] [cursor=pointer]
+        - generic "Madagaskar" [ref=e65] [cursor=pointer]
+        - generic "Filistin" [ref=e66] [cursor=pointer]
+        - generic "Gambiya" [ref=e67] [cursor=pointer]
+        - generic "Tunus" [ref=e68] [cursor=pointer]
+        - generic "Cezayir" [ref=e69] [cursor=pointer]
+        - generic "Ürdün" [ref=e70] [cursor=pointer]
+        - generic "Birleşik Arap Emirlikleri" [ref=e71] [cursor=pointer]
+        - generic "Katar" [ref=e72] [cursor=pointer]
+        - generic "Kuveyt" [ref=e73] [cursor=pointer]
+        - generic "Irak" [ref=e74] [cursor=pointer]
+        - generic "Umman" [ref=e75] [cursor=pointer]
+        - generic "Kamboçya" [ref=e76] [cursor=pointer]
+        - generic "Tayland" [ref=e77] [cursor=pointer]
+        - generic "Laos" [ref=e78] [cursor=pointer]
+        - generic "Myanmar (Burma)" [ref=e79] [cursor=pointer]
+        - generic "Vietnam" [ref=e80] [cursor=pointer]
+        - generic "Kuzey Kore" [ref=e81] [cursor=pointer]
+        - generic "Güney Kore" [ref=e82] [cursor=pointer]
+        - generic "Moğolistan" [ref=e83] [cursor=pointer]
+        - generic "Hindistan" [ref=e84] [cursor=pointer]
+        - generic "Bangladeş" [ref=e85] [cursor=pointer]
+        - generic "Butan" [ref=e86] [cursor=pointer]
+        - generic "Nepal" [ref=e87] [cursor=pointer]
+        - generic "Pakistan" [ref=e88] [cursor=pointer]
+        - generic "Afganistan" [ref=e89] [cursor=pointer]
+        - generic "Tacikistan" [ref=e90] [cursor=pointer]
+        - generic "Kırgızistan" [ref=e91] [cursor=pointer]
+        - generic "Türkmenistan" [ref=e92] [cursor=pointer]
+        - generic "İran" [ref=e93] [cursor=pointer]
+        - generic "Suriye" [ref=e94] [cursor=pointer]
+        - generic "Ermenistan" [ref=e95] [cursor=pointer]
+        - generic "İsveç" [ref=e96] [cursor=pointer]
+        - generic "Belarus" [ref=e97] [cursor=pointer]
+        - generic "Ukrayna" [ref=e98] [cursor=pointer]
+        - generic "Polonya" [ref=e99] [cursor=pointer]
+        - generic "Avusturya" [ref=e100] [cursor=pointer]
+        - generic "Macaristan" [ref=e101] [cursor=pointer]
+        - generic "Moldova" [ref=e102] [cursor=pointer]
+        - generic "Romanya" [ref=e103] [cursor=pointer]
+        - generic "Litvanya" [ref=e104] [cursor=pointer]
+        - generic "Letonya" [ref=e105] [cursor=pointer]
+        - generic "Estonya" [ref=e106] [cursor=pointer]
+        - generic "Almanya" [ref=e107] [cursor=pointer]
+        - generic "Bulgaristan" [ref=e108] [cursor=pointer]
+        - generic "Yunanistan" [ref=e109] [cursor=pointer]
+        - generic "Türkiye" [ref=e110] [cursor=pointer]
+        - generic "Arnavutluk" [ref=e111] [cursor=pointer]
+        - generic "Hırvatistan" [ref=e112] [cursor=pointer]
+        - generic "İsviçre" [ref=e113] [cursor=pointer]
+        - generic "Lüksemburg" [ref=e114] [cursor=pointer]
+        - generic "Belçika" [ref=e115] [cursor=pointer]
+        - generic "Hollanda" [ref=e116] [cursor=pointer]
+        - generic "Portekiz" [ref=e117] [cursor=pointer]
+        - generic "İspanya" [ref=e118] [cursor=pointer]
+        - generic "İrlanda" [ref=e119] [cursor=pointer]
+        - generic "Sri Lanka" [ref=e120] [cursor=pointer]
+        - generic "Çin" [ref=e121] [cursor=pointer]
+        - generic "Tayvan" [ref=e122] [cursor=pointer]
+        - generic "İtalya" [ref=e123] [cursor=pointer]
+        - generic "Danimarka" [ref=e124] [cursor=pointer]
+        - generic "Birleşik Krallık" [ref=e125] [cursor=pointer]
+        - generic "İzlanda" [ref=e126] [cursor=pointer]
+        - generic "Azerbaycan" [ref=e127] [cursor=pointer]
+        - generic "Gürcistan" [ref=e128] [cursor=pointer]
+        - generic "Filipinler" [ref=e129] [cursor=pointer]
+        - generic "Malezya" [ref=e130] [cursor=pointer]
+        - generic "Brunei" [ref=e131] [cursor=pointer]
+        - generic "Slovenya" [ref=e132] [cursor=pointer]
+        - generic "Finlandiya" [ref=e133] [cursor=pointer]
+        - generic "Slovakya" [ref=e134] [cursor=pointer]
+        - generic "Çekya" [ref=e135] [cursor=pointer]
+        - generic "Eritre" [ref=e136] [cursor=pointer]
+        - generic "Japonya" [ref=e137] [cursor=pointer]
+        - generic "Yemen" [ref=e138] [cursor=pointer]
+        - generic "Suudi Arabistan" [ref=e139] [cursor=pointer]
+        - generic "Kıbrıs" [ref=e140] [cursor=pointer]
+        - generic "Kıbrıs" [ref=e141] [cursor=pointer]
+        - generic "Fas" [ref=e142] [cursor=pointer]
+        - generic "Mısır" [ref=e143] [cursor=pointer]
+        - generic "Libya" [ref=e144] [cursor=pointer]
+        - generic "Etiyopya" [ref=e145] [cursor=pointer]
+        - generic "Cibuti" [ref=e146] [cursor=pointer]
+        - generic "Somali" [ref=e147] [cursor=pointer]
+        - generic "Uganda" [ref=e148] [cursor=pointer]
+        - generic "Ruanda" [ref=e149] [cursor=pointer]
+        - generic "Bosna-Hersek" [ref=e150] [cursor=pointer]
+        - generic "Kuzey Makedonya" [ref=e151] [cursor=pointer]
+        - generic "Sırbistan" [ref=e152] [cursor=pointer]
+        - generic "Karadağ" [ref=e153] [cursor=pointer]
+        - generic "Kosova" [ref=e154] [cursor=pointer]
+        - generic "Trinidad ve Tobago" [ref=e155] [cursor=pointer]
+        - generic "Güney Sudan" [ref=e156] [cursor=pointer]
+      - generic:
+        - generic:
+          - generic: TÜRKİYE
+        - generic:
+          - generic: RUSYA
+        - generic:
+          - generic: ÇIN
+        - generic:
+          - generic: HINDISTAN
+        - generic:
+          - generic: CEZAYIR
+        - generic:
+          - generic: KONGO - KINŞASA
+        - generic:
+          - generic: KAZAKISTAN
+        - generic:
+          - generic: SUUDI ARABISTAN
+        - generic:
+          - generic: SUDAN
+        - generic:
+          - generic: LİBYA
+        - generic:
+          - generic: İRAN
+        - generic:
+          - generic: ÇAD
+        - generic:
+          - generic: KANADA
+        - generic:
+          - generic: ETIYOPYA
+        - generic:
+          - generic: MALİ
+        - generic:
+          - generic: ANGOLA
+        - generic:
+          - generic: BREZILYA
+        - generic:
+          - generic: NIJERYA
+        - generic:
+          - generic: GÜNEY AFRIKA
+        - generic:
+          - generic: ARKTİK OKYANUSU
+        - generic:
+          - generic: HİNT OKYANUSU
+        - generic:
+          - generic: KUZEY ATLANTİK OKYANUSU
+        - generic:
+          - generic: GÜNEY ATLANTİK OKYANUSU
+    - generic "Map camera controls" [ref=e157]:
+      - button "Zoom out" [ref=e158] [cursor=pointer]: −
+      - status "Map zoom level" [ref=e159]: 100%
+      - button "Zoom in" [ref=e160] [cursor=pointer]: +
+      - button "Ülkene dön" [ref=e161] [cursor=pointer]:
+        - img [ref=e162]
+      - button "SIFIRLA" [ref=e166] [cursor=pointer]
+  - generic:
+    - generic [ref=e167]:
+      - generic [ref=e168]:
+        - button "Yönetici ⋯" [ref=e169] [cursor=pointer]:
+          - img "Yönetici" [ref=e170]
+          - generic [ref=e171]: ⋯
+        - generic [ref=e172]:
+          - generic [ref=e173]: Rule of Nations
+          - generic [ref=e174]:
+            - strong [ref=e175]: Browser playtest
+            - generic [ref=e176]: GÜN 1
+      - generic "Ulusal komut göstergeleri" [ref=e177]:
+        - generic [ref=e178]:
+          - img [ref=e181]
+          - generic [ref=e182]:
+            - generic [ref=e183]: HAZİNE
+            - strong [ref=e184]: $100.0B
+        - generic [ref=e185]:
+          - img [ref=e188]
+          - generic [ref=e189]:
+            - generic [ref=e190]: GÜNLÜK BÜTÇE
+            - strong [ref=e191]: +$0.194B
+        - generic [ref=e192]:
+          - img [ref=e195]
+          - generic [ref=e196]:
+            - generic [ref=e197]: ONAY
+            - strong [ref=e198]: 56%
+        - generic [ref=e199]:
+          - img [ref=e202]
+          - generic [ref=e203]:
+            - generic [ref=e204]: İSTİKRAR
+            - strong [ref=e205]: 90%
+    - generic [ref=e206]:
+      - generic [ref=e207]:
+        - generic "Oyun hızı kontrolleri" [ref=e208]:
+          - button "Ⅱ DURAKLAT" [pressed] [ref=e209] [cursor=pointer]:
+            - strong [ref=e210]: Ⅱ
+            - generic [ref=e211]: DURAKLAT
+          - button "1× 15s/GÜN" [ref=e212] [cursor=pointer]:
+            - strong [ref=e213]: 1×
+            - generic [ref=e214]: 15s/GÜN
+          - button "2× 7s/GÜN" [ref=e215] [cursor=pointer]:
+            - strong [ref=e216]: 2×
+            - generic [ref=e217]: 7s/GÜN
+          - button "3× 3s/GÜN" [ref=e218] [cursor=pointer]:
+            - strong [ref=e219]: 3×
+            - generic [ref=e220]: 3s/GÜN
+          - button "5× 1s/GÜN" [ref=e221] [cursor=pointer]:
+            - strong [ref=e222]: 5×
+            - generic [ref=e223]: 1s/GÜN
+        - generic [ref=e224]:
+          - generic [ref=e225]: OYUN TARİHİ
+          - strong [ref=e226]: 2026-01-01
+      - button "Ülkenin yönetimini aç" [active] [pressed] [ref=e227] [cursor=pointer]:
+        - generic [ref=e228]: 🇹🇷
+        - generic [ref=e229]:
+          - strong [ref=e230]: Türkiye
+          - generic [ref=e231]: demokrasi
+          - emphasis [ref=e232]: Ülkenin yönetimini aç
+  - complementary [ref=e233]:
+    - generic [ref=e234]:
+      - generic [ref=e235]: DEVLET / ULUSAL KOMUTA
+      - button "Yakın ülke paneli" [ref=e236] [cursor=pointer]: ×
+    - combobox "Ülke Seç" [ref=e237]:
+      - option "Afganistan (AF)"
+      - option "Arnavutluk (AL)"
+      - option "Cezayir (DZ)"
+      - option "Andorra (AD)"
+      - option "Angola (AO)"
+      - option "Antigua ve Barbuda (AG)"
+      - option "Arjantin (AR)"
+      - option "Ermenistan (AM)"
+      - option "Avustralya (AU)"
+      - option "Avusturya (AT)"
+      - option "Azerbaycan (AZ)"
+      - option "Bahamalar (BS)"
+      - option "Bahreyn (BH)"
+      - option "Bangladeş (BD)"
+      - option "Barbados (BB)"
+      - option "Belarus (BY)"
+      - option "Belçika (BE)"
+      - option "Belize (BZ)"
+      - option "Benin (BJ)"
+      - option "Butan (BT)"
+      - option "Bolivya (BO)"
+      - option "Bosna-Hersek (BA)"
+      - option "Botsvana (BW)"
+      - option "Brezilya (BR)"
+      - option "Brunei (BN)"
+      - option "Bulgaristan (BG)"
+      - option "Burkina Faso (BF)"
+      - option "Burundi (BI)"
+      - option "Cabo Verde (CV)"
+      - option "Kamboçya (KH)"
+      - option "Kamerun (CM)"
+      - option "Kanada (CA)"
+      - option "Orta Afrika Cumhuriyeti (CF)"
+      - option "Çad (TD)"
+      - option "Şili (CL)"
+      - option "Çin (CN)"
+      - option "Kolombiya (CO)"
+      - option "Komorlar (KM)"
+      - option "Kongo - Brazavil (CG)"
+      - option "Kosta Rika (CR)"
+      - option "Côte d’Ivoire (CI)"
+      - option "Hırvatistan (HR)"
+      - option "Küba (CU)"
+      - option "Çekya (CZ)"
+      - option "Kongo - Kinşasa (CD)"
+      - option "Danimarka (DK)"
+      - option "Cibuti (DJ)"
+      - option "Dominika (DM)"
+      - option "Dominik Cumhuriyeti (DO)"
+      - option "Ekvador (EC)"
+      - option "Mısır (EG)"
+      - option "El Salvador (SV)"
+      - option "Ekvator Ginesi (GQ)"
+      - option "Eritre (ER)"
+      - option "Estonya (EE)"
+      - option "Esvatini (SZ)"
+      - option "Etiyopya (ET)"
+      - option "Falkland Adaları (Malvinas Adaları) (FK)"
+      - option "Fiji (FJ)"
+      - option "Finlandiya (FI)"
+      - option "Fransız Güney Toprakları (TF)"
+      - option "Fransa (FR)"
+      - option "Gabon (GA)"
+      - option "Gambiya (GM)"
+      - option "Gürcistan (GE)"
+      - option "Almanya (DE)"
+      - option "Gana (GH)"
+      - option "Yunanistan (GR)"
+      - option "Grönland (GL)"
+      - option "Grenada (GD)"
+      - option "Guatemala (GT)"
+      - option "Gine (GN)"
+      - option "Gine-Bissau (GW)"
+      - option "Guyana (GY)"
+      - option "Haiti (HT)"
+      - option "Vatikan (VA)"
+      - option "Honduras (HN)"
+      - option "Macaristan (HU)"
+      - option "İzlanda (IS)"
+      - option "Hindistan (IN)"
+      - option "Endonezya (ID)"
+      - option "İran (IR)"
+      - option "Irak (IQ)"
+      - option "İrlanda (IE)"
+      - option "İsrail (IL)"
+      - option "İtalya (IT)"
+      - option "Jamaika (JM)"
+      - option "Japonya (JP)"
+      - option "Ürdün (JO)"
+      - option "Kazakistan (KZ)"
+      - option "Kenya (KE)"
+      - option "Kiribati (KI)"
+      - option "Kosova (XK)"
+      - option "Kuveyt (KW)"
+      - option "Kırgızistan (KG)"
+      - option "Laos (LA)"
+      - option "Letonya (LV)"
+      - option "Lübnan (LB)"
+      - option "Lesotho (LS)"
+      - option "Liberya (LR)"
+      - option "Libya (LY)"
+      - option "Liechtenstein (LI)"
+      - option "Litvanya (LT)"
+      - option "Lüksemburg (LU)"
+      - option "Madagaskar (MG)"
+      - option "Malavi (MW)"
+      - option "Malezya (MY)"
+      - option "Maldivler (MV)"
+      - option "Mali (ML)"
+      - option "Malta (MT)"
+      - option "Marshall Adaları (MH)"
+      - option "Moritanya (MR)"
+      - option "Mauritius (MU)"
+      - option "Meksika (MX)"
+      - option "Mikronezya (FM)"
+      - option "Moldova (MD)"
+      - option "Monako (MC)"
+      - option "Moğolistan (MN)"
+      - option "Karadağ (ME)"
+      - option "Fas (MA)"
+      - option "Mozambik (MZ)"
+      - option "Myanmar (Burma) (MM)"
+      - option "Kıbrıs (CY)"
+      - option "Namibya (NA)"
+      - option "Nauru (NR)"
+      - option "Nepal (NP)"
+      - option "Hollanda (NL)"
+      - option "Yeni Kaledonya (NC)"
+      - option "Yeni Zelanda (NZ)"
+      - option "Nikaragua (NI)"
+      - option "Nijer (NE)"
+      - option "Nijerya (NG)"
+      - option "Kuzey Kore (KP)"
+      - option "Kuzey Makedonya (MK)"
+      - option "Norveç (HAYIR)"
+      - option "Umman (OM)"
+      - option "Pakistan (PK)"
+      - option "Palau (PW)"
+      - option "Filistin (PS)"
+      - option "Panama (PA)"
+      - option "Papua Yeni Gine (PG)"
+      - option "Paraguay (PY)"
+      - option "Peru (PE)"
+      - option "Filipinler (PH)"
+      - option "Polonya (PL)"
+      - option "Portekiz (PT)"
+      - option "Porto Riko (PR)"
+      - option "Katar (QA)"
+      - option "Romanya (RO)"
+      - option "Rusya (RU)"
+      - option "Ruanda (RW)"
+      - option "Güney Sudan (SS)"
+      - option "Saint Kitts ve Nevis (KN)"
+      - option "Saint Lucia (LC)"
+      - option "Saint Vincent ve Grenadinler (VC)"
+      - option "Samoa (WS)"
+      - option "San Marino (SM)"
+      - option "Sao Tome ve Principe (ST)"
+      - option "Suudi Arabistan (SA)"
+      - option "Senegal (SN)"
+      - option "Sırbistan (RS)"
+      - option "Seyşeller (SC)"
+      - option "Sierra Leone (SL)"
+      - option "Singapur (SG)"
+      - option "Slovakya (SK)"
+      - option "Slovenya (SI)"
+      - option "Solomon Adaları (SB)"
+      - option "Somali (SO)"
+      - option "Güney Afrika (ZA)"
+      - option "Güney Kore (KR)"
+      - option "İspanya (ES)"
+      - option "Sri Lanka (LK)"
+      - option "Sudan (SD)"
+      - option "Surinam (SR)"
+      - option "İsveç (SE)"
+      - option "İsviçre (CH)"
+      - option "Suriye (SY)"
+      - option "Tayvan (TW)"
+      - option "Tacikistan (TJ)"
+      - option "Tanzanya (TZ)"
+      - option "Tayland (TH)"
+      - option "Timor-Leste (TL)"
+      - option "Togo (TG)"
+      - option "Tonga (TO)"
+      - option "Trinidad ve Tobago (TT)"
+      - option "Tunus (TN)"
+      - option "Türkiye (TR)" [selected]
+      - option "Türkmenistan (TM)"
+      - option "Tuvalu (TV)"
+      - option "Uganda (UG)"
+      - option "Ukrayna (UA)"
+      - option "Birleşik Arap Emirlikleri (AE)"
+      - option "Birleşik Krallık (GB)"
+      - option "Amerika Birleşik Devletleri (US)"
+      - option "Uruguay (UY)"
+      - option "Özbekistan (UZ)"
+      - option "Vanuatu (VU)"
+      - option "Venezuela (VE)"
+      - option "Vietnam (VN)"
+      - option "Batı Sahra (EH)"
+      - option "Yemen (YE)"
+      - option "Zambiya (ZM)"
+      - option "Zimbabve (ZW)"
+    - generic [ref=e239]:
+      - generic [ref=e240]: 🇹🇷
+      - generic [ref=e241]:
+        - heading "Türkiye" [level=1] [ref=e242]
+        - paragraph [ref=e243]: Oyuncunun ülkesi · demokrasi · Asya
+    - generic [ref=e244]:
+      - generic [ref=e245]:
+        - generic [ref=e246]: ☪
+        - generic [ref=e247]:
+          - generic [ref=e248]: DİN
+          - strong [ref=e249]: İslam
+      - generic [ref=e250]:
+        - img "bloc" [ref=e251]:
+          - img [ref=e252]
+        - generic [ref=e253]:
+          - generic [ref=e254]: İDEOLOJİ
+          - strong [ref=e255]: çoğulcu
+      - generic [ref=e256]:
+        - img [ref=e258]
+        - generic [ref=e259]:
+          - generic [ref=e260]: Askerî sıra
+          - strong [ref=e261]: "GFP #9"
+    - generic [ref=e262]:
+      - button "Genel" [pressed] [ref=e263] [cursor=pointer]:
+        - img [ref=e265]
+        - generic [ref=e266]: Genel
+      - button "Güç" [ref=e267] [cursor=pointer]:
+        - img [ref=e268]
+        - generic [ref=e272]: Güç
+      - button "Tedarik komutanlığı" [ref=e273] [cursor=pointer]:
+        - img [ref=e275]
+        - generic [ref=e276]: Tedarik komutanlığı
+    - generic [ref=e277]:
+      - button "Yönetim" [ref=e278] [cursor=pointer]:
+        - img [ref=e280]
+        - generic [ref=e281]: Yönetim
+      - button "Ekonomi" [ref=e282] [cursor=pointer]:
+        - img [ref=e284]
+        - generic [ref=e285]: Ekonomi
+      - button "Politikalar" [ref=e286] [cursor=pointer]:
+        - img [ref=e288]
+        - generic [ref=e289]: Politikalar
+      - button "trade Ticaret" [ref=e290] [cursor=pointer]:
+        - img "trade" [ref=e291]:
+          - img [ref=e292]
+        - generic [ref=e293]: Ticaret
+      - button "Üretim" [ref=e294] [cursor=pointer]:
+        - img [ref=e296]
+        - generic [ref=e297]: Üretim
+      - button "Diplomasi" [ref=e298] [cursor=pointer]:
+        - img [ref=e300]
+        - generic [ref=e301]: Diplomasi
+      - button "Askeri" [ref=e302] [cursor=pointer]:
+        - img [ref=e304]
+        - generic [ref=e305]: Askeri
+      - button "İstihbarat" [ref=e306] [cursor=pointer]:
+        - img [ref=e308]
+        - generic [ref=e309]: İstihbarat
+      - button "Kabine" [ref=e310] [cursor=pointer]:
+        - img [ref=e312]
+        - generic [ref=e313]: Kabine
+    - generic [ref=e314]:
+      - button "TEKNOLOJİ" [ref=e315] [cursor=pointer]:
+        - img [ref=e317]
+        - generic [ref=e318]: TEKNOLOJİ
+      - button "DÜNYA" [ref=e319] [cursor=pointer]:
+        - img [ref=e321]
+        - generic [ref=e322]: DÜNYA
+      - button "Savaşa hazırlık" [ref=e323] [cursor=pointer]:
+        - img [ref=e325]
+        - generic [ref=e326]: Savaşa hazırlık
+    - generic [ref=e327]:
+      - generic [ref=e328]:
+        - generic [ref=e329]: GSYİH
+        - strong [ref=e330]: $1000.0B
+      - generic [ref=e331]:
+        - generic [ref=e332]: EKONOMİK SAĞLIK
+        - strong [ref=e333]: 100%
+      - generic [ref=e334]:
+        - generic [ref=e335]: Nüfus
+        - strong [ref=e336]: 86.0M
+      - generic [ref=e337]:
+        - generic [ref=e338]: ASKERÎ KAPASİTE
+        - strong [ref=e339]: 81.5/100
+      - generic [ref=e340]:
+        - generic [ref=e341]: Sanayi üretimi
+        - strong [ref=e342]: "52.68"
+      - generic [ref=e343]:
+        - generic [ref=e344]: KAYNAK BASKISI
+        - strong [ref=e345]: 71.2%
+    - generic [ref=e346]:
+      - generic [ref=e347]:
+        - img "YAKIT" [ref=e348]:
+          - img
+        - generic [ref=e349]: YAKIT
+        - strong [ref=e350]: "25.6"
+      - generic [ref=e351]:
+        - img "ÇELİK" [ref=e352]:
+          - img
+        - generic [ref=e353]: ÇELİK
+        - strong [ref=e354]: "50.0"
+      - generic [ref=e355]:
+        - img "Elektrik" [ref=e356]:
+          - img
+        - generic [ref=e357]: ELEKTRİK
+        - strong [ref=e358]: "43.2"
+      - generic [ref=e359]:
+        - img [ref=e360]
+        - generic [ref=e363]: R&D
+        - strong [ref=e364]: "29.9"
+    - generic [ref=e365]:
+      - generic [ref=e366]:
+        - generic [ref=e367]: Günlük bütçe
+        - strong [ref=e368]: +0.210B
+      - generic [ref=e369]:
+        - generic [ref=e370]: GSYİH eğilimi
+        - strong [ref=e371]: +0.0115%
+      - generic [ref=e372]:
+        - generic [ref=e373]: Günlük gıda
+        - strong [ref=e374]: "+4.11"
+      - generic [ref=e375]:
+        - generic [ref=e376]: Günlük petrol
+        - strong [ref=e377]: "-0.27"
+      - generic [ref=e378]:
+        - generic [ref=e379]: Günlük demir
+        - strong [ref=e380]: "+0.21"
+      - generic [ref=e381]:
+        - generic [ref=e382]: Enflasyon
+        - strong [ref=e383]: 2.00%
+      - generic [ref=e384]:
+        - generic [ref=e385]: İSTİKRAR
+        - strong [ref=e386]: 90.0%
+      - generic [ref=e387]:
+        - generic [ref=e388]: Uyum
+        - strong [ref=e389]: 71.2%
+  - navigation "Dünya komuta araçları" [ref=e390]:
+    - button "PAZAR PAZAR" [ref=e391] [cursor=pointer]:
+      - img "PAZAR" [ref=e393]:
+        - img
+      - generic [ref=e394]: PAZAR
+    - button "DÜNYA DÜNYA" [ref=e395] [cursor=pointer]:
+      - img "DÜNYA" [ref=e397]:
+        - img
+      - generic [ref=e398]: DÜNYA
+    - button "UYARILAR 1 TEDARİK" [ref=e399] [cursor=pointer]:
+      - img "UYARILAR" [ref=e401]:
+        - img
+      - generic [ref=e402]: "1"
+      - generic [ref=e403]: TEDARİK
+  - navigation "Bilgi araçları" [ref=e404]:
+    - button "objectives 0/6 HEDEFLER" [ref=e405] [cursor=pointer]:
+      - img "objectives" [ref=e407]:
+        - img
+      - generic [ref=e408]: 0/6
+      - generic [ref=e409]: HEDEFLER
+    - button "Diplomasi DİPLOMASİ" [ref=e410] [cursor=pointer]:
+      - img "Diplomasi" [ref=e412]:
+        - img
+      - generic [ref=e413]: DİPLOMASİ
+    - button "UYARILAR 1 UYARILAR" [ref=e414] [cursor=pointer]:
+      - img "UYARILAR" [ref=e416]:
+        - img
+      - generic [ref=e417]: "1"
+      - generic [ref=e418]: UYARILAR
+    - button "İstihbarat 2 HABERLER" [ref=e419] [cursor=pointer]:
+      - img "İstihbarat" [ref=e421]:
+        - img
+      - generic [ref=e422]: "2"
+      - generic [ref=e423]: HABERLER
+  - navigation "Harita ve yardım araçları" [ref=e424]:
+    - button "HARİTA HARİTA" [ref=e425] [cursor=pointer]:
+      - img "HARİTA" [ref=e427]:
+        - img
+      - generic [ref=e428]: HARİTA
+    - button "YARDIM YARDIM" [ref=e429] [cursor=pointer]:
+      - img "YARDIM" [ref=e431]:
+        - img
+      - generic [ref=e432]: YARDIM
+  - generic [ref=e433]:
+    - generic [ref=e434]: HABERLER // Rule of Nations hazır.
+    - generic [ref=e435]:
+      - generic [ref=e436]: Dünya komuta kanalı
+      - generic [ref=e437]: OYUNCU · SİYASİ · SİYASİ · KÜRE
+  - generic: AlpyX Game Studios
+```
+
+# Test source
+
+```ts
+  1  | import {test,expect} from '@playwright/test';
+  2  | import {campaignFixture,resumeFixture} from './seedCampaign';
+  3  | import {postCredit,acceptCredit,expansion,applyForCredit} from '../src/engine/systems/sovereignCredit';
+  4  | function creditFixture(){
+  5  |  let s=campaignFixture('en');for(const id of ['TUR','FRA']){s.countries[id].economy={...s.countries[id].economy,treasury:100,gdp:1000,debt:100,inflation:2};s.countries[id].politics.stability=90;s.countries[id].diplomacy.reputation=80;}
+  6  |  const relation={score:70,status:'friendly' as const,sanctions:false,treaties:[]};s.countries.TUR.diplomacy.relations.FRA={...relation};s.countries.FRA.diplomacy.relations.TUR={...relation};return postCredit(s,'lend',5,5,365,'FRA');
+  7  | }
+  8  | for(const width of [1440,390])test(`${width}px every command menu works without click-time module downloads; training and investments are separate`,async({page})=>{
+  9  |  await page.setViewportSize({width,height:900});await resumeFixture(page,campaignFixture('en'));let downloads=0;
+  10 |  await page.route(/\/(src|assets)\/.*\.(tsx?|js)(\?.*)?$/,route=>{downloads++;return route.abort('failed');});
+  11 |  await page.locator('[data-guide="nation"]').click();await expect(page.locator('.national-development-shortcuts')).toHaveCount(0);
+  12 |  await page.locator('[data-guide="tab-technology"]').click();await expect(page.locator('.technology-sections')).toBeVisible();await page.locator('.technology-sections .section-menu').getByRole('button',{name:'Investments',exact:true}).click();await expect(page.locator('[data-development="investments"] .campus-grid article')).toHaveCount(2);await expect(page.locator('.pilot-recruitment')).toHaveCount(0);
+  13 |  await page.keyboard.press('Escape');await page.locator('[data-guide="tab-military"]').click();await page.locator('.military-panel .section-menu').getByRole('button',{name:'Pilot training',exact:true}).click();await expect(page.locator('.pilot-recruitment')).toBeVisible();await expect(page.locator('[data-development="pilots"] .campus-grid article')).toHaveCount(1);
+  14 |  await page.screenshot({path:`test-results/pilot-0904-${width}.png`});await page.locator('.command-panel [data-guide="close-workspace"]').click();
+  15 |  for(const rail of ['market','world','supply','diplo','alerts','news','help']){await page.locator(`[data-guide="rail-${rail}"]`).click();await expect(page.locator('[data-testid="error-boundary"],.panel-load-error')).toHaveCount(0);if(rail==='market'){for(const button of await page.locator('#market-window>.floating-command-body>.section-menu button').all()){await button.click();await expect(page.locator('.panel-load-error')).toHaveCount(0);}}await page.keyboard.press('Escape');}
+  16 |  expect(downloads).toBe(0);expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  17 | });
+  18 | for(const width of [1440,390])test(`${width}px World has three live rankings and opens beside the left rail; Supply is readable`,async({page})=>{
+  19 |  await page.setViewportSize({width,height:900});await resumeFixture(page,campaignFixture('en'));await page.locator('[data-guide="rail-world"]').click();await expect(page.locator('#pulse-window')).toBeVisible();
+  20 |  const frame=await page.locator('#pulse-window').boundingBox(),rail=await page.locator('.command-rail-left').boundingBox();if(width>760)expect(frame!.x-rail!.x-rail!.width).toBeCloseTo(12,0);else expect(frame!.x).toBe(12);
+  21 |  for(const name of ['Military ranking','Financial ranking','Diplomacy ranking']){await page.locator('#pulse-window .section-menu').getByRole('button',{name,exact:true}).click();await expect(page.locator('.ranking-table tbody tr')).toHaveCount(20);await expect(page.locator('.ranking-summary')).toContainText('Your rank');}
+  22 |  await page.screenshot({path:`test-results/rankings-0904-${width}.png`});await page.keyboard.press('Escape');await page.locator('[data-guide="rail-supply"]').click();await expect(page.locator('.resource-filter button').first().locator('img')).toBeVisible();
+  23 |  expect(await page.locator('#resource-command-window .trade-row-stat small').first().evaluate(el=>parseFloat(getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(10);
+  24 |  await page.screenshot({path:`test-results/supply-0904-${width}.png`});await page.keyboard.press('Escape');await page.locator('[data-guide="rail-market"]').click();await page.locator('#market-window>.floating-command-body>.section-menu').getByRole('button',{name:'Supply contracts',exact:true}).click();
+  25 |  const nav=await page.locator('#market-window>.floating-command-body>.section-menu').boundingBox(),summary=await page.locator('.legacy-exchange summary').boundingBox();expect(summary!.y-nav!.y-nav!.height).toBeLessThan(20);
+  26 | });
+  27 | for(const lang of ['en','tr','es','zh','ru'] as const)test(`${lang} credit and ranking navigation translates with consistent display case`,async({page})=>{
+> 28 |  const s=creditFixture();s.playerProfile.language=lang;await resumeFixture(page,s);await page.locator('[data-guide="nation"]').click();expect(await page.locator('.panel-tabs button span').last().evaluate(el=>getComputedStyle(el).textTransform)).toBe('uppercase');
+     |                                                                                                                                                                                                                                                      ^ Error: expect(received).toBe(expected) // Object.is equality
+  29 |  await page.locator('[data-guide="tab-technology"]').click();await page.locator('.technology-sections .section-menu button').last().click();await expect(page.locator('[data-development="investments"]')).toBeVisible();await page.keyboard.press('Escape');await page.locator('[data-guide="rail-market"]').click();await page.locator('#market-window>.floating-command-body>.section-menu button').nth(2).click();await expect(page.locator('.credit-desk')).toBeVisible();await expect(page.locator('.credit-partner>span').first()).toHaveText('🇫🇷');await expect(page.locator('.credit-rating-grade').first()).not.toBeEmpty();if(lang!=='en')await expect(page.locator('.credit-desk')).not.toContainText('Applications are assessed after three game days.');
+  30 | });
+  31 | test('credit applies once, stays pending with unchanged cash, then approval arrives as game days pass',async({page})=>{
+  32 |  const s=creditFixture();await resumeFixture(page,s);await page.locator('[data-guide="rail-market"]').click();await page.locator('#market-window>.floating-command-body>.section-menu').getByRole('button',{name:'Sovereign Credit & Monetary Fund',exact:true}).click();await page.locator('.credit-board').getByRole('button',{name:'Review application',exact:true}).first().click();await expect(page.locator('.review-dialog')).toContainText('Decision day');await page.locator('[data-guide="review-confirm"]').click();await expect(page.locator('.review-result')).toContainText('Credit application submitted');await page.locator('[data-guide="review-dismiss"]').first().click();await page.locator('.credit-desk .section-menu').getByRole('button',{name:/^Your applications/}).click();await expect(page.locator('.credit-applications')).toContainText('Under review');await expect(page.locator('.credit-overview article').first()).toContainText('$100B');
+  33 |  await page.locator('.speed-segment button').last().click();await expect(page.locator('.credit-applications')).toContainText('Credit approved',{timeout:15000});await page.locator('.speed-segment button').first().click();await page.screenshot({path:'test-results/credit-approved-0904.png'});
+  34 | });
+  35 | for(const width of [1440,390])test(`${width}px early repayment reviews saved interest and settles the loan`,async({page})=>{
+  36 |  await page.setViewportSize({width,height:900});let s=creditFixture();s=acceptCredit(s,expansion(s).creditOffers[0].id);s.day=31;await resumeFixture(page,s);await page.locator('[data-guide="rail-market"]').click();await page.locator('#market-window>.floating-command-body>.section-menu').getByRole('button',{name:'Sovereign Credit & Monetary Fund',exact:true}).click();await page.locator('.credit-desk .section-menu').getByRole('button',{name:'Loans & early repayment',exact:true}).click();await page.getByRole('button',{name:'Review repayment',exact:true}).click();await expect(page.locator('.review-dialog')).toContainText('Interest saved');await expect(page.locator('[data-guide="review-confirm"]')).toBeEnabled();await page.screenshot({path:`test-results/repayment-0904-${width}.png`});await page.locator('[data-guide="review-confirm"]').click();await expect(page.locator('.review-result')).toContainText('Loan settled');await page.locator('[data-guide="review-dismiss"]').first().click();await expect(page.getByRole('button',{name:'Review repayment',exact:true})).toHaveCount(0);await expect(page.locator('.credit-loan')).toContainText('paid');
+  37 | });
+  38 | test('a rejected saved application displays the lender decision after reload',async({page})=>{
+  39 |  let s=creditFixture();s=applyForCredit(s,expansion(s).creditOffers[0].id);s.countries.TUR.diplomacy.relations.FRA.score=-70;await resumeFixture(page,s);await page.locator('[data-guide="rail-market"]').click();await page.locator('#market-window>.floating-command-body>.section-menu button').nth(2).click();await page.locator('.credit-desk .section-menu').getByRole('button',{name:/^Your applications/}).click();await page.locator('.speed-segment button').last().click();await expect(page.locator('.credit-applications')).toContainText('Credit rejected',{timeout:15000});await page.locator('.speed-segment button').first().click();await expect(page.locator('.credit-applications')).toContainText('relations are too low');
+  40 | });
+  41 | 
+```
