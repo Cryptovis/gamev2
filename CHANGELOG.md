@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.90.0-playtest.10 — Rule of Nations: fluid command (Phase 2)
+Implementation and validation: **Claude (Opus 5.5)**. Branch: `dev/clear-command-090`. Save schema 17, simulation rules, seeded RNG and dependencies unchanged; existing saves continue.
+
+- **Rule of Nations (RON).** New name in the page title, HUD, entry and setup screens, wizard, Help, victory notice and opening news, untranslated in all five languages. The old title painted into the cover art is cropped away and replaced by an HTML mark. Messages stored in older saves show the new name. Save storage names are unchanged so existing campaigns load.
+- **Store subscriptions.** No component subscribes to the whole store. Always-mounted dialogs and the lesson briefing in every window watch only their opening flag; small panels select what they display; engine-preview panels use the simulation view. Over 17 measured 5x scenarios, component renders fell 30% and audited-panel renders 58%; React render time was already small and is unchanged, so no speed-up is claimed.
+- **Window motion and return.** Windows, dialogs and backdrops fade in (190/160 ms, opacity only). A returning parent window fades back with its tab, scroll position, frame and opener focus; reduced motion removes all window animation.
+- **Typography.** HTML text is at least 10 px (2,477 → 0 sub-10 px HTML elements in the review), notes and explanations 11 px, tabular figures, clearer secondary text. Buttons, tabs, section menus and headings use natural capitalization in five languages; capitals stay on short labels. Phone HUD labels and country tabs keep whole words. Corrected machine translations include the Russian window-drag hint, map readout and projection names.
+- New evidence and tooling: [Phase 2 record](docs/FLUID-UI-0910.md), `npm run measure:renders`, a typography/visual review and a non-gating `Measure` workflow for `measure/**` branches.
+
+Validation: 639 unit tests / 81 files, TypeScript and production build passed (run on the release tree). All 158 production-browser scenarios passed on GitHub-hosted Chromium (15.7 min; 146 earlier + 12 new for motion, return state, brand and typography). Not run locally or on StackBlitz: the npm registry was blocked in this session. CI on the published commit is the release gate.
+
 ## 0.90.0-playtest.9 — Reliable foundation (Phase 1)
 Implementation and validation: **Codex**. Branch: `dev/clear-command-090`.
 

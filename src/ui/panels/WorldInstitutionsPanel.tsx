@@ -208,7 +208,7 @@ export function WorldInstitutionsPanel() {
               execute: (commandId) => state.proposeAttack(chosen.id, commandId),
             })
           }
-        ><LocaleText value={"REVIEW ATTACK PROPOSAL"}/></button>
+        ><LocaleText value={"Review attack proposal"}/></button>
         <button onClick={() => state.navigate("war", chosen.id)}><LocaleText value={"OPEN WAR ASSESSMENT"}/></button>
       </article>
       <h3><LocaleText value={"Assembly votes & applications"}/></h3>

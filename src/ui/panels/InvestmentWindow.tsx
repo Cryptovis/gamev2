@@ -2,7 +2,7 @@ import { useState } from "react";
 import { CommandWindow } from "./CommandWindow";
 import { ReviewDialog, type ReviewContent } from "./ReviewDialog";
 import { LocaleText } from "../../i18n/localeText";
-import { useGameStore } from "../../store/gameStore";
+import {useWorldView} from '../../store/useWorldView';
 import {
   CAMPUSES,
   academyFor,
@@ -11,7 +11,7 @@ import {
 } from "../../engine/systems/governance";
 import type { CampusKind } from "../../domain/governance";
 export function InvestmentWindow({embedded=false,section='investments'}:{embedded?:boolean;section?:'investments'|'pilots'}={}) {
-  const s = useGameStore(),
+  const s = useWorldView(),
     c = s.countries[s.playerCountryId],
     a = academyFor(s, c.id),
     [count, setCount] = useState(50),
@@ -89,7 +89,7 @@ export function InvestmentWindow({embedded=false,section='investments'}:{embedde
                 }
               >
                 <LocaleText
-                  value={techReady ? "Review investment" : "RESEARCH REQUIRED"}
+                  value={techReady ? "Review investment" : "Research required"}
                 />
               </button>
             </article>

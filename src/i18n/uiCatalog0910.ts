@@ -1,0 +1,63 @@
+/** playtest.10 Rule of Nations: the brand name is a proper noun and stays untranslated in every language. */
+export const UI_CATALOG_0910:Record<string,[string,string,string,string]>={
+ 'Rule of Nations is ready.':['Rule of Nations hazır.','Rule of Nations está listo.','Rule of Nations 已准备就绪。','Rule of Nations готов.'],
+ 'Rule of Nations — economy, people and diplomacy.':['Rule of Nations — ekonomi, halk ve diplomasi.','Rule of Nations — economía, sociedad y diplomacia.','Rule of Nations——经济、民生与外交。','Rule of Nations — экономика, общество и дипломатия.'],
+ // Messages stored in saves from earlier versions show the current name.
+ 'The Real President is ready.':['Rule of Nations hazır.','Rule of Nations está listo.','Rule of Nations 已准备就绪。','Rule of Nations готов.'],
+ 'The Real President 0.83 online.':['Rule of Nations hazır.','Rule of Nations está listo.','Rule of Nations 已准备就绪。','Rule of Nations готов.'],
+ 'The Real President 0.83 — economy, people and diplomacy.':['Rule of Nations — ekonomi, halk ve diplomasi.','Rule of Nations — economía, sociedad y diplomacia.','Rule of Nations——经济、民生与外交。','Rule of Nations — экономика, общество и дипломатия.'],
+ 'The Real President {0} online.':['Rule of Nations {0} hazır.','Rule of Nations {0} está listo.','Rule of Nations {0} 已准备就绪。','Rule of Nations {0} готов.'],
+ 'The Real President {0} — economy, people and diplomacy.':['Rule of Nations {0} — ekonomi, halk ve diplomasi.','Rule of Nations {0} — economía, sociedad y diplomacia.','Rule of Nations {0}——经济、民生与外交。','Rule of Nations {0} — экономика, общество и дипломатия.'],
+ 'THE REAL PRESIDENT':['Rule of Nations','Rule of Nations','Rule of Nations','Rule of Nations'],
+ // Buttons and section headings use natural capitalization; short labels keep capitals.
+ 'Buy':['Al','Comprar','买入','Купить'],
+ 'Sell':['Sat','Vender','卖出','Продать'],
+ 'Import':['İthal et','Importar','进口','Импортировать'],
+ 'List on exchange':['Borsada listele','Publicar en la bolsa','挂牌至交易所','Выставить на биржу'],
+ 'Propose trade pact':['Ticaret anlaşması öner','Proponer pacto comercial','提议贸易协定','Предложить торговый пакт'],
+ 'Pact pending':['Anlaşma beklemede','Pacto pendiente','协定待定','Пакт на рассмотрении'],
+ 'Improve relations':['İlişkileri geliştir','Mejorar relaciones','改善关系','Улучшить отношения'],
+ 'Seek alliance':['İttifak ara','Buscar alianza','寻求同盟','Искать союз'],
+ 'Open diplomacy':['Diplomasiyi aç','Abrir diplomacia','打开外交','Открыть дипломатию'],
+ 'Research required':['Araştırma gerekli','Requiere investigación','需要研究','Требуется исследование'],
+ 'Review attack proposal':['Saldırı önerisini incele','Revisar propuesta de ataque','审查攻击提案','Рассмотреть предложение об атаке'],
+ 'Mark read':['Okundu olarak işaretle','Marcar como leído','标为已读','Отметить как прочитанное'],
+ 'Leader correspondence':['Lider yazışmaları','Correspondencia entre líderes','领导人通信','Переписка лидеров'],
+ 'World command channel':['Dünya komuta kanalı','Canal de mando mundial','全球指挥频道','Мировой командный канал'],
+ 'Active trade flows':['Aktif ticaret akışları','Flujos comerciales activos','活跃贸易往来','Активные торговые потоки'],
+ 'Best suppliers for you':['Sizin için en iyi tedarikçiler','Mejores proveedores para usted','最适合您的供应国','Лучшие поставщики для вас'],
+ 'Bilateral export desk':['İkili ihracat masası','Mesa de exportación bilateral','双边出口台','Двусторонний экспортный стол'],
+ 'Covert operations':['Gizli operasyonlar','Operaciones encubiertas','秘密行动','Тайные операции'],
+ 'Diplomatic actions':['Diplomatik eylemler','Acciones diplomáticas','外交行动','Дипломатические действия'],
+ 'Facilities & investment':['Tesisler ve yatırım','Instalaciones e inversión','设施与投资','Объекты и инвестиции'],
+ 'Global council actions':['Küresel konsey eylemleri','Acciones del consejo global','全球理事会行动','Действия глобального совета'],
+ 'Goodwill & aid':['İyi niyet ve yardım','Buena voluntad y ayuda','善意与援助','Добрая воля и помощь'],
+ 'Mineral reserves':['Maden rezervleri','Reservas minerales','矿产储量','Запасы полезных ископаемых'],
+ 'Operation log':['Operasyon kaydı','Registro de operaciones','行动日志','Журнал операций'],
+ 'Production lines':['Üretim hatları','Líneas de producción','生产线','Производственные линии'],
+ 'Secured supply contracts':['Güvenceli tedarik sözleşmeleri','Contratos de suministro asegurados','已锁定的供应合同','Гарантированные контракты на поставку'],
+ 'Strategic equipment stockpiles':['Stratejik ekipman stokları','Reservas de equipo estratégico','战略装备储备','Стратегические запасы техники'],
+ 'Strategic resource position':['Stratejik kaynak durumu','Posición de recursos estratégicos','战略资源态势','Положение со стратегическими ресурсами'],
+ // Country panel tabs: natural case (earlier Turkish, Spanish and Russian labels were capitals).
+ 'Overview':['Genel','Resumen','概览','Обзор'],
+ 'Economy':['Ekonomi','Economía','经济','Экономика'],
+ 'Diplomacy':['Diplomasi','Diplomacia','外交','Дипломатия'],
+ 'Military':['Askeri','Militar','军事','Армия'],
+ 'Cabinet':['Kabine','Gabinete','内阁','Кабинет'],
+ // Map readout and status line: replace machine-translated labels found in the playtest.10 review.
+ 'WORLD COMMAND':['DÜNYA KOMUTASI','MANDO MUNDIAL','全球指挥','МИРОВОЕ КОМАНДОВАНИЕ'],
+ 'GLOBE':['KÜRE','GLOBO','地球仪','ГЛОБУС'],
+ 'FLAT':['DÜZ','PLANO','平面','ПЛОСКАЯ'],
+ 'PLAYER':['OYUNCU','JUGADOR','玩家','ИГРОК'],
+ 'drag globe · wheel zoom · click sovereign territory':['küreyi sürükle · tekerlekle yakınlaştır · ülkeye tıkla','arrastra el globo · rueda para acercar · haz clic en un territorio','拖动地球 · 滚轮缩放 · 点击主权领土','перетащите глобус · колесо — масштаб · щёлкните по стране'],
+ 'drag to pan · wheel zoom · click sovereign territory':['sürükleyerek kaydır · tekerlekle yakınlaştır · ülkeye tıkla','arrastra para desplazar · rueda para acercar · haz clic en un territorio','拖动平移 · 滚轮缩放 · 点击主权领土','перетащите для сдвига · колесо — масштаб · щёлкните по стране'],
+ // "Drag" is the window handle hint (the old Russian text read "fight").
+ 'DRAG':['SÜRÜKLE','ARRASTRAR','拖动','ПЕРЕТАЩИТЬ'],
+};
+/** English display of the same legacy save messages. */
+export const LEGACY_BRAND_EN:Record<string,string>={
+ 'The Real President is ready.':'Rule of Nations is ready.',
+ 'The Real President 0.83 online.':'Rule of Nations is ready.',
+ 'The Real President 0.83 — economy, people and diplomacy.':'Rule of Nations — economy, people and diplomacy.',
+ 'THE REAL PRESIDENT':'Rule of Nations',
+};

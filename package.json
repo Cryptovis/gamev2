@@ -1,7 +1,7 @@
 {
-  "name": "alpyx-global-command",
+  "name": "rule-of-nations",
   "private": true,
-  "version": "0.90.0-playtest.9",
+  "version": "0.90.0-playtest.10",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -12,7 +12,8 @@
     "check": "npm run test && npm run build",
     "test:e2e": "playwright test",
     "measure:engine": "vitest run --config performance/vitest.config.ts",
-    "measure:browser": "playwright test --config performance/playwright.config.ts"
+    "measure:browser": "playwright test --config performance/playwright.config.ts",
+    "measure:renders": "playwright test --config performance/renders.config.ts"
   },
   "dependencies": {
     "chart.js": "4.5.1",

@@ -7,7 +7,6 @@ export const UI_CATALOG_090:Record<string,[string,string,string,string]>={
 'Days remaining':['Kalan gün','Días restantes','剩余天数','Осталось дней'],
 'Governance country':['Yönetilecek ülke','País de administración','管理国家','Страна управления'],
 'Transfer recipient':['Kontrolü alacak ülke','País receptor','接收国家','Страна-получатель'],
-'The Real President is ready.':['The Real President hazır.','The Real President está listo.','The Real President 已准备就绪。','The Real President готов.'],
 'Affairs':['Yönetim','Asuntos','政务','Управление'],
 'Affairs sections':['Yönetim bölümleri','Secciones de asuntos','政务栏目','Разделы управления'],
 'Administration':['İdare','Administración','行政管理','Администрация'],

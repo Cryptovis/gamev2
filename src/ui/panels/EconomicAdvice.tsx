@@ -1,6 +1,7 @@
 import {ManagedDialog} from '../windows/ManagedDialog';
 import {WINDOW_LAYERS} from '../windows/useWindowLifecycle';
 import { useGameStore } from "../../store/gameStore";
+import {useWorldView} from '../../store/useWorldView';
 import { LocaleText } from "../../i18n/localeText";
 import { living } from "../../engine/systems/livingEconomy";
 import { ReviewDialog } from "./ReviewDialog";
@@ -40,8 +41,16 @@ const advice: Record<
     panel: "economy",
   },
 };
+// Always mounted: gate on the notice/advice flags so the full-state body only subscribes while shown.
 export function EconomicAdvice() {
-  const s = useGameStore(),
+  const shown = useGameStore((s) => {
+    const l = s.world.living;
+    return !!l?.notice || (!!l?.advice.active && !s.world.tutorial.active);
+  });
+  return shown ? <EconomicAdviceDialog /> : null;
+}
+function EconomicAdviceDialog() {
+  const s = useWorldView(),
     l = living(s),
     kind = l.advice.active;
   if (l.notice)

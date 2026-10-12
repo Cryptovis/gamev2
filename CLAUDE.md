@@ -1,6 +1,6 @@
 # Working rules for this repository
 
-The Real President / AlpyX: a browser grand-strategy game (React 19, TypeScript, Zustand, Dexie, zod, D3 Geo, Chart.js, Vite, Vitest, Playwright).
+Rule of Nations (RON), formerly The Real President / AlpyX: a browser grand-strategy game (React 19, TypeScript, Zustand, Dexie, zod, D3 Geo, Chart.js, Vite, Vitest, Playwright). The name is a proper noun and is never translated. Storage names (`alpyx-global-command`, `alpyx-map-zoom`, `trp-*`) are kept so existing saves and settings load.
 
 ## Architecture (from docs/ARCHITECTURE.md; non-negotiable)
 - UI sends typed commands (`src/domain/commands.ts` → `src/engine/commands.ts`). UI never edits simulation numbers and never re-implements engine formulas for previews; add an engine preview function instead.
@@ -20,6 +20,7 @@ The Real President / AlpyX: a browser grand-strategy game (React 19, TypeScript,
 
 ## Code style
 - Existing files use a dense style. Keep diffs surgical: don't reformat lines you aren't changing, and write new code readably.
+- Components select only what they display (`useGameStore(selector)`, `useStoreView`, or `useWorldView` for engine-preview panels); parameterless `useGameStore()` is guarded by a test.
 - User-facing text must go through the i18n layer (`LocaleText`, `translateLive`) and exist in all five languages (en, tr, es, zh, ru). `src/tests/i18nArtifacts.test.ts` guards against translation artefacts.
 
 ## Known open work

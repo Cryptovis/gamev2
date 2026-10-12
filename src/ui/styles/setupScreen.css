@@ -99,7 +99,7 @@
  .campaign-wizard-backdrop .wizard-header{padding:10px 16px!important}
  .campaign-wizard-backdrop .wizard-header h1{font-size:26px;margin:5px 0}
  .campaign-wizard-backdrop .wizard-header p{display:none}
- .campaign-wizard-backdrop .wizard-header>div:first-child>small{font-size:9px}
+ .campaign-wizard-backdrop .wizard-header>div:first-child>small{font-size:10px}
  .campaign-wizard-backdrop .campaign-wizard .wizard-body{padding:14px 16px!important}
  .campaign-wizard-backdrop .wizard-intro h2{font-size:22px}
  .campaign-wizard-backdrop .wizard-avatar-layout{display:block}
@@ -114,7 +114,7 @@
  .campaign-wizard-backdrop .confirm-brief>p{font-size:12px!important}
  .campaign-wizard-backdrop .confirm-summary-grid>span{padding:7px 8px}
  .campaign-wizard-backdrop .confirm-summary-grid strong{font-size:12px}
- .campaign-wizard-backdrop .confirm-summary-grid small{font-size:9px}
+ .campaign-wizard-backdrop .confirm-summary-grid small{font-size:10px}
 }
 
 /* Portraits stay within their tiles; old fixed dimensions could clip neighbours. */

@@ -1,3 +1,4 @@
+import {BrandMark,BRAND_NAME} from '../BrandMark';
 import {version} from '../../../package.json';
 import {LocaleText,translateLive,translateText} from '../../i18n/localeText';
 import { useEffect, useMemo, useState, type CSSProperties } from 'react';
@@ -74,7 +75,7 @@ export function CampaignSetup(){
   <div className="loading-world-orbit"><i/><i/><i/></div>
   <section className="loading-command-card">
    <div className="loading-identity"><AvatarPortrait id={avatar} size={124}/><div className="loading-flag"><LocaleText value={flagEmoji(selected.iso2)}/></div></div>
-   <small><LocaleText value={"THE REAL PRESIDENT"}/></small>
+   <small translate="no">{BRAND_NAME}</small>
    <h1><LocaleText value={name.trim()}/><LocaleText value={"'s first day in office begins."}/></h1>
    <p><LocaleText value={selected.name}/><LocaleText value={" is transferring executive command. Markets are opening, diplomats are waiting, and the cabinet is assembling for the first briefing."}/></p>
    <div className="loading-status"><span><LocaleText value={loadingMessages[Math.max(0,loadingStep-1)]??tr(language,'loading_1','Establishing national command…')}/></span><strong><LocaleText value={[8,28,54,78,100][loadingStep]}/><LocaleText value={"%"}/></strong></div>
@@ -86,8 +87,8 @@ export function CampaignSetup(){
  const stepTitle=step===1?tr(language,'step_name','Your identity'):step===2?tr(language,'step_portrait','Choose your portrait'):step===3?tr(language,'step_country','Choose your nation'):tr(language,'step_confirm','Confirm command');
 
  return <div className="campaign-setup-backdrop campaign-wizard-backdrop" style={{'--setup-primary':theme.primary,'--setup-accent':theme.accent} as CSSProperties}>
-  <section className="campaign-wizard"><aside className="setup-cover"><img src="/assets/command/campaign-cover.webp" alt=""/><span className="entry-tagline"><LocaleText value="Be the president you have always dreamed of."/></span><small>{version}</small></aside>
-   <header className="wizard-header"><div><small><LocaleText value={"THE REAL PRESIDENT"}/><span className="wizard-release">{version}</span></small><h1><LocaleText value={stepTitle}/></h1><p><LocaleText value="Create your leader and choose a country."/></p></div><div className="wizard-stepper">{[1,2,3,4].map(n=><span key={n} className={typeof step==='number'&&step>=n?'active':''}><b><LocaleText value={n}/></b><small><LocaleText value={n===1?'IDENTITY':n===2?'PORTRAIT':n===3?'NATION':'CONFIRM'}/></small></span>)}</div></header>
+  <section className="campaign-wizard"><aside className="setup-cover"><img src="/assets/command/campaign-cover.webp" alt=""/><BrandMark/><span className="entry-tagline"><LocaleText value="Be the president you have always dreamed of."/></span><small>{version}</small></aside>
+   <header className="wizard-header"><div><small><span translate="no">{BRAND_NAME}</span><span className="wizard-release">{version}</span></small><h1><LocaleText value={stepTitle}/></h1><p><LocaleText value="Create your leader and choose a country."/></p></div><div className="wizard-stepper">{[1,2,3,4].map(n=><span key={n} className={typeof step==='number'&&step>=n?'active':''}><b><LocaleText value={n}/></b><small><LocaleText value={n===1?'IDENTITY':n===2?'PORTRAIT':n===3?'NATION':'CONFIRM'}/></small></span>)}</div></header>
 
    <div className="wizard-body">
     {step===1&&<div className="wizard-single-column">

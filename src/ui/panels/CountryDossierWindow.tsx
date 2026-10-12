@@ -16,7 +16,7 @@ function Radar({values}:{values:{label:string;value:number}[]}){
  return <svg viewBox={`0 0 ${size} ${size}`} className="dossier-radar">{[.25,.5,.75,1].map((scale)=><polygon key={scale} points={values.map((_,i)=>point(i,scale*100).join(',')).join(' ')} className="radar-grid"/>)}{values.map((v,i)=>{const [x,y]=point(i,100);return <g key={v.label}><line x1={c} y1={c} x2={x} y2={y} className="radar-axis"/><text x={c+(x-c)*1.18} y={c+(y-c)*1.18} textAnchor="middle" className="radar-label"><LocaleText value={v.label}/></text></g>})}<polygon points={poly} className="radar-value"/></svg>;
 }
 export function CountryDossierWindow({country,onClose}:{country:CountryState;onClose:()=>void}){
- const state=useGameStore();
+ const religiousShares=useGameStore(s=>s.world.religiousShares[country.id]);
  const [tab,setTab]=useState<DossierTab>('power');
  const radar=useMemo(()=>[
   {label:'ECON',value:calculateEconomicHealth(country)},
@@ -36,7 +36,7 @@ export function CountryDossierWindow({country,onClose}:{country:CountryState;onC
      <article><ReligionGlyph religion={country.society.dominantReligion} size={38}/><span><small><LocaleText value="DOMINANT RELIGION"/></small><strong><LocaleText value={country.society.dominantReligion.replaceAll('_',' ')}/></strong></span></article>
      <article><CommandArt kind="governance" size={38}/><span><small><LocaleText value="IDEOLOGY"/></small><strong><LocaleText value={country.society.ideology.replaceAll('_',' ')}/></strong></span></article>
     </div>
-    <section className="society-composition"><h3><LocaleText value="RELIGIOUS COMPOSITION · GAME ESTIMATES"/></h3><div>{Object.entries(state.world.religiousShares[country.id]??{}).sort((a,b)=>(b[1]??0)-(a[1]??0)).map(([religion,value])=><article key={religion}><header><span><LocaleText value={religion.replaceAll('_',' ')}/></span><strong>{(value??0).toFixed(2)}%</strong></header><progress max={100} value={clamp(value??0)} aria-label={translateLive(religion.replaceAll('_',' '))}/></article>)}</div></section>
+    <section className="society-composition"><h3><LocaleText value="RELIGIOUS COMPOSITION · GAME ESTIMATES"/></h3><div>{Object.entries(religiousShares??{}).sort((a,b)=>(b[1]??0)-(a[1]??0)).map(([religion,value])=><article key={religion}><header><span><LocaleText value={religion.replaceAll('_',' ')}/></span><strong>{(value??0).toFixed(2)}%</strong></header><progress max={100} value={clamp(value??0)} aria-label={translateLive(religion.replaceAll('_',' '))}/></article>)}</div></section>
     <div className="society-indicators">{([['Stability',country.politics.stability,'stability'],['Approval',country.politics.approval,'approval'],['Cohesion',country.society.cohesion,'overview'],['Secularization',country.society.secularization,'governance'],['Ideology pressure',country.society.influencePressure.ideology,'intel']] as [string,number,string][]).map(([label,value,icon])=><article key={label}><header><CommandArt kind={icon} size={28}/><span><LocaleText value={label}/></span><strong>{value.toFixed(0)}%</strong></header><progress max={100} value={clamp(value)} aria-label={translateLive(label)}/></article>)}</div>
    </div>}
 

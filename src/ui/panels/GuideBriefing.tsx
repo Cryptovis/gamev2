@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useGameStore } from "../../store/gameStore";
+import {useWorldView} from '../../store/useWorldView';
 import { LocaleText } from "../../i18n/localeText";
 import { ReviewDialog } from "./ReviewDialog";
 import { money } from "../formatMoney";
@@ -42,11 +43,27 @@ const lessons = [
     "Membership requires achievements and influence, followed by a vote. Meeting requirements allows an application, not automatic entry. Members can vote on proposals; voluntary outreach has uncertain outcomes.",
   ],
 ];
+// Mounted inside every workspace window: subscribe to the lesson step only, and read live
+// figures only while the lesson briefing is open.
 export function GuideBriefing() {
-  const s = useGameStore(),
-    t = s.world.tutorial,
+  const step = useGameStore((s) => (s.world.tutorial.active ? s.world.tutorial.step : 0)),
     [open, setOpen] = useState(false);
-  if (!t.active || t.step === 0 || t.step === 3) return null;
+  if (step === 0 || step === 3) return null;
+  return (
+    <section className="guide-briefing">
+      <button data-guide="tutorial-detail" onClick={() => setOpen(true)}>
+        <LocaleText value="Inspect this lesson" />
+      </button>
+      <span>
+        <LocaleText value="Open the briefing, read the live figures, then close it to continue." />
+      </span>
+      {open && <LessonBriefing onClose={() => setOpen(false)} />}
+    </section>
+  );
+}
+function LessonBriefing({ onClose }: { onClose: () => void }) {
+  const s = useWorldView(),
+    t = s.world.tutorial;
   const p = s.countries[s.playerCountryId],
     supply = calculateSupplyNetwork(p),
     checks = membershipRequirements(s, "un"),
@@ -120,21 +137,11 @@ export function GuideBriefing() {
                         x.met ? "COMPLETE" : "Required",
                       ]);
   return (
-    <section className="guide-briefing">
-      <button data-guide="tutorial-detail" onClick={() => setOpen(true)}>
-        <LocaleText value="Inspect this lesson" />
-      </button>
-      <span>
-        <LocaleText value="Open the briefing, read the live figures, then close it to continue." />
-      </span>
-      {open && (
-        <ReviewDialog
-          title={lessons[t.step][0]}
-          summary={lessons[t.step][1]}
-          metrics={metrics}
-          onCancel={() => setOpen(false)}
-        />
-      )}
-    </section>
+    <ReviewDialog
+      title={lessons[t.step][0]}
+      summary={lessons[t.step][1]}
+      metrics={metrics}
+      onCancel={onClose}
+    />
   );
 }

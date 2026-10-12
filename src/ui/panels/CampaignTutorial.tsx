@@ -1,6 +1,7 @@
 import { LocaleText, translateLive } from "../../i18n/localeText";
 import { useEffect, useState, useRef } from "react";
 import { useGameStore } from "../../store/gameStore";
+import {useWorldView} from '../../store/useWorldView';
 const steps = [
   [
     "Welcome to national command",
@@ -75,8 +76,12 @@ type Phase =
   | "reading"
   | "dismiss"
   | "reviewReading";
+// Always mounted: the lesson body (and its full-state subscription) exists only during a tutorial.
 export function CampaignTutorial() {
-  const state = useGameStore(),
+  return useGameStore((s) => s.world.tutorial.active) ? <ActiveTutorial /> : null;
+}
+function ActiveTutorial() {
+  const state = useWorldView(),
     t = state.world.tutorial,
     [phase, setPhase] = useState<Phase>("open"),
     [rect, setRect] = useState<DOMRect | null>(null);

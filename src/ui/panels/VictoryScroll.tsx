@@ -1,12 +1,18 @@
+import { BRAND_NAME } from "../BrandMark";
 import {ManagedDialog} from "../windows/ManagedDialog";
 import {WINDOW_LAYERS} from "../windows/useWindowLifecycle";
 import { createPortal } from "react-dom";
 import { useGameStore } from "../../store/gameStore";
+import {useWorldView} from '../../store/useWorldView';
 import { pendingVictory } from "../../engine/systems/victory";
 import { VICTORY_QUOTES } from "../../data/victoryQuotes";
 import { LocaleText } from "../../i18n/localeText";
+// Always mounted: only the pending war id is watched until a victory notice is due.
 export function VictoryScroll() {
-  const s = useGameStore(),
+  return useGameStore((s) => pendingVictory(s)?.warId ?? null) ? <VictoryNotice /> : null;
+}
+function VictoryNotice() {
+  const s = useWorldView(),
     v = pendingVictory(s);
   if (!v) return null;
   const q = VICTORY_QUOTES[v.quote] ?? VICTORY_QUOTES[0],
@@ -15,7 +21,7 @@ export function VictoryScroll() {
   return createPortal(
     <div className="victory-backdrop">
       <ManagedDialog key={v.warId} className="victory-scroll" label="VICTORY" layer={WINDOW_LAYERS.modal} onClose={() => s.dismissVictory(v.warId)}>
-        <small>THE REAL PRESIDENT</small>
+        <small translate="no">{BRAND_NAME}</small>
         <h1>
           <LocaleText value="VICTORY" />
         </h1>
