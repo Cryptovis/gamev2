@@ -63,7 +63,7 @@
 .trade-shortfall-hero .trade-desk-title p{margin:0;font-size:12px;line-height:1.5;color:#c5d7de}
 .country-dossier-window .trade-reason{font-size:11px;line-height:1.4}
 .country-dossier-window .trade-row-main strong{font-size:13px}
-.country-dossier-window .trade-row-stat small{font-size:9px;color:#bacfd7}
+.country-dossier-window .trade-row-stat small{font-size:10px;color:#bacfd7}
 .country-dossier-window .trade-row-stat b{font-size:12px}
 .country-dossier-window .trade-row-stat em{font-size:10px;color:#b9cdd5}
 .country-dossier-window .trade-action{font-size:10px;min-height:32px}
@@ -88,7 +88,7 @@
 .society-indicators header strong{color:#ffe1a3;font-size:15px}
 .national-supply-window .supply-summary{grid-template-columns:repeat(3,88px) minmax(0,1fr);gap:10px;margin-bottom:14px}
 .national-supply-window .supply-ring{width:80px;height:80px}
-.national-supply-window .supply-ring small{color:#c4d9df;font-size:9px}
+.national-supply-window .supply-ring small{color:#c4d9df;font-size:10px}
 .national-supply-window .supply-bottleneck{padding:12px}
 .national-supply-window .supply-bottleneck small{font-size:10px;color:#d6d7c5}
 .national-supply-window .supply-bottleneck span{font-size:11px;color:#c1d2da}
@@ -99,7 +99,7 @@
 .national-supply-window .infrastructure-grid header{justify-content:flex-start}
 .national-supply-window .infrastructure-grid header>span{flex:1;min-width:0}
 .national-supply-window .infrastructure-grid header small{font-size:11px;letter-spacing:.02em;color:#d3e1e2}
-.national-supply-window .infrastructure-grid header em{font-size:9px}
+.national-supply-window .infrastructure-grid header em{font-size:10px}
 .national-supply-window .infrastructure-grid p{min-height:0;font-size:12px;line-height:1.5;color:#c5d7de}
 .national-supply-window .infrastructure-grid button{min-height:36px;font-size:11px}
 .national-supply-window .infrastructure-grid button small{font-size:10px;color:#e3cca2}

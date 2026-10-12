@@ -50,7 +50,7 @@ export function ProductionPanel({country}:{country:CountryState}){
    <span><i><small><LocaleText value={"TREASURY / DAY"}/></small><strong><LocaleText value={'$'+production.lastInputUse.treasury.toFixed(3)+'B'}/></strong></i></span>
   </div>
 
-  <div className="subhead"><LocaleText value={"STRATEGIC EQUIPMENT STOCKPILES"}/></div>
+  <div className="subhead"><LocaleText value={"Strategic equipment stockpiles"}/></div>
   <div className="equipment-stock-grid">
    {EQUIPMENT_TYPES.map(type=>{const def=EQUIPMENT_CATALOG[type],line=production.lines[type],canDeploy=isPlayer&&production.stockpile[type]>=def.deployPack;return <article key={type} className="equipment-stock-card">
     <header><span><EquipmentGlyph type={type}/></span><div><small><LocaleText value={def.shortLabel}/></small><strong><LocaleText value={def.label}/></strong></div></header>
@@ -60,7 +60,7 @@ export function ProductionPanel({country}:{country:CountryState}){
    </article>;})}
   </div>
 
-  <div className="subhead"><LocaleText value={"PRODUCTION LINES"}/></div>
+  <div className="subhead"><LocaleText value={"Production lines"}/></div>
   <div className="production-lines">
    {EQUIPMENT_TYPES.map(type=>{const def=EQUIPMENT_CATALOG[type],line=production.lines[type];return <article key={type} className="production-line-card">
     <div className="production-line-identity"><span><EquipmentGlyph type={type}/></span><div><strong><LocaleText value={def.label}/></strong><small><LocaleText value={def.description}/></small></div></div>

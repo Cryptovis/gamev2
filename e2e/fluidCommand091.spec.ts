@@ -76,3 +76,15 @@ test('entry and setup screens carry the Rule of Nations mark over the cover art'
  await expect(page.locator('.setup-cover .brand-mark')).toContainText('Rule of Nations');await expect(page.locator('.wizard-header > div > small').first()).toContainText('Rule of Nations');
  await page.screenshot({path:'test-results/ron-setup-091.png'});
 });
+
+for(const [language,width] of [['en',1440],['tr',390],['ru',1440]] as const)test(`${language} ${width}px text is at least 10px, tabs use natural case and nothing overflows the page`,async({page})=>{
+ await page.setViewportSize({width,height:width===390?844:900});
+ const s=campaignFixture(language);s.selectedCountryId=null;await resumeFixture(page,s);
+ const smallest=()=>page.evaluate(()=>{let min=99,where='';for(const el of document.querySelectorAll('body *')){if(el.closest('svg'))continue;const text=[...el.childNodes].filter(n=>n.nodeType===3).map(n=>n.textContent??'').join('').trim();if(!text||!(el as HTMLElement).getClientRects().length)continue;const style=getComputedStyle(el);if(style.visibility==='hidden')continue;const size=parseFloat(style.fontSize);if(size<min){min=size;where=`${el.className} «${text.slice(0,20)}»`;}}return {min,where};});
+ for(const open of [async()=>{},async()=>{await page.locator('[data-guide="rail-supply"]').click();await expect(page.locator('#resource-command-window')).toBeVisible();},async()=>{await page.keyboard.press('Escape');await page.locator('[data-guide="nation"]').click();await expect(page.locator('.command-panel')).toBeVisible();}]){
+  await open();
+  const result=await smallest();expect(result.min,result.where).toBeGreaterThanOrEqual(10);
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth+1)).toBe(true);
+ }
+ expect(await page.locator('.command-panel .panel-tabs button span').first().evaluate(el=>getComputedStyle(el).textTransform)).toBe('none');
+});

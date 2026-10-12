@@ -6,3 +6,21 @@
 .campaign-wizard-backdrop .setup-cover>.brand-mark{position:relative;z-index:1;align-self:flex-start;margin-bottom:auto;font:inherit}
 @media(max-width:900px){.campaign-wizard-backdrop .setup-cover>.brand-mark{display:none}}
 @media(max-width:760px){.brand-mark strong{font-size:24px}.brand-mark-emblem{width:38px;height:38px;font-size:10px}}
+
+/*
+ * 0.91 typography. Every HTML label is at least 10px (older sheets were raised in place); sentences and
+ * secondary notes are at least 11px. Numbers use tabular figures so columns line up. Buttons, tabs and
+ * section menus use natural capitalization; capitals remain only on short eyebrow and stat labels.
+ */
+:root{--type-label:10px;--type-note:11px;--type-body:12px;--text-secondary:#a9bccb;--text-tertiary:#90a6b6}
+body{font-variant-numeric:tabular-nums lining-nums}
+.command-panel .panel-tabs button span,.resource-filter button,.section-menu-label,.map-hover-readout span{text-transform:none;letter-spacing:.01em}
+/* Sentences and explanatory notes. */
+.trade-reason,.trade-footnote,.trade-more summary,.trade-row-stat em,.data-note,.map-hover-readout span,.industrial-command .subhead small,.military-share-control small,.production-line-identity small,.supply-ring small,.unit-stat small,.equipment-stock-card button small,.national-flag-card em,.studio-footer{font-size:var(--type-note)!important;letter-spacing:0}
+/* Short capital labels stay compact but readable. */
+.top-metric small,.trade-row-stat small,.rail-button small,.identity-with-icon small,.production-line-eff small,.production-line-output small,.production-line-factories small,.resource-command-summary small,.processed-strip small,.production-kpis small,.campaign-clock small,.speed-segment button small{letter-spacing:.06em}
+/* Secondary text that was too dim on the dark command surfaces. */
+.trade-row-stat small,.trade-row-stat em,.trade-reason,.trade-footnote,.top-metric small,.identity-with-icon small,.unit-stat small,.data-note,.map-hover-readout span{color:var(--text-tertiary)}
+.muted,.trade-desk-subhead em,.production-line-identity small,.equipment-stock-flow span{color:var(--text-secondary)}
+/* Section headings converted from capitals read as headings, not labels. */
+.subhead{letter-spacing:.02em}

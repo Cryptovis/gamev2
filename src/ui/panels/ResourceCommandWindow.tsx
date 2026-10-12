@@ -28,7 +28,7 @@ export function ResourceCommandWindow({onClose,resource:initialResource}:{onClos
     return <article key={resource} className={'resource-command-card '+(status==='CRITICAL'?'critical':'')}>
       <header><ResourceIcon resource={resource} size={40}/><span className="resource-card-values"><small><LocaleText value={resource.toUpperCase()}/></small><strong><LocaleText value={player.resources[resource].toFixed(resource==='uranium'?1:0)}/></strong></span><em><LocaleText value={status}/></em></header>
       <div className="resource-command-meta"><span><LocaleText value={days>365?'365+':Math.max(0,days).toFixed(0)}/><LocaleText value={" reserve days"}/></span><span><LocaleText value={Math.min(999,self*100).toFixed(0)}/><LocaleText value={"% self-sufficient"}/></span></div>
-      <div className="subhead"><LocaleText value="BEST SUPPLIERS FOR YOU"/></div><SupplierRanking good={resource} limit={3}/>
+      <div className="subhead"><LocaleText value="Best suppliers for you"/></div><SupplierRanking good={resource} limit={3}/>
     </article>;
    })}
   </div>

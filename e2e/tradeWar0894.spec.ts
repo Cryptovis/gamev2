@@ -7,7 +7,7 @@ async function oilTrade(page:import('@playwright/test').Page,score:number) {
  s=updateBilateralRelation(s,'TUR','BGR',r=>({...r,score,status:'neutral',treaties:['trade']}));
  await resumeFixture(page,s);await page.locator('[data-guide="rail-supply"]').click();
  await page.locator('.resource-filter').getByRole('button',{name:/oil/i}).click();
- const row=page.locator('.trade-row').filter({hasText:'Bulgaria'}).first();await row.getByRole('button',{name:'IMPORT',exact:true}).click();
+ const row=page.locator('.trade-row').filter({hasText:'Bulgaria'}).first();await row.getByRole('button',{name:'Import',exact:true}).click();
 }
 for(const width of [1440,390])test(`${width}px monthly contract choices and disabled relation gate`,async({page})=>{
  await page.setViewportSize({width,height:900});await oilTrade(page,-20);await expect(page.getByRole('button',{name:'LONG-TERM AGREEMENT',exact:true})).toBeDisabled();await expect(page.locator('.review-dialog')).toContainText('above 40/100');

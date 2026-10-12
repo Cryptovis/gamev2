@@ -89,7 +89,7 @@ export function InvestmentWindow({embedded=false,section='investments'}:{embedde
                 }
               >
                 <LocaleText
-                  value={techReady ? "Review investment" : "RESEARCH REQUIRED"}
+                  value={techReady ? "Review investment" : "Research required"}
                 />
               </button>
             </article>
