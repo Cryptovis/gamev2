@@ -155,6 +155,10 @@ function projectPlan(b: TacticalBattle, side: TacticalSide, kind: TacticalPlanKi
   if (kind === 'recon') score += !k.visible.has(objective) && k.enemies.length < 2 ? 2 : -4;
   if (kind === 'withdraw') score += ratio < WITHDRAW_RATIO ? 10 : -10;
   if (kind === 'secure') score += k.holders[b.objectives.indexOf(objective)] === side ? 3 : -1;
+  // The attacker moves the front only while it attacks; the defender wins time by holding. Stronger sides press harder.
+  const pressing = kind === 'seize' || kind === 'flank';
+  if (side === 'attacker') score += pressing ? 2 + Math.max(0, ratio - 1) * 6 : kind === 'secure' && ratio >= 0.9 ? -3 : 0;
+  else score += kind === 'secure' ? 2 : pressing ? Math.max(0, ratio - 1.2) * 6 - 1 : 0;
   if (kind === 'flank') score += alive(b.units).some(u => u.side === side && u.role === 'armor') ? 0.5 : -20;
   return score;
 }
@@ -178,9 +182,10 @@ function stillValid(b: TacticalBattle, side: TacticalSide, plan: TacticalPlan, k
   const ratio = k.ownStrength / Math.max(1e-9, k.enemyStrength);
   if (plan.kind === 'withdraw') return ratio < WITHDRAW_RATIO * 1.3;
   if (ratio < WITHDRAW_RATIO) return false;
-  if (plan.kind === 'flank') return alive(b.units).some(u => u.side === side && u.role === 'armor');
-  // A seize plan that has taken its objective becomes a secure plan.
-  if (plan.kind === 'seize' || plan.kind === 'flank') return k.holders[b.objectives.indexOf(plan.objective)] !== side;
+  // A seize or flank plan that has taken its objective gives way to a secure plan.
+  const taken = k.holders[b.objectives.indexOf(plan.objective)] === side;
+  if (plan.kind === 'flank') return !taken && alive(b.units).some(u => u.side === side && u.role === 'armor');
+  if (plan.kind === 'seize') return !taken;
   if (plan.kind === 'recon') return !k.visible.has(plan.objective) && b.round - plan.startedRound < PLAN_HORIZON;
   return true;
 }
