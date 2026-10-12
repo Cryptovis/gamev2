@@ -1,21 +1,15 @@
 import {test,expect} from '@playwright/test';
 import {campaignFixture,resumeFixture} from './seedCampaign';
 import {withWarFuel} from '../src/tests/warFixture';
-import {applyGameCommand} from '../src/engine/commands';
 
-/** Phase 4: the player's task groups in the war theatre (Türkiye → Greece, auto-resolve war with default groups). */
-function playerWar(language:'tr'|'en'){
- const s=applyGameCommand(withWarFuel(campaignFixture(language)),{type:'military/declareWar',targetCountryId:'GRC'});
- s.selectedCountryId=null;
- return {s,id:Object.keys(s.wars)[0]};
-}
+/** Phase 4: the player's task groups in the war theatre. The player declares war on Greece from the country panel. */
 
 for(const [language,width] of [['tr',1440],['en',390]] as const)test(`${language} ${width}px task groups: assign through the command, enemy groups hidden`,async({page})=>{
  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
  await page.setViewportSize({width,height:width<500?844:900});
- const {s,id}=playerWar(language);
- expect(s.wars[id].taskGroups!.length).toBeGreaterThan(0);
- await resumeFixture(page,s);
+ await resumeFixture(page,withWarFuel(campaignFixture(language)));
+ await page.locator('[data-guide="nation"]').first().click();await page.locator('.country-select').selectOption('GRC');await page.locator('[data-guide="tab-war"]').click();
+ await page.locator('.declare-war').click();await page.locator('.strategic-decision-modal .confirm').click();
  await expect(page.locator('.war-theatre-backdrop')).toBeVisible();
  const opened=await page.locator('.review-dialog').waitFor({state:'visible',timeout:5000}).then(()=>true,()=>false);
  if(opened)await page.locator('.review-dialog [data-guide="review-dismiss"]').first().click();
