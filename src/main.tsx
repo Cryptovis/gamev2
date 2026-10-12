@@ -45,3 +45,4 @@ import "./ui/styles/commandIntelligence0907.css";
 
 import "./ui/styles/compactWorkspaces0908.css";
 import "./ui/styles/motion091.css";
+import "./ui/styles/typography091.css";

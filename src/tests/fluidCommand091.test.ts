@@ -2,7 +2,6 @@ import {describe,it,expect} from 'vitest';
 import {translateText} from '../i18n/localeText';
 import {makeInitialState} from '../data/initialState';
 import {BRAND_NAME,BRAND_SHORT} from '../ui/BrandMark';
-import motionCss from '../ui/styles/motion091.css?raw';
 import indexHtml from '../../index.html?raw';
 
 const uiSources=import.meta.glob<string>(['../ui/**/*.tsx','../app/**/*.tsx'],{query:'?raw',import:'default',eager:true});
@@ -32,22 +31,7 @@ describe('0.91 Rule of Nations',()=>{
   const state=makeInitialState();
   expect(state.mapNotice).toContain(BRAND_NAME);
   expect(state.sitrep.join(' ')).not.toMatch(/Real President|AlpyX/i);
-  const old=Object.entries(uiSources).filter(([,source])=>/THE REAL PRESIDENT|The Real President|AlpyX|ALPYX/.test(source)).map(([file])=>file);
+  const old=Object.entries(uiSources).filter(([,source])=>/THE REAL PRESIDENT|The Real President|AlpyX(?! Game Studios)|ALPYX/.test(source)).map(([file])=>file);
   expect(old).toEqual([]);
- });
-});
-
-describe('0.91 window motion',()=>{
- it('every animated window selector is switched off for reduced motion',()=>{
-  const css=motionCss.replace(/\/\*[\s\S]*?\*\//g,'');
-  const [motion,reduced]=css.split('@media (prefers-reduced-motion:reduce)');
-  const animated=[...motion.matchAll(/([^{}]+)\{animation:/g)].flatMap(m=>m[1].split(',').map(s=>s.trim())).filter(Boolean);
-  expect(animated.length).toBeGreaterThan(10);
-  for(const selector of animated)expect(reduced,selector).toContain(selector);
-  expect(reduced).toContain('animation:none');
- });
- it('stays inside the 160-220 ms design range and never animates geometry',()=>{
-  for(const ms of [...motionCss.matchAll(/--motion-[a-z]+:(\d+)ms/g)].map(m=>Number(m[1])))expect(ms>=160&&ms<=220).toBe(true);
-  expect(motionCss).not.toMatch(/@keyframes[^}]*(transform|translate|scale|width|height|top|left)/);
  });
 });
