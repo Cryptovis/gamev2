@@ -2,7 +2,7 @@ name: Measure
 
 # Measurement and visual review runs, started by pushing a branch named
 # measure/renders-<label>, measure/visual-<label> measure/check-<label> (unit tests, types and build only)
-# measure/e2e-<label> (the Phase 2 window, focus and brand browser specs) or measure/full-<label> (all browser specs). Not a release gate: CI (ci.yml) remains the gate.
+# measure/e2e-<label> (the Phase 2 window, focus and brand browser specs) measure/full-<label> (all browser specs) or measure/war-<label> (paired war-balance scenarios). Not a release gate: CI (ci.yml) remains the gate.
 # Results (JSON, screenshots, console output) are committed to results/<branch> so they can be
 # reviewed without artifact downloads.
 on:
@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     env:
-      SUITE: ${{ startsWith(github.ref_name, 'measure/visual') && 'visual' || startsWith(github.ref_name, 'measure/check') && 'check' || startsWith(github.ref_name, 'measure/e2e') && 'e2e' || startsWith(github.ref_name, 'measure/full') && 'full' || 'renders' }}
+      SUITE: ${{ startsWith(github.ref_name, 'measure/visual') && 'visual' || startsWith(github.ref_name, 'measure/check') && 'check' || startsWith(github.ref_name, 'measure/e2e') && 'e2e' || startsWith(github.ref_name, 'measure/full') && 'full' || startsWith(github.ref_name, 'measure/war') && 'war' || 'renders' }}
       PERFORMANCE_LABEL: ${{ github.ref_name }}
     steps:
       - uses: actions/checkout@v4
@@ -30,8 +30,11 @@ jobs:
       - name: Unit tests, types and build
         if: env.SUITE == 'check'
         run: npm run check 2>&1 | tee measure-output.txt; exit ${PIPESTATUS[0]}
+      - name: War balance
+        if: env.SUITE == 'war'
+        run: npm run measure:war 2>&1 | tee measure-output.txt; exit ${PIPESTATUS[0]}
       - run: npx playwright install --with-deps chromium
-        if: env.SUITE != 'check'
+        if: env.SUITE != 'check' && env.SUITE != 'war'
       - name: Render attribution
         if: env.SUITE == 'renders'
         run: npm run measure:renders 2>&1 | tee measure-output.txt; exit ${PIPESTATUS[0]}
