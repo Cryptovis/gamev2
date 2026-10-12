@@ -40,7 +40,6 @@ export const UI_CATALOG_0910:Record<string,[string,string,string,string]>={
  'Strategic resource position':['Stratejik kaynak durumu','Posición de recursos estratégicos','战略资源态势','Положение со стратегическими ресурсами'],
  // Country panel tabs: natural case (earlier Turkish, Spanish and Russian labels were capitals).
  'Overview':['Genel','Resumen','概览','Обзор'],
- 'Affairs':['Yönetim','Asuntos','事务','Дела'],
  'Economy':['Ekonomi','Economía','经济','Экономика'],
  'Diplomacy':['Diplomasi','Diplomacia','外交','Дипломатия'],
  'Military':['Askeri','Militar','军事','Армия'],

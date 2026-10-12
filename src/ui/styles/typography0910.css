@@ -24,14 +24,14 @@ body{font-variant-numeric:tabular-nums lining-nums}
 .muted,.trade-desk-subhead em,.production-line-identity small,.equipment-stock-flow span{color:var(--text-secondary)}
 /* Section headings converted from capitals read as headings, not labels. */
 .subhead{letter-spacing:.02em}
-/* Phone widths: labels wrap instead of spilling out of the HUD card or being cut inside tabs. */
+/* Phone widths: labels keep whole words; the HUD drops decorative icons and tabs stack icon over label. */
 @media(max-width:760px){
- .command-overview-island .governance-metrics .top-metric{min-width:0}
- .command-overview-island .governance-metrics .top-metric-icon{display:none}
+ .command-overview-island .governance-metrics .top-metric{min-width:0;padding-inline:6px}
+ .command-overview-island .governance-metrics .top-metric-icon{display:none!important}
  .command-overview-island .governance-metrics .top-metric>span{min-width:0}
- .command-overview-island .governance-metrics .top-metric small{letter-spacing:0;white-space:normal;overflow-wrap:anywhere;line-height:1.1}
- .command-panel .panel-tabs button{min-width:0}
- .command-panel .panel-tabs button span{white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere;line-height:1.15;font-size:11px}
+ .command-overview-island .governance-metrics .top-metric small{letter-spacing:0;white-space:normal;overflow-wrap:break-word;line-height:1.1}
+ .command-panel .panel-tabs button{min-width:0;flex-direction:column;justify-content:center;gap:3px;text-align:center}
+ .command-panel .panel-tabs button span{white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:break-word;hyphens:auto;line-height:1.15;font-size:11px}
 }
 /* Rail labels: long translations (e.g. Russian) wrap with hyphenation instead of being cut. */
-.command-rail .rail-button small{letter-spacing:0;white-space:normal;hyphens:auto;overflow-wrap:anywhere;line-height:1.05;text-align:center;max-width:100%}
+.command-rail .rail-button small{letter-spacing:0;white-space:normal;hyphens:auto;overflow-wrap:break-word;line-height:1.05;text-align:center;max-width:100%}
