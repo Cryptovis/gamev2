@@ -7,7 +7,7 @@ import { proposeCouncilResolution } from './council';
 import { changeRelations, relationFor, updateBilateralRelation } from './diplomacy';
 import { living, withLiving } from './livingEconomy';
 import { calculateSupplyNetwork } from './supplyNetwork';
-import { chooseTacticalOrders, resolveTacticalRound } from './tactical';
+import { resolveStandingRound } from './tactical';
 import { resolveCombatRound } from './warfare';
 import { checkHomeFront, releaseCoalition } from './warOutcome';
 import { combatPreview, concedeWar, inActiveWar, openWar, potentialCoalitionSupport, warDeclarationStatus } from './warRules';
@@ -173,7 +173,7 @@ export function processAiOffensives(state: GameState): GameState {
     const war = next.wars[w.id];
     if (!war || war.status !== 'active') continue;
     if (!war.tactical) next = resolveCombatRound(next, war.id);
-    else if (war.defenderId === next.playerCountryId && war.lastCombatDay < next.day - 1) next = resolveTacticalRound(next, war.id, chooseTacticalOrders(next, war.id, 'defender'), war.tactical.round);
+    else if (war.defenderId === next.playerCountryId && war.lastCombatDay < next.day - 1) next = resolveStandingRound(next, war.id);
   }
   return next;
 }

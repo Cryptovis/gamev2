@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.90.0-playtest.12 — Multi-round tactical AI and war balance (Phase 3)
+Implementation: **Claude (Opus 5.5)**. Branch: `dev/clear-command-090`. Save schema 17 (new optional plan field), dependencies unchanged.
+
+- **Tactical AI plans ahead.** AI sides choose a reconnoitre, seize, flank, secure or withdraw plan, project it three rounds ahead, keep it unless a clearly better one appears, and remember enemy groups they have actually seen. Orders use the player's validator, budget and fuel; a deterministic work budget falls back to the previous single-round AI. The player's board shows its own standing plan. Goal switches by a stronger attacker fell from 0.18 to 0.05 per round while it advanced further.
+- **Fog of war.** Objective holders are known only where visible; tests prove plans do not change when unseen enemies move.
+- **War balance.** Equal forces on plains now hold the front (+0.31 per day, was −0.93). Air superiority counts once and equals the mountain defensive edge. Attacker and defender follow one fuel rule: attacks pay operational fuel, holding pays a smaller sustainment share and is never blocked. The attacker/defender supply gap narrows from 13% to 4%. Small economies can reach a rescue line from any non-hostile lender during a war.
+- [Phase 3 record](docs/WAR-AI-0912.md), `npm run measure:war` paired-scenario harness.
+
+Validation: 660 unit tests / 83 files, TypeScript and production build passed; the 365-day long-run invariant passes. All 160 production-browser scenarios passed on GitHub-hosted Chromium (158 earlier + 2 standing-plan specs; full suite on the release tree before merge). Not run on StackBlitz: the npm registry is blocked in this session.
+
 ## 0.90.0-playtest.11 — RON Interactive credit
 Implementation: **Claude (Opus 5.5)**. Branch: `dev/clear-command-090`. Schema 17, simulation and dependencies unchanged.
 

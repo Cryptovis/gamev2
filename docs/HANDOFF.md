@@ -1,5 +1,12 @@
 # Devir notu (yeni konuşma için)
 
+## 0.90.0-playtest.12 — Faz 3 (Claude Opus 5.5)
+
+- Çok turlu taktik AI (`tacticalPlanner.ts`): keşif/ele geçir/kuşat/koru/geri çekil planları, 3 tur projeksiyon, plan tutarlılığı (en az 2 tur, %25 eşik), yalnızca görülen ve son 3 turda görülen düşman bilgisi, deterministik iş bütçesi (3.000) aşılırsa tek turlu AI'ya dönüş. Plan `TacticalBattle.plans` isteğe bağlı alanında; şema 17.
+- Denge: log oran cephe formülü, tek sayılan hava (dağ avantajı mertebesi), saldıran/savunan için tek yakıt kuralı (taarruz harekât, mevzi %25 idame), ikmal rol farkı %13 → %4, kurtarma kredisi için düşmanca olmayan (≥0) borç verenler. Ölçüm: [WAR-AI-0912](WAR-AI-0912.md), `npm run measure:war`.
+- Savaş sisi kararı (gizli karede "engellendi"): mevcut kurallarda hareket menzili görüş menzilini aşmadığı için doğrulayıcı hiç gizli kare okumuyor; bunu test sabitliyor. Menziller değişirse kural eklenmeli.
+- Yerel çalıştırıcı: npm registry kapalı; `/opt/npm-tools` + Node type-stripping ile birim testleri yerelde koşturuldu, tam doğrulama GitHub Actions'ta. Faz 4 başlamadı.
+
 ## 0.90.0-playtest.11 — RON Interactive (Claude Opus 5.5)
 
 - Alt bilgi stüdyo kredisi "RON Interactive"; arayüzde AlpyX metni kalmadı. Geçici `measure/*`, `results/*` ve `dev/ron-fluid-0910` dalları Alper'in onayıyla silindi; `Measure` iş akışı gerektiğinde yeni `measure/**` dallarıyla kullanılabilir. Faz 3 Alper'in StackBlitz testinden sonra başlayacak.
@@ -54,7 +61,7 @@
 Bu dosya yeni bir konuşmanın ilk okuması içindir. Geçmiş konuşmayı taşımadan kaldığımız yerden devam etmeyi sağlar.
 
 ## Durum
-- Sürüm: **0.90.0-playtest.11 "RON Interactive credit"** (playtest.10 Faz 2 üzerine)
+- Sürüm: **0.90.0-playtest.12 "Multi-round tactical AI and war balance"** (Faz 3)
 - Dal: `dev/clear-command-090`. Kaynak: 0.89.7 (`8322a3f`). Başlangıç GitHub HEAD: `4d3d564d5921dac391a9fc9769e1105f9e47f938` (0.90.4), CI başarılı (38086841276; 600 birim/111 tarayıcı testi). Playtest.5 GitHub HEAD `2adaceba` ve CI 38095471126 completed/success olarak doğrulandı. Playtest.6 GitHub HEAD `44f03ca86aac053e06f15309361a99a1af2cddca`; CI 38119416063 completed/success olarak doğrulandı.
 - `main`'e doğrudan push yok. Yeni işler `dev/<name>-0XX` dallarında yapılır.
 - 0.90.4 (Codex): menüler başlangıçta yüklenir; Tech → Investments, Military → Pilot training; okunur Supply ve sözleşme boşluğu; sola bitişik üç World sıralaması. Kredi: bayraklar, tüm ülkelerde AAA–D, üç oyun günü başvuru, ilişki/risk retleri, hedefli 3 yıllık can simidi, erken ödeme ve sınırlı kredi geçmişi ödülü. Şema 17 yeni opsiyonel alanlarla korunur; bağımlılıklar değişmez. 600 birim testi/TypeScript/derleme geçti. 111 üretim senaryosu doğrulandı: tam tur 108 geçti, eski seçici/atlas varsayımına takılan 3 test düzeltildikten sonra 3/3 tekrar geçti. Ayrıntılar PLAYTEST-090 kaydında. Gerçek StackBlitz testi yapılmadı.

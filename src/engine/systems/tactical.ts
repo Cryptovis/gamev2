@@ -1,8 +1,9 @@
 import type { BattlefieldTerrain, CasualtySnapshot, GameState, WarState } from '../../domain/game';
-import type { TacticalAction, TacticalBattle, TacticalOrder, TacticalOrderKind, TacticalRole, TacticalSide, TacticalUnit } from '../../domain/tactical';
+import type { TacticalAction, TacticalBattle, TacticalOrder, TacticalOrderKind, TacticalPlan, TacticalRole, TacticalSide, TacticalUnit } from '../../domain/tactical';
 import { nextRandom } from '../rng';
-import { COMMITTED_SHARE, emptyLosses, resolveCombatRound, type CombatSideOrders } from './warfare';
+import { COMMITTED_SHARE, SUSTAINMENT_SHARE, emptyLosses, resolveCombatRound, roundFuelCost, type CombatSideOrders } from './warfare';
 import { pendingVictory } from './victory';
+import { planTacticalOrders, sideKnowledge } from './tacticalPlanner';
 
 export const COMMAND_BUDGET = 3;
 export const ORDER_COST: Record<TacticalOrderKind, number> = { move: 1, defend: 1, flank: 2, recon: 1, reserve: 1, bombard: 2 };
@@ -166,11 +167,20 @@ export function startTacticalBattle(s: GameState, id: string): GameState {
 // Orders
 // ---------------------------------------------------------------------------------------------
 
+/** Fuel these orders require: operational fuel when any order is offensive, plus per-order fuel. The validator checks this. */
 export function tacticalFuel(s: GameState, w: WarState, side: TacticalSide, orders: TacticalOrder[]): number {
-  const m = s.countries[countryId(w, side)].military;
+  const c = s.countries[countryId(w, side)];
   const offensive = orders.some(o => OFFENSIVE.includes(o.kind));
-  const operational = offensive ? Math.max(3, 2.5 + m.tanks * 0.0016 + m.fighters * 0.02 + m.bombers * 0.032) * COMMITTED_SHARE : 0;
+  const operational = offensive ? roundFuelCost(c) * COMMITTED_SHARE : 0;
   return operational + orders.reduce((n, o) => n + (ORDER_FUEL[o.kind] ?? 0), 0);
+}
+/**
+ * Fuel a side burns in a round (Phase 3, same rule for attacker and defender): offensive orders pay operational fuel,
+ * a side that only holds pays sustainment. Sustainment is charged up to the stock but never blocks defending.
+ */
+export function tacticalRoundFuel(s: GameState, w: WarState, side: TacticalSide, orders: TacticalOrder[]): number {
+  const offensive = orders.some(o => OFFENSIVE.includes(o.kind));
+  return offensive ? tacticalFuel(s, w, side, orders) : roundFuelCost(s.countries[countryId(w, side)]) * COMMITTED_SHARE * SUSTAINMENT_SHARE + tacticalFuel(s, w, side, orders);
 }
 
 export function validateTacticalOrders(s: GameState, id: string, side: TacticalSide, orders: TacticalOrder[]): string[] {
@@ -214,40 +224,69 @@ export function validateTacticalOrders(s: GameState, id: string, side: TacticalS
   return [...new Set(reasons)];
 }
 
-/**
- * AI orders (0.86): every surviving group proposes scored options, and the best options that fit the
- * command budget are taken, one per group. The AI uses the same validator, vision and fuel as the player.
- * Priorities: hold a depot under threat, bombard visible enemies (above all on depots), take an open depot,
- * contest an enemy-held depot, then advance.
- */
+/** AI orders for a side: the Phase 3 multi-round planner (tacticalPlanner.ts), with this module's single-round AI as fallback. */
 export function chooseTacticalOrders(s: GameState, id: string, side: TacticalSide): TacticalOrder[] {
+  return planTacticalOrders(s, id, side).orders;
+}
+
+/**
+ * What a standing plan asks of this round's orders (Phase 3). Without an intent the AI chases the nearest open depot,
+ * which is the single-round behaviour used as the planner's fallback.
+ */
+export interface TacticalIntent {
+  objective: number;
+  posture: 'attack' | 'flank' | 'hold' | 'withdraw';
+  /** Send one group to reconnoitre toward the objective. */
+  scout: boolean;
+}
+
+/**
+ * Tactical order selection (0.86, extended in Phase 3): every surviving group proposes scored options, and the best
+ * options that fit the command budget are taken, one per group. The AI uses the same validator, vision and fuel as the
+ * player, and objective holders only as far as this side can see. Priorities: hold a depot under threat, bombard visible
+ * enemies (above all on depots), take an open depot, contest an enemy-held depot, then advance. An intent fixes the goal
+ * across rounds and shifts the weights for its posture.
+ */
+export function chooseSingleRoundOrders(s: GameState, id: string, side: TacticalSide, intent?: TacticalIntent): TacticalOrder[] {
   const b = s.wars[id].tactical!, visible = visibleCells(b, side);
   const enemies = alive(b.units).filter(u => u.side !== side && visible.has(u.cell));
-  const holders = objectiveHolders(b);
+  const holders = sideKnowledge(b, side, []).holders;
   const open = b.objectives.filter((_, i) => holders[i] !== side);
   const enemyHeld = b.objectives.filter((_, i) => holders[i] === other(side));
   const goals = open.length ? open : b.objectives;
+  const own = alive(b.units).filter(x => x.side === side);
+  const posture = intent?.posture, homeColumn = side === 'attacker' ? 0 : b.width - 1;
+  const scout = intent?.scout ? own.filter(u => u.role !== 'artillery' && !b.objectives.includes(u.cell)).sort((x, y) => cellDistance(b, x.cell, intent.objective) - cellDistance(b, y.cell, intent.objective) || x.id.localeCompare(y.id))[0] : undefined;
   const options: { order: TacticalOrder; score: number }[] = [];
-  for (const u of alive(b.units).filter(x => x.side === side)) {
+  for (const u of own) {
     const onObjective = b.objectives.includes(u.cell);
     const threatened = enemies.some(e => cellDistance(b, e.cell, u.cell) <= 2);
-    if (onObjective) options.push({ order: { unitId: u.id, kind: 'defend' }, score: threatened ? 7 : 4 });
+    if (onObjective) options.push({ order: { unitId: u.id, kind: 'defend' }, score: (threatened ? 7 : 4) + (posture === 'hold' ? 1 : 0) - (posture === 'withdraw' ? 4 : 0) });
     if (u.role === 'artillery') for (const enemy of enemies) {
-      const onDepot = b.objectives.includes(enemy.cell) ? 2 : 0, nearOwn = alive(b.units).some(x => x.side === side && cellDistance(b, x.cell, enemy.cell) <= 1) ? 1 : 0;
-      options.push({ order: { unitId: u.id, kind: 'bombard', target: enemy.cell }, score: 5 + onDepot + nearOwn - cellDistance(b, u.cell, enemy.cell) * 0.1 });
+      const onDepot = b.objectives.includes(enemy.cell) ? 2 : 0, nearOwn = own.some(x => cellDistance(b, x.cell, enemy.cell) <= 1) ? 1 : 0, focus = intent && cellDistance(b, enemy.cell, intent.objective) <= 2 ? 1 : 0;
+      options.push({ order: { unitId: u.id, kind: 'bombard', target: enemy.cell }, score: 5 + onDepot + nearOwn + focus - cellDistance(b, u.cell, enemy.cell) * 0.1 });
     }
-    if (!onObjective) {
-      const goal = [...goals].sort((x, y) => cellDistance(b, u.cell, x) - cellDistance(b, u.cell, y) || x - y)[0];
+    if (u === scout) {
+      const target = allCells(b).filter(c => !visible.has(c) && cellDistance(b, u.cell, c) <= 3).sort((x, y) => cellDistance(b, x, intent!.objective) - cellDistance(b, y, intent!.objective) || x - y)[0];
+      if (target !== undefined) options.push({ order: { unitId: u.id, kind: 'recon', target }, score: 6.5 });
+    }
+    if (!onObjective || posture === 'withdraw') {
+      const retreat = cellRow(b, u.cell) * b.width + homeColumn;
+      const goal = posture === 'withdraw' ? retreat : intent ? intent.objective : [...goals].sort((x, y) => cellDistance(b, u.cell, x) - cellDistance(b, u.cell, y) || x - y)[0];
       for (const target of allCells(b)) {
         const remaining = cellDistance(b, target, goal);
         if (cellDistance(b, u.cell, target) > 2 || remaining >= cellDistance(b, u.cell, goal)) continue;
-        const takesDepot = open.includes(target) ? 4 : 0, contests = enemyHeld.some(o => cellDistance(b, target, o) === 1) ? 1.5 : 0;
-        const score = 3 + takesDepot + contests - remaining * 0.3;
-        if (u.role === 'armor') options.push({ order: { unitId: u.id, kind: 'flank', target }, score: score + 0.5 });
+        const takesDepot = open.includes(target) && posture !== 'withdraw' ? 4 : 0, contests = enemyHeld.some(o => cellDistance(b, target, o) === 1) ? 1.5 : 0;
+        const cover = posture === 'withdraw' || posture === 'hold' ? (b.terrain[target] !== 'plains' ? 1 : 0) : 0;
+        const wide = posture === 'flank' && u.role === 'armor' && !enemies.some(e => cellDistance(b, e.cell, target) <= 1) ? 1 : 0;
+        const pace = posture === 'hold' && remaining > 1 ? -1.5 : posture === 'withdraw' ? 1 : 0;
+        const score = 3 + takesDepot + contests + cover + wide + pace - remaining * 0.3;
+        if (u.role === 'armor' && posture !== 'withdraw') options.push({ order: { unitId: u.id, kind: 'flank', target }, score: score + 0.5 });
         options.push({ order: { unitId: u.id, kind: 'move', target }, score });
       }
     }
-    options.push({ order: { unitId: u.id, kind: 'defend' }, score: b.terrain[u.cell] === 'plains' ? 1 : 1.5 });
+    options.push({ order: { unitId: u.id, kind: 'defend' }, score: (b.terrain[u.cell] === 'plains' ? 1 : 1.5) + (posture === 'hold' ? 1 : 0) });
+    if (posture === 'withdraw' && !threatened) options.push({ order: { unitId: u.id, kind: 'reserve' }, score: 2.5 });
   }
   options.sort((x, y) => y.score - x.score || x.order.unitId.localeCompare(y.order.unitId) || (x.order.target ?? -1) - (y.order.target ?? -1));
   const orders: TacticalOrder[] = [], used = new Set<string>();
@@ -256,6 +295,15 @@ export function chooseTacticalOrders(s: GameState, id: string, side: TacticalSid
     if (validateTacticalOrders(s, id, side, [...orders, order]).length) continue;
     orders.push(order); used.add(order.unitId);
     if (orders.reduce((n, o) => n + ORDER_COST[o.kind], 0) >= COMMAND_BUDGET) break;
+  }
+  // An attacker that means to attack keeps the initiative: the front only moves while it gives an offensive order.
+  if (side === 'attacker' && intent && posture !== 'withdraw' && !orders.some(o => OFFENSIVE.includes(o.kind))) {
+    const offensive = options.filter(o => OFFENSIVE.includes(o.order.kind));
+    for (let drop = orders.length - 1; drop >= -1; drop--) {
+      const kept = drop >= 0 ? orders.filter((_, i) => i !== drop) : orders;
+      const pick = offensive.find(o => !kept.some(k => k.unitId === o.order.unitId) && !validateTacticalOrders(s, id, side, [...kept, o.order]).length);
+      if (pick) return [...kept, pick.order];
+    }
   }
   return orders;
 }
@@ -345,11 +393,18 @@ export function distributeLosses(b: TacticalBattle, units: TacticalUnit[], side:
   return taken;
 }
 
-export function resolveTacticalRound(s: GameState, id: string, orders: TacticalOrder[], expectedRound: number): GameState {
+/**
+ * Resolves one round. `standingPlan` is the player's side plan when its orders came from the AI (auto mode or
+ * standing orders); a round the player orders by hand drops that side's plan.
+ */
+export function resolveTacticalRound(s: GameState, id: string, orders: TacticalOrder[], expectedRound: number, standingPlan?: TacticalPlan | null): GameState {
   if (tacticalCommandStatus(s, id, expectedRound, orders).length) return s;
-  const w = s.wars[id], b = w.tactical!, mine = playerSide(s, w), enemy = other(mine), enemyOrders = chooseTacticalOrders(s, id, enemy);
+  const w = s.wars[id], b = w.tactical!, mine = playerSide(s, w), enemy = other(mine), planned = planTacticalOrders(s, id, enemy), enemyOrders = planned.orders;
+  const plans: Partial<Record<TacticalSide, TacticalPlan>> = {};
+  if (planned.plan) plans[enemy] = planned.plan;
+  if (standingPlan) plans[mine] = standingPlan;
   const bySide: Record<TacticalSide, TacticalOrder[]> = { attacker: mine === 'attacker' ? orders : enemyOrders, defender: mine === 'defender' ? orders : enemyOrders };
-  const costs = { attacker: tacticalFuel(s, w, 'attacker', bySide.attacker), defender: tacticalFuel(s, w, 'defender', bySide.defender) };
+  const costs = { attacker: tacticalRoundFuel(s, w, 'attacker', bySide.attacker), defender: tacticalRoundFuel(s, w, 'defender', bySide.defender) };
   const all = [...bySide.attacker, ...bySide.defender];
 
   // Moves are simultaneous. Conflicting destinations leave both units in place.
@@ -413,8 +468,8 @@ export function resolveTacticalRound(s: GameState, id: string, orders: TacticalO
     for (const order of bySide[side].filter(o => o.kind === 'recon')) for (const cell of allCells(b)) if (cellDistance(b, cell, order.target!) <= 2) seen.add(cell);
     revealed[side] = [...seen];
     const c = next.countries[countryId(w, side)];
-    // The shared resolver already charged the attacker's base operational fuel.
-    const extra = side === 'attacker' ? bySide.attacker.reduce((n, o) => n + ORDER_FUEL[o.kind], 0) : costs.defender;
+    // The shared resolver already charged both sides' operational or sustainment fuel; orders add their own.
+    const extra = bySide[side].reduce((n, o) => n + ORDER_FUEL[o.kind], 0);
     next = { ...next, countries: { ...next.countries, [c.id]: { ...c, processedResources: { ...c.processedResources, fuel: Math.max(0, c.processedResources.fuel - extra) } } } };
   }
 
@@ -423,14 +478,22 @@ export function resolveTacticalRound(s: GameState, id: string, orders: TacticalO
     attackerLosses: losses.attacker, defenderLosses: losses.defender, attackerFuel: costs.attacker, defenderFuel: costs.defender,
     progressBefore: w.progress, progressAfter: nw.progress, units: after, beforeUnits: structuredClone(b.units), objectives: holders, revealed, actions,
   };
-  return { ...next, wars: { ...next.wars, [id]: { ...nw, tactical: { ...b, rngState, round: b.round + 1, units: after, revealed, events: [...b.events, event].slice(-60) } } } };
+  return { ...next, wars: { ...next.wars, [id]: { ...nw, tactical: { ...b, rngState, round: b.round + 1, units: after, revealed, events: [...b.events, event].slice(-60), plans } } } };
+}
+
+/** A round where the player's side follows its standing plan (auto mode, the assault command, unanswered defence). */
+export function resolveStandingRound(s: GameState, id: string): GameState {
+  const w = s.wars[id];
+  if (!w?.tactical) return s;
+  const planned = planTacticalOrders(s, id, playerSide(s, w));
+  return resolveTacticalRound(s, id, planned.orders, w.tactical.round, planned.plan);
 }
 
 export function processAutoTacticalWars(s: GameState): GameState {
   let next = s;
   for (const w of Object.values(s.wars))
     if (w.status === 'active' && w.tactical && w.autoAssault && [w.attackerId, w.defenderId].includes(s.playerCountryId))
-      next = resolveTacticalRound(next, w.id, chooseTacticalOrders(next, w.id, playerSide(next, w)), next.wars[w.id].tactical!.round);
+      next = resolveStandingRound(next, w.id);
   return next;
 }
 

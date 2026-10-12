@@ -145,3 +145,17 @@ Validation: 639 unit tests / 81 files, TypeScript and production build passed (r
 Footer credit changed to RON Interactive; interface guards now reject any AlpyX text. No simulation, schema or dependency change.
 
 Validation: 639 unit tests / 81 files, TypeScript and production build passed; all 158 production-browser scenarios passed on GitHub-hosted Chromium (15.4 min). CI on the published commit is the release gate.
+
+## 0.90.0-playtest.12 — Multi-round tactical AI and war balance (Claude, Phase 3)
+
+Phase 3 only; Phase 4 untouched. Save schema 17 with an optional plan field. Evidence: [Phase 3 record](WAR-AI-0912.md).
+
+Validation: 660 unit tests / 83 files, TypeScript and production build passed; the 365-day long-run invariant passes. All 160 production-browser scenarios passed on GitHub-hosted Chromium (158 earlier + 2 standing-plan specs; full suite on the release tree before merge). Not run on StackBlitz: the npm registry is blocked in this session.
+
+### Manual acceptance route
+
+1. Declare war on Greece and open the tactical battlefield. Turn on automatic assault for one day: the summary shows "Standing plan" with a plan and sector; the opponent's plan is never shown.
+2. Give orders by hand for a round: your standing plan disappears; the opponent keeps its plan.
+3. Save mid-battle, reload and continue: rounds play on with the same plans.
+4. Defend for several rounds: the fuel reserve falls slowly (sustainment) and defending stays allowed at zero fuel.
+5. With a small country short of cash at war, a rescue credit offer appears from a non-hostile country; apply and wait for approval.

@@ -11,7 +11,11 @@ const revealed=z.object({attacker:z.array(cell).max(MAX_BATTLE_CELLS),defender:z
 // 0.85 HD War v2 action timeline (schema 17).
 const action=z.object({kind:z.enum(['move','blocked','defend','reserve','recon','bombard','casualties','lost','capture','contest']),side,unitId:z.string().optional(),from:cell.optional(),to:cell.optional(),target:cell.optional(),hit:z.boolean().optional(),amount:finite.int().nonnegative().optional(),objective:cell.optional()});
 const event=z.object({round:finite.int().positive(),day,playerSide:side,orders:z.array(order).max(3),enemyOrders:z.array(order).max(3),attackerLosses:losses,defenderLosses:losses,attackerFuel:finite.nonnegative(),defenderFuel:finite.nonnegative(),progressBefore:finite.min(-100).max(100),progressAfter:finite.min(-100).max(100),units,beforeUnits:units,objectives:z.array(side.nullable()).min(1).max(4),revealed,actions:z.array(action).max(64)});
-const tactical=z.object({version:z.literal(2),width:finite.int().min(6).max(12),height:finite.int().min(6).max(8),seed:finite.int().nonnegative(),rngState:finite.int().nonnegative().optional(),startedDay:day,round:finite.int().nonnegative(),terrain:z.array(z.enum(['plains','urban','mountain','forest','desert','coastal'])).max(MAX_BATTLE_CELLS),objectives:z.array(cell).min(1).max(4),initialUnits:units,units,revealed,events:z.array(event).max(60)});
+// Phase 3: optional standing plans of AI-commanded sides (absent in older schema-17 saves).
+const knownEnemy=z.object({unitId:z.string().regex(/^(attacker|defender)-(infantry|armor|artillery)(-[1-9])?$/),role:z.enum(['infantry','armor','artillery']),cell,remaining:finite.int().nonnegative(),seenRound:finite.int().nonnegative()});
+const plan=z.object({kind:z.enum(['recon','seize','flank','secure','withdraw']),objective:cell,startedRound:finite.int().nonnegative(),updatedRound:finite.int().nonnegative(),score:finite,known:z.array(knownEnemy).max(12)});
+const plans=z.object({attacker:plan.optional(),defender:plan.optional()});
+const tactical=z.object({version:z.literal(2),width:finite.int().min(6).max(12),height:finite.int().min(6).max(8),seed:finite.int().nonnegative(),rngState:finite.int().nonnegative().optional(),startedDay:day,round:finite.int().nonnegative(),terrain:z.array(z.enum(['plains','urban','mountain','forest','desert','coastal'])).max(MAX_BATTLE_CELLS),objectives:z.array(cell).min(1).max(4),initialUnits:units,units,revealed,events:z.array(event).max(60),plans:plans.optional()});
 const UNIT_ID=/^(attacker|defender)-(infantry|armor|artillery)(-[1-9])?$/;
 const roleKey=(role:string)=>role==='infantry'?'personnel':role==='armor'?'tanks':'artillery';
 type Battle=z.infer<typeof tactical>;type Unit=Battle['units'][number];
@@ -72,6 +76,7 @@ export function valid083State(value:unknown):boolean {
     if(t.events.some((e,i)=>e.day<t.startedDay||e.day>s.day||e.round>t.round||(i>0&&(e.round!==t.events[i-1].round+1||e.day<=t.events[i-1].day))))return false;
     const last=t.events.at(-1);
     if(t.round===0?t.events.length!==0:!last||last.round!==t.round||last.day!==w.lastCombatDay||JSON.stringify(last.units)!==JSON.stringify(t.units))return false;
+    if(t.plans&&Object.values(t.plans).some(p=>p&&(!t.objectives.includes(p.objective)||p.startedRound>p.updatedRound||p.updatedRound>t.round||p.known.some(e=>e.seenRound>p.updatedRound||!e.unitId.startsWith(`${e.unitId.split('-')[0]}-${e.role}`)))))return false;
     if(!withinGrid(t)||t.units.some(u=>!UNIT_ID.test(u.id)||!u.id.startsWith(`${u.side}-${u.role}`)))return false;
     const allocated=new Map(t.initialUnits.map(u=>[u.id,u.allocated]));
     if(t.units.length!==t.initialUnits.length||t.units.some(u=>allocated.get(u.id)!==u.allocated))return false;
