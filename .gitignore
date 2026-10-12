@@ -11,3 +11,6 @@ playwright-report/
 
 # Reproducible machine-specific measurement output
 performance/results/
+
+# React profiling build for render attribution
+dist-profile/

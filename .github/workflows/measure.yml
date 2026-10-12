@@ -1,0 +1,42 @@
+name: Measure
+
+# Measurement and visual review runs, started by pushing a branch named
+# measure/renders-<label> or measure/visual-<label>. Not a release gate: CI (ci.yml) remains the gate.
+on:
+  push:
+    branches:
+      - "measure/**"
+
+permissions:
+  contents: read
+
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      SUITE: ${{ startsWith(github.ref_name, 'measure/visual') && 'visual' || 'renders' }}
+      PERFORMANCE_LABEL: ${{ github.ref_name }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Render attribution
+        if: env.SUITE == 'renders'
+        run: npm run measure:renders
+      - name: Visual review
+        if: env.SUITE == 'visual'
+        run: npx playwright test --config performance/visual.config.ts
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: measure-results
+          path: |
+            performance/results/
+            test-results/
+          if-no-files-found: warn
