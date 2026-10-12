@@ -296,6 +296,15 @@ export function chooseSingleRoundOrders(s: GameState, id: string, side: Tactical
     orders.push(order); used.add(order.unitId);
     if (orders.reduce((n, o) => n + ORDER_COST[o.kind], 0) >= COMMAND_BUDGET) break;
   }
+  // An attacker that means to attack keeps the initiative: the front only moves while it gives an offensive order.
+  if (side === 'attacker' && (posture === 'attack' || posture === 'flank') && !orders.some(o => OFFENSIVE.includes(o.kind))) {
+    const offensive = options.filter(o => OFFENSIVE.includes(o.order.kind));
+    for (let drop = orders.length - 1; drop >= -1; drop--) {
+      const kept = drop >= 0 ? orders.filter((_, i) => i !== drop) : orders;
+      const pick = offensive.find(o => !kept.some(k => k.unitId === o.order.unitId) && !validateTacticalOrders(s, id, side, [...kept, o.order]).length);
+      if (pick) return [...kept, pick.order];
+    }
+  }
   return orders;
 }
 
