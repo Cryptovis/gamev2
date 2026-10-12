@@ -1,0 +1,473 @@
+{
+ "seeds": 24,
+ "auto": [
+  {
+   "scenario": "equal · plains",
+   "meanDelta30": 0.214,
+   "minDelta30": -0.42,
+   "maxDelta30": 0.822,
+   "victories": 0,
+   "defeats": 24,
+   "ongoing": 0,
+   "meanEndDay": 57.3,
+   "attackerLoss": 0.067,
+   "defenderLoss": 0.0644,
+   "attackerFuel": 146,
+   "defenderFuel": 36.5,
+   "air": 0,
+   "supply": [
+    54.9,
+    57.2
+   ]
+  },
+  {
+   "scenario": "equal · urban",
+   "meanDelta30": -4.399,
+   "minDelta30": -5,
+   "maxDelta30": -3.846,
+   "victories": 0,
+   "defeats": 24,
+   "ongoing": 0,
+   "meanEndDay": 22.8,
+   "attackerLoss": 0.0364,
+   "defenderLoss": 0.0206,
+   "attackerFuel": 58.5,
+   "defenderFuel": 14.7,
+   "air": 0,
+   "supply": [
+    49.3,
+    51.4
+   ]
+  },
+  {
+   "scenario": "equal · mountain",
+   "meanDelta30": -6.699,
+   "minDelta30": -7.143,
+   "maxDelta30": -6.25,
+   "victories": 0,
+   "defeats": 24,
+   "ongoing": 0,
+   "meanEndDay": 15,
+   "attackerLoss": 0.0296,
+   "defenderLoss": 0.0118,
+   "attackerFuel": 38.4,
+   "defenderFuel": 9.6,
+   "air": 0,
+   "supply": [
+    38.3,
+    39.9
+   ]
+  },
+  {
+   "scenario": "equal · forest",
+   "meanDelta30": -3.703,
+   "minDelta30": -4.348,
+   "maxDelta30": -3.256,
+   "victories": 0,
+   "defeats": 24,
+   "ongoing": 0,
+   "meanEndDay": 27.2,
+   "attackerLoss": 0.0405,
+   "defenderLoss": 0.0257,
+   "attackerFuel": 69.6,
+   "defenderFuel": 17.4,
+   "air": 0,
+   "supply": [
+    45.6,
+    47.5
+   ]
+  },
+  {
+   "scenario": "equal · desert",
+   "meanDelta30": -1.78,
+   "minDelta30": -2.381,
+   "maxDelta30": -1.177,
+   "victories": 0,
+   "defeats": 24,
+   "ongoing": 0,
+   "meanEndDay": 45.8,
+   "attackerLoss": 0.06,
+   "defenderLoss": 0.0471,
+   "attackerFuel": 116.9,
+   "defenderFuel": 29.3,
+   "air": 0,
+   "supply": [
+    46.2,
+    48.1
+   ]
+  },
+  {
+   "scenario": "equal · coastal",
+   "meanDelta30": -2.814,
+   "minDelta30": -3.333,
+   "maxDelta30": -2.219,
+   "victories": 0,
+   "defeats": 24,
+   "ongoing": 0,
+   "meanEndDay": 34.8,
+   "attackerLoss": 0.0484,
+   "defenderLoss": 0.0344,
+   "attackerFuel": 88.8,
+   "defenderFuel": 22.2,
+   "air": 0,
+   "supply": [
+    50.1,
+    52.2
+   ]
+  },
+  {
+   "scenario": "attacker air superiority · plains",
+   "meanDelta30": 14.211,
+   "minDelta30": 12.5,
+   "maxDelta30": 14.286,
+   "victories": 24,
+   "defeats": 0,
+   "ongoing": 0,
+   "meanEndDay": 7,
+   "attackerLoss": 0.0053,
+   "defenderLoss": 0.0161,
+   "attackerFuel": 18.1,
+   "defenderFuel": 4.5,
+   "air": 100,
+   "supply": [
+    57,
+    60.4
+   ]
+  },
+  {
+   "scenario": "defender air superiority · plains",
+   "meanDelta30": -6.444,
+   "minDelta30": -7.143,
+   "maxDelta30": -5.882,
+   "victories": 0,
+   "defeats": 24,
+   "ongoing": 0,
+   "meanEndDay": 15.6,
+   "attackerLoss": 0.0318,
+   "defenderLoss": 0.0121,
+   "attackerFuel": 40,
+   "defenderFuel": 10,
+   "air": -100,
+   "supply": [
+    57.6,
+    59.1
+   ]
+  },
+  {
+   "scenario": "attacker air superiority · mountain",
+   "meanDelta30": -1.532,
+   "minDelta30": -2.15,
+   "maxDelta30": -0.831,
+   "victories": 0,
+   "defeats": 24,
+   "ongoing": 0,
+   "meanEndDay": 25.9,
+   "attackerLoss": 0.0319,
+   "defenderLoss": 0.0341,
+   "attackerFuel": 66.5,
+   "defenderFuel": 16.6,
+   "air": 100,
+   "supply": [
+    38,
+    40.4
+   ]
+  },
+  {
+   "scenario": "attacker low supply",
+   "meanDelta30": -3.837,
+   "minDelta30": -4.545,
+   "maxDelta30": -3.333,
+   "victories": 0,
+   "defeats": 24,
+   "ongoing": 0,
+   "meanEndDay": 26.2,
+   "attackerLoss": 0.0396,
+   "defenderLoss": 0.0245,
+   "attackerFuel": 67.1,
+   "defenderFuel": 16.8,
+   "air": 0,
+   "supply": [
+    44,
+    58.6
+   ]
+  },
+  {
+   "scenario": "attacker 1.5× forces",
+   "meanDelta30": 4.293,
+   "minDelta30": 3.704,
+   "maxDelta30": 5,
+   "victories": 24,
+   "defeats": 0,
+   "ongoing": 0,
+   "meanEndDay": 23.5,
+   "attackerLoss": 0.023,
+   "defenderLoss": 0.0331,
+   "attackerFuel": 83,
+   "defenderFuel": 15,
+   "air": 0,
+   "supply": [
+    53.1,
+    58.9
+   ]
+  },
+  {
+   "scenario": "attacker exhausted (50)",
+   "meanDelta30": -5.343,
+   "minDelta30": -5.882,
+   "maxDelta30": -4.762,
+   "victories": 0,
+   "defeats": 24,
+   "ongoing": 0,
+   "meanEndDay": 18.8,
+   "attackerLoss": 0.0284,
+   "defenderLoss": 0.0177,
+   "attackerFuel": 48.2,
+   "defenderFuel": 12.1,
+   "air": 0,
+   "supply": [
+    56.6,
+    59
+   ]
+  },
+  {
+   "scenario": "attacker without fuel",
+   "meanDelta30": -11.343,
+   "minDelta30": -12.5,
+   "maxDelta30": -11.111,
+   "victories": 0,
+   "defeats": 24,
+   "ongoing": 0,
+   "meanEndDay": 8.8,
+   "attackerLoss": 0.0233,
+   "defenderLoss": 0.0048,
+   "attackerFuel": 0,
+   "defenderFuel": 5.7,
+   "air": -2.2,
+   "supply": [
+    23.2,
+    59.4
+   ]
+  },
+  {
+   "scenario": "defender without fuel",
+   "meanDelta30": 16.667,
+   "minDelta30": 16.667,
+   "maxDelta30": 16.667,
+   "victories": 24,
+   "defeats": 0,
+   "ongoing": 0,
+   "meanEndDay": 6,
+   "attackerLoss": 0.0043,
+   "defenderLoss": 0.0142,
+   "attackerFuel": 15.5,
+   "defenderFuel": 0,
+   "air": 1.4,
+   "supply": [
+    57.1,
+    24.7
+   ]
+  }
+ ],
+ "tactical": [
+  {
+   "scenario": "equal · plains",
+   "attackerAi": "single",
+   "meanRounds": 20,
+   "meanProgress": 20.57,
+   "goalSwitchesPerRound": {
+    "attacker": 0.183,
+    "defender": 0.017
+   },
+   "reversalRate": {
+    "attacker": 0,
+    "defender": 0.111
+   },
+   "objectiveRoundsHeld": {
+    "attacker": 233,
+    "defender": 0
+   },
+   "captures": {
+    "attacker": 20,
+    "defender": 0
+   }
+  },
+  {
+   "scenario": "equal · plains",
+   "attackerAi": "planner",
+   "meanRounds": 20,
+   "meanProgress": 0.93,
+   "goalSwitchesPerRound": {
+    "attacker": 0.054,
+    "defender": 0.138
+   },
+   "reversalRate": {
+    "attacker": 0.055,
+    "defender": 0.023
+   },
+   "objectiveRoundsHeld": {
+    "attacker": 167,
+    "defender": 117
+   },
+   "captures": {
+    "attacker": 21,
+    "defender": 15
+   }
+  },
+  {
+   "scenario": "equal · mountain",
+   "attackerAi": "single",
+   "meanRounds": 15.25,
+   "meanProgress": -100,
+   "goalSwitchesPerRound": {
+    "attacker": 0.197,
+    "defender": 0.109
+   },
+   "reversalRate": {
+    "attacker": 0.028,
+    "defender": 0.089
+   },
+   "objectiveRoundsHeld": {
+    "attacker": 115,
+    "defender": 3
+   },
+   "captures": {
+    "attacker": 30,
+    "defender": 3
+   }
+  },
+  {
+   "scenario": "equal · mountain",
+   "attackerAi": "planner",
+   "meanRounds": 15.25,
+   "meanProgress": -100,
+   "goalSwitchesPerRound": {
+    "attacker": 0.098,
+    "defender": 0.066
+   },
+   "reversalRate": {
+    "attacker": 0.038,
+    "defender": 0.006
+   },
+   "objectiveRoundsHeld": {
+    "attacker": 85,
+    "defender": 59
+   },
+   "captures": {
+    "attacker": 13,
+    "defender": 10
+   }
+  },
+  {
+   "scenario": "attacker 1.5× forces",
+   "attackerAi": "single",
+   "meanRounds": 18.583333333333332,
+   "meanProgress": 89.63,
+   "goalSwitchesPerRound": {
+    "attacker": 0.197,
+    "defender": 0.018
+   },
+   "reversalRate": {
+    "attacker": 0,
+    "defender": 0.111
+   },
+   "objectiveRoundsHeld": {
+    "attacker": 216,
+    "defender": 0
+   },
+   "captures": {
+    "attacker": 20,
+    "defender": 0
+   }
+  },
+  {
+   "scenario": "attacker 1.5× forces",
+   "attackerAi": "planner",
+   "meanRounds": 20,
+   "meanProgress": 65.72,
+   "goalSwitchesPerRound": {
+    "attacker": 0.05,
+    "defender": 0.138
+   },
+   "reversalRate": {
+    "attacker": 0.044,
+    "defender": 0.023
+   },
+   "objectiveRoundsHeld": {
+    "attacker": 167,
+    "defender": 117
+   },
+   "captures": {
+    "attacker": 21,
+    "defender": 15
+   }
+  }
+ ],
+ "small": [
+  {
+   "days": 7,
+   "status": "victory",
+   "minTreasury": 4.003253234668121,
+   "arrearsDays": 0,
+   "worstRating": 53.083208059019924,
+   "rescueOfferDay": null,
+   "rescueApplied": false,
+   "rescueApproved": false,
+   "bankrupt": false
+  },
+  {
+   "days": 8,
+   "status": "victory",
+   "minTreasury": 4.003253234668121,
+   "arrearsDays": 0,
+   "worstRating": 53.07606980943428,
+   "rescueOfferDay": null,
+   "rescueApplied": false,
+   "rescueApproved": false,
+   "bankrupt": false
+  },
+  {
+   "days": 8,
+   "status": "victory",
+   "minTreasury": 4.003253234668121,
+   "arrearsDays": 0,
+   "worstRating": 53.07648170888745,
+   "rescueOfferDay": null,
+   "rescueApplied": false,
+   "rescueApproved": false,
+   "bankrupt": false
+  },
+  {
+   "days": 7,
+   "status": "victory",
+   "minTreasury": 4.003253234668121,
+   "arrearsDays": 0,
+   "worstRating": 53.08295834719658,
+   "rescueOfferDay": null,
+   "rescueApplied": false,
+   "rescueApproved": false,
+   "bankrupt": false
+  },
+  {
+   "days": 8,
+   "status": "victory",
+   "minTreasury": 4.003253234668121,
+   "arrearsDays": 0,
+   "worstRating": 53.078190645265856,
+   "rescueOfferDay": null,
+   "rescueApplied": false,
+   "rescueApproved": false,
+   "bankrupt": false
+  },
+  {
+   "days": 7,
+   "status": "victory",
+   "minTreasury": 4.003253234668121,
+   "arrearsDays": 0,
+   "worstRating": 53.083616503332706,
+   "rescueOfferDay": null,
+   "rescueApplied": false,
+   "rescueApproved": false,
+   "bankrupt": false
+  }
+ ]
+}
