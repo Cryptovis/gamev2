@@ -1,0 +1,317 @@
+[WebServer] [INEFFECTIVE_DYNAMIC_IMPORT] src/persistence/saveGame.ts is dynamically imported by src/engine/autosaveWrite.ts, src/store/gameStore.ts but also statically imported by src/ui/panels/CampaignEntry.tsx, dynamic import will not move module into another chunk.
+[WebServer] 
+[WebServer] [plugin builtin:vite-reporter] 
+[WebServer] (!) Some chunks are larger than 500 kB after minification. Consider:
+[WebServer] - Using dynamic import() to code-split the application
+[WebServer] - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+[WebServer] - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+[WebServer] [PLUGIN_TIMINGS] JavaScript callbacks ran for 1.6s of this 3.2s build (51%).
+[WebServer] The slowest callbacks, timed inside each callback (the wait before a callback starts is excluded, the time it awaits is included):
+[WebServer]   - plugin vite:css-post renderChunk (36%, 1.1s, 2 calls)
+[WebServer] Additional callback time came from callbacks under 1s.
+[WebServer] See https://rolldown.rs/reference/InputOptions.checks#bundlertimings for more details.
+[WebServer] 
+
+Running 25 tests using 1 worker
+·······TTTTTF············
+
+  1) e2e/fluidCommand091.spec.ts:63:33 › en shows Rule of Nations untranslated in the title, header and help 
+
+    Test timeout of 60000ms exceeded.
+
+    Error: locator.click: Test timeout of 60000ms exceeded.
+    Call log:
+      - waiting for locator('[data-guide="rail-help"]')
+        - locator resolved to <button class="rail-button" aria-pressed="false" data-guide="rail-help" title="HELP · Closed — click to open">…</button>
+      - attempting click action
+        2 × waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - <div>…</div> from <aside class="command-panel">…</aside> subtree intercepts pointer events
+        - retrying click action
+        - waiting 20ms
+        2 × waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - <div>…</div> from <aside class="command-panel">…</aside> subtree intercepts pointer events
+        - retrying click action
+          - waiting 100ms
+        109 × waiting for element to be visible, enabled and stable
+            - element is visible, enabled and stable
+            - scrolling into view if needed
+            - done scrolling
+            - <div>…</div> from <aside class="command-panel">…</aside> subtree intercepts pointer events
+          - retrying click action
+            - waiting 500ms
+
+
+      65 |  await expect(page).toHaveTitle('Rule of Nations');
+      66 |  await expect(page.locator('.brand-block .eyebrow')).toHaveText('Rule of Nations');
+    > 67 |  await page.locator('[data-guide="rail-help"]').click();await expect(page.locator('#help-window .game-notes h3')).toHaveText('Rule of Nations');
+         |                                                 ^
+      68 |  expect(await page.locator('body').innerText()).not.toMatch(/Real President|Gerçek Başkan|Gerçekten O'nun|AlpyX(?! Game Studios)/);
+      69 | });
+      70 |
+        at /home/runner/work/gamev2/gamev2/e2e/fluidCommand091.spec.ts:67:49
+
+    Error Context: test-results/fluidCommand091-en-shows-R-8d380-n-the-title-header-and-help/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/fluidCommand091-en-shows-R-8d380-n-the-title-header-and-help/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/fluidCommand091-en-shows-R-8d380-n-the-title-header-and-help/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) e2e/fluidCommand091.spec.ts:63:33 › tr shows Rule of Nations untranslated in the title, header and help 
+
+    Test timeout of 60000ms exceeded.
+
+    Error: locator.click: Test timeout of 60000ms exceeded.
+    Call log:
+      - waiting for locator('[data-guide="rail-help"]')
+        - locator resolved to <button class="rail-button" aria-pressed="false" data-guide="rail-help" title="YARDIM · Closed — click to open">…</button>
+      - attempting click action
+        2 × waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - <div>…</div> from <aside class="command-panel">…</aside> subtree intercepts pointer events
+        - retrying click action
+        - waiting 20ms
+        2 × waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - <div>…</div> from <aside class="command-panel">…</aside> subtree intercepts pointer events
+        - retrying click action
+          - waiting 100ms
+        108 × waiting for element to be visible, enabled and stable
+            - element is visible, enabled and stable
+            - scrolling into view if needed
+            - done scrolling
+            - <div>…</div> from <aside class="command-panel">…</aside> subtree intercepts pointer events
+          - retrying click action
+            - waiting 500ms
+
+
+      65 |  await expect(page).toHaveTitle('Rule of Nations');
+      66 |  await expect(page.locator('.brand-block .eyebrow')).toHaveText('Rule of Nations');
+    > 67 |  await page.locator('[data-guide="rail-help"]').click();await expect(page.locator('#help-window .game-notes h3')).toHaveText('Rule of Nations');
+         |                                                 ^
+      68 |  expect(await page.locator('body').innerText()).not.toMatch(/Real President|Gerçek Başkan|Gerçekten O'nun|AlpyX(?! Game Studios)/);
+      69 | });
+      70 |
+        at /home/runner/work/gamev2/gamev2/e2e/fluidCommand091.spec.ts:67:49
+
+    Error Context: test-results/fluidCommand091-tr-shows-R-2068c-n-the-title-header-and-help/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/fluidCommand091-tr-shows-R-2068c-n-the-title-header-and-help/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/fluidCommand091-tr-shows-R-2068c-n-the-title-header-and-help/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) e2e/fluidCommand091.spec.ts:63:33 › es shows Rule of Nations untranslated in the title, header and help 
+
+    Test timeout of 60000ms exceeded.
+
+    Error: locator.click: Test timeout of 60000ms exceeded.
+    Call log:
+      - waiting for locator('[data-guide="rail-help"]')
+        - locator resolved to <button class="rail-button" aria-pressed="false" data-guide="rail-help" title="AYUDA · Closed — click to open">…</button>
+      - attempting click action
+        2 × waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - <div>…</div> from <aside class="command-panel">…</aside> subtree intercepts pointer events
+        - retrying click action
+        - waiting 20ms
+        2 × waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - <div>…</div> from <aside class="command-panel">…</aside> subtree intercepts pointer events
+        - retrying click action
+          - waiting 100ms
+        108 × waiting for element to be visible, enabled and stable
+            - element is visible, enabled and stable
+            - scrolling into view if needed
+            - done scrolling
+            - <div>…</div> from <aside class="command-panel">…</aside> subtree intercepts pointer events
+          - retrying click action
+            - waiting 500ms
+
+
+      65 |  await expect(page).toHaveTitle('Rule of Nations');
+      66 |  await expect(page.locator('.brand-block .eyebrow')).toHaveText('Rule of Nations');
+    > 67 |  await page.locator('[data-guide="rail-help"]').click();await expect(page.locator('#help-window .game-notes h3')).toHaveText('Rule of Nations');
+         |                                                 ^
+      68 |  expect(await page.locator('body').innerText()).not.toMatch(/Real President|Gerçek Başkan|Gerçekten O'nun|AlpyX(?! Game Studios)/);
+      69 | });
+      70 |
+        at /home/runner/work/gamev2/gamev2/e2e/fluidCommand091.spec.ts:67:49
+
+    Error Context: test-results/fluidCommand091-es-shows-R-85a2d-n-the-title-header-and-help/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/fluidCommand091-es-shows-R-85a2d-n-the-title-header-and-help/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/fluidCommand091-es-shows-R-85a2d-n-the-title-header-and-help/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) e2e/fluidCommand091.spec.ts:63:33 › zh shows Rule of Nations untranslated in the title, header and help 
+
+    Test timeout of 60000ms exceeded.
+
+    Error: locator.click: Test timeout of 60000ms exceeded.
+    Call log:
+      - waiting for locator('[data-guide="rail-help"]')
+        - locator resolved to <button class="rail-button" aria-pressed="false" data-guide="rail-help" title="帮助 · Closed — click to open">…</button>
+      - attempting click action
+        2 × waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - <div>…</div> from <aside class="command-panel">…</aside> subtree intercepts pointer events
+        - retrying click action
+        - waiting 20ms
+        2 × waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - <div>…</div> from <aside class="command-panel">…</aside> subtree intercepts pointer events
+        - retrying click action
+          - waiting 100ms
+        108 × waiting for element to be visible, enabled and stable
+            - element is visible, enabled and stable
+            - scrolling into view if needed
+            - done scrolling
+            - <div>…</div> from <aside class="command-panel">…</aside> subtree intercepts pointer events
+          - retrying click action
+            - waiting 500ms
+
+
+      65 |  await expect(page).toHaveTitle('Rule of Nations');
+      66 |  await expect(page.locator('.brand-block .eyebrow')).toHaveText('Rule of Nations');
+    > 67 |  await page.locator('[data-guide="rail-help"]').click();await expect(page.locator('#help-window .game-notes h3')).toHaveText('Rule of Nations');
+         |                                                 ^
+      68 |  expect(await page.locator('body').innerText()).not.toMatch(/Real President|Gerçek Başkan|Gerçekten O'nun|AlpyX(?! Game Studios)/);
+      69 | });
+      70 |
+        at /home/runner/work/gamev2/gamev2/e2e/fluidCommand091.spec.ts:67:49
+
+    Error Context: test-results/fluidCommand091-zh-shows-R-75727-n-the-title-header-and-help/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/fluidCommand091-zh-shows-R-75727-n-the-title-header-and-help/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/fluidCommand091-zh-shows-R-75727-n-the-title-header-and-help/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  5) e2e/fluidCommand091.spec.ts:63:33 › ru shows Rule of Nations untranslated in the title, header and help 
+
+    Test timeout of 60000ms exceeded.
+
+    Error: locator.click: Test timeout of 60000ms exceeded.
+    Call log:
+      - waiting for locator('[data-guide="rail-help"]')
+        - locator resolved to <button class="rail-button" aria-pressed="false" data-guide="rail-help" title="ПОМОЩЬ · Closed — click to open">…</button>
+      - attempting click action
+        2 × waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - <div>…</div> from <aside class="command-panel">…</aside> subtree intercepts pointer events
+        - retrying click action
+        - waiting 20ms
+        2 × waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - <div>…</div> from <aside class="command-panel">…</aside> subtree intercepts pointer events
+        - retrying click action
+          - waiting 100ms
+        108 × waiting for element to be visible, enabled and stable
+            - element is visible, enabled and stable
+            - scrolling into view if needed
+            - done scrolling
+            - <div>…</div> from <aside class="command-panel">…</aside> subtree intercepts pointer events
+          - retrying click action
+            - waiting 500ms
+
+
+      65 |  await expect(page).toHaveTitle('Rule of Nations');
+      66 |  await expect(page.locator('.brand-block .eyebrow')).toHaveText('Rule of Nations');
+    > 67 |  await page.locator('[data-guide="rail-help"]').click();await expect(page.locator('#help-window .game-notes h3')).toHaveText('Rule of Nations');
+         |                                                 ^
+      68 |  expect(await page.locator('body').innerText()).not.toMatch(/Real President|Gerçek Başkan|Gerçekten O'nun|AlpyX(?! Game Studios)/);
+      69 | });
+      70 |
+        at /home/runner/work/gamev2/gamev2/e2e/fluidCommand091.spec.ts:67:49
+
+    Error Context: test-results/fluidCommand091-ru-shows-R-00e1b-n-the-title-header-and-help/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/fluidCommand091-ru-shows-R-00e1b-n-the-title-header-and-help/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/fluidCommand091-ru-shows-R-00e1b-n-the-title-header-and-help/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  6) e2e/fluidCommand091.spec.ts:71:1 › entry and setup screens carry the Rule of Nations mark over the cover art 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('.wizard-header small')
+    Expected substring: "Rule of Nations"
+    Error: strict mode violation: locator('.wizard-header small') resolved to 5 elements:
+        1) <small>…</small> aka getByText('Rule of Nations0.90.0-')
+        2) <small>IDENTITY</small> aka getByText('IDENTITY', { exact: true })
+        3) <small>PORTRAIT</small> aka getByText('PORTRAIT')
+        4) <small>NATION</small> aka getByText('NATION', { exact: true })
+        5) <small>CONFIRM</small> aka getByText('CONFIRM')
+
+    Call log:
+      - Expect "toContainText" with timeout 5000ms
+      - waiting for locator('.wizard-header small')
+
+
+      74 |  await expect(page.locator('.entry-art .brand-mark-emblem')).toHaveText('RON');
+      75 |  await page.locator('[data-entry="demo"]').click();await page.locator('[data-entry="new-game"]').click();
+    > 76 |  await expect(page.locator('.setup-cover .brand-mark')).toContainText('Rule of Nations');await expect(page.locator('.wizard-header small')).toContainText('Rule of Nations');
+         |                                                                                                                                             ^
+      77 |  await page.screenshot({path:'test-results/ron-setup-091.png'});
+      78 | });
+      79 |
+        at /home/runner/work/gamev2/gamev2/e2e/fluidCommand091.spec.ts:76:141
+
+    Error Context: test-results/fluidCommand091-entry-and--d2dfb-ons-mark-over-the-cover-art/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/fluidCommand091-entry-and--d2dfb-ons-mark-over-the-cover-art/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/fluidCommand091-entry-and--d2dfb-ons-mark-over-the-cover-art/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  6 failed
+    e2e/fluidCommand091.spec.ts:63:33 › en shows Rule of Nations untranslated in the title, header and help 
+    e2e/fluidCommand091.spec.ts:63:33 › tr shows Rule of Nations untranslated in the title, header and help 
+    e2e/fluidCommand091.spec.ts:63:33 › es shows Rule of Nations untranslated in the title, header and help 
+    e2e/fluidCommand091.spec.ts:63:33 › zh shows Rule of Nations untranslated in the title, header and help 
+    e2e/fluidCommand091.spec.ts:63:33 › ru shows Rule of Nations untranslated in the title, header and help 
+    e2e/fluidCommand091.spec.ts:71:1 › entry and setup screens carry the Rule of Nations mark over the cover art 
+  19 passed (7.5m)
