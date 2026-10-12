@@ -1,12 +1,13 @@
+import { Howl, Howler } from 'howler';
 import { CUE_CHANNEL, type AmbientTrack, type SoundCue } from '../presentation/battleEffects';
 import { audioSettingsNow, type AudioSettings } from './audioSettings';
 
 /**
  * Phase 5 (0.90.0-playtest.14): the one place that plays sound.
  *
- * - Howler.js is loaded with a dynamic import on the first user interaction (browser autoplay rule), so it is not in
- *   the initial bundle. Until then, and whenever the library or a file fails to load, every call is a silent no-op:
- *   sound can never stop or slow the game.
+ * - Howler.js ships with the app (9.6 kB gzip), so no module is downloaded at click time; no sound is created or
+ *   played before the first user interaction (browser autoplay rule). Until then, and whenever the audio backend or a
+ *   file fails, every call is a silent no-op: sound can never stop or slow the game.
  * - Separate volumes for UI, war and ambience, a master volume and mute (audioSettings, stored in this browser only).
  * - At most `MAX_CONCURRENT` effects at once; extra cues are dropped, not queued.
  * - A cue with an event id plays at most once (replays, rerenders, saves and reloads in the same tab do not repeat it).
@@ -31,7 +32,8 @@ export type AudioState = 'locked' | 'loading' | 'ready' | 'unavailable';
 
 /** Howler-backed sounds. Each Howl is created on first use; load or play errors mark that sound as broken. */
 export async function loadHowlerBackend(): Promise<AudioBackend> {
-  const { Howl, Howler } = await import('howler');
+  const support = Howler as unknown as { usingWebAudio?: boolean; noAudio?: boolean } | undefined;
+  if (typeof window === 'undefined' || !support || (!support.usingWebAudio && support.noAudio)) throw new Error('No audio output in this browser.');
   return {
     create(_name, urls, loop, onError) {
       const howl = new Howl({ src: urls, loop, preload: true, html5: false, onloaderror: onError, onplayerror: onError });
