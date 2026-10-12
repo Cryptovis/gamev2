@@ -8,6 +8,7 @@ import { calculateSupplyNetwork } from '../../engine/systems/supplyNetwork';
 import { infrastructureInvestmentCost, infrastructureInvestmentRule } from '../../engine/systems/infrastructure';
 import { formatCostB } from '../../engine/systems/policyPressure';
 import { useGameStore } from '../../store/gameStore';
+import { useStoreView } from '../../store/useStoreView';
 import { FuelIcon, FoodIcon, PowerIcon, SteelIcon } from '../icons/GameIcons';
 import { CommandWindow } from './CommandWindow';
 
@@ -23,7 +24,8 @@ export function SupplyCommandWindow({country,war,onClose}:{country:CountryState;
  const [tab,setTab]=useState<SupplyTab>('network');
  const infra=useGameStore(s=>s.infrastructure[country.id]),investInfrastructure=useGameStore(s=>s.investInfrastructure);
  const isPlayer=useGameStore(s=>country.id===s.playerCountryId);
- const investmentCost=useGameStore(s=>investment?infrastructureInvestmentCost(s,country.id,investment):0);
+ // Engine-owned investment costs for the four assets, compared by value.
+ const investmentCosts=useStoreView(s=>Object.fromEntries((['roads','rail','ports','hubs'] as InfrastructureAsset[]).map(asset=>[asset,infrastructureInvestmentCost(s,country.id,asset)])) as Record<InfrastructureAsset,number>);
  const side=war?(war.attackerId===country.id?'attacker':'defender'):'home';
  const terrain=war?.terrain??'plains';
  const supply=useMemo(()=>calculateSupplyNetwork(country,terrain,side,infra),[country,terrain,side,infra]);
@@ -61,7 +63,7 @@ export function SupplyCommandWindow({country,war,onClose}:{country:CountryState;
     ['ports','Port Capacity',infra?.ports??0],
     ['hubs','Supply Hubs',infra?.hubs??supply.logisticsEfficiency],
    ] as [InfrastructureAsset,string,number][]).map(([asset,label,value])=>{
-    const rule=infrastructureInvestmentRule(asset),cost=infrastructureInvestmentCost(state,country.id,asset);
+    const rule=infrastructureInvestmentRule(asset),cost=investmentCosts[asset];
     const disabled=!isPlayer||(asset==='ports'&&(infra?.ports??0)<=0)||country.economy.treasury<cost||value>=100;
     return <article key={asset} data-infrastructure={asset}>
      <header><InfrastructureIcon asset={asset}/><span><small><LocaleText value={label.toUpperCase()}/></small><strong><LocaleText value={value.toFixed(0)}/><LocaleText value={"%"}/></strong></span><em><LocaleText value={asset==='ports'&&(infra?.ports??0)<=0?'LANDLOCKED':'ACTIVE'}/></em></header>
@@ -84,6 +86,6 @@ export function SupplyCommandWindow({country,war,onClose}:{country:CountryState;
    <div className="front-command-hero"><small><LocaleText value={war?'ACTIVE THEATRE':'MOBILIZATION READINESS'}/></small><strong><LocaleText value={war?terrain.toUpperCase():'NO ACTIVE FRONT'}/></strong><p><LocaleText value={war?'Front delivery compares strategic reserves, transport efficiency, terrain and current force demand.':'This is the supply capacity available if the country mobilizes under normal terrain assumptions.'}/></p></div>
    <div className="front-bars">{[['Front supply',frontSupply],['Logistics',supply.logisticsEfficiency],['Infrastructure',supply.infrastructure],['Reserve factor',supply.reserveFactor*100],['Demand pressure',supply.frontDemand]].map(([label,value])=><div key={String(label)}><span><LocaleText value={label}/></span><i><b className={Number(value)<40?'danger-bar':''} style={{width:pct(Number(value))+'%'}}/></i><strong><LocaleText value={Number(value).toFixed(0)}/><LocaleText value={"%"}/></strong></div>)}</div>
   </div>}
- {investment&&(()=>{const rule=infrastructureInvestmentRule(investment),cost=investmentCost,before=infra[investment],after=Math.min(100,before+rule.gain),additional=(after-before)*.00022*(investment==='ports'?.7:1);return <ReviewDialog title={translateLive("Invest in "+rule.label)} summary="Improve national delivery capacity. Maintenance is charged daily." metrics={[["Investment",formatCostB(cost)],["Treasury after",`$${(country.economy.treasury-cost).toFixed(3)}B`],["Capacity",`${before.toFixed(1)} → ${after.toFixed(1)}%`],["Additional daily maintenance",`$${additional.toFixed(4)}B`]]} onCancel={()=>setInvestment(null)} onConfirm={()=>{investInfrastructure(investment);setInvestment(null)}}/>;})()}
+ {investment&&(()=>{const rule=infrastructureInvestmentRule(investment),cost=investmentCosts[investment],before=infra[investment],after=Math.min(100,before+rule.gain),additional=(after-before)*.00022*(investment==='ports'?.7:1);return <ReviewDialog title={translateLive("Invest in "+rule.label)} summary="Improve national delivery capacity. Maintenance is charged daily." metrics={[["Investment",formatCostB(cost)],["Treasury after",`$${(country.economy.treasury-cost).toFixed(3)}B`],["Capacity",`${before.toFixed(1)} → ${after.toFixed(1)}%`],["Additional daily maintenance",`$${additional.toFixed(4)}B`]]} onCancel={()=>setInvestment(null)} onConfirm={()=>{investInfrastructure(investment);setInvestment(null)}}/>;})()}
  </CommandWindow>;
 }

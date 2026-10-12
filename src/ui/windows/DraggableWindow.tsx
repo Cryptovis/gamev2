@@ -2,6 +2,7 @@ import {createPortal} from 'react-dom';
 import {useWorkspaceVisibility} from './useWorkspaceVisibility';
 import {useGameStore} from '../../store/gameStore';
 import {useWindowLifecycle,WINDOW_LAYERS} from './useWindowLifecycle';
+import {useScrollMemory} from './useScrollMemory';
 import {GuideBriefing} from '../panels/GuideBriefing';
 import {LocaleText,translateLive} from '../../i18n/localeText';
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
@@ -33,6 +34,7 @@ export function DraggableWindow({
  const [position,setPosition]=useState(()=>({...bounds(width,initialX,expanded),y:Math.min(initialY,150)}));
  const ref=useRef<HTMLElement>(null);
  const raise=useWindowLifecycle(ref,{onClose,layer:WINDOW_LAYERS.workspace,modal:false,backdrop:false,enabled:visible});
+ useScrollMemory(ref,visible);
  useLayoutEffect(()=>{
   if(!visible)return;
   setPosition(old=>({...bounds(width,old.x,expanded),y:expanded?Math.max(old.y,110,(document.querySelector('.topbar')?.getBoundingClientRect().bottom??98)+12):old.y}));

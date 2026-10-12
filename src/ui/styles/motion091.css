@@ -1,0 +1,28 @@
+/*
+ * 0.91 window motion. One shared fade for windows, dialogs and their backdrops, so screens no longer
+ * pop in as stacked layers. Opacity only: positions and sizes never animate, so layout, focus and
+ * hit-testing are identical with and without motion. A parent window that was hidden for a child
+ * fades back in when it is shown again, because the animation restarts when display returns.
+ * The keyframe only sets the start, so each element fades to its own opacity.
+ * Reduced motion removes every effect below.
+ */
+:root{--motion-enter:190ms;--motion-backdrop:160ms;--motion-ease:cubic-bezier(.2,.7,.2,1)}
+@keyframes ron-fade-in{from{opacity:0}}
+
+/* Workspace and command windows (also replayed when a parent returns from a child window). */
+.floating-command-window,.command-window-backdrop>.command-window,.left-command-dock,.map-command-dock{animation:ron-fade-in var(--motion-enter) var(--motion-ease) backwards}
+.command-window-backdrop{animation:ron-fade-in var(--motion-backdrop) ease-out backwards}
+
+/* Modal and review dialogs and their backdrops. */
+.advisor-backdrop,.avatar-picker-backdrop,.campaign-confirm-backdrop,.economic-advice-backdrop,.event-backdrop,.integration-overlay,.player-options-backdrop,.review-backdrop,.strategic-decision-backdrop,.victory-backdrop,.war-theatre-backdrop{animation:ron-fade-in var(--motion-backdrop) ease-out backwards}
+.advisor-backdrop>*,.avatar-picker-backdrop>*,.campaign-confirm-backdrop>*,.economic-advice-backdrop>*,.event-backdrop>*,.integration-overlay>*,.player-options-backdrop>*,.review-backdrop>*,.strategic-decision-backdrop>*,.victory-backdrop>*,.war-theatre-backdrop>*{animation:ron-fade-in var(--motion-enter) var(--motion-ease) backwards}
+
+/* Country panel: hidden with visibility while a child window is open; opacity returns smoothly. */
+.command-panel{transition:opacity var(--motion-enter) var(--motion-ease),transform .15s ease}
+
+@media (prefers-reduced-motion:reduce){
+ .floating-command-window,.command-window-backdrop,.command-window-backdrop>.command-window,.left-command-dock,.map-command-dock,
+ .advisor-backdrop,.avatar-picker-backdrop,.campaign-confirm-backdrop,.economic-advice-backdrop,.event-backdrop,.integration-overlay,.player-options-backdrop,.review-backdrop,.strategic-decision-backdrop,.victory-backdrop,.war-theatre-backdrop,
+ .advisor-backdrop>*,.avatar-picker-backdrop>*,.campaign-confirm-backdrop>*,.economic-advice-backdrop>*,.event-backdrop>*,.integration-overlay>*,.player-options-backdrop>*,.review-backdrop>*,.strategic-decision-backdrop>*,.victory-backdrop>*,.war-theatre-backdrop>*{animation:none}
+ .command-panel{transition:none}
+}
