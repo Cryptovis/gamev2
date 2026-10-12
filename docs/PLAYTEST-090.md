@@ -139,3 +139,9 @@ Validation: 639 unit tests / 81 files, TypeScript and production build passed (r
 - Not run locally or on StackBlitz: the npm registry was blocked in this session. All results come from GitHub-hosted Chromium.
 - React render time is unchanged; mobile and low-power performance were not measured.
 - Remaining capital-only button labels outside the reviewed set (for example setup "CONTINUE"), and translation quality beyond the corrected strings, are left for later polish.
+
+## 0.90.0-playtest.11 — RON Interactive credit (Claude)
+
+Footer credit changed to RON Interactive; interface guards now reject any AlpyX text. No simulation, schema or dependency change.
+
+Validation: VALIDATION_PENDING
