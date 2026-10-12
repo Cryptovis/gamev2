@@ -1,3 +1,5 @@
+import {ManagedDialog} from "../windows/ManagedDialog";
+import {WINDOW_LAYERS} from "../windows/useWindowLifecycle";
 import { createPortal } from "react-dom";
 import { useGameStore } from "../../store/gameStore";
 import { pendingVictory } from "../../engine/systems/victory";
@@ -12,12 +14,7 @@ export function VictoryScroll() {
     tr = s.playerProfile.language === "tr";
   return createPortal(
     <div className="victory-backdrop">
-      <section
-        className="victory-scroll"
-        role="dialog"
-        aria-modal="true"
-        aria-label={tr ? "Zafer" : "Victory"}
-      >
+      <ManagedDialog key={v.warId} className="victory-scroll" label="VICTORY" layer={WINDOW_LAYERS.modal} onClose={() => s.dismissVictory(v.warId)}>
         <small>THE REAL PRESIDENT</small>
         <h1>
           <LocaleText value="VICTORY" />
@@ -50,7 +47,7 @@ export function VictoryScroll() {
         >
           <LocaleText value="Manage territories" />
         </button>
-      </section>
+      </ManagedDialog>
     </div>,
     document.body,
   );

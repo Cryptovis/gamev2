@@ -185,3 +185,17 @@ Compact commander HUD and World rankings with ten visible rows and scroll access
 622 unit tests / 79 files, TypeScript and production build passed. All 8 final focused production-browser scenarios passed (2.2m), covering 390/1440/2048 px, five languages, all ranking pages, Supply readability, Society/Infrastructure and parent/review return. The local full run was interrupted at scenario 58 after finding two Supply font-size failures and one mobile bottom-padding failure; these real UI issues were corrected and covered by the final focused run. The full 134-scenario suite runs in exact-head GitHub CI after publication. Final desktop/mobile screenshots inspected; actual StackBlitz testing was not performed. V3 remains conditional on complete playability.
 
 Translation catalogue consolidation/loading, remaining previews, measured performance follow-ups, diplomacy coverage and campaign/war AI balance remain separate pending scopes.
+
+
+## Major patch — six-phase plan (Codex, 2026-10-12)
+
+This plan supersedes older phase numbering for the current work. Phase 1 alone is authorized.
+
+1. **Reliable foundation:** proven save/transaction/interaction bugs, regression coverage and initial performance measurements. Playtest.9 implements managed victory/crisis focus and expands safety coverage; release checks pending. [Evidence](QA-PHASE1-0909.md).
+2. **UI flow and targeted performance:** measured expensive selectors, typography, parent/child focus and transitions, five languages and zoom/mobile usability. Not started.
+3. **Multi-turn tactical AI and balance:** deterministic bounded planning, fog of war, common player/AI costs; fuel/air/small-economy balance measured before changes.
+4. **Air/naval task groups and logistics:** allocation, range, readiness and shared validators; unify cargo ownership/cancellation semantics.
+5. **Terrain, playback and audio:** resolved events drive effects; skip/replay cannot change simulation; accessible static/silent fallbacks.
+6. **Closed Beta acceptance:** complete campaigns, multiwar/defeat, 365/1095 days, all languages, actual StackBlitz/mobile, full tests and CI.
+
+No large refactoring, catalogue consolidation or new libraries in Phase 1. Typed commands, seeded RNG, migrations and existing .8 work are preserved. V3/major naming remains conditional on complete playability. Stop before Phase 2 for Alper's decision.

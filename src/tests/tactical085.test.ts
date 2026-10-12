@@ -134,6 +134,7 @@ describe('0.85 schema 17 migration', () => {
     const loaded = migrateSave(old)!;
     expect(loaded).not.toBeNull(); expect(loaded.schemaVersion).toBe(17);
     expect(loaded.wars[id].tactical).toMatchObject({ version: 2, width: 6, height: 6, objectives: [15], seed: 0 });
+    expect(migrateSave(snapshotGame(loaded))).toEqual(loaded); // Phase 1: migrated legacy battle survives another save/load.
   });
 
   it('rejects a v2 battle that references a sector outside its own grid', () => {

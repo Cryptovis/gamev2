@@ -1,5 +1,7 @@
 // 0.88 track E (audit E2): the player's regime-crisis warning. The crisis lives in the engine (factions.ts);
 // closing this dialog without an answer leaves it open until its deadline, where an ignored crisis ends in a coup.
+import {ManagedDialog} from '../windows/ManagedDialog';
+import {WINDOW_LAYERS} from '../windows/useWindowLifecycle';
 import { LocaleText } from '../../i18n/localeText';
 import { useGameStore } from '../../store/gameStore';
 import { CRISIS_OPTION_LABEL, coupRisk, crisisOptions } from '../../engine/systems/factions';
@@ -20,7 +22,7 @@ export function RegimeCrisisModal() {
   const s = useGameStore.getState(), p = s.countries[s.playerCountryId], risk = coupRisk(s, p.id), options = crisisOptions(p, s.day);
   return (
     <div className="event-backdrop">
-      <section className="event-modal" role="alertdialog" aria-label="Regime crisis">
+      <ManagedDialog className="event-modal" role="alertdialog" label="REGIME CRISIS" layer={WINDOW_LAYERS.modal} onClose={() => dispatch({ type: 'politics/acknowledgeCrisis' })}>
         <div className="panel-kicker"><LocaleText value="REGIME CRISIS" /></div>
         <h2><LocaleText value="Security services warn of a plot" /></h2>
         <p><LocaleText value="Officers in the security establishment are sounding out rivals of the government. Answer before the deadline: an ignored crisis ends in a coup and the campaign is lost." /></p>
@@ -35,7 +37,7 @@ export function RegimeCrisisModal() {
           ))}
         </div>
         <button className="restart-button" onClick={() => dispatch({ type: 'politics/acknowledgeCrisis' })}><LocaleText value="Decide later" /></button>
-      </section>
+      </ManagedDialog>
     </div>
   );
 }

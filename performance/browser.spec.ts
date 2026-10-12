@@ -51,3 +51,26 @@ test('measure cold entry, saved campaign resume, menus and map camera',async({br
  mkdirSync('performance/results',{recursive:true});writeFileSync(`performance/results/browser-${(process.env.PERFORMANCE_LABEL??'current').replace(/[^a-zA-Z0-9_-]/g,'_')}.json`,JSON.stringify({version,browser:browser.version(),viewport:{width:1440,height:900},coldEntryToPaintMs:distribution(cold),reports},null,2)+'\n');
  await context.close();
 });
+
+test('Phase 1 CPU profile of broad-subscriber panels at 5x',async({page})=>{
+ const reports=[];
+ for(const [name,selector,target] of [['supply','[data-guide="rail-supply"]','#resource-command-window'],['world','[data-guide="rail-world"]','#pulse-window']]){
+  const state=measuredCampaign(0);await resumeFixture(page,state);await page.locator(selector).click();await expect(page.locator(target)).toBeVisible();
+  const session=await page.context().newCDPSession(page);await session.send('Profiler.enable');await session.send('Profiler.setSamplingInterval',{interval:1000});await session.send('Profiler.start');
+  await page.evaluate(()=>{
+   const clock=document.querySelector('.campaign-clock strong')!;
+   (window as any).__phase1Changes=0;
+   (window as any).__phase1Observer=new MutationObserver(()=>{(window as any).__phase1Changes++});
+   (window as any).__phase1Observer.observe(clock,{subtree:true,characterData:true,childList:true});
+  });
+  await page.locator('.speed-segment button').last().click();
+  const started=Date.now();await page.waitForTimeout(6200);await page.locator('.speed-segment button').first().click();
+  const {profile}=await session.send('Profiler.stop');await session.detach();
+  const clockChanges=await page.evaluate(()=>{(window as any).__phase1Observer.disconnect();return (window as any).__phase1Changes;});
+  const names=new Map(profile.nodes.map(n=>[n.id,n.callFrame.functionName||'(anonymous)'])),counts:Record<string,number>={};
+  for(const id of profile.samples??[]){const name=names.get(id)??'unknown';counts[name]=(counts[name]??0)+1;}
+  reports.push({panel:name,elapsedMs:Date.now()-started,clockChanges,samples:profile.samples?.length??0,topSamples:Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,12)});
+  expect(clockChanges).toBeGreaterThan(0);
+ }
+ mkdirSync('performance/results',{recursive:true});writeFileSync('performance/results/phase1-browser.json',JSON.stringify({browser:page.context().browser()!.version(),viewport:page.viewportSize(),reports},null,2)+'\n');
+});

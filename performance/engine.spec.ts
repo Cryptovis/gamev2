@@ -37,3 +37,36 @@ test('measure real campaigns, snapshots and save validation without changing rul
  writeFileSync('performance/results/engine.json',JSON.stringify({version,node:process.version,cpu:cpus()[0]?.model,reports},null,2)+'\n');
  console.log(JSON.stringify(reports));
 });
+
+// Phase 1 baseline only: independent, identical seeded inputs; no balance or selector changes.
+import {makeInitialState} from '../src/data/initialState';
+import {applyGameCommand} from '../src/engine/commands';
+import {withWarFuel} from '../src/tests/warFixture';
+import {startTacticalBattle,processAutoTacticalWars} from '../src/engine/systems/tactical';
+import {processAutoWars} from '../src/engine/systems/warfare';
+import {processTradeRelations} from '../src/engine/systems/worldDynamics';
+import {tickGame} from '../src/engine/tick';
+
+test('Phase 1 baseline for relation updates and simultaneous wars',()=>{
+ const reports=[];
+ for(const warCount of [0,4,8]){
+  let state=makeInitialState();state.world.tutorial.active=false;state.eventCooldownUntil=100000;state.advisorCooldownUntil=100000;
+  const pairs=[['TUR','GRC'],['USA','CAN'],['FRA','DEU'],['RUS','CHN'],['BRA','ARG'],['IND','PAK'],['IRN','IRQ'],['JPN','KOR']];
+  for(const [i,[attacker,target]] of pairs.slice(0,warCount).entries()){
+   state=withWarFuel({...state,playerCountryId:attacker},attacker);
+   state=applyGameCommand(state,{type:'military/declareWar',targetCountryId:target});
+   const war=Object.values(state.wars).find(w=>w.attackerId===attacker&&w.defenderId===target)!;expect(war).toBeDefined();
+   if(i===0)state=startTacticalBattle(state,war.id);
+   state.wars[war.id].autoAssault=true;
+  }
+  state={...state,playerCountryId:'TUR',day:state.day+1};expect(canLoadSave(state)).toBe(true);
+  const resolved=processAutoTacticalWars(processAutoWars(state));
+  expect(Object.values(resolved.wars).filter(w=>w.rounds>state.wars[w.id].rounds)).toHaveLength(warCount);
+  const times:Record<string,number[]>={relations:[],combat:[],tick:[]};
+  for(let i=0;i<22;i++)for(const [name,run] of Object.entries({relations:()=>processTradeRelations(state),combat:()=>processAutoTacticalWars(processAutoWars(state)),tick:()=>tickGame(state)})){
+   const start=performance.now();const next=run();const ms=performance.now()-start;if(i>1)times[name].push(ms);expect(Number.isFinite(next.day)).toBe(true);
+  }
+  reports.push({warCount,activeWars:Object.values(state.wars).filter(w=>w.status==='active').length,relationEntries:Object.values(state.countries).reduce((sum,c)=>sum+Object.keys(c.diplomacy.relations).length,0),timingsMs:Object.fromEntries(Object.entries(times).map(([key,value])=>[key,distribution(value)]))});
+ }
+ mkdirSync('performance/results',{recursive:true});writeFileSync('performance/results/phase1-engine.json',JSON.stringify({node:process.version,cpu:cpus()[0]?.model,reports},null,2)+'\n');console.log(JSON.stringify(reports));
+});

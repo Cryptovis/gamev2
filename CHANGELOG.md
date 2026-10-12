@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.90.0-playtest.9 — Reliable foundation (Phase 1)
+Implementation and validation: **Codex**. Branch: `dev/clear-command-090`.
+
+- Victory and Regime Crisis use the existing managed focus/Tab/Escape lifecycle, with translated labels and preserved crisis acknowledgement. Save/load, exact-budget, duplicate command, cargo, settlement and same-day combat coverage expanded. No simulation, schema or dependency change.
+- Original QA claims reconciled against code and focused behavior; existing credit, market and compact-workspace work retained. Baseline CPU/relations/war measurements added without speculative optimization.
+- [Phase 1 evidence and remaining risks](docs/QA-PHASE1-0909.md). 635 unit tests / 80 files, TypeScript and production build passed. All 12 new focused production-browser scenarios passed; the local full run was interrupted after 78 passes by a workspace reset. The full 146-scenario suite must pass on the published GitHub commit. Phase 2 has not started.
+
 ## 0.90.0-playtest.8 — Compact workspaces
 Implementation and validation: **Codex**. Branch: `dev/clear-command-090`.
 

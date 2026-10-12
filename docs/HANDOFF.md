@@ -1,5 +1,14 @@
 # Devir notu (yeni konuşma için)
 
+## 0.90.0-playtest.9 — Faz 1 (Codex)
+
+- Alper Faz 1 uygulamasını onayladı; bu izin Faz 2 uygulamasını kapsamıyor. Büyük refactoring ve yeni kütüphane yok.
+- Victory/Regime Crisis mevcut ManagedDialog yaşam döngüsüne bağlandı; tutorial etkileşimli kalır. Şema 12–17 roundtrip ve işlem/gün tekrar testleri eklendi. Şema 17 ve engine kuralları değişmedi.
+- [QA kanıtları ve ölçüm sınırları](QA-PHASE1-0909.md). 635 birim testi/80 dosya, TypeScript/build ve 12 yeni production tarayıcı senaryosu geçti. Yerel tam koşu ortam kesintisiyle 78 başarılı senaryodan sonra durdu; tam 146 senaryo yayın HEAD CI üzerinde doğrulanacak. Ortam dönüşünde check tekrar geçti.
+- Başlangıç GitHub HEAD `cdba582b7aeb319af10af3f2af18699b2923af34`, yerel HEAD `47bdeacdd5012a1557ea27a84f113f47df4f147d`; kaynak ağaçları aynı `1c15b0edbc506d4b68a6456dc34a257c5f6648e6`. Yerel commit zinciri remote zincirine push edilmez; connector commit remote HEAD üzerine kurulur ve expected_sha ile güncellenir.
+- Ortam sıfırlanması eski worktree Git metadata dizinini sildi. Tüm tracked dosyalar remote .8 blob hashleriyle karşılaştırıldı: yalnızca 13 amaçlı dosya farklı, eksik dosya yok. Doğrulanmış .8 kaynak ağacından bağımsız yerel mirror kuruldu (yerel temel `0c88ed0`); remote geçmişi yerine geçmez.
+- Yerel Chromium bu oturumda mevcut Brotli paketinden `browser-runtime/chromium-0909` olarak yeniden çıkarıldı. Eski dosyanın mevcut olması çalıştığını göstermez.
+
 ## 0.90.0-playtest.8 — Codex
 
 - Üst sol HUD içerik kadar geniş; World 940 px, kompakt faaliyetler ve 10 görünür satır. Tüm 203 ülke kaydırmada erişilebilir; sıralama/ülke dönüş durumu ve alt boşluk korunur.
@@ -32,7 +41,7 @@
 Bu dosya yeni bir konuşmanın ilk okuması içindir. Geçmiş konuşmayı taşımadan kaldığımız yerden devam etmeyi sağlar.
 
 ## Durum
-- Sürüm: **0.90.0-playtest.8 "Compact workspaces"**
+- Sürüm: **0.90.0-playtest.9 "Reliable foundation"**
 - Dal: `dev/clear-command-090`. Kaynak: 0.89.7 (`8322a3f`). Başlangıç GitHub HEAD: `4d3d564d5921dac391a9fc9769e1105f9e47f938` (0.90.4), CI başarılı (38086841276; 600 birim/111 tarayıcı testi). Playtest.5 GitHub HEAD `2adaceba` ve CI 38095471126 completed/success olarak doğrulandı. Playtest.6 GitHub HEAD `44f03ca86aac053e06f15309361a99a1af2cddca`; CI 38119416063 completed/success olarak doğrulandı.
 - `main`'e doğrudan push yok. Yeni işler `dev/<name>-0XX` dallarında yapılır.
 - 0.90.4 (Codex): menüler başlangıçta yüklenir; Tech → Investments, Military → Pilot training; okunur Supply ve sözleşme boşluğu; sola bitişik üç World sıralaması. Kredi: bayraklar, tüm ülkelerde AAA–D, üç oyun günü başvuru, ilişki/risk retleri, hedefli 3 yıllık can simidi, erken ödeme ve sınırlı kredi geçmişi ödülü. Şema 17 yeni opsiyonel alanlarla korunur; bağımlılıklar değişmez. 600 birim testi/TypeScript/derleme geçti. 111 üretim senaryosu doğrulandı: tam tur 108 geçti, eski seçici/atlas varsayımına takılan 3 test düzeltildikten sonra 3/3 tekrar geçti. Ayrıntılar PLAYTEST-090 kaydında. Gerçek StackBlitz testi yapılmadı.
