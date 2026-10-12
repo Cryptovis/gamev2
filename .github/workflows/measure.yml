@@ -40,7 +40,7 @@ jobs:
         run: npm run measure:renders 2>&1 | tee measure-output.txt; exit ${PIPESTATUS[0]}
       - name: Focused browser specs
         if: env.SUITE == 'e2e'
-        run: npx playwright test taskGroups0913 tacticalPlanner0912 tacticalCommand083 fluidCommand0910 reliableFoundation0909 2>&1 | tee measure-output.txt; exit ${PIPESTATUS[0]}
+        run: npx playwright test audiovisual0914 taskGroups0913 tacticalPlanner0912 tacticalCommand083 fluidCommand0910 reliableFoundation0909 2>&1 | tee measure-output.txt; exit ${PIPESTATUS[0]}
       - name: All browser specs
         if: env.SUITE == 'full'
         run: npm run test:e2e 2>&1 | tee measure-output.txt; exit ${PIPESTATUS[0]}
