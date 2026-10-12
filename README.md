@@ -1,4 +1,4 @@
-# Rule of Nations (RON) — 0.90.0-playtest.11
+# Rule of Nations (RON) — 0.90.0-playtest.12
 
 Rule of Nations is a browser-based geopolitical grand-strategy prototype built with React, TypeScript, Zustand, D3 Geo and Dexie. Lead a country through its economy, resources, diplomacy, development and military conflicts. Chart.js provides economic charts; Vitest and Playwright verify gameplay and browser flows.
 
@@ -6,10 +6,10 @@ Rule of Nations is a browser-based geopolitical grand-strategy prototype built w
 
 | Item | Current state |
 |---|---|
-| Version | **0.90.0-playtest.11 — RON Interactive credit** (on playtest.10, Rule of Nations: fluid command) |
+| Version | **0.90.0-playtest.12 — Multi-round tactical AI and war balance** |
 | Development branch | `dev/clear-command-090` |
 | Save schema | 17 (0.86–0.89 add optional fields; 0.90 preserves the schema); schemas 12–16 migrate automatically, older or newer saves are refused with a warning |
-| Validation | 639 unit tests / 81 files, TypeScript and production build passed (run on the release tree). All 158 production-browser scenarios passed on GitHub-hosted Chromium (15.7 min; 146 earlier + 12 new for motion, return state, brand and typography). Not run locally or on StackBlitz: the npm registry was blocked in this session. CI on the published commit is the release gate. [Phase 2 record](docs/FLUID-UI-0910.md) |
+| Validation | VALIDATION_PENDING |
 | V3 | Reserved for the complete-playability milestone; the current plan builds on the existing engine |
 
 These details describe this development branch. Another branch, including `main`, can contain an older release. Check `package.json` and your checked-out branch when comparing previews.
@@ -31,9 +31,11 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-`check` runs tests, TypeScript checks and the production build. Browser tests run separately against the production preview. Optional `npm run measure:engine`, `npm run measure:browser` and `npm run measure:renders` (React render attribution on a profiling build) write local performance reports; run browser measurements separately from other builds/tests. See [measurement method](docs/PERFORMANCE-0906.md).
+`check` runs tests, TypeScript checks and the production build. Browser tests run separately against the production preview. Optional `npm run measure:engine`, `npm run measure:browser` `npm run measure:renders` (React render attribution on a profiling build) and `npm run measure:war` (paired war-balance scenarios) write local performance reports; run browser measurements separately from other builds/tests. See [measurement method](docs/PERFORMANCE-0906.md).
 
 ## Recent changelog
+
+- **0.90.0-playtest.12 (Claude):** Phase 3 — the tactical AI follows multi-round plans under fog of war with a deterministic fallback; equal forces hold the front, air superiority counts once, one fuel rule for attack and defence, rescue lines reachable during war. [Phase 3 record](docs/WAR-AI-0912.md). Schema 17 kept.
 
 - **0.90.0-playtest.11 (Claude):** footer credit is now RON Interactive; no AlpyX text remains in the interface.
 
@@ -195,7 +197,7 @@ Delivered milestones are retained here when new releases are added. This table s
 
 | Milestone | Delivered foundation | Record |
 |---|---|---|
-| 0.90 — Clear Command | Rule of Nations name; Phase 2 store subscriptions, window motion/return state and typography; Phase 1 managed victory/crisis focus and save/transaction regressions; compact ten-row World rankings, dense Supply and illustrated national workspaces; compact two-column Open Market, national intelligence alerts and opening news, source-linked contemporary diplomacy; repeatable long-campaign performance measurements, indexed map connections and deferred supplier disclosures; spacious workspaces with parent return navigation, framed HUD and world activity/list scrolling; illustrated Affairs and shared action gates; reliable command panels, separated investments/pilots, World rankings and rated/delayed sovereign credit with early repayment; market review/window hotfix, compact trading choices and execution receipts, Policies, national flag shortcut, current country names, readable events, quote rotation, keyboard map controls and verified simulation fixes | [Playtest 0.90](docs/PLAYTEST-090.md) |
+| 0.90 — Clear Command | Phase 3 multi-round tactical AI and war balance; Rule of Nations name; Phase 2 store subscriptions, window motion/return state and typography; Phase 1 managed victory/crisis focus and save/transaction regressions; compact ten-row World rankings, dense Supply and illustrated national workspaces; compact two-column Open Market, national intelligence alerts and opening news, source-linked contemporary diplomacy; repeatable long-campaign performance measurements, indexed map connections and deferred supplier disclosures; spacious workspaces with parent return navigation, framed HUD and world activity/list scrolling; illustrated Affairs and shared action gates; reliable command panels, separated investments/pilots, World rankings and rated/delayed sovereign credit with early repayment; market review/window hotfix, compact trading choices and execution receipts, Policies, national flag shortcut, current country names, readable events, quote rotation, keyboard map controls and verified simulation fixes | [Playtest 0.90](docs/PLAYTEST-090.md) |
 | 0.89 — Trade & Markets + onboarding polish | Icon market sections and bounded artwork recovery; shared window lifecycle and local panel recovery; illustrated research and clear action blockers; monthly supply contracts, shared war fuel readiness and 5× auto assault; unified entry/setup theme and compact final review; supplier ranking and country trade desk, commodity exchange with shocks and charts, diplomatic and cargo flights on the map | [Playtest 0.89](docs/PLAYTEST-089.md) |
 | 0.88 — Politics & Victory | AI wars and the defender path, allies joining, factions and contested elections, regime crises, data-driven events with chains, campaign victory | [Playtest 0.88](docs/PLAYTEST-088.md) |
 | 0.87 — Living World | Repeat fatigue and GDP-scaled costs, one market price scale, demand-bound AI buyers, shared treaty rules, command and migration cleanup | [Playtest 0.87](docs/PLAYTEST-087.md) |
