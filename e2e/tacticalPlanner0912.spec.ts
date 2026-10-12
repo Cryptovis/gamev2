@@ -18,8 +18,11 @@ for(const language of ['tr','en'] as const)test(`${language} tactical board show
  const {s,id}=standingBattle(language);
  expect(s.wars[id].tactical!.plans?.attacker).toBeDefined();expect(s.wars[id].tactical!.plans?.defender).toBeDefined();
  await resumeFixture(page,s);
- await page.locator('[data-guide="rail-world"]').click();await page.locator('#pulse-window .world-active-wars button').first().click();
+ // A loaded player war opens its command window with the last round's result; close that review first.
  await expect(page.locator('.war-theatre-backdrop')).toBeVisible();
+ const opened=await page.locator('.review-dialog').waitFor({state:'visible',timeout:5000}).then(()=>true,()=>false);
+ if(opened)await page.locator('.review-dialog [data-guide="review-dismiss"]').first().click();
+ await expect(page.locator('.review-dialog')).toHaveCount(0);
  if(!(await page.locator('[data-testid="tactical-battlefield"]').isVisible()))await page.locator('.hd-war-button').click();
  const plan=page.locator('[data-testid="standing-plan"]');
  await expect(plan).toHaveCount(1);
