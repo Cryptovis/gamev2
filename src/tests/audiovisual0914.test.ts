@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import manifest from '../../docs/ASSET_MANIFEST.md?raw';
 import type { GameState } from '../domain/game';
 import type { TacticalRoundEvent } from '../domain/tactical';
 import { resolveStandingRound, startTacticalBattle } from '../engine/systems/tactical';
@@ -169,17 +169,21 @@ describe('Phase 5 audio service', () => {
   });
 });
 
+// File lists only (lazy globs are never loaded) and module sources as text.
+const assetFiles = Object.keys(import.meta.glob(['../../public/assets/audio/*', '../../public/assets/terrain/*'])).map((p) => p.replace('../../', ''));
+const sources = import.meta.glob<string>(['../audio/*.ts', '../audio/*.tsx', '../presentation/*.ts', '../ui/panels/BattleFxLayer.tsx'], { query: '?raw', import: 'default', eager: true });
+
 describe('Phase 5 assets and boundaries', () => {
-  const manifest = readFileSync('docs/ASSET_MANIFEST.md', 'utf8');
   it('every sound cue and ambience has WebM and MP3 files, and every audio/terrain file is in the manifest', () => {
     const cues = Object.keys(CUE_CHANNEL) as SoundCue[];
-    for (const name of [...cues, 'ambient-command', 'ambient-war']) for (const url of soundUrls(name, 'public/assets/audio/')) expect(existsSync(url)).toBe(true);
-    for (const dir of ['public/assets/audio', 'public/assets/terrain']) for (const file of readdirSync(dir)) expect(manifest).toContain(file);
+    for (const name of [...cues, 'ambient-command', 'ambient-war']) for (const url of soundUrls(name, 'public/assets/audio/')) expect(assetFiles).toContain(url);
+    expect(assetFiles.filter((f) => f.includes('/terrain/'))).toHaveLength(6);
+    for (const file of assetFiles) expect(manifest).toContain(file.split('/').at(-1)!);
   });
 
   it('audio and effect modules never import simulation code that changes state', () => {
-    for (const file of ['src/audio/audioService.ts', 'src/audio/audioSettings.ts', 'src/audio/AudioDirector.tsx', 'src/presentation/battleEffects.ts', 'src/ui/panels/BattleFxLayer.tsx']) {
-      const src = readFileSync(file, 'utf8');
+    expect(Object.keys(sources).length).toBeGreaterThanOrEqual(5);
+    for (const src of Object.values(sources)) {
       const engineImports = [...src.matchAll(/from '([^']*engine[^']*)'/g)].map((m) => m[1]);
       expect(engineImports.filter((p) => !/engine\/systems\/tactical$/.test(p))).toEqual([]);
       expect(src).not.toMatch(/dispatch\(|setState\(|Math\.random|Date\.now/);
