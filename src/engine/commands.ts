@@ -1,6 +1,6 @@
 import {affairsPreview} from './affairsPreview';
 import {cancelIndustrialContract,dismissLivingNotice,markInboxRead,setTutorialStep,toggleFacility} from './systems/playerRecords';
-import {startTacticalBattle,tacticalStartStatus,tacticalCommandStatus,combatAllowed,resolveTacticalRound,chooseTacticalOrders,playerSide} from './systems/tactical';
+import {startTacticalBattle,tacticalStartStatus,tacticalCommandStatus,combatAllowed,resolveTacticalRound,resolveStandingRound} from './systems/tactical';
 import {buildPlant,togglePlant,cancelPowerProject} from './systems/energy';
 import {buildFacility} from './systems/industrialEconomy';
 import {placeIndustrialOrder} from './systems/industrialMarket';
@@ -235,7 +235,7 @@ function executeGameCommand(state: GameState, command: GameCommand): GameState {
       if (eligibility.block === 'fuel') return note(state, WAR_FUEL_MESSAGE);
       return openWar(state, state.playerCountryId, command.targetCountryId).state;
     }
-    case 'military/assault': { const w=state.wars[command.warId];if(!w||![w.attackerId,w.defenderId].includes(state.playerCountryId)||!combatAllowed(state))return state;return w.tactical?resolveTacticalRound(state,w.id,chooseTacticalOrders(state,w.id,playerSide(state,w)),w.tactical.round):resolveCombatRound(state,w.id); }
+    case 'military/assault': { const w=state.wars[command.warId];if(!w||![w.attackerId,w.defenderId].includes(state.playerCountryId)||!combatAllowed(state))return state;return w.tactical?resolveStandingRound(state,w.id):resolveCombatRound(state,w.id); }
     case 'military/setAutoAssault': {
       const war = state.wars[command.warId];
       if (!war || war.status !== 'active' || ![war.attackerId,war.defenderId].includes(state.playerCountryId)) return state;

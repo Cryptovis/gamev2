@@ -1,8 +1,9 @@
 import type { BattlefieldTerrain, CasualtySnapshot, GameState, WarState } from '../../domain/game';
-import type { TacticalAction, TacticalBattle, TacticalOrder, TacticalOrderKind, TacticalRole, TacticalSide, TacticalUnit } from '../../domain/tactical';
+import type { TacticalAction, TacticalBattle, TacticalOrder, TacticalOrderKind, TacticalPlan, TacticalRole, TacticalSide, TacticalUnit } from '../../domain/tactical';
 import { nextRandom } from '../rng';
 import { COMMITTED_SHARE, SUSTAINMENT_SHARE, emptyLosses, resolveCombatRound, roundFuelCost, type CombatSideOrders } from './warfare';
 import { pendingVictory } from './victory';
+import { planTacticalOrders, sideKnowledge } from './tacticalPlanner';
 
 export const COMMAND_BUDGET = 3;
 export const ORDER_COST: Record<TacticalOrderKind, number> = { move: 1, defend: 1, flank: 2, recon: 1, reserve: 1, bombard: 2 };
@@ -223,16 +224,20 @@ export function validateTacticalOrders(s: GameState, id: string, side: TacticalS
   return [...new Set(reasons)];
 }
 
-/**
- * AI orders (0.86): every surviving group proposes scored options, and the best options that fit the
- * command budget are taken, one per group. The AI uses the same validator, vision and fuel as the player.
- * Priorities: hold a depot under threat, bombard visible enemies (above all on depots), take an open depot,
- * contest an enemy-held depot, then advance.
- */
+/** AI orders for a side: the Phase 3 multi-round planner (tacticalPlanner.ts), with this module's single-round AI as fallback. */
 export function chooseTacticalOrders(s: GameState, id: string, side: TacticalSide): TacticalOrder[] {
+  return planTacticalOrders(s, id, side).orders;
+}
+
+/**
+ * Single-round AI (0.86), now the planner's fallback: every surviving group proposes scored options, and the best
+ * options that fit the command budget are taken, one per group. It uses the same validator, vision and fuel as the
+ * player, and objective holders only as far as this side can see (Phase 3 fog-of-war fix).
+ */
+export function chooseSingleRoundOrders(s: GameState, id: string, side: TacticalSide): TacticalOrder[] {
   const b = s.wars[id].tactical!, visible = visibleCells(b, side);
   const enemies = alive(b.units).filter(u => u.side !== side && visible.has(u.cell));
-  const holders = objectiveHolders(b);
+  const holders = sideKnowledge(b, side, []).holders;
   const open = b.objectives.filter((_, i) => holders[i] !== side);
   const enemyHeld = b.objectives.filter((_, i) => holders[i] === other(side));
   const goals = open.length ? open : b.objectives;
@@ -354,9 +359,16 @@ export function distributeLosses(b: TacticalBattle, units: TacticalUnit[], side:
   return taken;
 }
 
-export function resolveTacticalRound(s: GameState, id: string, orders: TacticalOrder[], expectedRound: number): GameState {
+/**
+ * Resolves one round. `standingPlan` is the player's side plan when its orders came from the AI (auto mode or
+ * standing orders); a round the player orders by hand drops that side's plan.
+ */
+export function resolveTacticalRound(s: GameState, id: string, orders: TacticalOrder[], expectedRound: number, standingPlan?: TacticalPlan | null): GameState {
   if (tacticalCommandStatus(s, id, expectedRound, orders).length) return s;
-  const w = s.wars[id], b = w.tactical!, mine = playerSide(s, w), enemy = other(mine), enemyOrders = chooseTacticalOrders(s, id, enemy);
+  const w = s.wars[id], b = w.tactical!, mine = playerSide(s, w), enemy = other(mine), planned = planTacticalOrders(s, id, enemy), enemyOrders = planned.orders;
+  const plans: Partial<Record<TacticalSide, TacticalPlan>> = {};
+  if (planned.plan) plans[enemy] = planned.plan;
+  if (standingPlan) plans[mine] = standingPlan;
   const bySide: Record<TacticalSide, TacticalOrder[]> = { attacker: mine === 'attacker' ? orders : enemyOrders, defender: mine === 'defender' ? orders : enemyOrders };
   const costs = { attacker: tacticalRoundFuel(s, w, 'attacker', bySide.attacker), defender: tacticalRoundFuel(s, w, 'defender', bySide.defender) };
   const all = [...bySide.attacker, ...bySide.defender];
@@ -432,14 +444,22 @@ export function resolveTacticalRound(s: GameState, id: string, orders: TacticalO
     attackerLosses: losses.attacker, defenderLosses: losses.defender, attackerFuel: costs.attacker, defenderFuel: costs.defender,
     progressBefore: w.progress, progressAfter: nw.progress, units: after, beforeUnits: structuredClone(b.units), objectives: holders, revealed, actions,
   };
-  return { ...next, wars: { ...next.wars, [id]: { ...nw, tactical: { ...b, rngState, round: b.round + 1, units: after, revealed, events: [...b.events, event].slice(-60) } } } };
+  return { ...next, wars: { ...next.wars, [id]: { ...nw, tactical: { ...b, rngState, round: b.round + 1, units: after, revealed, events: [...b.events, event].slice(-60), plans } } } };
+}
+
+/** A round where the player's side follows its standing plan (auto mode, the assault command, unanswered defence). */
+export function resolveStandingRound(s: GameState, id: string): GameState {
+  const w = s.wars[id];
+  if (!w?.tactical) return s;
+  const planned = planTacticalOrders(s, id, playerSide(s, w));
+  return resolveTacticalRound(s, id, planned.orders, w.tactical.round, planned.plan);
 }
 
 export function processAutoTacticalWars(s: GameState): GameState {
   let next = s;
   for (const w of Object.values(s.wars))
     if (w.status === 'active' && w.tactical && w.autoAssault && [w.attackerId, w.defenderId].includes(s.playerCountryId))
-      next = resolveTacticalRound(next, w.id, chooseTacticalOrders(next, w.id, playerSide(next, w)), next.wars[w.id].tactical!.round);
+      next = resolveStandingRound(next, w.id);
   return next;
 }
 

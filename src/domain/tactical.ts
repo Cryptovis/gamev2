@@ -52,6 +52,24 @@ export interface TacticalRoundEvent {
   actions: TacticalAction[];
 }
 
+/**
+ * Phase 3 multi-round tactical AI. A side's standing plan and what it has seen of the enemy. Optional in saves
+ * (schema 17): a battle without plans starts a fresh plan on its next AI round.
+ */
+export type TacticalPlanKind = 'recon' | 'seize' | 'flank' | 'secure' | 'withdraw';
+/** An enemy group as last seen by this side; never updated from information the side could not see. */
+export interface KnownEnemy { unitId: string; role: TacticalRole; cell: number; remaining: number; seenRound: number }
+export interface TacticalPlan {
+  kind: TacticalPlanKind;
+  /** Objective sector the plan is built around. */
+  objective: number;
+  startedRound: number;
+  updatedRound: number;
+  /** Projected value of the plan when last evaluated (used for plan consistency). */
+  score: number;
+  known: KnownEnemy[];
+}
+
 /** HD War v2 (0.85): sized grid, seeded mirrored terrain and several objectives. Schema 17. */
 export interface TacticalBattle {
   version: 2;
@@ -69,4 +87,6 @@ export interface TacticalBattle {
   units: TacticalUnit[];
   revealed: Record<TacticalSide, number[]>;
   events: TacticalRoundEvent[];
+  /** Phase 3: standing plans of AI-commanded sides (the opponent, and the player's side in auto mode). */
+  plans?: Partial<Record<TacticalSide, TacticalPlan>>;
 }
