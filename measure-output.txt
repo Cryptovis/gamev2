@@ -1,0 +1,27 @@
+
+> alpyx-global-command@0.90.0-playtest.9 measure:renders
+> playwright test --config performance/renders.config.ts
+
+[WebServer] [INEFFECTIVE_DYNAMIC_IMPORT] src/persistence/saveGame.ts is dynamically imported by src/engine/autosaveWrite.ts, src/store/gameStore.ts but also statically imported by src/ui/panels/CampaignEntry.tsx, dynamic import will not move module into another chunk.
+[WebServer] 
+
+Running 1 test using 1 worker
+[renders] map only: commits=182 renders=5919 selfMs=158.9
+[renders] market: commits=94 renders=4639 selfMs=176.3
+[renders] world: commits=151 renders=5704 selfMs=153.5
+[renders] supply: commits=122 renders=7581 selfMs=310.2
+[renders] goals: commits=170 renders=6159 selfMs=178.8
+[renders] diplomacy: commits=171 renders=7724 selfMs=157.2
+[renders] alerts: commits=142 renders=5471 selfMs=123
+[renders] help: commits=167 renders=6292 selfMs=181.8
+[renders] nation/economy: commits=172 renders=13489 selfMs=193.6
+[renders] nation/policies: commits=174 renders=13068 selfMs=190.5
+[renders] nation/trade: commits=175 renders=13561 selfMs=235.1
+[renders] nation/production: commits=123 renders=17229 selfMs=248.1
+[renders] nation/diplomacy: commits=173 renders=12934 selfMs=188.9
+[renders] nation/military: commits=176 renders=13537 selfMs=224.7
+[renders] nation/technology: commits=124 renders=12666 selfMs=177.3
+[renders] nation/world: commits=122 renders=14532 selfMs=233.7
+[renders] nation/war: commits=167 renders=12817 selfMs=189.3
+·
+  1 passed (3.0m)
