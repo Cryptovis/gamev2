@@ -1,4 +1,4 @@
-# Rule of Nations (RON) — 0.90.0-playtest.10
+# Rule of Nations (RON) — 0.90.0-playtest.11
 
 Rule of Nations is a browser-based geopolitical grand-strategy prototype built with React, TypeScript, Zustand, D3 Geo and Dexie. Lead a country through its economy, resources, diplomacy, development and military conflicts. Chart.js provides economic charts; Vitest and Playwright verify gameplay and browser flows.
 
@@ -6,7 +6,7 @@ Rule of Nations is a browser-based geopolitical grand-strategy prototype built w
 
 | Item | Current state |
 |---|---|
-| Version | **0.90.0-playtest.10 — Rule of Nations: fluid command** |
+| Version | **0.90.0-playtest.11 — RON Interactive credit** (on playtest.10, Rule of Nations: fluid command) |
 | Development branch | `dev/clear-command-090` |
 | Save schema | 17 (0.86–0.89 add optional fields; 0.90 preserves the schema); schemas 12–16 migrate automatically, older or newer saves are refused with a warning |
 | Validation | 639 unit tests / 81 files, TypeScript and production build passed (run on the release tree). All 158 production-browser scenarios passed on GitHub-hosted Chromium (15.7 min; 146 earlier + 12 new for motion, return state, brand and typography). Not run locally or on StackBlitz: the npm registry was blocked in this session. CI on the published commit is the release gate. [Phase 2 record](docs/FLUID-UI-0910.md) |
@@ -34,6 +34,8 @@ npm run test:e2e
 `check` runs tests, TypeScript checks and the production build. Browser tests run separately against the production preview. Optional `npm run measure:engine`, `npm run measure:browser` and `npm run measure:renders` (React render attribution on a profiling build) write local performance reports; run browser measurements separately from other builds/tests. See [measurement method](docs/PERFORMANCE-0906.md).
 
 ## Recent changelog
+
+- **0.90.0-playtest.11 (Claude):** footer credit is now RON Interactive; no AlpyX text remains in the interface.
 
 - **0.90.0-playtest.10 (Claude):** the game is now **Rule of Nations (RON)**; store subscriptions narrowed (−30% component renders), fading windows that return with their scroll and focus, a 10 px text floor and natural-case buttons and headings in five languages. [Phase 2 record](docs/FLUID-UI-0910.md). Schema 17, simulation and dependencies unchanged.
 

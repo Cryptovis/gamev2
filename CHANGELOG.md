@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.90.0-playtest.11 — RON Interactive credit
+Implementation: **Claude (Opus 5.5)**. Branch: `dev/clear-command-090`. Schema 17, simulation and dependencies unchanged.
+
+- The studio credit in the footer is **RON Interactive** (untranslated); the last visible "AlpyX" text is removed. Guards now reject any AlpyX text in the interface.
+
+Validation: 639 unit tests / 81 files, TypeScript and production build passed; all 158 production-browser scenarios passed on GitHub-hosted Chromium (15.4 min). CI on the published commit is the release gate.
+
 ## 0.90.0-playtest.10 — Rule of Nations: fluid command (Phase 2)
 Implementation and validation: **Claude (Opus 5.5)**. Branch: `dev/clear-command-090`. Save schema 17, simulation rules, seeded RNG and dependencies unchanged; existing saves continue.
 

@@ -56,7 +56,7 @@ Audited-panel counts come from each scenario's 25 most frequently rendered compo
 
 - Page title and description, HUD eyebrow, entry and setup cover mark (`BrandMark`, `translate="no"`), wizard and loading headers, Help, victory notice, opening news and map notice use **Rule of Nations / RON**, untranslated in every language. Messages already stored in older saves display the new name.
 - The cover art had "THE REAL PRESIDENT" painted into the image; the title band was cropped (900×1350 → 900×1088) and the name is now HTML text over the art.
-- Package name `rule-of-nations`. Kept on purpose: IndexedDB `alpyx-global-command`, local storage keys `alpyx-map-zoom` and `trp-*`, and the footer credit "AlpyX Game Studios" pending Alper's decision. Historical release notes keep the names they were published under.
+- Package name `rule-of-nations`. Kept on purpose: IndexedDB `alpyx-global-command`, local storage keys `alpyx-map-zoom` and `trp-*`, The footer credit became "RON Interactive" in playtest.11 at Alper's request. Historical release notes keep the names they were published under.
 
 ## 5. Validation
 

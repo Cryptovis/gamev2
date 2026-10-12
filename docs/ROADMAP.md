@@ -203,3 +203,7 @@ No large refactoring, catalogue consolidation or new libraries in Phase 1. Typed
 ## 0.90.0-playtest.10 — Rule of Nations: fluid command (Claude)
 
 Delivered Phase 2: narrowed store subscriptions with render attribution (`npm run measure:renders`), opacity-only window motion with reduced-motion support, parent return with scroll/tab/focus, a 10 px text floor with natural-case buttons, tabs and headings in five languages, and the Rule of Nations name. Remaining for later phases: long-tail capital labels, wider translation review, mobile/low-power and StackBlitz measurement (Phase 6). Phase 3 (multi-turn tactical AI) has not started.
+
+## 0.90.0-playtest.11 — RON Interactive credit (Claude)
+
+Footer credit is RON Interactive. Phase 3 (multi-turn tactical AI and balance) starts after Alper's StackBlitz check and authorization.

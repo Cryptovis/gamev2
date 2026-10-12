@@ -32,7 +32,7 @@ describe('playtest.10 Rule of Nations',()=>{
   const state=makeInitialState();
   expect(state.mapNotice).toContain(BRAND_NAME);
   expect(state.sitrep.join(' ')).not.toMatch(/Real President|AlpyX/i);
-  const old=Object.entries(uiSources).filter(([,source])=>/THE REAL PRESIDENT|The Real President|AlpyX(?! Game Studios)|ALPYX/.test(source)).map(([file])=>file);
+  const old=Object.entries(uiSources).filter(([,source])=>/THE REAL PRESIDENT|The Real President|AlpyX|ALPYX/.test(source)).map(([file])=>file);
   expect(old).toEqual([]);
  });
 });

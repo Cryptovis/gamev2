@@ -65,7 +65,8 @@ for(const language of LANGUAGES)test(`${language} shows Rule of Nations untransl
  await expect(page).toHaveTitle('Rule of Nations');
  await expect(page.locator('.brand-block .eyebrow')).toHaveText('Rule of Nations');
  await page.locator('[data-guide="rail-help"]').click();await expect(page.locator('#help-window .game-notes h3')).toHaveText('Rule of Nations');
- expect(await page.locator('body').innerText()).not.toMatch(/Real President|Gerçek Başkan|Gerçekten O'nun|AlpyX(?! Game Studios)/);
+ expect(await page.locator('body').innerText()).not.toMatch(/Real President|Gerçek Başkan|Gerçekten O'nun|AlpyX/i);
+ await expect(page.locator('.studio-footer')).toHaveText('RON Interactive');
 });
 
 test('entry and setup screens carry the Rule of Nations mark over the cover art',async({page})=>{
