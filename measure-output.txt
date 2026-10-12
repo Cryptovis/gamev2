@@ -1,0 +1,123 @@
+
+> rule-of-nations@0.90.0-playtest.12 test:e2e
+> playwright test
+
+[WebServer] [INEFFECTIVE_DYNAMIC_IMPORT] src/persistence/saveGame.ts is dynamically imported by src/engine/autosaveWrite.ts, src/store/gameStore.ts but also statically imported by src/ui/panels/CampaignEntry.tsx, dynamic import will not move module into another chunk.
+[WebServer] 
+[WebServer] [plugin builtin:vite-reporter] 
+[WebServer] (!) Some chunks are larger than 500 kB after minification. Consider:
+[WebServer] - Using dynamic import() to code-split the application
+[WebServer] - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+[WebServer] - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+
+Running 160 tests using 1 worker
+················································································
+··································································TT············
+
+  1) e2e/tacticalPlanner0912.spec.ts:16:44 › tr tactical board shows the player's standing plan but never the opponent's, and survives save/load 
+
+    Test timeout of 60000ms exceeded.
+
+    Error: locator.click: Test timeout of 60000ms exceeded.
+    Call log:
+      - waiting for locator('[data-guide="rail-world"]')
+        - locator resolved to <button class="rail-button" aria-pressed="false" data-guide="rail-world" title="DÜNYA · Closed — click to open">…</button>
+      - attempting click action
+        2 × waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - <div class="review-backdrop">…</div> intercepts pointer events
+        - retrying click action
+        - waiting 20ms
+        2 × waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - <div class="review-backdrop">…</div> intercepts pointer events
+        - retrying click action
+          - waiting 100ms
+        108 × waiting for element to be visible, enabled and stable
+            - element is visible, enabled and stable
+            - scrolling into view if needed
+            - done scrolling
+            - <div class="review-backdrop">…</div> intercepts pointer events
+          - retrying click action
+            - waiting 500ms
+        - waiting for element to be visible, enabled and stable
+
+
+      19 |  expect(s.wars[id].tactical!.plans?.attacker).toBeDefined();expect(s.wars[id].tactical!.plans?.defender).toBeDefined();
+      20 |  await resumeFixture(page,s);
+    > 21 |  await page.locator('[data-guide="rail-world"]').click();await page.locator('#pulse-window .world-active-wars button').first().click();
+         |                                                  ^
+      22 |  await expect(page.locator('.war-theatre-backdrop')).toBeVisible();
+      23 |  if(!(await page.locator('[data-testid="tactical-battlefield"]').isVisible()))await page.locator('.hd-war-button').click();
+      24 |  const plan=page.locator('[data-testid="standing-plan"]');
+        at /home/runner/work/gamev2/gamev2/e2e/tacticalPlanner0912.spec.ts:21:50
+
+    Error Context: test-results/tacticalPlanner0912-tr-tac-2b802-nt-s-and-survives-save-load/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/tacticalPlanner0912-tr-tac-2b802-nt-s-and-survives-save-load/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/tacticalPlanner0912-tr-tac-2b802-nt-s-and-survives-save-load/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) e2e/tacticalPlanner0912.spec.ts:16:44 › en tactical board shows the player's standing plan but never the opponent's, and survives save/load 
+
+    Test timeout of 60000ms exceeded.
+
+    Error: locator.click: Test timeout of 60000ms exceeded.
+    Call log:
+      - waiting for locator('[data-guide="rail-world"]')
+        - locator resolved to <button class="rail-button" aria-pressed="false" data-guide="rail-world" title="WORLD · Closed — click to open">…</button>
+      - attempting click action
+        2 × waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - <div class="review-backdrop">…</div> intercepts pointer events
+        - retrying click action
+        - waiting 20ms
+        2 × waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - <div class="review-backdrop">…</div> intercepts pointer events
+        - retrying click action
+          - waiting 100ms
+        108 × waiting for element to be visible, enabled and stable
+            - element is visible, enabled and stable
+            - scrolling into view if needed
+            - done scrolling
+            - <div class="review-backdrop">…</div> intercepts pointer events
+          - retrying click action
+            - waiting 500ms
+
+
+      19 |  expect(s.wars[id].tactical!.plans?.attacker).toBeDefined();expect(s.wars[id].tactical!.plans?.defender).toBeDefined();
+      20 |  await resumeFixture(page,s);
+    > 21 |  await page.locator('[data-guide="rail-world"]').click();await page.locator('#pulse-window .world-active-wars button').first().click();
+         |                                                  ^
+      22 |  await expect(page.locator('.war-theatre-backdrop')).toBeVisible();
+      23 |  if(!(await page.locator('[data-testid="tactical-battlefield"]').isVisible()))await page.locator('.hd-war-button').click();
+      24 |  const plan=page.locator('[data-testid="standing-plan"]');
+        at /home/runner/work/gamev2/gamev2/e2e/tacticalPlanner0912.spec.ts:21:50
+
+    Error Context: test-results/tacticalPlanner0912-en-tac-e06d8-nt-s-and-survives-save-load/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/tacticalPlanner0912-en-tac-e06d8-nt-s-and-survives-save-load/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/tacticalPlanner0912-en-tac-e06d8-nt-s-and-survives-save-load/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    e2e/tacticalPlanner0912.spec.ts:16:44 › tr tactical board shows the player's standing plan but never the opponent's, and survives save/load 
+    e2e/tacticalPlanner0912.spec.ts:16:44 › en tactical board shows the player's standing plan but never the opponent's, and survives save/load 
+  158 passed (17.8m)

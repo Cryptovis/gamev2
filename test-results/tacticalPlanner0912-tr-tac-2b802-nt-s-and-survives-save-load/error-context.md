@@ -1,0 +1,746 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: tacticalPlanner0912.spec.ts >> tr tactical board shows the player's standing plan but never the opponent's, and survives save/load
+- Location: e2e/tacticalPlanner0912.spec.ts:16:44
+
+# Error details
+
+```
+Test timeout of 60000ms exceeded.
+```
+
+```
+Error: locator.click: Test timeout of 60000ms exceeded.
+Call log:
+  - waiting for locator('[data-guide="rail-world"]')
+    - locator resolved to <button class="rail-button" aria-pressed="false" data-guide="rail-world" title="DÜNYA · Closed — click to open">…</button>
+  - attempting click action
+    2 × waiting for element to be visible, enabled and stable
+      - element is visible, enabled and stable
+      - scrolling into view if needed
+      - done scrolling
+      - <div class="review-backdrop">…</div> intercepts pointer events
+    - retrying click action
+    - waiting 20ms
+    2 × waiting for element to be visible, enabled and stable
+      - element is visible, enabled and stable
+      - scrolling into view if needed
+      - done scrolling
+      - <div class="review-backdrop">…</div> intercepts pointer events
+    - retrying click action
+      - waiting 100ms
+    108 × waiting for element to be visible, enabled and stable
+        - element is visible, enabled and stable
+        - scrolling into view if needed
+        - done scrolling
+        - <div class="review-backdrop">…</div> intercepts pointer events
+      - retrying click action
+        - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+
+```
+
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - main [ref=e3]:
+    - generic [ref=e4]:
+      - generic:
+        - strong: DÜNYA KOMUTASI
+        - generic: küreyi sürükle · tekerlekle yakınlaştır · ülkeye tıkla
+      - group "Interactive world map" [ref=e5]:
+        - generic [ref=e8]:
+          - generic "Tanzanya" [ref=e9] [cursor=pointer]
+          - generic "Batı Sahra" [ref=e10] [cursor=pointer]
+          - generic "Kanada" [ref=e11] [cursor=pointer]
+          - generic "Amerika Birleşik Devletleri" [ref=e12] [cursor=pointer]
+          - generic "Kazakistan" [ref=e13] [cursor=pointer]
+          - generic "Özbekistan" [ref=e14] [cursor=pointer]
+          - generic "Endonezya" [ref=e15] [cursor=pointer]
+          - generic "Kongo - Kinşasa" [ref=e16] [cursor=pointer]
+          - generic "Somali" [ref=e17] [cursor=pointer]
+          - generic "Kenya" [ref=e18] [cursor=pointer]
+          - generic "Sudan" [ref=e19] [cursor=pointer]
+          - generic "Çad" [ref=e20] [cursor=pointer]
+          - generic "Haiti" [ref=e21] [cursor=pointer]
+          - generic "Dominik Cumhuriyeti" [ref=e22] [cursor=pointer]
+          - generic "Rusya" [ref=e23] [cursor=pointer]
+          - generic "Norveç" [ref=e24] [cursor=pointer]
+          - generic "Grönland" [ref=e25] [cursor=pointer]
+          - generic "Fransız Güney Toprakları" [ref=e26] [cursor=pointer]
+          - generic "Güney Afrika" [ref=e27] [cursor=pointer]
+          - generic "Lesotho" [ref=e28] [cursor=pointer]
+          - generic "Brezilya" [ref=e29] [cursor=pointer]
+          - generic "Venezuela" [ref=e30] [cursor=pointer]
+          - generic "Guyana" [ref=e31] [cursor=pointer]
+          - generic "Surinam" [ref=e32] [cursor=pointer]
+          - generic "Fransa" [ref=e33] [cursor=pointer]
+          - generic "Porto Riko" [ref=e34] [cursor=pointer]
+          - generic "Zimbabve" [ref=e35] [cursor=pointer]
+          - generic "Botsvana" [ref=e36] [cursor=pointer]
+          - generic "Namibya" [ref=e37] [cursor=pointer]
+          - generic "Senegal" [ref=e38] [cursor=pointer]
+          - generic "Mali" [ref=e39] [cursor=pointer]
+          - generic "Moritanya" [ref=e40] [cursor=pointer]
+          - generic "Benin" [ref=e41] [cursor=pointer]
+          - generic "Nijer" [ref=e42] [cursor=pointer]
+          - generic "Nijerya" [ref=e43] [cursor=pointer]
+          - generic "Kamerun" [ref=e44] [cursor=pointer]
+          - generic "Togo" [ref=e45] [cursor=pointer]
+          - generic "Gana" [ref=e46] [cursor=pointer]
+          - generic "Côte d’Ivoire" [ref=e47] [cursor=pointer]
+          - generic "Gine" [ref=e48] [cursor=pointer]
+          - generic "Gine-Bissau" [ref=e49] [cursor=pointer]
+          - generic "Liberya" [ref=e50] [cursor=pointer]
+          - generic "Sierra Leone" [ref=e51] [cursor=pointer]
+          - generic "Burkina Faso" [ref=e52] [cursor=pointer]
+          - generic "Orta Afrika Cumhuriyeti" [ref=e53] [cursor=pointer]
+          - generic "Kongo - Brazavil" [ref=e54] [cursor=pointer]
+          - generic "Gabon" [ref=e55] [cursor=pointer]
+          - generic "Ekvator Ginesi" [ref=e56] [cursor=pointer]
+          - generic "Zambiya" [ref=e57] [cursor=pointer]
+          - generic "Malavi" [ref=e58] [cursor=pointer]
+          - generic "Mozambik" [ref=e59] [cursor=pointer]
+          - generic "Esvatini" [ref=e60] [cursor=pointer]
+          - generic "Angola" [ref=e61] [cursor=pointer]
+          - generic "Burundi" [ref=e62] [cursor=pointer]
+          - generic "İsrail" [ref=e63] [cursor=pointer]
+          - generic "Lübnan" [ref=e64] [cursor=pointer]
+          - generic "Madagaskar" [ref=e65] [cursor=pointer]
+          - generic "Filistin" [ref=e66] [cursor=pointer]
+          - generic "Gambiya" [ref=e67] [cursor=pointer]
+          - generic "Tunus" [ref=e68] [cursor=pointer]
+          - generic "Cezayir" [ref=e69] [cursor=pointer]
+          - generic "Ürdün" [ref=e70] [cursor=pointer]
+          - generic "Birleşik Arap Emirlikleri" [ref=e71] [cursor=pointer]
+          - generic "Katar" [ref=e72] [cursor=pointer]
+          - generic "Kuveyt" [ref=e73] [cursor=pointer]
+          - generic "Irak" [ref=e74] [cursor=pointer]
+          - generic "Umman" [ref=e75] [cursor=pointer]
+          - generic "Kamboçya" [ref=e76] [cursor=pointer]
+          - generic "Tayland" [ref=e77] [cursor=pointer]
+          - generic "Laos" [ref=e78] [cursor=pointer]
+          - generic "Myanmar (Burma)" [ref=e79] [cursor=pointer]
+          - generic "Vietnam" [ref=e80] [cursor=pointer]
+          - generic "Kuzey Kore" [ref=e81] [cursor=pointer]
+          - generic "Güney Kore" [ref=e82] [cursor=pointer]
+          - generic "Moğolistan" [ref=e83] [cursor=pointer]
+          - generic "Hindistan" [ref=e84] [cursor=pointer]
+          - generic "Bangladeş" [ref=e85] [cursor=pointer]
+          - generic "Butan" [ref=e86] [cursor=pointer]
+          - generic "Nepal" [ref=e87] [cursor=pointer]
+          - generic "Pakistan" [ref=e88] [cursor=pointer]
+          - generic "Afganistan" [ref=e89] [cursor=pointer]
+          - generic "Tacikistan" [ref=e90] [cursor=pointer]
+          - generic "Kırgızistan" [ref=e91] [cursor=pointer]
+          - generic "Türkmenistan" [ref=e92] [cursor=pointer]
+          - generic "İran" [ref=e93] [cursor=pointer]
+          - generic "Suriye" [ref=e94] [cursor=pointer]
+          - generic "Ermenistan" [ref=e95] [cursor=pointer]
+          - generic "İsveç" [ref=e96] [cursor=pointer]
+          - generic "Belarus" [ref=e97] [cursor=pointer]
+          - generic "Ukrayna" [ref=e98] [cursor=pointer]
+          - generic "Polonya" [ref=e99] [cursor=pointer]
+          - generic "Avusturya" [ref=e100] [cursor=pointer]
+          - generic "Macaristan" [ref=e101] [cursor=pointer]
+          - generic "Moldova" [ref=e102] [cursor=pointer]
+          - generic "Romanya" [ref=e103] [cursor=pointer]
+          - generic "Litvanya" [ref=e104] [cursor=pointer]
+          - generic "Letonya" [ref=e105] [cursor=pointer]
+          - generic "Estonya" [ref=e106] [cursor=pointer]
+          - generic "Almanya" [ref=e107] [cursor=pointer]
+          - generic "Bulgaristan" [ref=e108] [cursor=pointer]
+          - generic "Yunanistan" [ref=e109] [cursor=pointer]
+          - generic "Türkiye" [ref=e110] [cursor=pointer]
+          - generic "Arnavutluk" [ref=e111] [cursor=pointer]
+          - generic "Hırvatistan" [ref=e112] [cursor=pointer]
+          - generic "İsviçre" [ref=e113] [cursor=pointer]
+          - generic "Lüksemburg" [ref=e114] [cursor=pointer]
+          - generic "Belçika" [ref=e115] [cursor=pointer]
+          - generic "Hollanda" [ref=e116] [cursor=pointer]
+          - generic "Portekiz" [ref=e117] [cursor=pointer]
+          - generic "İspanya" [ref=e118] [cursor=pointer]
+          - generic "İrlanda" [ref=e119] [cursor=pointer]
+          - generic "Sri Lanka" [ref=e120] [cursor=pointer]
+          - generic "Çin" [ref=e121] [cursor=pointer]
+          - generic "Tayvan" [ref=e122] [cursor=pointer]
+          - generic "İtalya" [ref=e123] [cursor=pointer]
+          - generic "Danimarka" [ref=e124] [cursor=pointer]
+          - generic "Birleşik Krallık" [ref=e125] [cursor=pointer]
+          - generic "İzlanda" [ref=e126] [cursor=pointer]
+          - generic "Azerbaycan" [ref=e127] [cursor=pointer]
+          - generic "Gürcistan" [ref=e128] [cursor=pointer]
+          - generic "Filipinler" [ref=e129] [cursor=pointer]
+          - generic "Malezya" [ref=e130] [cursor=pointer]
+          - generic "Brunei" [ref=e131] [cursor=pointer]
+          - generic "Slovenya" [ref=e132] [cursor=pointer]
+          - generic "Finlandiya" [ref=e133] [cursor=pointer]
+          - generic "Slovakya" [ref=e134] [cursor=pointer]
+          - generic "Çekya" [ref=e135] [cursor=pointer]
+          - generic "Eritre" [ref=e136] [cursor=pointer]
+          - generic "Japonya" [ref=e137] [cursor=pointer]
+          - generic "Yemen" [ref=e138] [cursor=pointer]
+          - generic "Suudi Arabistan" [ref=e139] [cursor=pointer]
+          - generic "Kıbrıs" [ref=e140] [cursor=pointer]
+          - generic "Kıbrıs" [ref=e141] [cursor=pointer]
+          - generic "Fas" [ref=e142] [cursor=pointer]
+          - generic "Mısır" [ref=e143] [cursor=pointer]
+          - generic "Libya" [ref=e144] [cursor=pointer]
+          - generic "Etiyopya" [ref=e145] [cursor=pointer]
+          - generic "Cibuti" [ref=e146] [cursor=pointer]
+          - generic "Somali" [ref=e147] [cursor=pointer]
+          - generic "Uganda" [ref=e148] [cursor=pointer]
+          - generic "Ruanda" [ref=e149] [cursor=pointer]
+          - generic "Bosna-Hersek" [ref=e150] [cursor=pointer]
+          - generic "Kuzey Makedonya" [ref=e151] [cursor=pointer]
+          - generic "Sırbistan" [ref=e152] [cursor=pointer]
+          - generic "Karadağ" [ref=e153] [cursor=pointer]
+          - generic "Kosova" [ref=e154] [cursor=pointer]
+          - generic "Trinidad ve Tobago" [ref=e155] [cursor=pointer]
+          - generic "Güney Sudan" [ref=e156] [cursor=pointer]
+        - generic:
+          - generic:
+            - generic: RUSYA
+          - generic:
+            - generic: TÜRKİYE
+          - generic:
+            - generic: ÇIN
+          - generic:
+            - generic: HINDISTAN
+          - generic:
+            - generic: CEZAYIR
+          - generic:
+            - generic: KONGO - KINŞASA
+          - generic:
+            - generic: KAZAKISTAN
+          - generic:
+            - generic: SUUDI ARABISTAN
+          - generic:
+            - generic: SUDAN
+          - generic:
+            - generic: LİBYA
+          - generic:
+            - generic: İRAN
+          - generic:
+            - generic: ÇAD
+          - generic:
+            - generic: KANADA
+          - generic:
+            - generic: ETIYOPYA
+          - generic:
+            - generic: MALİ
+          - generic:
+            - generic: ANGOLA
+          - generic:
+            - generic: BREZILYA
+          - generic:
+            - generic: NIJERYA
+          - generic:
+            - generic: GÜNEY AFRIKA
+          - generic:
+            - generic: ARKTİK OKYANUSU
+          - generic:
+            - generic: HİNT OKYANUSU
+          - generic:
+            - generic: KUZEY ATLANTİK OKYANUSU
+          - generic:
+            - generic: GÜNEY ATLANTİK OKYANUSU
+      - generic "Map camera controls" [ref=e157]:
+        - button "Zoom out" [ref=e158] [cursor=pointer]: −
+        - status "Map zoom level" [ref=e159]: 100%
+        - button "Zoom in" [ref=e160] [cursor=pointer]: +
+        - button "Ülkene dön" [ref=e161] [cursor=pointer]:
+          - img [ref=e162]
+        - button "SIFIRLA" [ref=e166] [cursor=pointer]
+    - generic:
+      - generic [ref=e167]:
+        - generic [ref=e168]:
+          - button "Yönetici ⋯" [ref=e169] [cursor=pointer]:
+            - img "Yönetici" [ref=e170]
+            - generic [ref=e171]: ⋯
+          - generic [ref=e172]:
+            - generic [ref=e173]: Rule of Nations
+            - generic [ref=e174]:
+              - strong [ref=e175]: Browser playtest
+              - generic [ref=e176]: GÜN 2
+        - generic "Ulusal komut göstergeleri" [ref=e177]:
+          - generic [ref=e178]:
+            - img [ref=e181]
+            - generic [ref=e182]:
+              - generic [ref=e183]: HAZİNE
+              - strong [ref=e184]: $143.0B
+          - generic [ref=e185]:
+            - img [ref=e188]
+            - generic [ref=e189]:
+              - generic [ref=e190]: GÜNLÜK BÜTÇE
+              - strong [ref=e191]: +$0.167B
+          - generic [ref=e192]:
+            - img [ref=e195]
+            - generic [ref=e196]:
+              - generic [ref=e197]: ONAY
+              - strong [ref=e198]: 56%
+          - generic [ref=e199]:
+            - img [ref=e202]
+            - generic [ref=e203]:
+              - generic [ref=e204]: İSTİKRAR
+              - strong [ref=e205]: 67%
+      - generic [ref=e206]:
+        - generic [ref=e207]:
+          - generic "Oyun hızı kontrolleri" [ref=e208]:
+            - button "Ⅱ DURAKLAT" [pressed] [ref=e209] [cursor=pointer]:
+              - strong [ref=e210]: Ⅱ
+              - generic [ref=e211]: DURAKLAT
+            - button "1× 15s/GÜN" [ref=e212] [cursor=pointer]:
+              - strong [ref=e213]: 1×
+              - generic [ref=e214]: 15s/GÜN
+            - button "2× 7s/GÜN" [ref=e215] [cursor=pointer]:
+              - strong [ref=e216]: 2×
+              - generic [ref=e217]: 7s/GÜN
+            - button "3× 3s/GÜN" [ref=e218] [cursor=pointer]:
+              - strong [ref=e219]: 3×
+              - generic [ref=e220]: 3s/GÜN
+            - button "5× 1s/GÜN" [ref=e221] [cursor=pointer]:
+              - strong [ref=e222]: 5×
+              - generic [ref=e223]: 1s/GÜN
+          - generic [ref=e224]:
+            - generic [ref=e225]: OYUN TARİHİ
+            - strong [ref=e226]: 2026-01-02
+        - button "Ülkenin yönetimini aç" [ref=e227] [cursor=pointer]:
+          - generic [ref=e228]: 🇹🇷
+          - generic [ref=e229]:
+            - strong [ref=e230]: Türkiye
+            - generic [ref=e231]: demokrasi
+            - emphasis [ref=e232]: Ülkenin yönetimini aç
+    - navigation "Dünya komuta araçları" [ref=e233]:
+      - button "PAZAR PAZAR" [ref=e234] [cursor=pointer]:
+        - img "PAZAR" [ref=e236]:
+          - img
+        - generic [ref=e237]: PAZAR
+      - button "DÜNYA 1 DÜNYA" [ref=e238] [cursor=pointer]:
+        - img "DÜNYA" [ref=e240]:
+          - img
+        - generic [ref=e241]: "1"
+        - generic [ref=e242]: DÜNYA
+      - button "UYARILAR 1 TEDARİK" [ref=e243] [cursor=pointer]:
+        - img "UYARILAR" [ref=e245]:
+          - img
+        - generic [ref=e246]: "1"
+        - generic [ref=e247]: TEDARİK
+    - navigation "Bilgi araçları" [ref=e248]:
+      - button "objectives 1/6 HEDEFLER" [ref=e249] [cursor=pointer]:
+        - img "objectives" [ref=e251]:
+          - img
+        - generic [ref=e252]: 1/6
+        - generic [ref=e253]: HEDEFLER
+      - button "Diplomasi DİPLOMASİ" [ref=e254] [cursor=pointer]:
+        - img "Diplomasi" [ref=e256]:
+          - img
+        - generic [ref=e257]: DİPLOMASİ
+      - button "UYARILAR 2 UYARILAR" [ref=e258] [cursor=pointer]:
+        - img "UYARILAR" [ref=e260]:
+          - img
+        - generic [ref=e261]: "2"
+        - generic [ref=e262]: UYARILAR
+      - button "İstihbarat 5 HABERLER" [ref=e263] [cursor=pointer]:
+        - img "İstihbarat" [ref=e265]:
+          - img
+        - generic [ref=e266]: "5"
+        - generic [ref=e267]: HABERLER
+    - navigation "Harita ve yardım araçları" [ref=e268]:
+      - button "HARİTA HARİTA" [ref=e269] [cursor=pointer]:
+        - img "HARİTA" [ref=e271]:
+          - img
+        - generic [ref=e272]: HARİTA
+      - button "YARDIM YARDIM" [ref=e273] [cursor=pointer]:
+        - img "YARDIM" [ref=e275]:
+          - img
+        - generic [ref=e276]: YARDIM
+    - generic [ref=e277]:
+      - generic [ref=e278]: "HABERLER // SAVAŞ // Türkiye mountain saldırısı: +11.0 cephe | tedarik %19/%11 | rezervler 100/100 | hava +28 | kayıplar 521 / 129"
+      - generic [ref=e279]:
+        - generic [ref=e280]: Dünya komuta kanalı
+        - generic [ref=e281]: OYUNCU · SİYASİ · SİYASİ · KÜRE
+    - generic: RON Interactive
+  - dialog "Savaş yönetimi" [ref=e283]:
+    - banner [ref=e284]:
+      - generic [ref=e285]:
+        - generic [ref=e286]: SAVAŞ YÖNETİMİ
+        - heading "Türkiye karşı Yunanistan" [level=2] [ref=e287]
+      - button "Yakın savaş komutları" [ref=e288] [cursor=pointer]: ×
+    - alert [ref=e289]:
+      - strong [ref=e290]: Uzun operasyon için yakıt rezervleri yetersiz
+      - paragraph [ref=e291]: "Yakıtın yeteceği operasyon günü: 13.4. Tedarik ve hazırlık çökmeden saldırıyı durdurmayı, ithalat sağlamayı veya geri çekilmeyi düşün."
+      - button "Yakıt tedarikini incele" [ref=e292] [cursor=pointer]
+    - generic [ref=e293]:
+      - generic [ref=e294]:
+        - generic [ref=e295]:
+          - generic [ref=e296]: TAKTİK KOMUTA · 0.89
+          - heading "İkmal depolarını ele geçir" [level=3] [ref=e297]
+          - paragraph [ref=e298]: Her simge cepheye ayrılmış bir birlik grubudur. Arazi, ikmal ve ülkenin askerî gücü sonucu etkiler.
+        - button "Savaş komutasına dön" [ref=e299] [cursor=pointer]
+      - status [ref=e300]:
+        - generic [ref=e301]:
+          - strong [ref=e302]: Tur tamamlandı
+          - paragraph [ref=e303]: Sonuçları incele. Sonra yeni turu başlat veya çekil.
+        - button "Tur sonuçlarını gör" [ref=e304] [cursor=pointer]
+      - generic [ref=e305]:
+        - generic [ref=e306]:
+          - text: Tur
+          - generic [ref=e307]: "2"
+        - generic [ref=e308]:
+          - text: Komut puanı
+          - generic [ref=e309]: 0/3
+        - generic [ref=e310]:
+          - text: Planlanan yakıt
+          - generic [ref=e311]: "0.8"
+        - generic [ref=e312]:
+          - text: Yakıt rezervi
+          - generic [ref=e313]: "152.3"
+        - generic [ref=e314]:
+          - text: Cephe ilerlemesi
+          - generic [ref=e315]: "11.0"
+        - generic [ref=e316]:
+          - text: Kalıcı plan
+          - generic [ref=e317]: Hedefi ele geçir · E3
+      - generic [ref=e318]:
+        - generic [ref=e319]:
+          - group "Taktik muharebe sahası" [ref=e320]:
+            - button "A1 · Görülmeyen bölge" [ref=e321] [cursor=pointer]:
+              - generic [ref=e322]: A1
+            - button "B1 · ova" [ref=e323] [cursor=pointer]:
+              - generic [ref=e324]: B1
+            - button "C1 · ova" [ref=e325] [cursor=pointer]:
+              - generic [ref=e326]: C1
+            - button "D1 · ova" [ref=e327] [cursor=pointer]:
+              - generic [ref=e328]: D1
+            - button "E1 · Görülmeyen bölge" [ref=e329] [cursor=pointer]:
+              - generic [ref=e330]: E1
+            - button "F1 · Görülmeyen bölge" [ref=e331] [cursor=pointer]:
+              - generic [ref=e332]: F1
+            - button "G1 · Görülmeyen bölge" [ref=e333] [cursor=pointer]:
+              - generic [ref=e334]: G1
+            - button "H1 · Görülmeyen bölge" [ref=e335] [cursor=pointer]:
+              - generic [ref=e336]: H1
+            - button "I1 · Görülmeyen bölge" [ref=e337] [cursor=pointer]:
+              - generic [ref=e338]: I1
+            - button "J1 · Görülmeyen bölge" [ref=e339] [cursor=pointer]:
+              - generic [ref=e340]: J1
+            - button "A2 · ova" [ref=e341] [cursor=pointer]:
+              - generic [ref=e342]: A2
+            - button "B2 · ova" [ref=e343] [cursor=pointer]:
+              - generic [ref=e344]: B2
+            - button "C2 · dağlık · Zırhlı" [ref=e345] [cursor=pointer]:
+              - generic [ref=e346]: C2
+            - button "D2 · orman" [ref=e347] [cursor=pointer]:
+              - generic [ref=e348]: D2
+            - button "E2 · dağlık" [ref=e349] [cursor=pointer]:
+              - generic [ref=e350]: E2
+            - button "F2 · Görülmeyen bölge" [ref=e351] [cursor=pointer]:
+              - generic [ref=e352]: F2
+            - button "G2 · Görülmeyen bölge" [ref=e353] [cursor=pointer]:
+              - generic [ref=e354]: G2
+            - button "H2 · Görülmeyen bölge" [ref=e355] [cursor=pointer]:
+              - generic [ref=e356]: H2
+            - button "I2 · Görülmeyen bölge" [ref=e357] [cursor=pointer]:
+              - generic [ref=e358]: I2
+            - button "J2 · Görülmeyen bölge" [ref=e359] [cursor=pointer]:
+              - generic [ref=e360]: J2
+            - button "A3 · ova" [ref=e361] [cursor=pointer]:
+              - generic [ref=e362]: A3
+            - button "B3 · ova" [ref=e363] [cursor=pointer]:
+              - generic [ref=e364]: B3
+            - button "C3 · dağlık · Piyade" [ref=e365] [cursor=pointer]:
+              - generic [ref=e366]: C3
+            - button "D3 · ova" [ref=e367] [cursor=pointer]:
+              - generic [ref=e368]: D3
+            - button "E3 · ova" [ref=e369] [cursor=pointer]:
+              - generic [ref=e370]: E3
+              - generic "İkmal deposu" [ref=e371]: ◆
+            - button "F3 · Görülmeyen bölge" [ref=e372] [cursor=pointer]:
+              - generic [ref=e373]: F3
+            - button "G3 · Görülmeyen bölge" [ref=e374] [cursor=pointer]:
+              - generic [ref=e375]: G3
+            - button "H3 · Görülmeyen bölge" [ref=e376] [cursor=pointer]:
+              - generic [ref=e377]: H3
+            - button "I3 · Görülmeyen bölge" [ref=e378] [cursor=pointer]:
+              - generic [ref=e379]: I3
+            - button "J3 · Görülmeyen bölge" [ref=e380] [cursor=pointer]:
+              - generic [ref=e381]: J3
+            - button "A4 · ova · Topçu" [ref=e382] [cursor=pointer]:
+              - generic [ref=e383]: A4
+            - button "B4 · ova" [ref=e384] [cursor=pointer]:
+              - generic [ref=e385]: B4
+            - button "C4 · dağlık" [ref=e386] [cursor=pointer]:
+              - generic [ref=e387]: C4
+            - button "D4 · dağlık" [ref=e388] [cursor=pointer]:
+              - generic [ref=e389]: D4
+            - button "E4 · Görülmeyen bölge" [ref=e390] [cursor=pointer]:
+              - generic [ref=e391]: E4
+            - button "F4 · Görülmeyen bölge" [ref=e392] [cursor=pointer]:
+              - generic [ref=e393]: F4
+            - button "G4 · Görülmeyen bölge" [ref=e394] [cursor=pointer]:
+              - generic [ref=e395]: G4
+            - button "H4 · Görülmeyen bölge" [ref=e396] [cursor=pointer]:
+              - generic [ref=e397]: H4
+            - button "I4 · Görülmeyen bölge" [ref=e398] [cursor=pointer]:
+              - generic [ref=e399]: I4
+            - button "J4 · Görülmeyen bölge" [ref=e400] [cursor=pointer]:
+              - generic [ref=e401]: J4
+            - button "A5 · ova" [ref=e402] [cursor=pointer]:
+              - generic [ref=e403]: A5
+            - button "B5 · ova" [ref=e404] [cursor=pointer]:
+              - generic [ref=e405]: B5
+            - button "C5 · ova" [ref=e406] [cursor=pointer]:
+              - generic [ref=e407]: C5
+            - button "D5 · Görülmeyen bölge" [ref=e408] [cursor=pointer]:
+              - generic [ref=e409]: D5
+            - button "E5 · Görülmeyen bölge" [ref=e410] [cursor=pointer]:
+              - generic [ref=e411]: E5
+            - button "F5 · Görülmeyen bölge" [ref=e412] [cursor=pointer]:
+              - generic [ref=e413]: F5
+            - button "G5 · Görülmeyen bölge" [ref=e414] [cursor=pointer]:
+              - generic [ref=e415]: G5
+            - button "H5 · Görülmeyen bölge" [ref=e416] [cursor=pointer]:
+              - generic [ref=e417]: H5
+            - button "I5 · Görülmeyen bölge" [ref=e418] [cursor=pointer]:
+              - generic [ref=e419]: I5
+            - button "J5 · Görülmeyen bölge" [ref=e420] [cursor=pointer]:
+              - generic [ref=e421]: J5
+            - button "A6 · ova" [ref=e422] [cursor=pointer]:
+              - generic [ref=e423]: A6
+            - button "B6 · ova · Piyade" [ref=e424] [cursor=pointer]:
+              - generic [ref=e425]: B6
+            - button "C6 · ova" [ref=e426] [cursor=pointer]:
+              - generic [ref=e427]: C6
+            - button "D6 · dağlık" [ref=e428] [cursor=pointer]:
+              - generic [ref=e429]: D6
+            - button "E6 · Görülmeyen bölge" [ref=e430] [cursor=pointer]:
+              - generic [ref=e431]: E6
+            - button "F6 · Görülmeyen bölge" [ref=e432] [cursor=pointer]:
+              - generic [ref=e433]: F6
+              - generic "İkmal deposu" [ref=e434]: ◆
+            - button "G6 · Görülmeyen bölge" [ref=e435] [cursor=pointer]:
+              - generic [ref=e436]: G6
+            - button "H6 · Görülmeyen bölge" [ref=e437] [cursor=pointer]:
+              - generic [ref=e438]: H6
+            - button "I6 · Görülmeyen bölge" [ref=e439] [cursor=pointer]:
+              - generic [ref=e440]: I6
+            - button "J6 · Görülmeyen bölge" [ref=e441] [cursor=pointer]:
+              - generic [ref=e442]: J6
+            - button "A7 · ova" [ref=e443] [cursor=pointer]:
+              - generic [ref=e444]: A7
+            - button "B7 · ova · Zırhlı" [ref=e445] [cursor=pointer]:
+              - generic [ref=e446]: B7
+            - button "C7 · ova" [ref=e447] [cursor=pointer]:
+              - generic [ref=e448]: C7
+            - button "D7 · ova" [ref=e449] [cursor=pointer]:
+              - generic [ref=e450]: D7
+            - button "E7 · Görülmeyen bölge" [ref=e451] [cursor=pointer]:
+              - generic [ref=e452]: E7
+            - button "F7 · Görülmeyen bölge" [ref=e453] [cursor=pointer]:
+              - generic [ref=e454]: F7
+            - button "G7 · Görülmeyen bölge" [ref=e455] [cursor=pointer]:
+              - generic [ref=e456]: G7
+            - button "H7 · Görülmeyen bölge" [ref=e457] [cursor=pointer]:
+              - generic [ref=e458]: H7
+            - button "I7 · Görülmeyen bölge" [ref=e459] [cursor=pointer]:
+              - generic [ref=e460]: I7
+            - button "J7 · Görülmeyen bölge" [ref=e461] [cursor=pointer]:
+              - generic [ref=e462]: J7
+            - button "A8 · ova" [ref=e463] [cursor=pointer]:
+              - generic [ref=e464]: A8
+            - button "B8 · ova" [ref=e465] [cursor=pointer]:
+              - generic [ref=e466]: B8
+            - button "C8 · dağlık" [ref=e467] [cursor=pointer]:
+              - generic [ref=e468]: C8
+            - button "D8 · Görülmeyen bölge" [ref=e469] [cursor=pointer]:
+              - generic [ref=e470]: D8
+            - button "E8 · Görülmeyen bölge" [ref=e471] [cursor=pointer]:
+              - generic [ref=e472]: E8
+            - button "F8 · Görülmeyen bölge" [ref=e473] [cursor=pointer]:
+              - generic [ref=e474]: F8
+            - button "G8 · Görülmeyen bölge" [ref=e475] [cursor=pointer]:
+              - generic [ref=e476]: G8
+            - button "H8 · Görülmeyen bölge" [ref=e477] [cursor=pointer]:
+              - generic [ref=e478]: H8
+            - button "I8 · Görülmeyen bölge" [ref=e479] [cursor=pointer]:
+              - generic [ref=e480]: I8
+            - button "J8 · Görülmeyen bölge" [ref=e481] [cursor=pointer]:
+              - generic [ref=e482]: J8
+            - generic:
+              - img:
+                - img
+              - generic: 100%
+            - generic:
+              - img:
+                - img
+              - generic: 100%
+            - generic:
+              - img:
+                - img
+              - generic: 100%
+            - generic:
+              - img:
+                - img
+              - generic: 100%
+            - generic:
+              - img:
+                - img
+              - generic: 100%
+          - generic [ref=e483]:
+            - generic [ref=e484]: Birliklerin
+            - generic [ref=e486]: Görünen düşman
+            - generic [ref=e488]: ◆ İkmal deposu
+          - paragraph [ref=e489]: Hedefler yalnızca yanında düşman yokken tutulur.
+          - paragraph [ref=e490]: Depoyu ele geçirmek muharebe gücünü artırır. Gizli düşman konumları keşifle görünür. İki tarafın emirleri eşzamanlı uygulanır.
+          - paragraph [ref=e491]: Taarruz emirleri harekât yakıtı harcar. Mevzi tutmak her iki taraf için daha küçük bir idame payı harcar ve savunmayı asla engellemez.
+        - generic [ref=e492]:
+          - heading "Birlik grubunu seç" [level=4] [ref=e493]
+          - generic [ref=e494]:
+            - button "Piyade ekipmanı Piyade 1 68.432 / 68.692" [pressed] [ref=e495] [cursor=pointer]:
+              - img "Piyade ekipmanı" [ref=e496]:
+                - img
+              - generic [ref=e497]:
+                - text: Piyade 1
+                - generic [ref=e498]: 68.432 / 68.692
+            - button "Piyade ekipmanı Piyade 2 68.432 / 68.693" [ref=e499] [cursor=pointer]:
+              - img "Piyade ekipmanı" [ref=e500]:
+                - img
+              - generic [ref=e501]:
+                - text: Piyade 2
+                - generic [ref=e502]: 68.432 / 68.693
+            - button "Tanklar Zırhlı 1 455 / 456" [ref=e503] [cursor=pointer]:
+              - img "Tanklar" [ref=e504]:
+                - img
+              - generic [ref=e505]:
+                - text: Zırhlı 1
+                - generic [ref=e506]: 455 / 456
+            - button "Tanklar Zırhlı 2 455 / 457" [ref=e507] [cursor=pointer]:
+              - img "Tanklar" [ref=e508]:
+                - img
+              - generic [ref=e509]:
+                - text: Zırhlı 2
+                - generic [ref=e510]: 455 / 457
+            - button "Topçu Topçu 1 1.324 / 1.328" [ref=e511] [cursor=pointer]:
+              - img "Topçu" [ref=e512]:
+                - img
+              - generic [ref=e513]:
+                - text: Topçu 1
+                - generic [ref=e514]: 1.324 / 1.328
+          - generic [ref=e515]:
+            - button "İlerle 1 KP · 1 YAKIT" [pressed] [ref=e516] [cursor=pointer]:
+              - text: İlerle
+              - generic [ref=e517]: 1 KP · 1 YAKIT
+            - button "Savun 1 KP · 0 YAKIT" [ref=e518] [cursor=pointer]:
+              - text: Savun
+              - generic [ref=e519]: 1 KP · 0 YAKIT
+            - button "Kuşat 2 KP · 2 YAKIT" [ref=e520] [cursor=pointer]:
+              - text: Kuşat
+              - generic [ref=e521]: 2 KP · 2 YAKIT
+            - button "Keşfet 1 KP · 1 YAKIT" [ref=e522] [cursor=pointer]:
+              - text: Keşfet
+              - generic [ref=e523]: 1 KP · 1 YAKIT
+            - button "İhtiyat ayır 1 KP · 0 YAKIT" [ref=e524] [cursor=pointer]:
+              - text: İhtiyat ayır
+              - generic [ref=e525]: 1 KP · 0 YAKIT
+            - button "Bombardıman 2 KP · 2 YAKIT" [disabled] [ref=e526]:
+              - text: Bombardıman
+              - generic [ref=e527]: 2 KP · 2 YAKIT
+          - paragraph [ref=e528]: Görünen boş bir bölgeye ilerle. Piyade ve topçu bir, zırhlı birlikler iki bölge hareket edebilir.
+          - paragraph [ref=e529]: "Hedef bölge: —"
+          - button "Emri sıraya ekle" [disabled] [ref=e530]
+          - status [ref=e531]:
+            - paragraph [ref=e532]: Muharebe sahasında bir bölge seç.
+          - list [ref=e533]: —
+          - button "Bekleme emirlerini incele" [disabled] [ref=e534]
+          - status [ref=e535]:
+            - paragraph [ref=e536]: Bugünün emirleri uygulandı. Sonraki tur için bir oyun günü ilerlet.
+          - button "Sonraki turu başlat" [ref=e537] [cursor=pointer]
+          - button "Geri çekil" [ref=e538] [cursor=pointer]
+      - generic [ref=e539]:
+        - generic [ref=e540]:
+          - heading "Son çözülen tur 1" [level=4] [ref=e541]
+          - button "Kayıtlı sonucu tekrar göster" [ref=e542] [cursor=pointer]
+        - paragraph [ref=e543]: "Personel kaybı: 521 · Harcanan yakıt: 6.3 · Cephe değişimi: 11.0"
+        - paragraph [ref=e544]: Kayıtlı sonucu tekrar göstermek muharebeyi yeniden hesaplamaz veya kayıpları yeniden uygulamaz.
+        - group [ref=e545]:
+          - generic "Tur kaydı" [ref=e546] [cursor=pointer]
+  - dialog "Tur tamamlandı" [ref=e548]:
+    - banner [ref=e549]:
+      - generic [ref=e550]: KARAR İNCELEMESİ
+      - button "İncelemeyi kapat" [active] [ref=e551] [cursor=pointer]: ×
+    - img [ref=e553]:
+      - img
+    - heading "Tur tamamlandı" [level=2] [ref=e554]
+    - paragraph [ref=e555]: İki tarafın emirleri uygulandı. Kayıpları, yakıtı ve cephe değişimini incele. Sonraki adımını seç.
+    - generic [ref=e556]:
+      - generic [ref=e557]:
+        - generic [ref=e558]: Tur
+        - strong [ref=e559]: "1"
+      - generic [ref=e560]:
+        - generic [ref=e561]: Senin personel kaybın
+        - strong [ref=e562]: "521"
+      - generic [ref=e563]:
+        - generic [ref=e564]: Karşı tarafın personel kaybı
+        - strong [ref=e565]: "129"
+      - generic [ref=e566]:
+        - generic [ref=e567]: Harcanan yakıt
+        - strong [ref=e568]: "6.3"
+      - generic [ref=e569]:
+        - generic [ref=e570]: Cephe değişimi
+        - strong [ref=e571]: "11.0"
+      - generic [ref=e572]:
+        - generic [ref=e573]: Karşı tarafın emirleri
+        - strong [ref=e574]: Keşfet · Kuşat
+    - paragraph [ref=e576]: Sonraki tur bir oyun günü ilerletir. Ülke kararlarına yanıt vermen gerekebilir.
+    - contentinfo [ref=e577]:
+      - button "GERİ / İPTAL" [ref=e578] [cursor=pointer]
+      - button "Kayıtlı sonucu tekrar göster" [ref=e579] [cursor=pointer]
+      - button "Geri çekil" [ref=e580] [cursor=pointer]
+      - button "Haritaya dön" [ref=e581] [cursor=pointer]
+      - button "Sonraki turu başlat" [ref=e582] [cursor=pointer]
+```
+
+# Test source
+
+```ts
+  1  | import {test,expect} from '@playwright/test';
+  2  | import {campaignFixture,resumeFixture} from './seedCampaign';
+  3  | import {withWarFuel} from '../src/tests/warFixture';
+  4  | import {applyGameCommand} from '../src/engine/commands';
+  5  | import {resolveStandingRound,startTacticalBattle} from '../src/engine/systems/tactical';
+  6  | 
+  7  | /** A Türkiye → Greece battle whose first round the player's side fought under standing orders (Phase 3 planner). */
+  8  | function standingBattle(language:'tr'|'en'){
+  9  |  let s=applyGameCommand(withWarFuel(campaignFixture(language)),{type:'military/declareWar',targetCountryId:'GRC'});
+  10 |  const id=Object.keys(s.wars)[0];
+  11 |  s=startTacticalBattle(s,id);s=resolveStandingRound({...s,day:s.day+1},id);
+  12 |  s.selectedCountryId=null;
+  13 |  return {s,id};
+  14 | }
+  15 | 
+  16 | for(const language of ['tr','en'] as const)test(`${language} tactical board shows the player's standing plan but never the opponent's, and survives save/load`,async({page})=>{
+  17 |  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
+  18 |  const {s,id}=standingBattle(language);
+  19 |  expect(s.wars[id].tactical!.plans?.attacker).toBeDefined();expect(s.wars[id].tactical!.plans?.defender).toBeDefined();
+  20 |  await resumeFixture(page,s);
+> 21 |  await page.locator('[data-guide="rail-world"]').click();await page.locator('#pulse-window .world-active-wars button').first().click();
+     |                                                  ^ Error: locator.click: Test timeout of 60000ms exceeded.
+  22 |  await expect(page.locator('.war-theatre-backdrop')).toBeVisible();
+  23 |  if(!(await page.locator('[data-testid="tactical-battlefield"]').isVisible()))await page.locator('.hd-war-button').click();
+  24 |  const plan=page.locator('[data-testid="standing-plan"]');
+  25 |  await expect(plan).toHaveCount(1);
+  26 |  await expect(plan).toContainText(language==='tr'?'Kalıcı plan':'Standing plan');
+  27 |  await expect(page.locator('[data-testid="tactical-battlefield"]')).toContainText(language==='tr'?'idame payı':'sustainment share');
+  28 |  await page.screenshot({path:`test-results/tactical-plan-0912-${language}.png`,fullPage:true});
+  29 |  expect(errors).toEqual([]);
+  30 | });
+  31 | 
+```

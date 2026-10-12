@@ -1,0 +1,745 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: tacticalPlanner0912.spec.ts >> en tactical board shows the player's standing plan but never the opponent's, and survives save/load
+- Location: e2e/tacticalPlanner0912.spec.ts:16:44
+
+# Error details
+
+```
+Test timeout of 60000ms exceeded.
+```
+
+```
+Error: locator.click: Test timeout of 60000ms exceeded.
+Call log:
+  - waiting for locator('[data-guide="rail-world"]')
+    - locator resolved to <button class="rail-button" aria-pressed="false" data-guide="rail-world" title="WORLD · Closed — click to open">…</button>
+  - attempting click action
+    2 × waiting for element to be visible, enabled and stable
+      - element is visible, enabled and stable
+      - scrolling into view if needed
+      - done scrolling
+      - <div class="review-backdrop">…</div> intercepts pointer events
+    - retrying click action
+    - waiting 20ms
+    2 × waiting for element to be visible, enabled and stable
+      - element is visible, enabled and stable
+      - scrolling into view if needed
+      - done scrolling
+      - <div class="review-backdrop">…</div> intercepts pointer events
+    - retrying click action
+      - waiting 100ms
+    108 × waiting for element to be visible, enabled and stable
+        - element is visible, enabled and stable
+        - scrolling into view if needed
+        - done scrolling
+        - <div class="review-backdrop">…</div> intercepts pointer events
+      - retrying click action
+        - waiting 500ms
+
+```
+
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - main [ref=e3]:
+    - generic [ref=e4]:
+      - generic:
+        - strong: WORLD COMMAND
+        - generic: drag globe · wheel zoom · click sovereign territory
+      - group "Interactive world map" [ref=e5]:
+        - generic [ref=e8]:
+          - generic "Tanzania" [ref=e9] [cursor=pointer]
+          - generic "W. Sahara" [ref=e10] [cursor=pointer]
+          - generic "Canada" [ref=e11] [cursor=pointer]
+          - generic "United States of America" [ref=e12] [cursor=pointer]
+          - generic "Kazakhstan" [ref=e13] [cursor=pointer]
+          - generic "Uzbekistan" [ref=e14] [cursor=pointer]
+          - generic "Indonesia" [ref=e15] [cursor=pointer]
+          - generic "Dem. Rep. Congo" [ref=e16] [cursor=pointer]
+          - generic "Somaliland" [ref=e17] [cursor=pointer]
+          - generic "Kenya" [ref=e18] [cursor=pointer]
+          - generic "Sudan" [ref=e19] [cursor=pointer]
+          - generic "Chad" [ref=e20] [cursor=pointer]
+          - generic "Haiti" [ref=e21] [cursor=pointer]
+          - generic "Dominican Rep." [ref=e22] [cursor=pointer]
+          - generic "Russia" [ref=e23] [cursor=pointer]
+          - generic "Norway" [ref=e24] [cursor=pointer]
+          - generic "Greenland" [ref=e25] [cursor=pointer]
+          - generic "Fr. S. Antarctic Lands" [ref=e26] [cursor=pointer]
+          - generic "South Africa" [ref=e27] [cursor=pointer]
+          - generic "Lesotho" [ref=e28] [cursor=pointer]
+          - generic "Brazil" [ref=e29] [cursor=pointer]
+          - generic "Venezuela" [ref=e30] [cursor=pointer]
+          - generic "Guyana" [ref=e31] [cursor=pointer]
+          - generic "Suriname" [ref=e32] [cursor=pointer]
+          - generic "France" [ref=e33] [cursor=pointer]
+          - generic "Puerto Rico" [ref=e34] [cursor=pointer]
+          - generic "Zimbabwe" [ref=e35] [cursor=pointer]
+          - generic "Botswana" [ref=e36] [cursor=pointer]
+          - generic "Namibia" [ref=e37] [cursor=pointer]
+          - generic "Senegal" [ref=e38] [cursor=pointer]
+          - generic "Mali" [ref=e39] [cursor=pointer]
+          - generic "Mauritania" [ref=e40] [cursor=pointer]
+          - generic "Benin" [ref=e41] [cursor=pointer]
+          - generic "Niger" [ref=e42] [cursor=pointer]
+          - generic "Nigeria" [ref=e43] [cursor=pointer]
+          - generic "Cameroon" [ref=e44] [cursor=pointer]
+          - generic "Togo" [ref=e45] [cursor=pointer]
+          - generic "Ghana" [ref=e46] [cursor=pointer]
+          - generic "Côte d'Ivoire" [ref=e47] [cursor=pointer]
+          - generic "Guinea" [ref=e48] [cursor=pointer]
+          - generic "Guinea-Bissau" [ref=e49] [cursor=pointer]
+          - generic "Liberia" [ref=e50] [cursor=pointer]
+          - generic "Sierra Leone" [ref=e51] [cursor=pointer]
+          - generic "Burkina Faso" [ref=e52] [cursor=pointer]
+          - generic "Central African Rep." [ref=e53] [cursor=pointer]
+          - generic "Congo" [ref=e54] [cursor=pointer]
+          - generic "Gabon" [ref=e55] [cursor=pointer]
+          - generic "Eq. Guinea" [ref=e56] [cursor=pointer]
+          - generic "Zambia" [ref=e57] [cursor=pointer]
+          - generic "Malawi" [ref=e58] [cursor=pointer]
+          - generic "Mozambique" [ref=e59] [cursor=pointer]
+          - generic "Eswatini" [ref=e60] [cursor=pointer]
+          - generic "Angola" [ref=e61] [cursor=pointer]
+          - generic "Burundi" [ref=e62] [cursor=pointer]
+          - generic "Israel" [ref=e63] [cursor=pointer]
+          - generic "Lebanon" [ref=e64] [cursor=pointer]
+          - generic "Madagascar" [ref=e65] [cursor=pointer]
+          - generic "Palestine" [ref=e66] [cursor=pointer]
+          - generic "Gambia" [ref=e67] [cursor=pointer]
+          - generic "Tunisia" [ref=e68] [cursor=pointer]
+          - generic "Algeria" [ref=e69] [cursor=pointer]
+          - generic "Jordan" [ref=e70] [cursor=pointer]
+          - generic "United Arab Emirates" [ref=e71] [cursor=pointer]
+          - generic "Qatar" [ref=e72] [cursor=pointer]
+          - generic "Kuwait" [ref=e73] [cursor=pointer]
+          - generic "Iraq" [ref=e74] [cursor=pointer]
+          - generic "Oman" [ref=e75] [cursor=pointer]
+          - generic "Cambodia" [ref=e76] [cursor=pointer]
+          - generic "Thailand" [ref=e77] [cursor=pointer]
+          - generic "Laos" [ref=e78] [cursor=pointer]
+          - generic "Myanmar" [ref=e79] [cursor=pointer]
+          - generic "Vietnam" [ref=e80] [cursor=pointer]
+          - generic "North Korea" [ref=e81] [cursor=pointer]
+          - generic "South Korea" [ref=e82] [cursor=pointer]
+          - generic "Mongolia" [ref=e83] [cursor=pointer]
+          - generic "India" [ref=e84] [cursor=pointer]
+          - generic "Bangladesh" [ref=e85] [cursor=pointer]
+          - generic "Bhutan" [ref=e86] [cursor=pointer]
+          - generic "Nepal" [ref=e87] [cursor=pointer]
+          - generic "Pakistan" [ref=e88] [cursor=pointer]
+          - generic "Afghanistan" [ref=e89] [cursor=pointer]
+          - generic "Tajikistan" [ref=e90] [cursor=pointer]
+          - generic "Kyrgyzstan" [ref=e91] [cursor=pointer]
+          - generic "Turkmenistan" [ref=e92] [cursor=pointer]
+          - generic "Iran" [ref=e93] [cursor=pointer]
+          - generic "Syria" [ref=e94] [cursor=pointer]
+          - generic "Armenia" [ref=e95] [cursor=pointer]
+          - generic "Sweden" [ref=e96] [cursor=pointer]
+          - generic "Belarus" [ref=e97] [cursor=pointer]
+          - generic "Ukraine" [ref=e98] [cursor=pointer]
+          - generic "Poland" [ref=e99] [cursor=pointer]
+          - generic "Austria" [ref=e100] [cursor=pointer]
+          - generic "Hungary" [ref=e101] [cursor=pointer]
+          - generic "Moldova" [ref=e102] [cursor=pointer]
+          - generic "Romania" [ref=e103] [cursor=pointer]
+          - generic "Lithuania" [ref=e104] [cursor=pointer]
+          - generic "Latvia" [ref=e105] [cursor=pointer]
+          - generic "Estonia" [ref=e106] [cursor=pointer]
+          - generic "Germany" [ref=e107] [cursor=pointer]
+          - generic "Bulgaria" [ref=e108] [cursor=pointer]
+          - generic "Greece" [ref=e109] [cursor=pointer]
+          - generic "Türkiye" [ref=e110] [cursor=pointer]
+          - generic "Albania" [ref=e111] [cursor=pointer]
+          - generic "Croatia" [ref=e112] [cursor=pointer]
+          - generic "Switzerland" [ref=e113] [cursor=pointer]
+          - generic "Luxembourg" [ref=e114] [cursor=pointer]
+          - generic "Belgium" [ref=e115] [cursor=pointer]
+          - generic "Netherlands" [ref=e116] [cursor=pointer]
+          - generic "Portugal" [ref=e117] [cursor=pointer]
+          - generic "Spain" [ref=e118] [cursor=pointer]
+          - generic "Ireland" [ref=e119] [cursor=pointer]
+          - generic "Sri Lanka" [ref=e120] [cursor=pointer]
+          - generic "China" [ref=e121] [cursor=pointer]
+          - generic "Taiwan" [ref=e122] [cursor=pointer]
+          - generic "Italy" [ref=e123] [cursor=pointer]
+          - generic "Denmark" [ref=e124] [cursor=pointer]
+          - generic "United Kingdom" [ref=e125] [cursor=pointer]
+          - generic "Iceland" [ref=e126] [cursor=pointer]
+          - generic "Azerbaijan" [ref=e127] [cursor=pointer]
+          - generic "Georgia" [ref=e128] [cursor=pointer]
+          - generic "Philippines" [ref=e129] [cursor=pointer]
+          - generic "Malaysia" [ref=e130] [cursor=pointer]
+          - generic "Brunei" [ref=e131] [cursor=pointer]
+          - generic "Slovenia" [ref=e132] [cursor=pointer]
+          - generic "Finland" [ref=e133] [cursor=pointer]
+          - generic "Slovakia" [ref=e134] [cursor=pointer]
+          - generic "Czechia" [ref=e135] [cursor=pointer]
+          - generic "Eritrea" [ref=e136] [cursor=pointer]
+          - generic "Japan" [ref=e137] [cursor=pointer]
+          - generic "Yemen" [ref=e138] [cursor=pointer]
+          - generic "Saudi Arabia" [ref=e139] [cursor=pointer]
+          - generic "N. Cyprus" [ref=e140] [cursor=pointer]
+          - generic "N. Cyprus" [ref=e141] [cursor=pointer]
+          - generic "Morocco" [ref=e142] [cursor=pointer]
+          - generic "Egypt" [ref=e143] [cursor=pointer]
+          - generic "Libya" [ref=e144] [cursor=pointer]
+          - generic "Ethiopia" [ref=e145] [cursor=pointer]
+          - generic "Djibouti" [ref=e146] [cursor=pointer]
+          - generic "Somaliland" [ref=e147] [cursor=pointer]
+          - generic "Uganda" [ref=e148] [cursor=pointer]
+          - generic "Rwanda" [ref=e149] [cursor=pointer]
+          - generic "Bosnia and Herz." [ref=e150] [cursor=pointer]
+          - generic "North Macedonia" [ref=e151] [cursor=pointer]
+          - generic "Serbia" [ref=e152] [cursor=pointer]
+          - generic "Montenegro" [ref=e153] [cursor=pointer]
+          - generic "Kosovo" [ref=e154] [cursor=pointer]
+          - generic "Trinidad and Tobago" [ref=e155] [cursor=pointer]
+          - generic "S. Sudan" [ref=e156] [cursor=pointer]
+        - generic:
+          - generic:
+            - generic: RUSSIA
+          - generic:
+            - generic: TÜRKIYE
+          - generic:
+            - generic: CHINA
+          - generic:
+            - generic: INDIA
+          - generic:
+            - generic: ALGERIA
+          - generic:
+            - generic: DEM. REP. CONGO
+          - generic:
+            - generic: KAZAKHSTAN
+          - generic:
+            - generic: SAUDI ARABIA
+          - generic:
+            - generic: SUDAN
+          - generic:
+            - generic: LIBYA
+          - generic:
+            - generic: IRAN
+          - generic:
+            - generic: CHAD
+          - generic:
+            - generic: CANADA
+          - generic:
+            - generic: ETHIOPIA
+          - generic:
+            - generic: MALI
+          - generic:
+            - generic: ANGOLA
+          - generic:
+            - generic: BRAZIL
+          - generic:
+            - generic: NIGERIA
+          - generic:
+            - generic: SOUTH AFRICA
+          - generic:
+            - generic: ARCTIC OCEAN
+          - generic:
+            - generic: INDIAN OCEAN
+          - generic:
+            - generic: NORTH ATLANTIC OCEAN
+          - generic:
+            - generic: SOUTH ATLANTIC OCEAN
+      - generic "Map camera controls" [ref=e157]:
+        - button "Zoom out" [ref=e158] [cursor=pointer]: −
+        - status "Map zoom level" [ref=e159]: 100%
+        - button "Zoom in" [ref=e160] [cursor=pointer]: +
+        - button "Return to your nation" [ref=e161] [cursor=pointer]:
+          - img [ref=e162]
+        - button "RESET" [ref=e166] [cursor=pointer]
+    - generic:
+      - generic [ref=e167]:
+        - generic [ref=e168]:
+          - button "Executive ⋯" [ref=e169] [cursor=pointer]:
+            - img "Executive" [ref=e170]
+            - generic [ref=e171]: ⋯
+          - generic [ref=e172]:
+            - generic [ref=e173]: Rule of Nations
+            - generic [ref=e174]:
+              - strong [ref=e175]: Browser playtest
+              - generic [ref=e176]: DAY 2
+        - generic "National command indicators" [ref=e177]:
+          - generic [ref=e178]:
+            - img [ref=e181]
+            - generic [ref=e182]:
+              - generic [ref=e183]: TREASURY
+              - strong [ref=e184]: $143.0B
+          - generic [ref=e185]:
+            - img [ref=e188]
+            - generic [ref=e189]:
+              - generic [ref=e190]: BUDGET / DAY
+              - strong [ref=e191]: +$0.167B
+          - generic [ref=e192]:
+            - img [ref=e195]
+            - generic [ref=e196]:
+              - generic [ref=e197]: APPROVAL
+              - strong [ref=e198]: 56%
+          - generic [ref=e199]:
+            - img [ref=e202]
+            - generic [ref=e203]:
+              - generic [ref=e204]: STABILITY
+              - strong [ref=e205]: 67%
+      - generic [ref=e206]:
+        - generic [ref=e207]:
+          - generic "Game speed controls" [ref=e208]:
+            - button "Ⅱ PAUSE" [pressed] [ref=e209] [cursor=pointer]:
+              - strong [ref=e210]: Ⅱ
+              - generic [ref=e211]: PAUSE
+            - button "1× 15s/day" [ref=e212] [cursor=pointer]:
+              - strong [ref=e213]: 1×
+              - generic [ref=e214]: 15s/day
+            - button "2× 7s/day" [ref=e215] [cursor=pointer]:
+              - strong [ref=e216]: 2×
+              - generic [ref=e217]: 7s/day
+            - button "3× 3s/day" [ref=e218] [cursor=pointer]:
+              - strong [ref=e219]: 3×
+              - generic [ref=e220]: 3s/day
+            - button "5× 1s/day" [ref=e221] [cursor=pointer]:
+              - strong [ref=e222]: 5×
+              - generic [ref=e223]: 1s/day
+          - generic [ref=e224]:
+            - generic [ref=e225]: CAMPAIGN DATE
+            - strong [ref=e226]: 2026-01-02
+        - button "Open your nation" [ref=e227] [cursor=pointer]:
+          - generic [ref=e228]: 🇹🇷
+          - generic [ref=e229]:
+            - strong [ref=e230]: Türkiye
+            - generic [ref=e231]: democracy
+            - emphasis [ref=e232]: Open your nation
+    - navigation "World command tools" [ref=e233]:
+      - button "market MARKET" [ref=e234] [cursor=pointer]:
+        - img "market" [ref=e236]:
+          - img
+        - generic [ref=e237]: MARKET
+      - button "world 1 WORLD" [ref=e238] [cursor=pointer]:
+        - img "world" [ref=e240]:
+          - img
+        - generic [ref=e241]: "1"
+        - generic [ref=e242]: WORLD
+      - button "alerts 1 SUPPLY" [ref=e243] [cursor=pointer]:
+        - img "alerts" [ref=e245]:
+          - img
+        - generic [ref=e246]: "1"
+        - generic [ref=e247]: SUPPLY
+    - navigation "Information tools" [ref=e248]:
+      - button "objectives 1/6 GOALS" [ref=e249] [cursor=pointer]:
+        - img "objectives" [ref=e251]:
+          - img
+        - generic [ref=e252]: 1/6
+        - generic [ref=e253]: GOALS
+      - button "diplomacy DIPLOMACY" [ref=e254] [cursor=pointer]:
+        - img "diplomacy" [ref=e256]:
+          - img
+        - generic [ref=e257]: DIPLOMACY
+      - button "alerts 2 ALERTS" [ref=e258] [cursor=pointer]:
+        - img "alerts" [ref=e260]:
+          - img
+        - generic [ref=e261]: "2"
+        - generic [ref=e262]: ALERTS
+      - button "intel 5 NEWS" [ref=e263] [cursor=pointer]:
+        - img "intel" [ref=e265]:
+          - img
+        - generic [ref=e266]: "5"
+        - generic [ref=e267]: NEWS
+    - navigation "Map and help tools" [ref=e268]:
+      - button "map MAP" [ref=e269] [cursor=pointer]:
+        - img "map" [ref=e271]:
+          - img
+        - generic [ref=e272]: MAP
+      - button "help HELP" [ref=e273] [cursor=pointer]:
+        - img "help" [ref=e275]:
+          - img
+        - generic [ref=e276]: HELP
+    - generic [ref=e277]:
+      - generic [ref=e278]: "NEWS // WAR // Türkiye mountain assault: +11.0 front | supply 19%/11% | reserves 100/100 | air +28 | losses 521 / 129"
+      - generic [ref=e279]:
+        - generic [ref=e280]: World command channel
+        - generic [ref=e281]: PLAYER · POLITICAL · POLITICAL · GLOBE
+    - generic: RON Interactive
+  - dialog "War command" [ref=e283]:
+    - banner [ref=e284]:
+      - generic [ref=e285]:
+        - generic [ref=e286]: WAR COMMAND
+        - heading "Türkiye vs Greece" [level=2] [ref=e287]
+      - button "Close war command" [ref=e288] [cursor=pointer]: ×
+    - alert [ref=e289]:
+      - strong [ref=e290]: Fuel reserves are insufficient for a sustained operation
+      - paragraph [ref=e291]: "Fuel operational days: 13.4. Consider halting the assault, securing imports or withdrawing before supply and readiness collapse."
+      - button "Inspect fuel supply" [ref=e292] [cursor=pointer]
+    - generic [ref=e293]:
+      - generic [ref=e294]:
+        - generic [ref=e295]:
+          - generic [ref=e296]: TACTICAL COMMAND · 0.89
+          - heading "Secure the supply depots" [level=3] [ref=e297]
+          - paragraph [ref=e298]: Each token is an allocated force group. Terrain, supply and national strength still matter.
+        - button "Return to war command" [ref=e299] [cursor=pointer]
+      - status [ref=e300]:
+        - generic [ref=e301]:
+          - strong [ref=e302]: Round complete
+          - paragraph [ref=e303]: See the results, then start your next turn or withdraw.
+        - button "View round results" [ref=e304] [cursor=pointer]
+      - generic [ref=e305]:
+        - generic [ref=e306]:
+          - text: Round
+          - generic [ref=e307]: "2"
+        - generic [ref=e308]:
+          - text: Command points
+          - generic [ref=e309]: 0/3
+        - generic [ref=e310]:
+          - text: Planned fuel
+          - generic [ref=e311]: "0.8"
+        - generic [ref=e312]:
+          - text: Fuel reserve
+          - generic [ref=e313]: "152.3"
+        - generic [ref=e314]:
+          - text: Front progress
+          - generic [ref=e315]: "11.0"
+        - generic [ref=e316]:
+          - text: Standing plan
+          - generic [ref=e317]: Seize objective · E3
+      - generic [ref=e318]:
+        - generic [ref=e319]:
+          - group "Tactical battlefield" [ref=e320]:
+            - button "A1 · Unseen sector" [ref=e321] [cursor=pointer]:
+              - generic [ref=e322]: A1
+            - button "B1 · plains" [ref=e323] [cursor=pointer]:
+              - generic [ref=e324]: B1
+            - button "C1 · plains" [ref=e325] [cursor=pointer]:
+              - generic [ref=e326]: C1
+            - button "D1 · plains" [ref=e327] [cursor=pointer]:
+              - generic [ref=e328]: D1
+            - button "E1 · Unseen sector" [ref=e329] [cursor=pointer]:
+              - generic [ref=e330]: E1
+            - button "F1 · Unseen sector" [ref=e331] [cursor=pointer]:
+              - generic [ref=e332]: F1
+            - button "G1 · Unseen sector" [ref=e333] [cursor=pointer]:
+              - generic [ref=e334]: G1
+            - button "H1 · Unseen sector" [ref=e335] [cursor=pointer]:
+              - generic [ref=e336]: H1
+            - button "I1 · Unseen sector" [ref=e337] [cursor=pointer]:
+              - generic [ref=e338]: I1
+            - button "J1 · Unseen sector" [ref=e339] [cursor=pointer]:
+              - generic [ref=e340]: J1
+            - button "A2 · plains" [ref=e341] [cursor=pointer]:
+              - generic [ref=e342]: A2
+            - button "B2 · plains" [ref=e343] [cursor=pointer]:
+              - generic [ref=e344]: B2
+            - button "C2 · mountain · armor" [ref=e345] [cursor=pointer]:
+              - generic [ref=e346]: C2
+            - button "D2 · forest" [ref=e347] [cursor=pointer]:
+              - generic [ref=e348]: D2
+            - button "E2 · mountain" [ref=e349] [cursor=pointer]:
+              - generic [ref=e350]: E2
+            - button "F2 · Unseen sector" [ref=e351] [cursor=pointer]:
+              - generic [ref=e352]: F2
+            - button "G2 · Unseen sector" [ref=e353] [cursor=pointer]:
+              - generic [ref=e354]: G2
+            - button "H2 · Unseen sector" [ref=e355] [cursor=pointer]:
+              - generic [ref=e356]: H2
+            - button "I2 · Unseen sector" [ref=e357] [cursor=pointer]:
+              - generic [ref=e358]: I2
+            - button "J2 · Unseen sector" [ref=e359] [cursor=pointer]:
+              - generic [ref=e360]: J2
+            - button "A3 · plains" [ref=e361] [cursor=pointer]:
+              - generic [ref=e362]: A3
+            - button "B3 · plains" [ref=e363] [cursor=pointer]:
+              - generic [ref=e364]: B3
+            - button "C3 · mountain · infantry" [ref=e365] [cursor=pointer]:
+              - generic [ref=e366]: C3
+            - button "D3 · plains" [ref=e367] [cursor=pointer]:
+              - generic [ref=e368]: D3
+            - button "E3 · plains" [ref=e369] [cursor=pointer]:
+              - generic [ref=e370]: E3
+              - generic "Supply depot" [ref=e371]: ◆
+            - button "F3 · Unseen sector" [ref=e372] [cursor=pointer]:
+              - generic [ref=e373]: F3
+            - button "G3 · Unseen sector" [ref=e374] [cursor=pointer]:
+              - generic [ref=e375]: G3
+            - button "H3 · Unseen sector" [ref=e376] [cursor=pointer]:
+              - generic [ref=e377]: H3
+            - button "I3 · Unseen sector" [ref=e378] [cursor=pointer]:
+              - generic [ref=e379]: I3
+            - button "J3 · Unseen sector" [ref=e380] [cursor=pointer]:
+              - generic [ref=e381]: J3
+            - button "A4 · plains · artillery" [ref=e382] [cursor=pointer]:
+              - generic [ref=e383]: A4
+            - button "B4 · plains" [ref=e384] [cursor=pointer]:
+              - generic [ref=e385]: B4
+            - button "C4 · mountain" [ref=e386] [cursor=pointer]:
+              - generic [ref=e387]: C4
+            - button "D4 · mountain" [ref=e388] [cursor=pointer]:
+              - generic [ref=e389]: D4
+            - button "E4 · Unseen sector" [ref=e390] [cursor=pointer]:
+              - generic [ref=e391]: E4
+            - button "F4 · Unseen sector" [ref=e392] [cursor=pointer]:
+              - generic [ref=e393]: F4
+            - button "G4 · Unseen sector" [ref=e394] [cursor=pointer]:
+              - generic [ref=e395]: G4
+            - button "H4 · Unseen sector" [ref=e396] [cursor=pointer]:
+              - generic [ref=e397]: H4
+            - button "I4 · Unseen sector" [ref=e398] [cursor=pointer]:
+              - generic [ref=e399]: I4
+            - button "J4 · Unseen sector" [ref=e400] [cursor=pointer]:
+              - generic [ref=e401]: J4
+            - button "A5 · plains" [ref=e402] [cursor=pointer]:
+              - generic [ref=e403]: A5
+            - button "B5 · plains" [ref=e404] [cursor=pointer]:
+              - generic [ref=e405]: B5
+            - button "C5 · plains" [ref=e406] [cursor=pointer]:
+              - generic [ref=e407]: C5
+            - button "D5 · Unseen sector" [ref=e408] [cursor=pointer]:
+              - generic [ref=e409]: D5
+            - button "E5 · Unseen sector" [ref=e410] [cursor=pointer]:
+              - generic [ref=e411]: E5
+            - button "F5 · Unseen sector" [ref=e412] [cursor=pointer]:
+              - generic [ref=e413]: F5
+            - button "G5 · Unseen sector" [ref=e414] [cursor=pointer]:
+              - generic [ref=e415]: G5
+            - button "H5 · Unseen sector" [ref=e416] [cursor=pointer]:
+              - generic [ref=e417]: H5
+            - button "I5 · Unseen sector" [ref=e418] [cursor=pointer]:
+              - generic [ref=e419]: I5
+            - button "J5 · Unseen sector" [ref=e420] [cursor=pointer]:
+              - generic [ref=e421]: J5
+            - button "A6 · plains" [ref=e422] [cursor=pointer]:
+              - generic [ref=e423]: A6
+            - button "B6 · plains · infantry" [ref=e424] [cursor=pointer]:
+              - generic [ref=e425]: B6
+            - button "C6 · plains" [ref=e426] [cursor=pointer]:
+              - generic [ref=e427]: C6
+            - button "D6 · mountain" [ref=e428] [cursor=pointer]:
+              - generic [ref=e429]: D6
+            - button "E6 · Unseen sector" [ref=e430] [cursor=pointer]:
+              - generic [ref=e431]: E6
+            - button "F6 · Unseen sector" [ref=e432] [cursor=pointer]:
+              - generic [ref=e433]: F6
+              - generic "Supply depot" [ref=e434]: ◆
+            - button "G6 · Unseen sector" [ref=e435] [cursor=pointer]:
+              - generic [ref=e436]: G6
+            - button "H6 · Unseen sector" [ref=e437] [cursor=pointer]:
+              - generic [ref=e438]: H6
+            - button "I6 · Unseen sector" [ref=e439] [cursor=pointer]:
+              - generic [ref=e440]: I6
+            - button "J6 · Unseen sector" [ref=e441] [cursor=pointer]:
+              - generic [ref=e442]: J6
+            - button "A7 · plains" [ref=e443] [cursor=pointer]:
+              - generic [ref=e444]: A7
+            - button "B7 · plains · armor" [ref=e445] [cursor=pointer]:
+              - generic [ref=e446]: B7
+            - button "C7 · plains" [ref=e447] [cursor=pointer]:
+              - generic [ref=e448]: C7
+            - button "D7 · plains" [ref=e449] [cursor=pointer]:
+              - generic [ref=e450]: D7
+            - button "E7 · Unseen sector" [ref=e451] [cursor=pointer]:
+              - generic [ref=e452]: E7
+            - button "F7 · Unseen sector" [ref=e453] [cursor=pointer]:
+              - generic [ref=e454]: F7
+            - button "G7 · Unseen sector" [ref=e455] [cursor=pointer]:
+              - generic [ref=e456]: G7
+            - button "H7 · Unseen sector" [ref=e457] [cursor=pointer]:
+              - generic [ref=e458]: H7
+            - button "I7 · Unseen sector" [ref=e459] [cursor=pointer]:
+              - generic [ref=e460]: I7
+            - button "J7 · Unseen sector" [ref=e461] [cursor=pointer]:
+              - generic [ref=e462]: J7
+            - button "A8 · plains" [ref=e463] [cursor=pointer]:
+              - generic [ref=e464]: A8
+            - button "B8 · plains" [ref=e465] [cursor=pointer]:
+              - generic [ref=e466]: B8
+            - button "C8 · mountain" [ref=e467] [cursor=pointer]:
+              - generic [ref=e468]: C8
+            - button "D8 · Unseen sector" [ref=e469] [cursor=pointer]:
+              - generic [ref=e470]: D8
+            - button "E8 · Unseen sector" [ref=e471] [cursor=pointer]:
+              - generic [ref=e472]: E8
+            - button "F8 · Unseen sector" [ref=e473] [cursor=pointer]:
+              - generic [ref=e474]: F8
+            - button "G8 · Unseen sector" [ref=e475] [cursor=pointer]:
+              - generic [ref=e476]: G8
+            - button "H8 · Unseen sector" [ref=e477] [cursor=pointer]:
+              - generic [ref=e478]: H8
+            - button "I8 · Unseen sector" [ref=e479] [cursor=pointer]:
+              - generic [ref=e480]: I8
+            - button "J8 · Unseen sector" [ref=e481] [cursor=pointer]:
+              - generic [ref=e482]: J8
+            - generic:
+              - img:
+                - img
+              - generic: 100%
+            - generic:
+              - img:
+                - img
+              - generic: 100%
+            - generic:
+              - img:
+                - img
+              - generic: 100%
+            - generic:
+              - img:
+                - img
+              - generic: 100%
+            - generic:
+              - img:
+                - img
+              - generic: 100%
+          - generic [ref=e483]:
+            - generic [ref=e484]: Your forces
+            - generic [ref=e486]: Visible enemy
+            - generic [ref=e488]: ◆ Supply depot
+          - paragraph [ref=e489]: Objectives are held only while no enemy is adjacent.
+          - paragraph [ref=e490]: Capturing the depot improves combat power. Hidden enemy positions require recon. Both sides execute orders simultaneously.
+          - paragraph [ref=e491]: Offensive orders burn operational fuel. Holding positions burns a smaller sustainment share, for both sides, and never prevents defending.
+        - generic [ref=e492]:
+          - heading "Select a force group" [level=4] [ref=e493]
+          - generic [ref=e494]:
+            - button "infantry equipment infantry 1 68,432 / 68,692" [pressed] [ref=e495] [cursor=pointer]:
+              - img "infantry equipment" [ref=e496]:
+                - img
+              - generic [ref=e497]:
+                - text: infantry 1
+                - generic [ref=e498]: 68,432 / 68,692
+            - button "infantry equipment infantry 2 68,432 / 68,693" [ref=e499] [cursor=pointer]:
+              - img "infantry equipment" [ref=e500]:
+                - img
+              - generic [ref=e501]:
+                - text: infantry 2
+                - generic [ref=e502]: 68,432 / 68,693
+            - button "tanks armor 1 455 / 456" [ref=e503] [cursor=pointer]:
+              - img "tanks" [ref=e504]:
+                - img
+              - generic [ref=e505]:
+                - text: armor 1
+                - generic [ref=e506]: 455 / 456
+            - button "tanks armor 2 455 / 457" [ref=e507] [cursor=pointer]:
+              - img "tanks" [ref=e508]:
+                - img
+              - generic [ref=e509]:
+                - text: armor 2
+                - generic [ref=e510]: 455 / 457
+            - button "artillery artillery 1 1,324 / 1,328" [ref=e511] [cursor=pointer]:
+              - img "artillery" [ref=e512]:
+                - img
+              - generic [ref=e513]:
+                - text: artillery 1
+                - generic [ref=e514]: 1,324 / 1,328
+          - generic [ref=e515]:
+            - button "Advance 1 CP · 1 fuel" [pressed] [ref=e516] [cursor=pointer]:
+              - text: Advance
+              - generic [ref=e517]: 1 CP · 1 fuel
+            - button "Defend 1 CP · 0 fuel" [ref=e518] [cursor=pointer]:
+              - text: Defend
+              - generic [ref=e519]: 1 CP · 0 fuel
+            - button "Flank 2 CP · 2 fuel" [ref=e520] [cursor=pointer]:
+              - text: Flank
+              - generic [ref=e521]: 2 CP · 2 fuel
+            - button "Recon 1 CP · 1 fuel" [ref=e522] [cursor=pointer]:
+              - text: Recon
+              - generic [ref=e523]: 1 CP · 1 fuel
+            - button "Hold reserves 1 CP · 0 fuel" [ref=e524] [cursor=pointer]:
+              - text: Hold reserves
+              - generic [ref=e525]: 1 CP · 0 fuel
+            - button "Bombard 2 CP · 2 fuel" [disabled] [ref=e526]:
+              - text: Bombard
+              - generic [ref=e527]: 2 CP · 2 fuel
+          - paragraph [ref=e528]: Move into a visible empty sector. Infantry and artillery move one sector; armor moves two.
+          - paragraph [ref=e529]: "Target sector: —"
+          - button "Queue order" [disabled] [ref=e530]
+          - status [ref=e531]:
+            - paragraph [ref=e532]: Choose a sector on the battlefield.
+          - list [ref=e533]: —
+          - button "Review hold orders" [disabled] [ref=e534]
+          - status [ref=e535]:
+            - paragraph [ref=e536]: Orders already executed today. Advance one campaign day for the next round.
+          - button "Start next turn" [ref=e537] [cursor=pointer]
+          - button "Withdraw" [ref=e538] [cursor=pointer]
+      - generic [ref=e539]:
+        - generic [ref=e540]:
+          - heading "Last resolved round 1" [level=4] [ref=e541]
+          - button "Replay recorded result" [ref=e542] [cursor=pointer]
+        - paragraph [ref=e543]: "Personnel lost: 521 · Fuel spent: 6.3 · Front change: 11.0"
+        - paragraph [ref=e544]: Recorded results do not reroll combat or apply losses again.
+        - group [ref=e545]:
+          - generic "Round log" [ref=e546] [cursor=pointer]
+  - dialog "Round complete" [ref=e548]:
+    - banner [ref=e549]:
+      - generic [ref=e550]: COMMAND REVIEW
+      - button "Close review" [active] [ref=e551] [cursor=pointer]: ×
+    - img [ref=e553]:
+      - img
+    - heading "Round complete" [level=2] [ref=e554]
+    - paragraph [ref=e555]: Both plans have resolved. Review the losses, fuel and front change. Choose your next step.
+    - generic [ref=e556]:
+      - generic [ref=e557]:
+        - generic [ref=e558]: Round
+        - strong [ref=e559]: "1"
+      - generic [ref=e560]:
+        - generic [ref=e561]: Your personnel lost
+        - strong [ref=e562]: "521"
+      - generic [ref=e563]:
+        - generic [ref=e564]: Opponent personnel lost
+        - strong [ref=e565]: "129"
+      - generic [ref=e566]:
+        - generic [ref=e567]: Fuel spent
+        - strong [ref=e568]: "6.3"
+      - generic [ref=e569]:
+        - generic [ref=e570]: Front change
+        - strong [ref=e571]: "11.0"
+      - generic [ref=e572]:
+        - generic [ref=e573]: Opponent orders
+        - strong [ref=e574]: Recon · Flank
+    - paragraph [ref=e576]: Starting the next turn advances one campaign day. National decisions may need your attention.
+    - contentinfo [ref=e577]:
+      - button "BACK / CANCEL" [ref=e578] [cursor=pointer]
+      - button "Replay recorded result" [ref=e579] [cursor=pointer]
+      - button "Withdraw" [ref=e580] [cursor=pointer]
+      - button "Return to map" [ref=e581] [cursor=pointer]
+      - button "Start next turn" [ref=e582] [cursor=pointer]
+```
+
+# Test source
+
+```ts
+  1  | import {test,expect} from '@playwright/test';
+  2  | import {campaignFixture,resumeFixture} from './seedCampaign';
+  3  | import {withWarFuel} from '../src/tests/warFixture';
+  4  | import {applyGameCommand} from '../src/engine/commands';
+  5  | import {resolveStandingRound,startTacticalBattle} from '../src/engine/systems/tactical';
+  6  | 
+  7  | /** A Türkiye → Greece battle whose first round the player's side fought under standing orders (Phase 3 planner). */
+  8  | function standingBattle(language:'tr'|'en'){
+  9  |  let s=applyGameCommand(withWarFuel(campaignFixture(language)),{type:'military/declareWar',targetCountryId:'GRC'});
+  10 |  const id=Object.keys(s.wars)[0];
+  11 |  s=startTacticalBattle(s,id);s=resolveStandingRound({...s,day:s.day+1},id);
+  12 |  s.selectedCountryId=null;
+  13 |  return {s,id};
+  14 | }
+  15 | 
+  16 | for(const language of ['tr','en'] as const)test(`${language} tactical board shows the player's standing plan but never the opponent's, and survives save/load`,async({page})=>{
+  17 |  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
+  18 |  const {s,id}=standingBattle(language);
+  19 |  expect(s.wars[id].tactical!.plans?.attacker).toBeDefined();expect(s.wars[id].tactical!.plans?.defender).toBeDefined();
+  20 |  await resumeFixture(page,s);
+> 21 |  await page.locator('[data-guide="rail-world"]').click();await page.locator('#pulse-window .world-active-wars button').first().click();
+     |                                                  ^ Error: locator.click: Test timeout of 60000ms exceeded.
+  22 |  await expect(page.locator('.war-theatre-backdrop')).toBeVisible();
+  23 |  if(!(await page.locator('[data-testid="tactical-battlefield"]').isVisible()))await page.locator('.hd-war-button').click();
+  24 |  const plan=page.locator('[data-testid="standing-plan"]');
+  25 |  await expect(plan).toHaveCount(1);
+  26 |  await expect(plan).toContainText(language==='tr'?'Kalıcı plan':'Standing plan');
+  27 |  await expect(page.locator('[data-testid="tactical-battlefield"]')).toContainText(language==='tr'?'idame payı':'sustainment share');
+  28 |  await page.screenshot({path:`test-results/tactical-plan-0912-${language}.png`,fullPage:true});
+  29 |  expect(errors).toEqual([]);
+  30 | });
+  31 | 
+```
