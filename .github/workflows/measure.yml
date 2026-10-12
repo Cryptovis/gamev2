@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     env:
-      SUITE: ${{ startsWith(github.ref_name, 'measure/visual') && 'visual' || startsWith(github.ref_name, 'measure/check') && 'check' || startsWith(github.ref_name, 'measure/e2e') && 'e2e' || startsWith(github.ref_name, 'measure/full') && 'full' || startsWith(github.ref_name, 'measure/war') && 'war' || 'renders' }}
+      SUITE: ${{ startsWith(github.ref_name, 'measure/visual') && 'visual' || startsWith(github.ref_name, 'measure/check') && 'check' || startsWith(github.ref_name, 'measure/e2e') && 'e2e' || startsWith(github.ref_name, 'measure/full') && 'full' || startsWith(github.ref_name, 'measure/war') && 'war' || startsWith(github.ref_name, 'measure/lock') && 'lock' || 'renders' }}
       PERFORMANCE_LABEL: ${{ github.ref_name }}
     steps:
       - uses: actions/checkout@v4
@@ -33,8 +33,16 @@ jobs:
       - name: War balance
         if: env.SUITE == 'war'
         run: npm run measure:war 2>&1 | tee measure-output.txt; exit ${PIPESTATUS[0]}
+      - name: Lockfile for new dependencies (one-off)
+        if: env.SUITE == 'lock'
+        run: |
+          npm install --save-exact --ignore-scripts howler @types/howler --save-dev=false 2>&1 | tee measure-output.txt
+          npm uninstall --ignore-scripts @types/howler >/dev/null 2>&1; npm install --save-exact --save-dev --ignore-scripts @types/howler 2>&1 | tee -a measure-output.txt
+          npm ls howler @types/howler >> measure-output.txt 2>&1 || true
+          mkdir -p performance/results && cp package.json package-lock.json performance/results/
+          node -e "const l=require('./package-lock.json');for(const k of ['node_modules/howler','node_modules/@types/howler'])console.log(k,JSON.stringify(l.packages[k]))" >> measure-output.txt
       - run: npx playwright install --with-deps chromium
-        if: env.SUITE != 'check' && env.SUITE != 'war'
+        if: env.SUITE != 'check' && env.SUITE != 'war' && env.SUITE != 'lock'
       - name: Render attribution
         if: env.SUITE == 'renders'
         run: npm run measure:renders 2>&1 | tee measure-output.txt; exit ${PIPESTATUS[0]}
