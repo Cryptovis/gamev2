@@ -45,7 +45,8 @@ export function calculateSupplyNetwork(country:CountryState,terrain:BattlefieldT
   );
   const reserveFactor=clamp(Math.min(1,fuelDays/30)*.46+Math.min(1,steelDays/45)*.26+Math.min(1,foodDays/45)*.28,.08,1);
   const frontDemand=clamp(18+country.military.personnel/45000+country.military.tanks*.012+country.military.artillery*.006+country.military.fighters*.055,12,100);
-  const roleFactor=role==='attacker'?.92:role==='defender'?1.04:1;
+  // Phase 3: an attacker's extended lines cost 4%; a defender holds its normal home throughput (was .92 / 1.04, a 13% gap).
+  const roleFactor=role==='attacker'?.96:1;
   const theatre=terrainFactor[terrain];
   const powerFactor=clamp(country.processedResources.electricity/70,.35,1);
   const throughput=clamp((logisticsEfficiency*.52+infrastructure*.3+powerFactor*100*.18)*reserveFactor,4,100);

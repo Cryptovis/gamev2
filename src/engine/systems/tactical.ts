@@ -1,7 +1,7 @@
 import type { BattlefieldTerrain, CasualtySnapshot, GameState, WarState } from '../../domain/game';
 import type { TacticalAction, TacticalBattle, TacticalOrder, TacticalOrderKind, TacticalRole, TacticalSide, TacticalUnit } from '../../domain/tactical';
 import { nextRandom } from '../rng';
-import { COMMITTED_SHARE, emptyLosses, resolveCombatRound, type CombatSideOrders } from './warfare';
+import { COMMITTED_SHARE, SUSTAINMENT_SHARE, emptyLosses, resolveCombatRound, roundFuelCost, type CombatSideOrders } from './warfare';
 import { pendingVictory } from './victory';
 
 export const COMMAND_BUDGET = 3;
@@ -166,11 +166,20 @@ export function startTacticalBattle(s: GameState, id: string): GameState {
 // Orders
 // ---------------------------------------------------------------------------------------------
 
+/** Fuel these orders require: operational fuel when any order is offensive, plus per-order fuel. The validator checks this. */
 export function tacticalFuel(s: GameState, w: WarState, side: TacticalSide, orders: TacticalOrder[]): number {
-  const m = s.countries[countryId(w, side)].military;
+  const c = s.countries[countryId(w, side)];
   const offensive = orders.some(o => OFFENSIVE.includes(o.kind));
-  const operational = offensive ? Math.max(3, 2.5 + m.tanks * 0.0016 + m.fighters * 0.02 + m.bombers * 0.032) * COMMITTED_SHARE : 0;
+  const operational = offensive ? roundFuelCost(c) * COMMITTED_SHARE : 0;
   return operational + orders.reduce((n, o) => n + (ORDER_FUEL[o.kind] ?? 0), 0);
+}
+/**
+ * Fuel a side burns in a round (Phase 3, same rule for attacker and defender): offensive orders pay operational fuel,
+ * a side that only holds pays sustainment. Sustainment is charged up to the stock but never blocks defending.
+ */
+export function tacticalRoundFuel(s: GameState, w: WarState, side: TacticalSide, orders: TacticalOrder[]): number {
+  const offensive = orders.some(o => OFFENSIVE.includes(o.kind));
+  return offensive ? tacticalFuel(s, w, side, orders) : roundFuelCost(s.countries[countryId(w, side)]) * COMMITTED_SHARE * SUSTAINMENT_SHARE + tacticalFuel(s, w, side, orders);
 }
 
 export function validateTacticalOrders(s: GameState, id: string, side: TacticalSide, orders: TacticalOrder[]): string[] {
@@ -349,7 +358,7 @@ export function resolveTacticalRound(s: GameState, id: string, orders: TacticalO
   if (tacticalCommandStatus(s, id, expectedRound, orders).length) return s;
   const w = s.wars[id], b = w.tactical!, mine = playerSide(s, w), enemy = other(mine), enemyOrders = chooseTacticalOrders(s, id, enemy);
   const bySide: Record<TacticalSide, TacticalOrder[]> = { attacker: mine === 'attacker' ? orders : enemyOrders, defender: mine === 'defender' ? orders : enemyOrders };
-  const costs = { attacker: tacticalFuel(s, w, 'attacker', bySide.attacker), defender: tacticalFuel(s, w, 'defender', bySide.defender) };
+  const costs = { attacker: tacticalRoundFuel(s, w, 'attacker', bySide.attacker), defender: tacticalRoundFuel(s, w, 'defender', bySide.defender) };
   const all = [...bySide.attacker, ...bySide.defender];
 
   // Moves are simultaneous. Conflicting destinations leave both units in place.
@@ -413,8 +422,8 @@ export function resolveTacticalRound(s: GameState, id: string, orders: TacticalO
     for (const order of bySide[side].filter(o => o.kind === 'recon')) for (const cell of allCells(b)) if (cellDistance(b, cell, order.target!) <= 2) seen.add(cell);
     revealed[side] = [...seen];
     const c = next.countries[countryId(w, side)];
-    // The shared resolver already charged the attacker's base operational fuel.
-    const extra = side === 'attacker' ? bySide.attacker.reduce((n, o) => n + ORDER_FUEL[o.kind], 0) : costs.defender;
+    // The shared resolver already charged both sides' operational or sustainment fuel; orders add their own.
+    const extra = bySide[side].reduce((n, o) => n + ORDER_FUEL[o.kind], 0);
     next = { ...next, countries: { ...next.countries, [c.id]: { ...c, processedResources: { ...c.processedResources, fuel: Math.max(0, c.processedResources.fuel - extra) } } } };
   }
 
