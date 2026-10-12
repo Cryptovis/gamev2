@@ -557,6 +557,11 @@ export function processCreditApplications(s: GameState): GameState {
         n = updateExpansion(n, { ...e, creditApplications: e.creditApplications.filter(a => a.status === 'pending').concat(e.creditApplications.filter(a => a.status !== 'pending').slice(0, 100)) });
     return n;
 }
+/**
+ * Phase 3: rescue lines come from any lender on non-hostile terms (relations ≥ 0), matching the approval rule. The old
+ * "≥ 20" offer threshold left 70 of 96 small economies without any possible rescue lender at the start of a campaign.
+ */
+export const RESCUE_MIN_RELATION = 0;
 /** Cash-poor countries can receive a bounded three-year rescue line, never free money or an automatic loan. */
 export function emergencyCreditOffers(s: GameState, borrowerId = s.playerCountryId): GameState {
     const b = s.countries[borrowerId];
@@ -566,7 +571,7 @@ export function emergencyCreditOffers(s: GameState, borrowerId = s.playerCountry
     if (e.loans.some(l => l.borrowerId === b.id && l.status !== 'paid' && l.dueDay - l.startedDay > 365) || e.creditOffers.some(o => o.emergency && o.targetCountryId === b.id && o.expiresDay >= s.day && o.status === 'open'))
         return s;
     let n = s;
-    const lenders = activeCountries(s.countries).filter(c => validPair(s, c.id, b.id) && Math.min(relationFor(c, b.id).score, relationFor(b, c.id).score) >= 20 && c.economy.treasury > Math.max(.01, c.economy.gdp * .04)).sort((a, c) => c.economy.treasury - a.economy.treasury || a.id.localeCompare(c.id)).slice(0, 3);
+    const lenders = activeCountries(s.countries).filter(c => validPair(s, c.id, b.id) && Math.min(relationFor(c, b.id).score, relationFor(b, c.id).score) >= RESCUE_MIN_RELATION && c.economy.treasury > Math.max(.01, c.economy.gdp * .04)).sort((a, c) => c.economy.treasury - a.economy.treasury || a.id.localeCompare(c.id)).slice(0, 3);
     for (const l of lenders) {
         const principal = Math.min(l.economy.treasury * .08, b.economy.gdp * .04);
         const before = expansion(n).creditOffers.length;

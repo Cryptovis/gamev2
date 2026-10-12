@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
-import type { TacticalAction, TacticalBattle, TacticalOrder, TacticalOrderKind, TacticalUnit } from '../../domain/tactical';
-import { COMMAND_BUDGET, ORDER_COST, ORDER_FUEL, cellColumn, cellCount, cellRow, objectiveHolders, playerSide, sectorName, tacticalCommandStatus, tacticalFuel, unitNumber, validateTacticalOrders, visibleCells } from '../../engine/systems/tactical';
+import type { TacticalAction, TacticalBattle, TacticalOrder, TacticalOrderKind, TacticalPlanKind, TacticalUnit } from '../../domain/tactical';
+import { COMMAND_BUDGET, ORDER_COST, ORDER_FUEL, cellColumn, cellCount, cellRow, objectiveHolders, playerSide, sectorName, tacticalCommandStatus, tacticalRoundFuel, unitNumber, validateTacticalOrders, visibleCells } from '../../engine/systems/tactical';
 import { useGameStore } from '../../store/gameStore';
 import {useWorldView} from '../../store/useWorldView';
 import { LocaleText, translateLive } from '../../i18n/localeText';
@@ -10,6 +10,8 @@ import { ReviewDialog } from './ReviewDialog';
 
 const names:Record<TacticalOrderKind,string>={move:'Advance',defend:'Defend',flank:'Flank',recon:'Recon',reserve:'Hold reserves',bombard:'Bombard'};
 const descriptions:Record<TacticalOrderKind,string>={move:'Move into a visible empty sector. Infantry and artillery move one sector; armor moves two.',defend:'Reduce losses. Forest, mountain and urban cover improve defensive power.',flank:'Move up to two sectors with an attack bonus, but expose the unit to greater losses.',recon:'Reveal sectors near the target for the next planning round.',reserve:'Reduce losses this round and prepare an offensive bonus for the next round.',bombard:'Artillery targets a visible enemy within three sectors, increasing enemy losses.'};
+/** Phase 3: the player's standing plan (auto mode or unanswered defence). The opponent's plan is never shown. */
+const PLAN_LABELS:Record<TacticalPlanKind,string>={recon:'Reconnoitre',seize:'Seize objective',flank:'Flank objective',secure:'Secure objective',withdraw:'Withdraw to cover'};
 const asset=(role:string)=>role==='infantry'?'infantry_equipment':role==='armor'?'tanks':'artillery';
 /** "Infantry 2" — role in the player's language plus the group number. */
 function unitLabel(u:TacticalUnit|undefined):string{if(!u)return '';const n=unitNumber(u);return `${translateLive(u.role)}${n?' '+n:''}`;}
@@ -53,7 +55,8 @@ export function TacticalBattlefield({warId,onReturn}:{warId:string;onReturn:()=>
   const proposed:TacticalOrder={unitId:selected,kind,...(['move','flank','recon','bombard'].includes(kind)?{target}:{})};
   const draft=[...orders.filter(o=>o.unitId!==selected),proposed];
   const draftReasons=validateTacticalOrders(s,warId,side,draft),commitReasons=tacticalCommandStatus(s,warId,b.round,orders);
-  const points=orders.reduce((n,o)=>n+ORDER_COST[o.kind],0),fuel=tacticalFuel(s,w,side,orders),active=w.status==='active';
+  // Phase 3: shown fuel includes sustainment for holding; only offensive and per-order fuel must be in reserve.
+  const points=orders.reduce((n,o)=>n+ORDER_COST[o.kind],0),fuel=tacticalRoundFuel(s,w,side,orders),active=w.status==='active',standing=b.plans?.[side];
   const [receiptRound,setReceiptRound]=useState(b.round);
   const nextTurn=()=>{
     const before=useGameStore.getState();
@@ -73,7 +76,7 @@ export function TacticalBattlefield({warId,onReturn}:{warId:string;onReturn:()=>
   return <div className="tactical-experience" data-testid="tactical-battlefield">
     <div className="tactical-heading"><div><small><LocaleText value="TACTICAL COMMAND"/> · 0.89</small><h3><LocaleText value="Secure the supply depots"/></h3><p><LocaleText value="Each token is an allocated force group. Terrain, supply and national strength still matter."/></p></div><button onClick={onReturn}><LocaleText value="Return to war command"/></button></div>
     <div className="tactical-flow-banner" role="status"><div><strong><LocaleText value={w.lastCombatDay===s.day?'Round complete':'Your planning turn'}/></strong><p><LocaleText value={w.lastCombatDay===s.day?'See the results, then start your next turn or withdraw.':'Choose a group, choose an order and queue it. Finish your plan to let the opponent respond.'}/></p></div>{w.lastCombatDay===s.day?<button className="tactical-flow-results" onClick={()=>setReview('result')}><LocaleText value="View round results"/></button>:<button disabled={commitReasons.length>0||replay} onClick={()=>{setReceiptRound(b.round);setReview('orders');}}><LocaleText value="Finish plan"/></button>}</div>
-    <div className="tactical-summary"><span><LocaleText value="Round"/> <b>{b.round+1}</b></span><span><LocaleText value="Command points"/> <b>{points}/{COMMAND_BUDGET}</b></span><span><LocaleText value="Planned fuel"/> <b>{fuel.toFixed(1)}</b></span><span><LocaleText value="Fuel reserve"/> <b>{s.countries[s.playerCountryId].processedResources.fuel.toFixed(1)}</b></span><span><LocaleText value="Front progress"/> <b>{w.progress.toFixed(1)}</b></span></div>
+    <div className="tactical-summary"><span><LocaleText value="Round"/> <b>{b.round+1}</b></span><span><LocaleText value="Command points"/> <b>{points}/{COMMAND_BUDGET}</b></span><span><LocaleText value="Planned fuel"/> <b>{fuel.toFixed(1)}</b></span><span><LocaleText value="Fuel reserve"/> <b>{s.countries[s.playerCountryId].processedResources.fuel.toFixed(1)}</b></span><span><LocaleText value="Front progress"/> <b>{w.progress.toFixed(1)}</b></span>{standing&&<span data-testid="standing-plan"><LocaleText value="Standing plan"/> <b><LocaleText value={PLAN_LABELS[standing.kind]}/> · {sectorName(b,standing.objective)}</b></span>}</div>
     <div className="tactical-layout">
       <div>
         <div className="tactical-board" ref={board} role="group" aria-label={translateLive('Tactical battlefield')} style={{'--cols':b.width,'--rows':b.height} as CSSProperties}>
@@ -87,6 +90,7 @@ export function TacticalBattlefield({warId,onReturn}:{warId:string;onReturn:()=>
         <div className="tactical-legend"><span><i className="friendly"/><LocaleText value="Your forces"/></span><span><i className="enemy"/><LocaleText value="Visible enemy"/></span><span>◆ <LocaleText value="Supply depot"/></span></div>
         <p className="tactical-note"><LocaleText value="Objectives are held only while no enemy is adjacent."/></p>
         <p className="tactical-note"><LocaleText value="Capturing the depot improves combat power. Hidden enemy positions require recon. Both sides execute orders simultaneously."/></p>
+        <p className="tactical-note"><LocaleText value="Offensive orders burn operational fuel. Holding positions burns a smaller sustainment share, for both sides, and never prevents defending."/></p>
       </div>
       <div className="tactical-orders">
         <h4><LocaleText value="Select a force group"/></h4><div className="tactical-unit-list">{b.units.filter(u=>u.side===side).map(u=><button key={u.id} aria-pressed={u.id===selected} disabled={!active||u.remaining<=0||replay} onClick={()=>{setSelected(u.id);setTarget(undefined);}} data-unit={u.id}><AssetThumbnail asset={asset(u.role)} size={28}/><span>{unitLabel(u)}<small>{u.remaining.toLocaleString(s.playerProfile.language)} / {u.allocated.toLocaleString(s.playerProfile.language)}{u.prepared?' · '+translateLive('Prepared'):''}</small></span></button>)}</div>

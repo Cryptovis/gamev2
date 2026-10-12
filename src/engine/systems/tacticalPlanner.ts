@@ -17,8 +17,8 @@ export const PLAN_HORIZON = 3;
 export const PLAN_COMMITMENT = 0.25;
 /** A plan is kept for at least this many rounds unless it becomes impossible or the side must withdraw. */
 export const PLAN_MIN_ROUNDS = 2;
-/** Deterministic work limit per decision (projected unit-steps plus order validations). */
-export const PLAN_EVALUATION_BUDGET = 6000;
+/** Deterministic work limit per decision (projected unit-steps plus order validations). Measured decisions use about 1,000. */
+export const PLAN_EVALUATION_BUDGET = 3000;
 /** Rounds an unseen enemy group stays in memory at its last known sector. */
 export const MEMORY_ROUNDS = 3;
 /** Below this share of the enemy's strength, a side withdraws to cover. */
@@ -41,7 +41,8 @@ export interface PlannedOrders {
 
 class Budget {
   used = 0;
-  constructor(readonly limit: number) {}
+  readonly limit: number;
+  constructor(limit: number) { this.limit = limit; }
   spend(n = 1) { this.used += n; return this.used <= this.limit; }
   get exceeded() { return this.used > this.limit; }
 }
@@ -157,6 +158,8 @@ function projectPlan(b: TacticalBattle, side: TacticalSide, kind: TacticalPlanKi
   if (kind === 'secure') score += k.holders[b.objectives.indexOf(objective)] === side ? 3 : -1;
   // The attacker moves the front only while it attacks; the defender wins time by holding. Stronger sides press harder.
   const pressing = kind === 'seize' || kind === 'flank';
+  // Seizing an objective this side already holds is not a plan.
+  if (pressing && k.holders[b.objectives.indexOf(objective)] === side) score -= 8;
   if (side === 'attacker') score += pressing ? 2 + Math.max(0, ratio - 1) * 6 : kind === 'secure' && ratio >= 0.9 ? -3 : 0;
   else score += kind === 'secure' ? 2 : pressing ? Math.max(0, ratio - 1.2) * 6 - 1 : 0;
   if (kind === 'flank') score += alive(b.units).some(u => u.side === side && u.role === 'armor') ? 0.5 : -20;
@@ -222,7 +225,9 @@ export function planTacticalOrders(s: GameState, id: string, side: TacticalSide,
     reason = `Kept plan: ${planSummary(b, plan)}.`;
   } else {
     // A seize/flank plan that has taken its objective continues as "secure" on the same objective.
-    const converted = previous && (previous.kind === 'seize' || previous.kind === 'flank') && k.holders[b.objectives.indexOf(previous.objective)] === side
+    // The attacker only consolidates when it is not stronger; a stronger attacker presses on to the next objective.
+    const consolidate = side === 'defender' || k.ownStrength < k.enemyStrength;
+    const converted = consolidate && previous && (previous.kind === 'seize' || previous.kind === 'flank') && k.holders[b.objectives.indexOf(previous.objective)] === side
       ? candidates.find(c => c.kind === 'secure' && c.objective === previous.objective) : undefined;
     const chosen = converted && converted.score >= best.score - Math.abs(best.score) * PLAN_COMMITMENT ? converted : best;
     plan = { kind: chosen.kind, objective: chosen.objective, startedRound: b.round, updatedRound: b.round, score: chosen.score, known: k.enemies };
