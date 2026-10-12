@@ -50,6 +50,9 @@ test('replay draws recorded effects; low effects shows one round summary instead
  await page.reload();await page.locator('.load-previous').click();
  await expect(page.locator('[data-testid="tactical-battlefield"]')).toBeVisible();
  await expect(page.locator('.round-summary-strip')).toBeVisible();
+ // A loaded war shows the last round's result first; close it.
+ const review=await page.locator('.review-dialog').waitFor({state:'visible',timeout:5000}).then(()=>true,()=>false);
+ if(review)await page.locator('.review-dialog [data-guide="review-dismiss"]').first().click();
  await page.locator('.tactical-round-result button').first().click();
  await expect(page.locator('.battle-fx')).toHaveCount(0);
  await expect(page.locator('.tactical-round-result p').first()).toHaveText(result);
