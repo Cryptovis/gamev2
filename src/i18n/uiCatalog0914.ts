@@ -1,0 +1,21 @@
+/** playtest.14 (Phase 5): sound, battle effects and round summaries. */
+export const UI_CATALOG_0914:Record<string,[string,string,string,string]>={
+ 'Round summary':['Tur özeti','Resumen de la ronda','回合摘要','Итоги раунда'],
+ 'Moves':['Hareketler','Movimientos','机动','Перемещения'],
+ 'Bombardments':['Bombardımanlar','Bombardeos','炮击','Обстрелы'],
+ 'hits':['isabet','impactos','命中','попаданий'],
+ 'Objectives captured':['Ele geçirilen hedefler','Objetivos tomados','夺取的目标','Захвачено целей'],
+ 'Groups lost':['Kaybedilen gruplar','Grupos perdidos','损失的编队','Потеряно групп'],
+ 'Sound':['Ses','Sonido','声音','Звук'],
+ 'SOUND AND EFFECTS':['SES VE EFEKTLER','SONIDO Y EFECTOS','声音与效果','ЗВУК И ЭФФЕКТЫ'],
+ 'Sound and effects':['Ses ve efektler','Sonido y efectos','声音与效果','Звук и эффекты'],
+ 'Sound starts after your first click or key press. Effects only replay recorded results and never change the campaign.':['Ses ilk tıklamandan veya tuşa basmandan sonra başlar. Efektler yalnızca kaydedilmiş sonuçları yeniden oynatır ve kampanyayı asla değiştirmez.','El sonido empieza tras tu primer clic o pulsación de tecla. Los efectos solo reproducen resultados registrados y nunca cambian la campaña.','声音会在你第一次点击或按键后开始。效果只回放已记录的结果，绝不会改变战役。','Звук включается после первого щелчка или нажатия клавиши. Эффекты лишь воспроизводят записанные результаты и никогда не меняют кампанию.'],
+ 'Mute all sound':['Tüm sesi kapat','Silenciar todo el sonido','全部静音','Отключить весь звук'],
+ 'Master volume':['Ana ses düzeyi','Volumen general','主音量','Общая громкость'],
+ 'Interface':['Arayüz','Interfaz','界面','Интерфейс'],
+ 'Battle and radio':['Savaş ve telsiz','Batalla y radio','战斗与无线电','Бой и радиосвязь'],
+ 'Ambience':['Ortam sesi','Ambiente','环境音','Фоновый звук'],
+ 'Low effects: show one summary per battle round':['Düşük efekt: her savaş turu için tek özet göster','Efectos reducidos: un resumen por ronda de combate','低效果：每个战斗回合只显示一个摘要','Минимум эффектов: одна сводка на боевой раунд'],
+ "Your system's reduced-motion setting also turns battle animation into summaries.":['Sistemindeki hareketi azaltma ayarı da savaş animasyonlarını özete dönüştürür.','El ajuste de movimiento reducido de tu sistema también convierte la animación de batalla en resúmenes.','系统的“减少动态效果”设置也会把战斗动画改为摘要。','Системная настройка «уменьшить движение» тоже заменяет боевую анимацию сводками.'],
+ 'Sound could not be loaded. The game continues silently.':['Ses yüklenemedi. Oyun sessiz devam ediyor.','No se pudo cargar el sonido. El juego continúa en silencio.','无法加载声音。游戏将静音继续。','Не удалось загрузить звук. Игра продолжается без звука.'],
+};

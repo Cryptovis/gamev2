@@ -7,6 +7,10 @@ import { LocaleText, translateLive } from '../../i18n/localeText';
 import { AssetThumbnail } from '../icons/AssetThumbnail';
 import { PLAYBACK_SPEEDS, PLAYBACK_STEP_MS, actionCell, playbackAction, playbackFrames, playbackUnits } from '../../engine/systems/tacticalPlayback';
 import { ReviewDialog } from './ReviewDialog';
+import { BattleFxLayer, RoundSummaryStrip } from './BattleFxLayer';
+import { effectAt, shouldSummarize, summarizeRound } from '../../presentation/battleEffects';
+import { useAudioSettings } from '../../audio/audioSettings';
+import { audio } from '../../audio/audioService';
 
 const names:Record<TacticalOrderKind,string>={move:'Advance',defend:'Defend',flank:'Flank',recon:'Recon',reserve:'Hold reserves',bombard:'Bombard'};
 const descriptions:Record<TacticalOrderKind,string>={move:'Move into a visible empty sector. Infantry and artillery move one sector; armor moves two.',defend:'Reduce losses. Forest, mountain and urban cover improve defensive power.',flank:'Move up to two sectors with an attack bonus, but expose the unit to greater losses.',recon:'Reveal sectors near the target for the next planning round.',reserve:'Reduce losses this round and prepare an offensive bonus for the next round.',bombard:'Artillery targets a visible enemy within three sectors, increasing enemy losses.'};
@@ -39,6 +43,9 @@ export function TacticalBattlefield({warId,onReturn}:{warId:string;onReturn:()=>
   const s=useWorldView(),w=s.wars[warId],b=w.tactical!,side=playerSide(s,w);
   const [selected,setSelected]=useState(b.units.find(u=>u.side===side&&u.remaining>0)?.id??''),[kind,setKind]=useState<TacticalOrderKind>('move'),[target,setTarget]=useState<number|undefined>(),[orders,setOrders]=useState<TacticalOrder[]>([]),[review,setReview]=useState<'orders'|'handoff'|'result'|'withdraw'|'blocked'|null>(w.lastCombatDay===s.day&&b.events.length?'result':null),[replay,setReplay]=useState(false),[focused,setFocused]=useState(0),[replayRound,setReplayRound]=useState(b.events.at(-1)?.round??1),[step,setStep]=useState(0),[playing,setPlaying]=useState(false),[speed,setSpeed]=useState(1);
   const board=useRef<HTMLDivElement>(null);
+  // Phase 5: effects and sounds come only from the recorded round; summarised at 4× playback, the 5× clock, low effects or reduced motion.
+  const lowEffects=useAudioSettings(a=>a.lowEffects),reducedMotion=typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const summarized=shouldSummarize({playbackSpeed:speed,campaignSpeed:s.speed,lowEffects,reducedMotion});
   useEffect(()=>{setOrders([]);setTarget(undefined);setReplay(false);},[b.round]);
   const eventIndex=b.events.findIndex(e=>e.round===replayRound);
   const last=replay?(b.events[eventIndex]??b.events.at(-1)):b.events.at(-1);
@@ -50,7 +57,10 @@ export function TacticalBattlefield({warId,onReturn}:{warId:string;onReturn:()=>
   const holders=objectiveHolders(b,shown);
   const live=visibleCells({...b,units:shown,revealed:replay?recordedVision??b.revealed:b.revealed},side),unit=b.units.find(u=>u.id===selected);
   // 0.86 playback: step through the recorded action timeline. Reduced motion jumps straight to the result.
-  const startReplay=(round:number)=>{const ev=b.events.find(e=>e.round===round),reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;setReplay(true);setReplayRound(round);setStep(reduce&&ev?playbackFrames(ev):0);setPlaying(!reduce);};
+  const startReplay=(round:number)=>{const ev=b.events.find(e=>e.round===round),reduce=summarized;setReplay(true);setReplayRound(round);setStep(reduce&&ev?playbackFrames(ev):0);setPlaying(!reduce);};
+  const effect=replay&&last&&!summarized&&step>0?effectAt(warId,last,step,playbackUnits(last,step-1)):null,summary=last?summarizeRound(warId,last):null;
+  useEffect(()=>{if(effect&&playing)for(const cue of effect.sounds)audio.play(cue,`${effect.id}:${cue}`);},[effect?.id,playing]);
+  useEffect(()=>{if(replay&&summarized&&summary)for(const cue of summary.sounds)audio.play(cue,`${summary.id}:${cue}`);},[replay,summarized,summary?.id]);
   useEffect(()=>{if(!replay||!playing)return;if(done){setPlaying(false);return;}const timer=setTimeout(()=>setStep(n=>n+1),PLAYBACK_STEP_MS/speed);return ()=>clearTimeout(timer);},[replay,playing,step,done,speed,replayRound]);
   const proposed:TacticalOrder={unitId:selected,kind,...(['move','flank','recon','bombard'].includes(kind)?{target}:{})};
   const draft=[...orders.filter(o=>o.unitId!==selected),proposed];
@@ -86,7 +96,9 @@ export function TacticalBattlefield({warId,onReturn}:{warId:string;onReturn:()=>
           })}
           {shown.filter(u=>u.remaining>0&&(u.side===side||live.has(u.cell))).map(u=><div key={u.id} className={`tactical-token ${u.side===side?'friendly':'enemy'} ${selected===u.id?'selected':''}`} style={{left:`${cellColumn(b,u.cell)*100/b.width}%`,top:`${cellRow(b,u.cell)*100/b.height}%`}} aria-hidden="true"><AssetThumbnail asset={asset(u.role)} size={36}/><span>{Math.round(u.remaining/Math.max(1,u.allocated)*100)}%</span></div>)}
           {current&&fxCell!==undefined&&<div key={`${replayRound}-${step}`} className={`tactical-fx fx-${current.kind}${current.hit===false?' fx-miss':''} ${current.side===side?'friendly':'enemy'}`} style={{left:`${cellColumn(b,fxCell)*100/b.width}%`,top:`${cellRow(b,fxCell)*100/b.height}%`}} aria-hidden="true">{fxSymbol(current)}</div>}
+          {!summarized&&<BattleFxLayer board={b} effect={effect} side={side}/>}
         </div>
+        {summarized&&summary&&<RoundSummaryStrip summary={summary} side={side}/>}
         <div className="tactical-legend"><span><i className="friendly"/><LocaleText value="Your forces"/></span><span><i className="enemy"/><LocaleText value="Visible enemy"/></span><span>◆ <LocaleText value="Supply depot"/></span></div>
         <p className="tactical-note"><LocaleText value="Objectives are held only while no enemy is adjacent."/></p>
         <p className="tactical-note"><LocaleText value="Capturing the depot improves combat power. Hidden enemy positions require recon. Both sides execute orders simultaneously."/></p>

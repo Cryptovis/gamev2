@@ -1,0 +1,46 @@
+/* Phase 5 (playtest.14): battle effects drawn from recorded playback steps. Decorative only.
+   Transform and opacity only (plus SVG stroke drawing); reduced motion shows each effect's final frame. */
+.battle-fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:3;overflow:visible;--fx:#ffe39b;--fx-hot:#ff8a5c}
+.battle-fx.enemy{--fx:#ffb3a3;--fx-hot:#ff6b5b}
+.battle-fx .fx-trail,.battle-fx .fx-shell{fill:none;stroke:var(--fx);stroke-width:1.1;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;animation:fx-draw .42s var(--motion-ease,ease-out) forwards;filter:drop-shadow(0 0 1px #000a)}
+.battle-fx .fx-shell{stroke:var(--fx-hot);stroke-width:.8;stroke-dasharray:1;animation-duration:.38s}
+.battle-fx .fx-arrive{fill:var(--fx);opacity:0;animation:fx-pop .32s .34s ease-out forwards;transform-box:fill-box;transform-origin:center}
+.battle-fx .fx-blocked{fill:none;stroke:#ff6b5b;stroke-width:1.2;stroke-linecap:round;opacity:0;animation:fx-pop .3s .36s ease-out forwards;transform-box:fill-box;transform-origin:center}
+.battle-fx .fx-impact{fill:var(--fx-hot);opacity:0;animation:fx-burst .5s .34s ease-out forwards;transform-box:fill-box;transform-origin:center}
+.battle-fx .fx-impact.fx-miss{fill:none;stroke:#c9d2cf;stroke-width:.7}
+.battle-fx .fx-shock{fill:none;stroke:var(--fx-hot);stroke-width:.6;opacity:0;animation:fx-ring .6s .4s ease-out forwards;transform-box:fill-box;transform-origin:center}
+.battle-fx .fx-sweep{fill:none;stroke:#9fd9e6;stroke-width:.6;stroke-dasharray:2 1.5;opacity:0;animation:fx-ring .7s ease-out forwards;transform-box:fill-box;transform-origin:center}
+.battle-fx .fx-contact{fill:#ff6b5b55;stroke:#ff6b5b;stroke-width:.6;opacity:0;animation:fx-burst .45s ease-out forwards;transform-box:fill-box;transform-origin:center}
+.battle-fx .fx-objective{fill:none;stroke:#8fe0b0;stroke-width:.9;opacity:0;animation:fx-ring .7s ease-out forwards;transform-box:fill-box;transform-origin:center}
+.battle-fx.enemy .fx-objective.capture{stroke:#f19a86}
+.battle-fx .fx-objective.contest{stroke:#f1cd7d;stroke-dasharray:1.5 1}
+@keyframes fx-draw{to{stroke-dashoffset:0}}
+@keyframes fx-pop{0%{opacity:0;transform:scale(.4)}60%{opacity:1;transform:scale(1.2)}100%{opacity:.95;transform:scale(1)}}
+@keyframes fx-burst{0%{opacity:0;transform:scale(.3)}35%{opacity:1;transform:scale(1.15)}100%{opacity:.25;transform:scale(1)}}
+@keyframes fx-ring{0%{opacity:.9;transform:scale(.35)}100%{opacity:0;transform:scale(1.25)}}
+
+.round-summary-strip{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;margin:8px 0;padding:8px 12px;border-radius:10px;background:#0b22312e;border:1px solid #86a9b844;font-size:12px;font-variant-numeric:tabular-nums}
+.round-summary-strip strong{font-size:13px;color:#fff0bc}
+
+@media (prefers-reduced-motion:reduce){
+ .battle-fx .fx-trail,.battle-fx .fx-shell{animation:none;stroke-dashoffset:0}
+ .battle-fx .fx-arrive,.battle-fx .fx-blocked,.battle-fx .fx-impact,.battle-fx .fx-contact{animation:none;opacity:.9}
+ .battle-fx .fx-shock,.battle-fx .fx-sweep,.battle-fx .fx-objective{animation:none;opacity:.8}
+}
+
+/* Phase 5 terrain tiles (original SVGs, docs/ASSET_MANIFEST.md). The earlier gradients stay underneath as the fallback
+   if a tile cannot load; fogged sectors keep their plain dark fill so hidden terrain is not revealed. */
+.tactical-board .tactical-cell.terrain-plains:not(.fogged){background:url('/assets/terrain/plains.svg') center/100% 100% no-repeat,linear-gradient(140deg,#53604a,#3c4c3e)}
+.tactical-board .tactical-cell.terrain-forest:not(.fogged){background:url('/assets/terrain/forest.svg') center/100% 100% no-repeat,radial-gradient(circle at 30% 30%,#2e4934 0 24%,transparent 25%),radial-gradient(circle at 70% 65%,#243e2d 0 27%,#3f5840 28%)}
+.tactical-board .tactical-cell.terrain-mountain:not(.fogged){background:url('/assets/terrain/mountain.svg') center/100% 100% no-repeat,repeating-linear-gradient(125deg,#616352 0 12px,#4a5144 12px 22px)}
+.tactical-board .tactical-cell.terrain-desert:not(.fogged){background:url('/assets/terrain/desert.svg') center/100% 100% no-repeat,linear-gradient(135deg,#7b7251,#625b40)}
+.tactical-board .tactical-cell.terrain-urban:not(.fogged){background:url('/assets/terrain/urban.svg') center/100% 100% no-repeat,repeating-linear-gradient(90deg,#586360 0 8px,#3d4847 9px 14px)}
+.tactical-board .tactical-cell.terrain-coastal:not(.fogged){background:url('/assets/terrain/coastal.svg') center/100% 100% no-repeat,linear-gradient(120deg,#49615b 50%,#294d5a 51%)}
+
+/* Phase 5 sound options (Player options → Sound). */
+.audio-options .audio-toggle{display:flex;gap:10px;align-items:center;margin:8px 0;font-size:13px}
+.audio-options .audio-slider{display:grid;grid-template-columns:minmax(120px,1fr) minmax(0,2fr) 48px;gap:10px;align-items:center;margin:6px 0;font-size:13px}
+.audio-options .audio-slider input{width:100%;accent-color:#e1bc70}
+.audio-options .audio-slider output{font-variant-numeric:tabular-nums;text-align:right}
+.audio-options .audio-status{color:#ffb4a2;font-size:12px}
+@media (max-width:520px){.audio-options .audio-slider{grid-template-columns:1fr 48px}.audio-options .audio-slider input{grid-column:1/-1;grid-row:2}}
