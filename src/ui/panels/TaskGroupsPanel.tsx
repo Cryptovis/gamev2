@@ -18,7 +18,8 @@ const MISSION_HINT: Record<TaskMission, string> = {
   convoyEscort: 'Protects your cargo and halves an enemy blockade.',
 };
 const ASSET_LABEL: Record<TaskAsset, string> = { fighters: 'Fighters', bombers: 'Bombers', warships: 'Warships' };
-const pct = (v: number) => `${(v * 100).toFixed(1)}%`;
+/** Signed percentage; no sign on a zero effect. */
+const pct = (v: number, sign: '+' | '−') => v * 100 >= 0.05 ? `${sign}${(v * 100).toFixed(1)}%` : '0.0%';
 
 /**
  * Phase 4 task groups for the player's side of a war. Every number shown comes from engine previews
@@ -40,10 +41,10 @@ export function TaskGroupsPanel({ warId }: { warId: string }) {
       </header>
       <dl className="task-groups-effects">
         <div><dt><LocaleText value="Air superiority" /></dt><dd>{summary.airSuperiority >= 0 ? '+' : ''}{summary.airSuperiority.toFixed(0)}</dd></div>
-        <div><dt><LocaleText value="Close air support power" /></dt><dd>+{pct(summary.closeAirSupport)}</dd></div>
-        <div><dt><LocaleText value="Our interdiction" /></dt><dd>−{pct(summary.interdiction)}</dd></div>
-        <div><dt><LocaleText value="Our blockade" /></dt><dd>−{pct(summary.blockade)}</dd></div>
-        <div className={summary.supplyCut > 0 ? 'task-groups-alert' : undefined}><dt><LocaleText value="Enemy cut to our supply" /></dt><dd>−{pct(summary.supplyCut)}</dd></div>
+        <div><dt><LocaleText value="Close air support power" /></dt><dd>{pct(summary.closeAirSupport, '+')}</dd></div>
+        <div><dt><LocaleText value="Our interdiction" /></dt><dd>{pct(summary.interdiction, '−')}</dd></div>
+        <div><dt><LocaleText value="Our blockade" /></dt><dd>{pct(summary.blockade, '−')}</dd></div>
+        <div className={summary.supplyCut > 0 ? 'task-groups-alert' : undefined}><dt><LocaleText value="Enemy cut to our supply" /></dt><dd>{pct(summary.supplyCut, '−')}</dd></div>
       </dl>
       {summary.cargoAtRisk && <p className="task-groups-warning" role="status"><LocaleText value="Incoming cargo runs an enemy blockade without escorts." /></p>}
       <ul className="task-groups-rows">
