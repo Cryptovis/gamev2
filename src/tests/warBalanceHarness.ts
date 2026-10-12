@@ -23,6 +23,17 @@ function twin(state: GameState, from: string, to: string): GameState {
     const record = value as Record<string, unknown>;
     if (key !== 'countries' && from in record) next[key] = {...record, [to]: structuredClone(record[from])};
   }
+  // World-level records keyed by country (academies, living economy…), one and two levels deep.
+  const world = {...state.world} as unknown as Mutable;
+  for (const [key, value] of Object.entries(state.world)) {
+    if (!value || typeof value !== 'object' || Array.isArray(value)) continue;
+    const record = value as Record<string, unknown>;
+    if (from in record) { world[key] = {...record, [to]: structuredClone(record[from])}; continue; }
+    const nested = {...record}; let changed = false;
+    for (const [inner, child] of Object.entries(record)) if (child && typeof child === 'object' && !Array.isArray(child) && from in (child as Record<string, unknown>)) { nested[inner] = {...(child as Record<string, unknown>), [to]: structuredClone((child as Record<string, unknown>)[from])}; changed = true; }
+    if (changed) world[key] = nested;
+  }
+  next.world = world;
   const template = state.countries[TEMPLATE_ID], source = state.countries[from];
   const country: CountryState = {...structuredClone(source), id: to, name: `Twin ${to}`, region: template.region, subregion: template.subregion};
   (next as unknown as GameState).countries = {...state.countries, [to]: country};
