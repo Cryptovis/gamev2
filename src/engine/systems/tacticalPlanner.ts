@@ -1,6 +1,6 @@
 import type { GameState } from '../../domain/game';
 import type { KnownEnemy, TacticalBattle, TacticalOrder, TacticalPlan, TacticalPlanKind, TacticalSide, TacticalUnit } from '../../domain/tactical';
-import { COMMAND_BUDGET, ORDER_COST, allCells, cellColumn, cellDistance, cellRow, chooseSingleRoundOrders, validateTacticalOrders, visibleCells } from './tactical';
+import { allCells, cellColumn, cellDistance, cellRow, chooseSingleRoundOrders, visibleCells, type TacticalIntent } from './tactical';
 
 /**
  * Phase 3 multi-round tactical AI.
@@ -152,7 +152,7 @@ function projectPlan(b: TacticalBattle, side: TacticalSide, kind: TacticalPlanKi
     const support = units.some(u => u.role === 'artillery' && k.enemies.some(e => cellDistance(b, e.cell, u.cell) <= 3)) ? 1 : 0;
     score += weight * (held * 6 + progress * 1.5 + cover * 1.2 + support - exposed * 3 / Math.max(0.35, Math.min(2, ratio)));
   }
-  if (kind === 'recon') score += k.enemies.length < 2 ? 4 : -2;
+  if (kind === 'recon') score += !k.visible.has(objective) && k.enemies.length < 2 ? 2 : -4;
   if (kind === 'withdraw') score += ratio < WITHDRAW_RATIO ? 10 : -10;
   if (kind === 'secure') score += k.holders[b.objectives.indexOf(objective)] === side ? 3 : -1;
   if (kind === 'flank') score += alive(b.units).some(u => u.side === side && u.role === 'armor') ? 0.5 : -20;
@@ -163,46 +163,10 @@ function projectPlan(b: TacticalBattle, side: TacticalSide, kind: TacticalPlanKi
 // Orders for the chosen plan
 // ---------------------------------------------------------------------------------------------
 
-function planOrders(s: GameState, id: string, side: TacticalSide, plan: TacticalPlan, k: Knowledge, budget: Budget): TacticalOrder[] {
-  const b = s.wars[id].tactical!, own = alive(b.units).filter(u => u.side === side);
-  const goals = destinations(b, side, plan.kind, plan.objective, k);
-  const visibleEnemies = k.enemies.filter(e => k.visible.has(e.cell) && e.seenRound === b.round);
-  const candidates: { order: TacticalOrder; priority: number }[] = [];
-  const forward = (from: number, to: number) => (side === 'attacker' ? cellColumn(b, to) > cellColumn(b, from) : cellColumn(b, to) < cellColumn(b, from));
-  for (const u of own) {
-    const goal = goals.get(u.id)!, threatened = visibleEnemies.some(e => cellDistance(b, e.cell, u.cell) <= 2);
-    if (u.role === 'artillery') {
-      const targets = visibleEnemies.filter(e => cellDistance(b, e.cell, u.cell) <= 3)
-        .sort((x, y) => cellDistance(b, x.cell, plan.objective) - cellDistance(b, y.cell, plan.objective) || x.cell - y.cell);
-      if (targets.length && plan.kind !== 'withdraw') candidates.push({ order: { unitId: u.id, kind: 'bombard', target: targets[0].cell }, priority: 9 - cellDistance(b, targets[0].cell, plan.objective) * 0.2 });
-    }
-    if (plan.kind === 'recon' && u.role !== 'artillery') {
-      const scout = allCells(b).filter(c => !k.visible.has(c) && cellDistance(b, u.cell, c) <= 3)
-        .sort((x, y) => cellDistance(b, x, plan.objective) - cellDistance(b, y, plan.objective) || x - y)[0];
-      if (scout !== undefined) candidates.push({ order: { unitId: u.id, kind: 'recon', target: scout }, priority: 8 - cellDistance(b, u.cell, plan.objective) * 0.1 });
-    }
-    if (u.cell === goal || (b.objectives.includes(u.cell) && plan.kind !== 'withdraw')) {
-      candidates.push({ order: { unitId: u.id, kind: threatened || plan.kind === 'secure' ? 'defend' : 'reserve' }, priority: threatened ? 7 : 3 });
-      continue;
-    }
-    const occupied = new Set(alive(b.units).filter(x => x.id !== u.id && k.visible.has(x.cell)).map(x => x.cell));
-    const step = stepToward(b, u, goal, occupied, budget);
-    if (step === u.cell) { candidates.push({ order: { unitId: u.id, kind: 'defend' }, priority: 1 }); continue; }
-    const kind = u.role === 'armor' && cellDistance(b, u.cell, step) <= 2 && forward(u.cell, step) && plan.kind !== 'withdraw' ? 'flank' : 'move';
-    // Groups closest to the objective act first: they decide the plan's next round.
-    candidates.push({ order: { unitId: u.id, kind, target: step }, priority: 6 - cellDistance(b, step, plan.objective) * 0.3 + (plan.kind === 'withdraw' ? 2 : 0) });
-    if (kind === 'flank') candidates.push({ order: { unitId: u.id, kind: 'move', target: step }, priority: 5.5 - cellDistance(b, step, plan.objective) * 0.3 });
-  }
-  candidates.sort((x, y) => y.priority - x.priority || x.order.unitId.localeCompare(y.order.unitId) || (x.order.target ?? -1) - (y.order.target ?? -1));
-  const orders: TacticalOrder[] = [], used = new Set<string>();
-  for (const { order } of candidates) {
-    if (used.has(order.unitId)) continue;
-    if (!budget.spend(10)) break;
-    if (validateTacticalOrders(s, id, side, [...orders, order]).length) continue;
-    orders.push(order); used.add(order.unitId);
-    if (orders.reduce((n, o) => n + ORDER_COST[o.kind], 0) >= COMMAND_BUDGET) break;
-  }
-  return orders;
+const POSTURE: Record<TacticalPlanKind, TacticalIntent['posture']> = { recon: 'attack', seize: 'attack', flank: 'flank', secure: 'hold', withdraw: 'withdraw' };
+/** The plan fixes the goal and posture; the shared order scorer turns them into this round's validated orders. */
+export function planIntent(b: TacticalBattle, plan: TacticalPlan, k: Knowledge): TacticalIntent {
+  return { objective: plan.objective, posture: POSTURE[plan.kind], scout: plan.kind === 'recon' && !k.visible.has(plan.objective) };
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -217,7 +181,7 @@ function stillValid(b: TacticalBattle, side: TacticalSide, plan: TacticalPlan, k
   if (plan.kind === 'flank') return alive(b.units).some(u => u.side === side && u.role === 'armor');
   // A seize plan that has taken its objective becomes a secure plan.
   if (plan.kind === 'seize' || plan.kind === 'flank') return k.holders[b.objectives.indexOf(plan.objective)] !== side;
-  if (plan.kind === 'recon') return k.enemies.length < 2 && b.round - plan.startedRound < PLAN_HORIZON;
+  if (plan.kind === 'recon') return !k.visible.has(plan.objective) && b.round - plan.startedRound < PLAN_HORIZON;
   return true;
 }
 
@@ -259,7 +223,8 @@ export function planTacticalOrders(s: GameState, id: string, side: TacticalSide,
     plan = { kind: chosen.kind, objective: chosen.objective, startedRound: b.round, updatedRound: b.round, score: chosen.score, known: k.enemies };
     reason = previous ? `New plan (${previous.kind} → ${chosen.kind}): ${planSummary(b, plan)}.` : `Plan: ${planSummary(b, plan)}.`;
   }
-  const orders = planOrders(s, id, side, plan, k, budget);
-  if (budget.exceeded) return fallback('Evaluation budget exceeded; single-round orders used.');
+  // Each scored order option is validated once; count the work against the same budget.
+  if (!budget.spend(alive(b.units).filter(u => u.side === side).length * 40)) return fallback('Evaluation budget exceeded; single-round orders used.');
+  const orders = chooseSingleRoundOrders(s, id, side, planIntent(b, plan, k));
   return { orders, plan, evaluations: budget.used, fallback: false, reason };
 }

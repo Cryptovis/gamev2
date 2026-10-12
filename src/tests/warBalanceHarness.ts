@@ -179,12 +179,14 @@ export interface SmallEconomyResult { days: number; status: WarState['status']; 
  * A small economy (the player) defending for up to 90 days against a regional AI attacker, on the full daily tick.
  * The player applies for the first rescue line offered. "Bankrupt" means arrears that persist for 30+ days.
  */
-export function runSmallEconomyDefense(seed: number, defenderId = 'ARM', attackerId = 'AZE', days = 90): SmallEconomyResult {
+export function runSmallEconomyDefense(seed: number, defenderId = 'ARM', attackerId = 'GEO', days = 90, lowTreasury = false): SmallEconomyResult {
   let state = makeInitialState();
   state = {...state, simulationSeed: seed >>> 0, playerCountryId: defenderId, speed: 0, eventCooldownUntil: 100000, advisorCooldownUntil: 100000,
     playerProfile: {...state.playerProfile, setupComplete: true}, world: {...state.world, tutorial: {...state.world.tutorial, active: false, completed: true}}};
-  const a = state.countries[attackerId];
-  state = {...state, countries: {...state.countries, [attackerId]: {...a, processedResources: {...a.processedResources, fuel: Math.max(a.processedResources.fuel, 5000)}}}};
+  const a = state.countries[attackerId], d = state.countries[defenderId];
+  state = {...state, countries: {...state.countries, [attackerId]: {...a, processedResources: {...a.processedResources, fuel: Math.max(a.processedResources.fuel, 5000)}},
+    // lowTreasury: the defender enters the war with cash below the 1.5%-of-GDP rescue threshold.
+    [defenderId]: lowTreasury ? {...d, economy: {...d.economy, treasury: d.economy.gdp * 0.01}} : d}};
   const opened = openWar(state, attackerId, defenderId, true);
   state = opened.state;
   const warId = opened.warId!;

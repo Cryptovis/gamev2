@@ -21,7 +21,7 @@ test('measure paired war-balance scenarios',()=>{
    reversalRate:{attacker:+(sum(r=>r.reversals.attacker)/Math.max(1,sum(r=>r.moves.attacker))).toFixed(3),defender:+(sum(r=>r.reversals.defender)/Math.max(1,sum(r=>r.moves.defender))).toFixed(3)},
    objectiveRoundsHeld:{attacker:sum(r=>r.heldRounds.attacker),defender:sum(r=>r.heldRounds.defender)},captures:{attacker:sum(r=>r.captures.attacker),defender:sum(r=>r.captures.defender)}};
  }));
- const small=BALANCE_SEEDS.slice(0,6).map(seed=>runSmallEconomyDefense(seed));
+ const small=[['ARM','GEO',false],['ARM','AZE',false],['ARM','GEO',true],['GEO','RUS',true]].flatMap(([d,a,low])=>BALANCE_SEEDS.slice(0,4).map(seed=>({pair:`${a}→${d}${low?' low cash':''}`,...runSmallEconomyDefense(seed,d as string,a as string,90,low as boolean)})));
  for(const r of small)console.log(`[small] ${JSON.stringify(r)}`);
  for(const r of auto)console.log(`[war] ${r.scenario.padEnd(36)} Δ30 ${String(r.meanDelta30).padStart(7)} [${r.minDelta30}, ${r.maxDelta30}] V/D/A ${r.victories}/${r.defeats}/${r.ongoing} end ${r.meanEndDay} loss ${r.attackerLoss}/${r.defenderLoss} fuel ${r.attackerFuel}/${r.defenderFuel} air ${r.air} supply ${r.supply}`);
  for(const r of tactical)console.log(`[tactical] ${r.scenario.padEnd(22)} ${r.attackerAi.padEnd(7)} rounds ${r.meanRounds} progress ${r.meanProgress} switches ${JSON.stringify(r.goalSwitchesPerRound)} reversal ${JSON.stringify(r.reversalRate)} held ${JSON.stringify(r.objectiveRoundsHeld)}`);

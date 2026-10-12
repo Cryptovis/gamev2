@@ -230,38 +230,63 @@ export function chooseTacticalOrders(s: GameState, id: string, side: TacticalSid
 }
 
 /**
- * Single-round AI (0.86), now the planner's fallback: every surviving group proposes scored options, and the best
- * options that fit the command budget are taken, one per group. It uses the same validator, vision and fuel as the
- * player, and objective holders only as far as this side can see (Phase 3 fog-of-war fix).
+ * What a standing plan asks of this round's orders (Phase 3). Without an intent the AI chases the nearest open depot,
+ * which is the single-round behaviour used as the planner's fallback.
  */
-export function chooseSingleRoundOrders(s: GameState, id: string, side: TacticalSide): TacticalOrder[] {
+export interface TacticalIntent {
+  objective: number;
+  posture: 'attack' | 'flank' | 'hold' | 'withdraw';
+  /** Send one group to reconnoitre toward the objective. */
+  scout: boolean;
+}
+
+/**
+ * Tactical order selection (0.86, extended in Phase 3): every surviving group proposes scored options, and the best
+ * options that fit the command budget are taken, one per group. The AI uses the same validator, vision and fuel as the
+ * player, and objective holders only as far as this side can see. Priorities: hold a depot under threat, bombard visible
+ * enemies (above all on depots), take an open depot, contest an enemy-held depot, then advance. An intent fixes the goal
+ * across rounds and shifts the weights for its posture.
+ */
+export function chooseSingleRoundOrders(s: GameState, id: string, side: TacticalSide, intent?: TacticalIntent): TacticalOrder[] {
   const b = s.wars[id].tactical!, visible = visibleCells(b, side);
   const enemies = alive(b.units).filter(u => u.side !== side && visible.has(u.cell));
   const holders = sideKnowledge(b, side, []).holders;
   const open = b.objectives.filter((_, i) => holders[i] !== side);
   const enemyHeld = b.objectives.filter((_, i) => holders[i] === other(side));
   const goals = open.length ? open : b.objectives;
+  const own = alive(b.units).filter(x => x.side === side);
+  const posture = intent?.posture, homeColumn = side === 'attacker' ? 0 : b.width - 1;
+  const scout = intent?.scout ? own.filter(u => u.role !== 'artillery' && !b.objectives.includes(u.cell)).sort((x, y) => cellDistance(b, x.cell, intent.objective) - cellDistance(b, y.cell, intent.objective) || x.id.localeCompare(y.id))[0] : undefined;
   const options: { order: TacticalOrder; score: number }[] = [];
-  for (const u of alive(b.units).filter(x => x.side === side)) {
+  for (const u of own) {
     const onObjective = b.objectives.includes(u.cell);
     const threatened = enemies.some(e => cellDistance(b, e.cell, u.cell) <= 2);
-    if (onObjective) options.push({ order: { unitId: u.id, kind: 'defend' }, score: threatened ? 7 : 4 });
+    if (onObjective) options.push({ order: { unitId: u.id, kind: 'defend' }, score: (threatened ? 7 : 4) + (posture === 'hold' ? 1 : 0) - (posture === 'withdraw' ? 4 : 0) });
     if (u.role === 'artillery') for (const enemy of enemies) {
-      const onDepot = b.objectives.includes(enemy.cell) ? 2 : 0, nearOwn = alive(b.units).some(x => x.side === side && cellDistance(b, x.cell, enemy.cell) <= 1) ? 1 : 0;
-      options.push({ order: { unitId: u.id, kind: 'bombard', target: enemy.cell }, score: 5 + onDepot + nearOwn - cellDistance(b, u.cell, enemy.cell) * 0.1 });
+      const onDepot = b.objectives.includes(enemy.cell) ? 2 : 0, nearOwn = own.some(x => cellDistance(b, x.cell, enemy.cell) <= 1) ? 1 : 0, focus = intent && cellDistance(b, enemy.cell, intent.objective) <= 2 ? 1 : 0;
+      options.push({ order: { unitId: u.id, kind: 'bombard', target: enemy.cell }, score: 5 + onDepot + nearOwn + focus - cellDistance(b, u.cell, enemy.cell) * 0.1 });
     }
-    if (!onObjective) {
-      const goal = [...goals].sort((x, y) => cellDistance(b, u.cell, x) - cellDistance(b, u.cell, y) || x - y)[0];
+    if (u === scout) {
+      const target = allCells(b).filter(c => !visible.has(c) && cellDistance(b, u.cell, c) <= 3).sort((x, y) => cellDistance(b, x, intent!.objective) - cellDistance(b, y, intent!.objective) || x - y)[0];
+      if (target !== undefined) options.push({ order: { unitId: u.id, kind: 'recon', target }, score: 6.5 });
+    }
+    if (!onObjective || posture === 'withdraw') {
+      const retreat = cellRow(b, u.cell) * b.width + homeColumn;
+      const goal = posture === 'withdraw' ? retreat : intent ? intent.objective : [...goals].sort((x, y) => cellDistance(b, u.cell, x) - cellDistance(b, u.cell, y) || x - y)[0];
       for (const target of allCells(b)) {
         const remaining = cellDistance(b, target, goal);
         if (cellDistance(b, u.cell, target) > 2 || remaining >= cellDistance(b, u.cell, goal)) continue;
-        const takesDepot = open.includes(target) ? 4 : 0, contests = enemyHeld.some(o => cellDistance(b, target, o) === 1) ? 1.5 : 0;
-        const score = 3 + takesDepot + contests - remaining * 0.3;
-        if (u.role === 'armor') options.push({ order: { unitId: u.id, kind: 'flank', target }, score: score + 0.5 });
+        const takesDepot = open.includes(target) && posture !== 'withdraw' ? 4 : 0, contests = enemyHeld.some(o => cellDistance(b, target, o) === 1) ? 1.5 : 0;
+        const cover = posture === 'withdraw' || posture === 'hold' ? (b.terrain[target] !== 'plains' ? 1 : 0) : 0;
+        const wide = posture === 'flank' && u.role === 'armor' && !enemies.some(e => cellDistance(b, e.cell, target) <= 1) ? 1 : 0;
+        const pace = posture === 'hold' && remaining > 1 ? -1.5 : posture === 'withdraw' ? 1 : 0;
+        const score = 3 + takesDepot + contests + cover + wide + pace - remaining * 0.3;
+        if (u.role === 'armor' && posture !== 'withdraw') options.push({ order: { unitId: u.id, kind: 'flank', target }, score: score + 0.5 });
         options.push({ order: { unitId: u.id, kind: 'move', target }, score });
       }
     }
-    options.push({ order: { unitId: u.id, kind: 'defend' }, score: b.terrain[u.cell] === 'plains' ? 1 : 1.5 });
+    options.push({ order: { unitId: u.id, kind: 'defend' }, score: (b.terrain[u.cell] === 'plains' ? 1 : 1.5) + (posture === 'hold' ? 1 : 0) });
+    if (posture === 'withdraw' && !threatened) options.push({ order: { unitId: u.id, kind: 'reserve' }, score: 2.5 });
   }
   options.sort((x, y) => y.score - x.score || x.order.unitId.localeCompare(y.order.unitId) || (x.order.target ?? -1) - (y.order.target ?? -1));
   const orders: TacticalOrder[] = [], used = new Set<string>();
