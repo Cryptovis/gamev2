@@ -1,7 +1,7 @@
 // 0.88 track E (audit E2): factions, coalition support, election forecast and regime pressure.
 // Every number shown here comes from an engine read function in src/engine/systems/factions.ts.
 import { LocaleText } from '../../i18n/localeText';
-import { useGameStore } from '../../store/gameStore';
+import {useWorldView} from '../../store/useWorldView';
 import { FACTION_KEYS } from '../../domain/politics';
 import {
   CONCESSION_DAYS, CRISIS_OPTION_LABEL, FACTION_LABEL, REGIME_CRISIS_PRESSURE,
@@ -12,7 +12,7 @@ import { formatCostB } from '../../engine/systems/policyPressure';
 const pct = (value: number) => `${value.toFixed(0)}%`;
 
 export function PoliticsSection() {
-  const s = useGameStore();
+  const s = useWorldView();
   const p = s.countries[s.playerCountryId];
   if (!p) return null;
   const f = factionsFor(p), forecast = electionForecast(s, p.id), risk = coupRisk(s, p.id);

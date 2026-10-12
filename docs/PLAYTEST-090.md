@@ -119,3 +119,23 @@ Manual route: World → each ranking → scroll past ten countries → country �
 Victory and Regime Crisis use the existing managed focus/Tab/Escape lifecycle, with translated labels and preserved crisis acknowledgement. Save/load, exact-budget, duplicate command, cargo, settlement and same-day combat coverage expanded. No simulation, schema or dependency change.
 
 635 unit tests / 80 files, TypeScript and production build passed. All 12 new focused production-browser scenarios passed; the local full run was interrupted after 78 passes by a workspace reset. The full 146-scenario suite must pass on the published GitHub commit. QA classification and performance method: [Phase 1 evidence](QA-PHASE1-0909.md).
+
+## 0.90.0-playtest.10 — Rule of Nations: fluid command (Claude, Phase 2)
+
+Phase 2 and the Rule of Nations name only; Phase 3 untouched. Save schema 17, simulation rules, RNG and dependencies unchanged. Evidence and measurement method: [Phase 2 record](FLUID-UI-0910.md).
+
+Validation: VALIDATION_PENDING
+
+### Manual acceptance route
+
+1. Entry and setup show the RON mark and "Rule of Nations" over the cover art; the browser tab reads Rule of Nations. Switch to tr/es/zh/ru: the name stays untranslated.
+2. Open World, scroll the rankings, open a country from a visible row with Enter, close the country panel: World fades back at the same frame and scroll offset with focus on that row.
+3. Nation → Military → National power → Escape: the panel returns on Military with the same scroll and focus on National power. With the OS "reduce motion" setting, windows appear without fades.
+4. At 390 px in Turkish: HUD labels stay inside the card; country tabs show whole words (Genel, Ekonomi, Tedarik komutanlığı). Buttons such as "Propose trade pact" read in natural case.
+5. Run 5x for a minute with Supply open: values update daily; no console errors.
+
+### Known limits
+
+- Not run locally or on StackBlitz: the npm registry was blocked in this session. All results come from GitHub-hosted Chromium.
+- React render time is unchanged; mobile and low-power performance were not measured.
+- Remaining capital-only button labels outside the reviewed set (for example setup "CONTINUE"), and translation quality beyond the corrected strings, are left for later polish.

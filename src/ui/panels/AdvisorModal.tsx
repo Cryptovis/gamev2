@@ -5,14 +5,19 @@ import {useState} from 'react';
 import {flagEmoji} from '../../data/countryThemes';
 import {tr} from '../../i18n/gameI18n';
 import {useGameStore} from '../../store/gameStore';
+import {useWorldView} from '../../store/useWorldView';
 import {ResourceIcon} from '../icons/GameIcons';
 import {relationFor,relationshipIndex} from '../../engine/systems/diplomacy';
 import {makeLongTermImportContract,longTermContractPreview} from '../../engine/systems/trade';
 import {ReviewDialog} from './ReviewDialog';
 import {letterCost,diplomaticProposalStatus} from '../../engine/systems/livingEconomy';
 import {formatCostB} from '../../engine/systems/policyPressure';
+// Gate on the prompt alone; the full-state dialog body only subscribes while a prompt is shown.
 export function AdvisorModal(){
- const state=useGameStore(),prompt=state.activeAdvisor,[review,setReview]=useState<'pact'|1|3|5|10|null>(null);
+ return useGameStore(s=>!!s.activeAdvisor)?<AdvisorPrompt/>:null;
+}
+function AdvisorPrompt(){
+ const state=useWorldView(),prompt=state.activeAdvisor,[review,setReview]=useState<'pact'|1|3|5|10|null>(null);
  if(!prompt)return null;const supplier=state.countries[prompt.supplierId],player=state.countries[state.playerCountryId],language=state.playerProfile.language,rel=relationFor(player,supplier.id);
  const pact=diplomaticProposalStatus(state,supplier.id,'trade_pact'),terms=longTermContractPreview(state,player.id,supplier.id,prompt.resource,typeof review==='number'?review:1);
  const contract=typeof review==='number'?makeLongTermImportContract(state,player.id,supplier.id,prompt.resource,review):null;

@@ -1,4 +1,4 @@
-# AlpyX Roadmap after 0.31
+# Rule of Nations roadmap (formerly AlpyX) after 0.31
 
 ## Current playable spine
 World map → national economy/resources → diplomacy → bilateral commodity flows → development → military conflict → occupation → political consequences.
@@ -189,13 +189,17 @@ Translation catalogue consolidation/loading, remaining previews, measured perfor
 
 ## Major patch — six-phase plan (Codex, 2026-10-12)
 
-This plan supersedes older phase numbering for the current work. Phase 1 alone is authorized.
+This plan supersedes older phase numbering for the current work. Phases 1 and 2 are delivered; Phase 3 needs Alper's authorization.
 
-1. **Reliable foundation:** proven save/transaction/interaction bugs, regression coverage and initial performance measurements. Playtest.9 implements managed victory/crisis focus and expands safety coverage; release checks pending. [Evidence](QA-PHASE1-0909.md).
-2. **UI flow and targeted performance:** measured expensive selectors, typography, parent/child focus and transitions, five languages and zoom/mobile usability. Not started.
+1. **Reliable foundation:** proven save/transaction/interaction bugs, regression coverage and initial performance measurements. Playtest.9 implements managed victory/crisis focus and expands safety coverage; release CI 38242251836 passed. [Evidence](QA-PHASE1-0909.md).
+2. **UI flow and targeted performance:** measured expensive selectors, typography, parent/child focus and transitions, five languages and zoom/mobile usability. Delivered in playtest.10 together with the Rule of Nations name. [Evidence](FLUID-UI-0910.md).
 3. **Multi-turn tactical AI and balance:** deterministic bounded planning, fog of war, common player/AI costs; fuel/air/small-economy balance measured before changes.
 4. **Air/naval task groups and logistics:** allocation, range, readiness and shared validators; unify cargo ownership/cancellation semantics.
 5. **Terrain, playback and audio:** resolved events drive effects; skip/replay cannot change simulation; accessible static/silent fallbacks.
 6. **Closed Beta acceptance:** complete campaigns, multiwar/defeat, 365/1095 days, all languages, actual StackBlitz/mobile, full tests and CI.
 
 No large refactoring, catalogue consolidation or new libraries in Phase 1. Typed commands, seeded RNG, migrations and existing .8 work are preserved. V3/major naming remains conditional on complete playability. Stop before Phase 2 for Alper's decision.
+
+## 0.90.0-playtest.10 — Rule of Nations: fluid command (Claude)
+
+Delivered Phase 2: narrowed store subscriptions with render attribution (`npm run measure:renders`), opacity-only window motion with reduced-motion support, parent return with scroll/tab/focus, a 10 px text floor with natural-case buttons, tabs and headings in five languages, and the Rule of Nations name. Remaining for later phases: long-tail capital labels, wider translation review, mobile/low-power and StackBlitz measurement (Phase 6). Phase 3 (multi-turn tactical AI) has not started.

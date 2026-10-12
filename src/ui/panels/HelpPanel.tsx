@@ -1,6 +1,9 @@
+import { BRAND_NAME } from "../BrandMark";
 import { LocaleText, translateLive } from "../../i18n/localeText";
 import { useState } from "react";
 import { useGameStore } from "../../store/gameStore";
+import { useShallow } from "zustand/react/shallow";
+import { useStoreView } from "../../store/useStoreView";
 import { DraggableWindow } from "../windows/DraggableWindow";
 import { ReviewDialog } from "./ReviewDialog";
 import {
@@ -91,13 +94,42 @@ const faq = [
   ],
 ];
 export function HelpPanel() {
-  const state = useGameStore(),
+  const state = useGameStore(
+      useShallow((s) => ({
+        closeWorkspace: s.closeWorkspace,
+        restoreAdvice: s.restoreAdvice,
+        showReceipt: s.showReceipt,
+        navigate: s.navigate,
+        setTutorial: s.setTutorial,
+        startProgram: s.startProgram,
+      })),
+    ),
+    language = useGameStore((s) => s.playerProfile.language),
     [query, setQuery] = useState(""),
-    [review, setReview] = useState<ProgramKind | null>(null),
-    player = state.countries[state.playerCountryId];
+    [review, setReview] = useState<ProgramKind | null>(null);
+  // Only the displayed program figures are watched, not the whole campaign state.
+  const programs = useStoreView((s) => {
+    const treasury = s.countries[s.playerCountryId].economy.treasury;
+    return (Object.keys(PROGRAMS) as ProgramKind[]).map((kind) => {
+      const cost = programCost(s, kind),
+        active = s.world.programs?.find((p) => p.kind === kind && p.status === "active");
+      return { kind, cost, affordable: treasury >= cost, remaining: active ? Math.max(0, active.readyDay - s.day) : null };
+    });
+  });
+  const reviewed = useStoreView((s) => {
+    if (!review) return null;
+    const preview = programPreview(s, review);
+    return {
+      cost: preview.cost,
+      multiplier: preview.multiplier,
+      treasury: s.countries[s.playerCountryId].economy.treasury,
+      day: s.day,
+      active: !!s.world.programs?.some((p) => p.kind === review && p.status === "active"),
+    };
+  });
   const matching = faq.filter((row) =>
     row.some((t) =>
-      translateText(state.playerProfile.language, t)
+      translateText(language, t)
         .toLocaleLowerCase()
         .includes(query.toLocaleLowerCase()),
     ),
@@ -113,7 +145,7 @@ export function HelpPanel() {
       onClose={state.closeWorkspace}
     >
       <section className="game-notes">
-        <h3>The Real President</h3>
+        <h3 translate="no">{BRAND_NAME}</h3>
         <p>
           <LocaleText value="203 sovereign profiles · economy · population · resource markets · diplomacy · research · military command." />
         </p>
@@ -176,12 +208,8 @@ export function HelpPanel() {
           />
         </p>
         <div className="program-grid">
-          {(Object.keys(PROGRAMS) as ProgramKind[]).map((kind) => {
-            const d = PROGRAMS[kind],
-              cost = programCost(state, kind),
-              active = state.world.programs?.find(
-                (p) => p.kind === kind && p.status === "active",
-              );
+          {programs.map(({ kind, cost, affordable, remaining }) => {
+            const d = PROGRAMS[kind];
             return (
               <article key={kind}>
                 <h4>
@@ -197,13 +225,13 @@ export function HelpPanel() {
                   <LocaleText value={" days"} />
                 </small>
                 <button
-                  disabled={!!active || player.economy.treasury < cost}
+                  disabled={remaining !== null || !affordable}
                   onClick={() => setReview(kind)}
                 >
                   <LocaleText
                     value={
-                      active
-                        ? `${Math.max(0, active.readyDay - state.day)} days remaining`
+                      remaining !== null
+                        ? `${remaining} days remaining`
                         : "Review program"
                     }
                   />
@@ -251,8 +279,8 @@ export function HelpPanel() {
           />
         </p>
       </section>
-      {review && (() => {
-        const preview = programPreview(state, review);
+      {review && reviewed && (() => {
+        const preview = reviewed;
         return (
         <ReviewDialog
           title={translateLive(PROGRAMS[review].title)}
@@ -261,16 +289,13 @@ export function HelpPanel() {
             ["Cost", formatCostB(preview.cost)],
             [
               "Treasury after",
-              `$${(player.economy.treasury - preview.cost).toFixed(2)}B`,
+              `$${(preview.treasury - preview.cost).toFixed(2)}B`,
             ],
-            ["Completion", `Day ${state.day + PROGRAMS[review].days}`],
+            ["Completion", `Day ${preview.day + PROGRAMS[review].days}`],
             ["Effect after repeat fatigue", `${Math.round(preview.multiplier * 100)}%`],
           ]}
           allowed={
-            player.economy.treasury >= preview.cost &&
-            !state.world.programs?.some(
-              (p) => p.kind === review && p.status === "active",
-            )
+            preview.treasury >= preview.cost && !preview.active
           }
           onCancel={() => setReview(null)}
           onConfirm={(commandId) => {

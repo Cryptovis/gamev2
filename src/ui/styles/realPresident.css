@@ -4,7 +4,7 @@
   left: 0;
   right: 0;
   text-align: center;
-  font-size: 9px;
+  font-size: 10px;
   color: #c0d2dd;
   letter-spacing: 0.1em;
   z-index: 2600;
@@ -109,7 +109,7 @@
   gap: 8px;
 }
 .wizard-stepper small {
-  font-size: 8px;
+  font-size: 10px;
 }
 .wizard-personal-fields {
   gap: 16px;
@@ -519,7 +519,7 @@
   min-height: 112px;
 }
 .pulse-summary small {
-  font-size: 9px;
+  font-size: 10px;
 }
 .command-panel select,
 .floating-command-window select,
@@ -662,7 +662,7 @@
 .panel-tabs button { min-width: 0; padding-inline: 6px; }
 .panel-tabs button span { font-size: 10px; }
 .rail-button { min-width: 68px; }
-.rail-button small { font-size: 9px !important; }
+.rail-button small { font-size: 10px !important; }
 .profile-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
 .profile-tabs button { padding: 10px 14px; border: 1px solid #6a8791; border-radius: 9px; background: #243e4a; color: #e9edf0; }
 .profile-tabs button.active { background: #f2d283; color: #182f3b; }
@@ -773,7 +773,7 @@ body:has(.guided-tutorial) .review-backdrop { background: rgb(7 23 33 / 16%); ba
   .wizard-country-preview .wizard-stat-grid { grid-column: 1 / -1; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 4px; gap: 3px; }
   .wizard-country-preview .wizard-stat-grid span { padding: 5px 3px; text-align: center; }
   .wizard-country-preview .wizard-stat-grid b { font-size: 12px; }
-  .wizard-country-preview .wizard-stat-grid small { font-size: 8px; }
+  .wizard-country-preview .wizard-stat-grid small { font-size: 10px; }
   .wizard-country-preview .opening-profile { grid-column: 1 / -1; margin-top: 3px; padding: 5px 8px; }
   .wizard-country-preview .opening-profile p { font-size: 10px; margin-top: 2px; }
   .wizard-country-list .wizard-intro h2 { font-size: 23px; }

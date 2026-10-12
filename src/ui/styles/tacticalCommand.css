@@ -12,7 +12,7 @@
 .tactical-layout {display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:22px;align-items:start}
 .tactical-board {position:relative;display:grid;grid-template-columns:repeat(var(--cols,6),minmax(0,1fr));aspect-ratio:var(--cols,6)/var(--rows,6);width:100%;border:2px solid #76806b;border-radius:12px;overflow:hidden;background:#29362e;isolation:isolate}
 .tactical-board .tactical-cell {position:relative;min-width:0;min-height:0;padding:0;border:1px solid #6c76635e;border-radius:0;background:linear-gradient(140deg,#53604a,#3c4c3e);color:#d6dfc9;opacity:1}
-.tactical-cell small {position:absolute;top:5px;left:5px;font-size:9px;opacity:.75}
+.tactical-cell small {position:absolute;top:5px;left:5px;font-size:10px;opacity:.75}
 .tactical-board .terrain-mountain {background:repeating-linear-gradient(125deg,#616352 0 12px,#4a5144 12px 22px)}
 .tactical-board .terrain-forest {background:radial-gradient(circle at 30% 30%,#2e4934 0 24%,transparent 25%),radial-gradient(circle at 70% 65%,#243e2d 0 27%,#3f5840 28%)}
 .tactical-board .terrain-desert {background:linear-gradient(135deg,#7b7251,#625b40)}
@@ -25,7 +25,7 @@
 .tactical-depot {position:absolute;right:6px;bottom:4px;color:#ffe39b;font-size:23px;text-shadow:0 1px 7px #172b20}
 .tactical-token {position:absolute;width:calc(100% / var(--cols,6));height:calc(100% / var(--rows,6));display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;transition:left .5s ease,top .5s ease;z-index:1}
 .tactical-token>svg {filter:drop-shadow(0 3px 3px #0008)}
-.tactical-token span {font-size:9px;border-radius:4px;padding:2px 5px;background:#123d2f;color:#d1f5db;border:1px solid #a1d8b566;line-height:1}
+.tactical-token span {font-size:10px;border-radius:4px;padding:2px 5px;background:#123d2f;color:#d1f5db;border:1px solid #a1d8b566;line-height:1}
 .tactical-token.enemy span {background:#653932;color:#ffe3d2;border-color:#e2a59888}
 .tactical-legend {display:flex;flex-wrap:wrap;gap:12px;font-size:10px;margin:12px 0;color:#bdcbca}
 .tactical-legend span {display:flex;align-items:center;gap:5px}
@@ -38,7 +38,7 @@
 .tactical-unit-list small {font-size:10px;color:#c3cfcd}
 .tactical-order-types {display:grid;grid-template-columns:1fr 1fr;gap:7px}
 .tactical-order-types button {display:grid;gap:4px;text-align:left}
-.tactical-order-types small {font-size:9px;color:#b8c8c5}
+.tactical-order-types small {font-size:10px;color:#b8c8c5}
 .tactical-orders [aria-pressed=true] {border-color:#d6b979;background:#42504b}
 .tactical-orders>p {font-size:11px;line-height:1.65;color:#c5d3d0}
 .tactical-orders .tactical-queue {width:100%;background:#395a48}
@@ -65,7 +65,7 @@
 .economic-table-scroll table {border-collapse:collapse;width:100%;font-size:11px}
 .economic-table-scroll :is(th,td) {padding:8px;border-bottom:1px solid #6c77734a;text-align:left}
 .economic-table-scroll caption {text-align:left;padding:8px;color:#dec28b}
-@media(max-width:760px) {.tactical-layout {grid-template-columns:1fr;gap:16px}.tactical-heading {gap:10px}.tactical-heading h3 {font-size:21px}.tactical-heading>button {max-width:110px}.tactical-summary {gap:5px}.tactical-summary span {padding:7px;font-size:10px}.tactical-orders {border-top:1px solid #7b867655;padding-top:16px}.tactical-token svg {width:30px;height:30px}.tactical-cell small {font-size:8px}.tactical-round-result>div {align-items:flex-start}.war-theatre:has(.tactical-experience) {padding:14px;max-height:calc(100dvh - 24px)}}
+@media(max-width:760px) {.tactical-layout {grid-template-columns:1fr;gap:16px}.tactical-heading {gap:10px}.tactical-heading h3 {font-size:21px}.tactical-heading>button {max-width:110px}.tactical-summary {gap:5px}.tactical-summary span {padding:7px;font-size:10px}.tactical-orders {border-top:1px solid #7b867655;padding-top:16px}.tactical-token svg {width:30px;height:30px}.tactical-cell small {font-size:10px}.tactical-round-result>div {align-items:flex-start}.war-theatre:has(.tactical-experience) {padding:14px;max-height:calc(100dvh - 24px)}}
 @media(prefers-reduced-motion:reduce) {.tactical-token {transition:none}}
 
 .tactical-replay-controls {display:flex;flex-wrap:wrap;gap:10px;margin:12px 0}.tactical-replay-controls label {font-size:11px;display:flex;align-items:center;gap:8px}.tactical-replay-controls select {background:#20383e;color:#edf1ee;border:1px solid #708174;border-radius:6px;padding:7px}
@@ -75,7 +75,7 @@
 @media(min-width:761px) {.tactical-board {max-width:480px;margin-inline:auto}}
 
 /* 0.85 HD War v2 */
-.tactical-cell small {font-size:8px}
+.tactical-cell small {font-size:10px}
 .tactical-token>svg {width:min(36px,70%);height:auto}
 .tactical-depot.held-friendly {color:#8fe0b0}
 .tactical-depot.held-enemy {color:#f19a86}

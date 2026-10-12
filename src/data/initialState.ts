@@ -21,7 +21,7 @@ export const makeInitialState = (): GameState => {
   selectedCountryId: 'TUR',
   mapMode: 'political',
   mapPresentation: 'political',
-  mapNotice: 'The Real President 0.83 — economy, people and diplomacy.',
+  mapNotice: 'Rule of Nations — economy, people and diplomacy.',
   countries,
   tradeDeals: {},
   wars: {},
@@ -45,7 +45,7 @@ export const makeInitialState = (): GameState => {
   lastAiDay: 1,
   lastStrategicReviewDay: 1,
   sitrep: [
-    'The Real President is ready.',
+    'Rule of Nations is ready.',
     'Strategic AI, covert operations and influence networks loaded alongside Strategic Command systems.',
   ],
   });

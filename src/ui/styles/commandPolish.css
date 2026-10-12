@@ -12,7 +12,7 @@
 .clock-island .speed-segment {padding:5px;background:linear-gradient(135deg,#112631,#213e4b);border:1px solid #81b9ba;border-radius:12px;box-shadow:inset 0 0 18px #7cd9d01a,0 0 0 3px #142c3477}
 .clock-island .speed-segment button {min-width:46px;min-height:48px;border:1px solid transparent;font-variant-numeric:tabular-nums}
 .clock-island .speed-segment button strong {font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:18px;font-weight:900;letter-spacing:-.04em}
-.clock-island .speed-segment button small {font-size:9px!important;font-weight:700;letter-spacing:.02em;color:#c7d8dd}
+.clock-island .speed-segment button small {font-size:10px!important;font-weight:700;letter-spacing:.02em;color:#c7d8dd}
 .clock-island .speed-segment button.active {background:linear-gradient(135deg,#ffe2a1,#eabc62);border-color:#ffeaba;box-shadow:0 0 14px #e7bd6240,inset 0 1px #fff6cd}
 .clock-island .speed-segment button:focus-visible {outline:2px solid #a7f0df;outline-offset:2px}
 .review-visual {display:flex;align-items:center;justify-content:center;min-height:92px;background:radial-gradient(ellipse,#9bbaae20,transparent 70%);margin:8px 0;border-bottom:1px solid #abbea126;padding-bottom:12px}

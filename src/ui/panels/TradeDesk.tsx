@@ -8,6 +8,7 @@ import { LocaleText, translateLive } from '../../i18n/localeText';
 import { EXCHANGE_GOODS, letterCost } from '../../engine/systems/livingEconomy';
 import { countryTradeOptions, rankSuppliers, type SaleOption, type TradeOption } from '../../engine/systems/tradeOptions';
 import { useGameStore } from '../../store/gameStore';
+import {useWorldView} from '../../store/useWorldView';
 import { MARKET_RESOURCES, resourceStrategicStatus } from '../../store/marketSelectors';
 import { money } from '../formatMoney';
 import { AssetThumbnail } from '../icons/AssetThumbnail';
@@ -45,7 +46,7 @@ type Dialog = ReviewContent & { actions?:Array<{label:string;onClick:()=>void;di
 
 /** Turns a route's next step into a button and, where the action costs money, a review dialog. */
 function useTradeActions() {
-  const state = useGameStore();
+  const state = useWorldView();
   const [dialog, setDialog] = useState<Dialog | null>(null);
   const player = state.countries[state.playerCountryId];
   const [contract,setContract]=useState<{partnerId:string;resource:TradeResource}|null>(null);
@@ -115,13 +116,13 @@ function useTradeActions() {
 }
 
 const ACTION_LABEL: Record<TradeOption['nextStep'], string> = {
-  buy: 'BUY', sell: 'SELL', list_on_exchange: 'LIST ON EXCHANGE', propose_pact: 'PROPOSE TRADE PACT', pact_pending: 'PACT PENDING',
-  improve_relations: 'IMPROVE RELATIONS', form_alliance: 'SEEK ALLIANCE', none: '',
+  buy: 'Buy', sell: 'Sell', list_on_exchange: 'List on exchange', propose_pact: 'Propose trade pact', pact_pending: 'Pact pending',
+  improve_relations: 'Improve relations', form_alliance: 'Seek alliance', none: '',
 };
 
 function ActionButton({ option, onAction }: { option: TradeOption; onAction: (option: TradeOption) => void }) {
   if (option.nextStep === 'none') return <span className="trade-action-none" />;
-  const label = option.nextStep === 'buy' && option.raw ? 'IMPORT' : ACTION_LABEL[option.nextStep];
+  const label = option.nextStep === 'buy' && option.raw ? 'Import' : ACTION_LABEL[option.nextStep];
   return <button className={'trade-action step-' + option.nextStep} onClick={() => onAction(option)}><LocaleText value={label} /></button>;
 }
 
@@ -165,7 +166,7 @@ function TradeRow({ option, leading, title, maxAvailable, onAction, demand }: { 
  * without access are collapsed behind "Show N more countries without access".
  */
 export function SupplierRanking({ good, limit = 4 }: { good: ExchangeGood; limit?: number }) {
-  const state = useGameStore();
+  const state = useWorldView();
   const [showMore,setShowMore]=useState(false);
   const actions = useTradeActions();
   const ranked = useMemo(() => rankSuppliers(state, state.playerCountryId, good), [state.day, state.countries, state.tradeDeals, state.world.living, state.industrialEconomy, state.production, good]);
@@ -194,7 +195,7 @@ export function SupplierRanking({ good, limit = 4 }: { good: ExchangeGood; limit
  * player's most urgent raw-resource shortfall.
  */
 export function SupplierFinder() {
-  const state = useGameStore();
+  const state = useWorldView();
   const player = state.countries[state.playerCountryId];
   const [contract,setContract]=useState<{partnerId:string;resource:TradeResource}|null>(null);
   const [years,setYears]=useState<1|3|5|10>(1);
@@ -214,7 +215,7 @@ export function SupplierFinder() {
 
 /** The "Trade" tab of the country panel: what the player can buy from and sell to the selected country. */
 export function CountryTradeDesk({ country }: { country: CountryState }) {
-  const state = useGameStore();
+  const state = useWorldView();
   const actions = useTradeActions();
   const isPlayer = country.id === state.playerCountryId;
   const desk = useMemo(() => (isPlayer ? null : countryTradeOptions(state, country.id)), [isPlayer, country.id, state.day, state.countries, state.tradeDeals, state.world.living, state.industrialEconomy, state.production]);
@@ -253,8 +254,8 @@ export function CountryTradeDesk({ country }: { country: CountryState }) {
         <span><small><LocaleText value="RELATIONS" /></small><b><LocaleText value={desk.relationIndex} /><LocaleText value="/100" /></b><Meter value={desk.relationIndex} tone={desk.relationIndex < 20 ? 'red' : 'cyan'} mark={20} label="Relations" /></span>
         <span><small><LocaleText value="CARGO" /></small><b><LocaleText value={desk.travelDays} /><LocaleText value=" days" /></b><em><LocaleText value={desk.distanceKm.toLocaleString()} /><LocaleText value=" km" /></em></span>
       </div>
-      {desk.pactStep === 'propose_pact' && <button className="trade-action step-propose_pact" onClick={() => actions.proposePact(country)}><LocaleText value="PROPOSE TRADE PACT" /></button>}
-      {(desk.pactStep === 'improve_relations' || desk.pactStep === 'pact_pending') && <button className="trade-action" onClick={() => state.navigate('diplomacy', country.id)}><LocaleText value="OPEN DIPLOMACY" /></button>}
+      {desk.pactStep === 'propose_pact' && <button className="trade-action step-propose_pact" onClick={() => actions.proposePact(country)}><LocaleText value="Propose trade pact" /></button>}
+      {(desk.pactStep === 'improve_relations' || desk.pactStep === 'pact_pending') && <button className="trade-action" onClick={() => state.navigate('diplomacy', country.id)}><LocaleText value="Open diplomacy" /></button>}
     </header>
 
     <div className="trade-desk-section">

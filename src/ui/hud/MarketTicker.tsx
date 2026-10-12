@@ -1,11 +1,11 @@
 import {LocaleText,translateLive} from '../../i18n/localeText';
-import { useGameStore } from '../../store/gameStore';
+import { useStoreView } from '../../store/useStoreView';
 import { getMarketBoard } from '../../store/marketSelectors';
 import { ResourceIcon } from '../icons/GameIcons';
 
 export function MarketTicker() {
-  const state = useGameStore();
-  const board = getMarketBoard(state);
+  // Only the displayed quotes are watched.
+  const board = useStoreView((state) => getMarketBoard(state).map(({ resource, price }) => ({ resource, price })));
   return <div className="market-ticker" aria-label={translateLive("Global commodity market")}>
     <span className="market-title"><LocaleText value={"GLOBAL MARKET"}/></span>
     {board.map((item) => <span className="market-quote" key={item.resource}>

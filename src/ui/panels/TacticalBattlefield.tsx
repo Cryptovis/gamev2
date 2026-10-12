@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import type { TacticalAction, TacticalBattle, TacticalOrder, TacticalOrderKind, TacticalUnit } from '../../domain/tactical';
 import { COMMAND_BUDGET, ORDER_COST, ORDER_FUEL, cellColumn, cellCount, cellRow, objectiveHolders, playerSide, sectorName, tacticalCommandStatus, tacticalFuel, unitNumber, validateTacticalOrders, visibleCells } from '../../engine/systems/tactical';
 import { useGameStore } from '../../store/gameStore';
+import {useWorldView} from '../../store/useWorldView';
 import { LocaleText, translateLive } from '../../i18n/localeText';
 import { AssetThumbnail } from '../icons/AssetThumbnail';
 import { PLAYBACK_SPEEDS, PLAYBACK_STEP_MS, actionCell, playbackAction, playbackFrames, playbackUnits } from '../../engine/systems/tacticalPlayback';
@@ -33,7 +34,7 @@ function actionLine(b:TacticalBattle,a:TacticalAction,units:TacticalUnit[]):stri
   }
 }
 export function TacticalBattlefield({warId,onReturn}:{warId:string;onReturn:()=>void}) {
-  const s=useGameStore(),w=s.wars[warId],b=w.tactical!,side=playerSide(s,w);
+  const s=useWorldView(),w=s.wars[warId],b=w.tactical!,side=playerSide(s,w);
   const [selected,setSelected]=useState(b.units.find(u=>u.side===side&&u.remaining>0)?.id??''),[kind,setKind]=useState<TacticalOrderKind>('move'),[target,setTarget]=useState<number|undefined>(),[orders,setOrders]=useState<TacticalOrder[]>([]),[review,setReview]=useState<'orders'|'handoff'|'result'|'withdraw'|'blocked'|null>(w.lastCombatDay===s.day&&b.events.length?'result':null),[replay,setReplay]=useState(false),[focused,setFocused]=useState(0),[replayRound,setReplayRound]=useState(b.events.at(-1)?.round??1),[step,setStep]=useState(0),[playing,setPlaying]=useState(false),[speed,setSpeed]=useState(1);
   const board=useRef<HTMLDivElement>(null);
   useEffect(()=>{setOrders([]);setTarget(undefined);setReplay(false);},[b.round]);

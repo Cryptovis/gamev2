@@ -1,0 +1,55 @@
+name: Measure
+
+# Measurement and visual review runs, started by pushing a branch named
+# measure/renders-<label>, measure/visual-<label> measure/check-<label> (unit tests, types and build only)
+# or measure/e2e-<label> (the Phase 2 window, focus and brand browser specs). Not a release gate: CI (ci.yml) remains the gate.
+# Results (JSON, screenshots, console output) are committed to results/<branch> so they can be
+# reviewed without artifact downloads.
+on:
+  push:
+    branches:
+      - "measure/**"
+
+permissions:
+  contents: write
+
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      SUITE: ${{ startsWith(github.ref_name, 'measure/visual') && 'visual' || startsWith(github.ref_name, 'measure/check') && 'check' || startsWith(github.ref_name, 'measure/e2e') && 'e2e' || 'renders' }}
+      PERFORMANCE_LABEL: ${{ github.ref_name }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Unit tests, types and build
+        if: env.SUITE == 'check'
+        run: npm run check 2>&1 | tee measure-output.txt; exit ${PIPESTATUS[0]}
+      - run: npx playwright install --with-deps chromium
+        if: env.SUITE != 'check'
+      - name: Render attribution
+        if: env.SUITE == 'renders'
+        run: npm run measure:renders 2>&1 | tee measure-output.txt; exit ${PIPESTATUS[0]}
+      - name: Focused browser specs
+        if: env.SUITE == 'e2e'
+        run: npx playwright test fluidCommand0910 reliableFoundation0909 commandWindows0905 2>&1 | tee measure-output.txt; exit ${PIPESTATUS[0]}
+      - name: Visual review
+        if: env.SUITE == 'visual'
+        run: npx playwright test --config performance/visual.config.ts 2>&1 | tee measure-output.txt; exit ${PIPESTATUS[0]}
+      - name: Publish results branch
+        if: always()
+        run: |
+          out="$RUNNER_TEMP/results"; mkdir -p "$out"
+          cp measure-output.txt "$out/" 2>/dev/null || true
+          cp -r performance/results "$out/" 2>/dev/null || true
+          find test-results -name '*.png' -size -2M -exec cp --parents {} "$out/" \; 2>/dev/null || true
+          find test-results -name 'error-context.md' -exec cp --parents {} "$out/" \; 2>/dev/null || true
+          cd "$out" && git init -q && git checkout -q -b results
+          git config user.name "measure-bot" && git config user.email "measure-bot@users.noreply.github.com"
+          git add -A && git commit -q -m "results for ${GITHUB_REF_NAME} @ ${GITHUB_SHA::8}"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${GITHUB_REPOSITORY}.git" "results:refs/heads/results/${GITHUB_REF_NAME}"
