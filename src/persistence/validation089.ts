@@ -1,4 +1,4 @@
-import { MAX_FLIGHTS } from '../engine/systems/flights';
+import { MAX_FLIGHT_RECORDS } from '../engine/systems/flights';
 
 /**
  * 0.89 flights (world.flights, optional). Written as plain checks so it does not depend on zod refinements.
@@ -8,7 +8,7 @@ export function validFlights(value: unknown): boolean {
   const s = value as { day: number; countries: Record<string, unknown>; world: { flights?: unknown } };
   const list = s.world?.flights;
   if (list === undefined) return true;
-  if (!Array.isArray(list) || list.length > MAX_FLIGHTS) return false;
+  if (!Array.isArray(list) || list.length > MAX_FLIGHT_RECORDS) return false;
   const known = (id: unknown) => typeof id === 'string' && !!s.countries[id];
   const int = (n: unknown): n is number => typeof n === 'number' && Number.isInteger(n);
   return list.every((f: Record<string, unknown>) => {
@@ -16,6 +16,9 @@ export function validFlights(value: unknown): boolean {
     if (!['diplomatic', 'cargo'].includes(f.kind as string) || !['enroute', 'landed'].includes(f.status as string)) return false;
     if (!known(f.fromId) || !known(f.toId) || f.fromId === f.toId) return false;
     if (!int(f.departDay) || !int(f.arriveDay) || f.departDay > s.day || f.arriveDay < f.departDay || f.arriveDay - f.departDay > 10) return false;
+    // Phase 4 optional fields: shipment link, and goods delivered/lost recorded on landing.
+    if (f.shipmentId !== undefined && (typeof f.shipmentId !== 'string' || f.shipmentId.length > 120)) return false;
+    for (const k of ['delivered', 'lost'] as const) if (f[k] !== undefined && (typeof f[k] !== 'number' || !Number.isFinite(f[k] as number) || (f[k] as number) < 0 || f.status !== 'landed')) return false;
     const p = f.payload as Record<string, unknown> | undefined;
     if (!p || typeof p !== 'object') return false;
     if (p.type === 'none') return true;

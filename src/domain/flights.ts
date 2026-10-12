@@ -18,4 +18,9 @@ export interface Flight {
   label: string;
   payload: FlightPayload;
   status: 'enroute' | 'landed';
+  /** Phase 4: links a commodity cargo to its exchange delivery; the exchange books the position when this flight lands. */
+  shipmentId?: string;
+  /** Phase 4: goods landed and goods intercepted by a blockade, recorded on landing (absent before landing and in older saves). */
+  delivered?: number;
+  lost?: number;
 }

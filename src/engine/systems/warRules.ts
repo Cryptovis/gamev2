@@ -8,6 +8,7 @@ import { pilotCoverage } from './governance';
 import { applyWarCondemnation } from './worldInstitutions';
 import { coalitionSupportFrom, emptyLosses, getWarPreview } from './warfare';
 import { settleWarOutcome } from './warOutcome';
+import { withDefaultTaskGroups } from './taskGroups';
 
 /**
  * War rules shared by the player's commands and the AI (audit E1, B9, E5). The player's 'military/declareWar' and
@@ -156,6 +157,8 @@ export function openWar(state: GameState, attackerId: string, defenderId: string
   let next = cancelPairTrades(state, attacker.id, defender.id);
   next = setWarRelation(next, attacker.id, defender.id);
   next = { ...next, wars: { ...next.wars, [warId]: war }, countries: { ...next.countries, [attacker.id]: { ...next.countries[attacker.id], diplomacy: { ...next.countries[attacker.id].diplomacy, reputation: clamp(next.countries[attacker.id].diplomacy.reputation - 8, 0, 100) } } } };
+  // Phase 4: both sides start with the default task groups (the earlier fixed share, ready at once).
+  next = withDefaultTaskGroups(next, warId);
   next = applyWarCondemnation(state, note(next, `WAR // ${attacker.name} declared war on ${defender.name}.`), attacker.id, defender.id);
   return { state: callAllies(next, warId), warId };
 }

@@ -71,6 +71,9 @@ export type ReliableCommand =
  | {type:'technology/cancel'}
  | {type:'tactical/start';warId:string}
  | {type:'tactical/commit';warId:string;expectedRound:number;orders:import('./tactical').TacticalOrder[]}
+ // Phase 4: air and naval task groups (shared validator: engine/systems/taskGroups.taskGroupPreview).
+ | {type:'war/assignTaskGroup';warId:string;mission:import('./taskGroups').TaskMission;asset:import('./taskGroups').TaskAsset;count:number}
+ | {type:'war/recallTaskGroup';warId:string;mission:import('./taskGroups').TaskMission;asset:import('./taskGroups').TaskAsset}
  // 0.87 audit A5: actions that used to write the store directly.
  | {type:'industry/toggleFacility';kind:import('./industrial').FacilityKind}
  | {type:'industry/cancelContract';id:string}

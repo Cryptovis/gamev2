@@ -1,7 +1,7 @@
 import { activeCountries } from '../../domain/sovereignty';
 import type { CountryState, EventKind, GameState } from '../../domain/game';
 import type {
-  Commodity, CommodityExchangeState, CommodityMarket, CommodityPosition, CommodityShock, CommodityTrade,
+  Commodity, CommodityDelivery, CommodityExchangeState, CommodityMarket, CommodityPosition, CommodityShock, CommodityTrade,
 } from '../../domain/commodityExchange';
 import { REFERENCE_PRICES } from '../../data/commodityPrices';
 import { GOODS } from '../../data/industrialCatalog';
@@ -358,15 +358,17 @@ export function placeCommodityOrder(s: GameState, countryId: string, g: Commodit
     if (spec.physical && q.counterpartyId) {
       n = changeExchangeStock(n, q.counterpartyId, g, -q.quantity);
       n = addTreasury(n, q.counterpartyId, q.quantity * q.mid);
-      n = scheduleFlight(n, { kind: 'cargo', fromId: q.counterpartyId, toId: countryId, label: LABELS[g], payload: { type: 'goods', countryId, good: g, amount: q.quantity } });
-      ex = { ...ex, deliveries: [...ex.deliveries, { countryId, good: g, amount: q.quantity, arriveDay: s.day + q.arrivalDays }] };
+      // Phase 4: one shipment. The cargo flight carries the goods; its landing books the position (same day, same record).
+      const shipmentId = `SH-${s.day}-${countryId}-${g}-${ex.deliveries.length}`;
+      n = scheduleFlight(n, { kind: 'cargo', fromId: q.counterpartyId, toId: countryId, label: LABELS[g], payload: { type: 'goods', countryId, good: g, amount: q.quantity }, shipmentId });
+      ex = { ...ex, deliveries: [...ex.deliveries, { id: shipmentId, countryId, good: g, amount: q.quantity, arriveDay: s.day + q.arrivalDays }] };
       ex = setPosition(ex, countryId, g, { ...p, inbound: p.inbound + q.quantity, avgCost, tradedDay: s.day, tradedToday: traded });
     } else ex = setPosition(ex, countryId, g, { ...p, units: p.units + q.quantity, avgCost, tradedDay: s.day, tradedToday: traded });
   } else {
     if (spec.physical && q.counterpartyId) {
       n = changeExchangeStock(n, countryId, g, -q.quantity);
       n = addTreasury(n, q.counterpartyId, -q.quantity * q.mid);
-      n = scheduleFlight(n, { kind: 'cargo', fromId: countryId, toId: q.counterpartyId, label: LABELS[g], payload: { type: 'goods', countryId: q.counterpartyId, good: g, amount: q.quantity } });
+      n = scheduleFlight(n, { kind: 'cargo', fromId: countryId, toId: q.counterpartyId, label: LABELS[g], payload: { type: 'goods', countryId: q.counterpartyId, good: g, amount: q.quantity }, shipmentId: `SH-${s.day}-${q.counterpartyId}-${g}-s${ex.settlements.length}` });
     }
     const units = Math.max(0, p.units - q.fromPosition);
     ex = setPosition(ex, countryId, g, { ...p, units, avgCost: units + p.inbound > 1e-12 ? p.avgCost : 0, realized: p.realized + q.realized, tradedDay: s.day, tradedToday: traded });
@@ -502,11 +504,16 @@ function settleAndDeliver(s: GameState, ex0: CommodityExchangeState): { state: G
   const dueCash = ex.settlements.filter((x) => x.day <= s.day);
   for (const x of dueCash) n = addTreasury(n, x.countryId, x.amount);
   ex = { ...ex, settlements: ex.settlements.filter((x) => x.day > s.day) };
-  for (const d of ex.deliveries.filter((x) => x.arriveDay <= s.day)) {
-    const p = commodityPosition(ex, d.countryId, d.good), moved = Math.min(d.amount, p.inbound);
-    ex = setPosition(ex, d.countryId, d.good, { ...p, inbound: p.inbound - moved, units: p.units + moved });
+  // Phase 4: a delivery linked to a cargo flight settles when that flight lands, with what it actually delivered (a
+  // blockade may intercept part of it). Unlinked deliveries (older saves) and any whose flight is gone keep the day rule.
+  const cargo = new Map((s.world.flights ?? []).filter((f) => f.shipmentId).map((f) => [f.shipmentId!, f]));
+  const due = (d: CommodityDelivery) => { const f = d.id ? cargo.get(d.id) : undefined; return f ? f.status === 'landed' : d.arriveDay <= s.day; };
+  for (const d of ex.deliveries.filter(due)) {
+    const f = d.id ? cargo.get(d.id) : undefined, p = commodityPosition(ex, d.countryId, d.good), moved = Math.min(d.amount, p.inbound);
+    const lost = Math.min(moved, Math.max(0, f?.lost ?? 0)), arrived = moved - lost;
+    ex = setPosition(ex, d.countryId, d.good, { ...p, inbound: p.inbound - moved, units: p.units + arrived, realized: p.realized - lost * p.avgCost });
   }
-  ex = { ...ex, deliveries: ex.deliveries.filter((x) => x.arriveDay > s.day) };
+  ex = { ...ex, deliveries: ex.deliveries.filter((d) => !due(d)) };
   // Physical holdings are part of national stock: if the nation consumed it, the position shrinks (no P&L on use).
   // Storage is charged on delivered and vaulted units.
   for (const [id, goods] of Object.entries(ex.positions)) {

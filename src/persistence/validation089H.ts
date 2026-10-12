@@ -38,7 +38,7 @@ export function validCommodityExchange(value: unknown): boolean {
       if (!nonNegative(p.units) || !nonNegative(p.inbound) || !nonNegative(p.avgCost) || !finite(p.realized) || !nonNegative(p.storagePaid) || !int(p.tradedDay) || p.tradedDay > s.day || !nonNegative(p.tradedToday)) return false;
     }
   }
-  if (!list(ex.deliveries, 400) || !ex.deliveries.every((d) => known(d.countryId) && commodity(d.good) && positive(d.amount) && int(d.arriveDay) && d.arriveDay <= s.day + 10)) return false;
+  if (!list(ex.deliveries, 400) || !ex.deliveries.every((d) => (d.id === undefined || (typeof d.id === 'string' && d.id.length <= 120)) && known(d.countryId) && commodity(d.good) && positive(d.amount) && int(d.arriveDay) && d.arriveDay <= s.day + 10)) return false;
   if (!list(ex.settlements, 400) || !ex.settlements.every((x) => known(x.countryId) && nonNegative(x.amount) && int(x.day) && x.day <= s.day + 1)) return false;
   if (!list(ex.trades, 60) || !ex.trades.every((x) => int(x.day) && x.day <= s.day && known(x.countryId) && commodity(x.good) && (x.side === 'buy' || x.side === 'sell') && positive(x.quantity) && positive(x.price) && (x.counterpartyId === undefined || known(x.counterpartyId)))) return false;
   return true;

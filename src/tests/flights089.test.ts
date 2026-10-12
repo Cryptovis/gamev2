@@ -56,12 +56,20 @@ describe('0.89 flights', () => {
     expect(flights(s)[0]?.status ?? 'landed').toBe('landed');
   });
 
-  it('caps the list and delivers evicted flights immediately', () => {
+  it('caps visual flights but never lands cargo early to make room (Phase 4)', () => {
     let s = base();
     const oil = s.countries.TUR.resources.oil;
+    for (let i = 0; i < MAX_FLIGHTS; i++) s = scheduleFlight(s, { kind: 'diplomatic', fromId: 'GRC', toId: 'TUR', label: 'Diplomatic mission' });
     for (let i = 0; i < MAX_FLIGHTS + 3; i++) s = scheduleFlight(s, { kind: 'cargo', fromId: 'SAU', toId: 'TUR', label: 'Oil cargo', payload: { type: 'goods', countryId: 'TUR', good: 'oil', amount: 1 } });
-    expect(flights(s)).toHaveLength(MAX_FLIGHTS);
-    expect(s.countries.TUR.resources.oil).toBeCloseTo(oil + 3);
+    // Visual flights made room; every cargo is still in the air and nothing was delivered before its arrival day.
+    expect(flights(s).filter((f) => f.payload.type === 'none')).toHaveLength(0);
+    expect(flights(s).filter((f) => f.payload.type === 'goods' && f.status === 'enroute')).toHaveLength(MAX_FLIGHTS + 3);
+    expect(s.countries.TUR.resources.oil).toBe(oil);
+    expect(validFlights(snapshotGame(s))).toBe(true);
+    const arrive = flights(s)[0].arriveDay;
+    s = processFlights({ ...s, day: arrive });
+    expect(s.countries.TUR.resources.oil).toBeCloseTo(oil + MAX_FLIGHTS + 3);
+    expect(flights(s).every((f) => f.status === 'landed' && f.delivered === 1 && f.lost === 0)).toBe(true);
   });
 
   it('ignores invalid endpoints and keeps saves valid with or without flights', () => {

@@ -1,3 +1,4 @@
+import { assignTaskGroup, taskGroupPreview } from './systems/taskGroups';
 import {affairsPreview} from './affairsPreview';
 import {cancelIndustrialContract,dismissLivingNotice,markInboxRead,setTutorialStep,toggleFacility} from './systems/playerRecords';
 import {startTacticalBattle,tacticalStartStatus,tacticalCommandStatus,combatAllowed,resolveTacticalRound,resolveStandingRound} from './systems/tactical';
@@ -74,6 +75,8 @@ function executeGameCommand(state: GameState, command: GameCommand): GameState {
   switch (command.type) {
     case 'tactical/start': return startTacticalBattle(state,command.warId);
     case 'tactical/commit': return resolveTacticalRound(state,command.warId,command.orders,command.expectedRound);
+    case 'war/assignTaskGroup': return assignTaskGroup(state,command.warId,state.playerCountryId,command.mission,command.asset,command.count);
+    case 'war/recallTaskGroup': return assignTaskGroup(state,command.warId,state.playerCountryId,command.mission,command.asset,0);
     case 'energy/build': return buildPlant(state,state.playerCountryId,command.kind);
     case 'energy/toggle': return togglePlant(state,state.playerCountryId,command.kind);
     case 'energy/cancel': return cancelPowerProject(state,state.playerCountryId,command.id);
@@ -276,6 +279,7 @@ export function executeCommandResult(state:GameState,command:GameCommand):Comman
  if(command.type==='military/assault'&&!combatAllowed(state))return {state,status:'unavailable',message:'Resolve the pending campaign decision before giving combat orders.'};
  if(command.type==='tactical/start'){const reason=tacticalStartStatus(state,command.warId);if(reason)return {state,status:'unavailable',message:reason};}
  if(command.type==='tactical/commit'){const reasons=tacticalCommandStatus(state,command.warId,command.expectedRound,command.orders);if(reasons.length)return {state,status:'unavailable',message:reasons.join(' ')};}
+ if(command.type==='war/assignTaskGroup'||command.type==='war/recallTaskGroup'){const preview=taskGroupPreview(state,command.warId,state.playerCountryId,command.mission,command.asset,command.type==='war/recallTaskGroup'?0:command.count);if(!preview.allowed)return {state,status:'unavailable',message:preview.reasons.join(' ')};}
  if(command.type==='commodity/order'){const preview=commodityOrderPreview(state,state.playerCountryId,command.good,command.side,command.quantity);if(!preview.allowed)return {state,status:'unavailable',message:preview.reasons.join(' ')};}
  if(command.type==='credit/accept'){const view=creditApplicationPreview(state,command.id);if(!view.allowed)return {state,status:'unavailable',message:view.reasons.join(' ')};}
  if(command.type==='credit/repay'){const view=repaymentPreview(state,command.id);if(!view.allowed)return {state,status:'unavailable',message:view.reasons.join(' ')};}

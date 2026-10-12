@@ -8,6 +8,8 @@ import {tickGame} from '../engine/tick';
 import {openWar} from '../engine/systems/warRules';
 import {resolveEvent} from '../engine/systems/events';
 import {dismissVictory, pendingVictory} from '../engine/systems/victory';
+import {assignTaskGroup, missionGroups, withDefaultTaskGroups} from '../engine/systems/taskGroups';
+import type {TaskAsset, TaskMission} from '../domain/taskGroups';
 import {applyForCredit, arrears, availableCreditOffers, creditApplicationPreview, creditRating, expansion} from '../engine/systems/sovereignCredit';
 
 /**
@@ -17,7 +19,9 @@ import {applyForCredit, arrears, availableCreditOffers, creditApplicationPreview
  */
 export const ATTACKER_ID = 'CZE';
 /** A host id per terrain: terrainForCountry() maps these ids to the named battlefield. */
-export const TERRAIN_HOSTS: Record<BattlefieldTerrain, string> = {plains: 'POL', urban: 'DEU', mountain: 'CHE', forest: 'FIN', desert: 'SAU', coastal: 'CYP'};
+// Phase 4: the desert host is Libya (was Saudi Arabia, 3,700 km from the attacker's capital, beyond fighter range), so the
+// terrain comparison stays a terrain comparison. Twins carry template data, so only the id's position and terrain change.
+export const TERRAIN_HOSTS: Record<BattlefieldTerrain, string> = {plains: 'POL', urban: 'DEU', mountain: 'CHE', forest: 'FIN', desert: 'LBY', coastal: 'CYP'};
 export const TEMPLATE_ID = 'POL';
 
 type Mutable = Record<string, unknown>;
@@ -55,6 +59,10 @@ export interface ScenarioSpec {
   war?: Partial<WarState>;
   /** State-level changes, e.g. grounding a side's pilots. */
   prepare?: (state: GameState, attackerId: string, defenderId: string) => GameState;
+  /** Phase 4: war saved before task groups (the fixed 25% share). New wars get the default groups. */
+  legacy?: boolean;
+  /** Phase 4: task-group strengths set after the default assignment (immediately on station, for measurement). */
+  missions?: {side: 'attacker' | 'defender'; mission: TaskMission; asset: TaskAsset; share: number}[];
 }
 /** Grounds a side's aircraft by leaving them without trained crews: air superiority changes, counts and personnel do not. */
 export function groundAircraft(state: GameState, id: string): GameState {
@@ -82,7 +90,26 @@ export function scenarioState(spec: ScenarioSpec, seed: number): Setup {
     attackerStartPersonnel: attacker.military.personnel, defenderStartPersonnel: defender.military.personnel, defenderAllies: [], ...spec.war,
   };
   state = {...state, simulationSeed: seed >>> 0, wars: {[warId]: war}, playerCountryId: 'USA'};
+  if (!spec.legacy) state = withMissions(withDefaultTaskGroups(state, warId), warId, spec.missions ?? []);
   return {state, warId, attackerId: ATTACKER_ID, defenderId};
+}
+
+const missionStrength = (state: GameState, warId: string, side: 'attacker' | 'defender', mission: TaskMission, asset: TaskAsset) => missionGroups(state.wars[warId], side, mission, asset).reduce((n, g) => n + g.count, 0);
+/**
+ * Applies mission strengths through the game's own assignment rule (shares of the national stock, in order), then
+ * puts the new groups on station at once so a scenario measures the mission rather than its preparation days.
+ */
+export function withMissions(state: GameState, warId: string, missions: NonNullable<ScenarioSpec['missions']>): GameState {
+  for (const m of missions) {
+    const w = state.wars[warId], id = m.side === 'attacker' ? w.attackerId : w.defenderId;
+    const count = Math.round(Math.floor(state.countries[id].military[m.asset]) * m.share);
+    if (missionStrength(state, warId, m.side, m.mission, m.asset) === count) continue;
+    const next = assignTaskGroup(state, warId, id, m.mission, m.asset, count);
+    if (next === state) throw new Error(`mission refused: ${JSON.stringify(m)}`);
+    state = next;
+  }
+  const w = state.wars[warId];
+  return {...state, wars: {...state.wars, [warId]: {...w, taskGroups: w.taskGroups!.map(g => ({...g, readyDay: Math.min(g.readyDay, state.day)}))}}};
 }
 
 export interface AutoResult { deltas: number[]; endDay: number | null; status: WarState['status']; attackerLosses: number; defenderLosses: number; attackerFuelUsed: number; defenderFuelUsed: number; air: number; supply: [number, number] }
@@ -171,6 +198,26 @@ export const SCENARIOS: ScenarioSpec[] = [
   {name: 'attacker exhausted (50)', war: {attackerExhaustion: 50}},
   {name: 'attacker without fuel', adjust: a => { a.processedResources.fuel = 0; }},
   {name: 'defender without fuel', adjust: (_, d) => { d.processedResources.fuel = 0; }},
+];
+
+/**
+ * Phase 4 task-group scenarios: the same twins with one side's assignment changed from the default (a quarter of each
+ * force: fighters on air superiority, bombers on close air support, warships on shore support).
+ */
+export const MISSION_SCENARIOS: ScenarioSpec[] = [
+  {name: 'default task groups · plains'},
+  {name: 'attacker CAS added (AS + CAS)', missions: [{side: 'attacker', mission: 'closeAirSupport', asset: 'fighters', share: .25}]},
+  {name: 'attacker CAS only (no AS)', missions: [{side: 'attacker', mission: 'airSuperiority', asset: 'fighters', share: 0}, {side: 'attacker', mission: 'closeAirSupport', asset: 'fighters', share: .25}]},
+  {name: 'attacker all fighters on AS', missions: [{side: 'attacker', mission: 'airSuperiority', asset: 'fighters', share: 1}]},
+  {name: 'attacker AS + CAS, defender grounded', prepare: (s, _, d) => groundAircraft(s, d), missions: [{side: 'attacker', mission: 'closeAirSupport', asset: 'fighters', share: .5}]},
+  {name: 'attacker interdiction (AS covered)', missions: [{side: 'attacker', mission: 'interdiction', asset: 'fighters', share: .25}]},
+  {name: 'attacker interdiction, defender grounded', prepare: (s, _, d) => groundAircraft(s, d), missions: [{side: 'attacker', mission: 'interdiction', asset: 'fighters', share: .25}]},
+  {name: 'attacker without shore support', missions: [{side: 'attacker', mission: 'shoreSupport', asset: 'warships', share: 0}, {side: 'attacker', mission: 'convoyEscort', asset: 'warships', share: .25}]},
+  {name: 'attacker blockade (no escorts)', missions: [{side: 'attacker', mission: 'shoreSupport', asset: 'warships', share: 0}, {side: 'attacker', mission: 'blockade', asset: 'warships', share: .25}]},
+  {name: 'attacker blockade vs defender escorts', missions: [{side: 'attacker', mission: 'shoreSupport', asset: 'warships', share: 0}, {side: 'attacker', mission: 'blockade', asset: 'warships', share: .25}, {side: 'defender', mission: 'shoreSupport', asset: 'warships', share: 0}, {side: 'defender', mission: 'convoyEscort', asset: 'warships', share: .25}]},
+  {name: 'defender CAS added (AS + CAS)', missions: [{side: 'defender', mission: 'closeAirSupport', asset: 'fighters', share: .25}]},
+  {name: 'attacker no aircraft assigned', missions: [{side: 'attacker', mission: 'airSuperiority', asset: 'fighters', share: 0}, {side: 'attacker', mission: 'closeAirSupport', asset: 'bombers', share: 0}]},
+  {name: 'legacy save (fixed share) · plains', legacy: true},
 ];
 
 export interface SmallEconomyResult { days: number; status: WarState['status']; minTreasury: number; arrearsDays: number; worstRating: number; rescueOfferDay: number | null; rescueApplied: boolean; rescueApproved: boolean; bankrupt: boolean }

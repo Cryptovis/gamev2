@@ -38,6 +38,7 @@ import {resolveDiplomaticOffer} from '../engine/systems/diplomaticOffers';
 interface GameActions {
  startTactical:(id:string,commandId?:string)=>void;
  commitTactical:(id:string,expectedRound:number,orders:import('../domain/tactical').TacticalOrder[],commandId?:string)=>void;
+ assignTaskGroup:(warId:string,mission:import('../domain/taskGroups').TaskMission,asset:import('../domain/taskGroups').TaskAsset,count:number,commandId?:string)=>void;
  cancelPowerProject:(id:string,commandId?:string)=>void;
  buildPlant:(kind:PlantKind,commandId?:string)=>void;
  togglePlant:(kind:PlantKind)=>void;
@@ -159,6 +160,7 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
   ...makeInitialState(),
   startTactical:(warId,commandId)=>set(s=>commandWithReceipt(s,{type:'tactical/start',warId,commandId})),
   commitTactical:(warId,expectedRound,orders,commandId)=>set(s=>commandWithReceipt(s,{type:'tactical/commit',warId,expectedRound,orders,commandId})),
+  assignTaskGroup:(warId,mission,asset,count,commandId)=>set(s=>commandWithReceipt(s,count>0?{type:'war/assignTaskGroup',warId,mission,asset,count,commandId}:{type:'war/recallTaskGroup',warId,mission,asset,commandId})),
   cancelPowerProject:(id,commandId)=>set(s=>commandWithReceipt(s,{...{type:'energy/cancel',id},commandId})),
   buildPlant:(kind,commandId)=>set(s=>commandWithReceipt(s,{...{type:'energy/build',kind},commandId})),
   togglePlant:(kind)=>set(s=>applyGameCommand(s,{type:'energy/toggle',kind})),

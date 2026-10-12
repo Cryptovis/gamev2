@@ -10,6 +10,7 @@ import { calculateSupplyNetwork } from './supplyNetwork';
 import { resolveStandingRound } from './tactical';
 import { resolveCombatRound } from './warfare';
 import { checkHomeFront, releaseCoalition } from './warOutcome';
+import { processAiTaskGroups } from './aiTaskGroups';
 import { combatPreview, concedeWar, inActiveWar, openWar, potentialCoalitionSupport, warDeclarationStatus } from './warRules';
 
 /**
@@ -250,6 +251,7 @@ export function processAiOccupations(state: GameState): GameState {
 export function processAiWars(state: GameState): GameState {
   let next = checkHomeFront(state);
   if (next.campaignStatus !== 'active') return next;
+  next = processAiTaskGroups(next);
   next = processAiOffensives(next);
   next = processAiCeasefires(next);
   next = processCouncilCeasefires(next);

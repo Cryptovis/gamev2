@@ -1,7 +1,8 @@
 import type { BattlefieldTerrain, CasualtySnapshot, GameState, WarState } from '../../domain/game';
 import type { TacticalAction, TacticalBattle, TacticalOrder, TacticalOrderKind, TacticalPlan, TacticalRole, TacticalSide, TacticalUnit } from '../../domain/tactical';
 import { nextRandom } from '../rng';
-import { COMMITTED_SHARE, SUSTAINMENT_SHARE, emptyLosses, resolveCombatRound, roundFuelCost, type CombatSideOrders } from './warfare';
+import { COMMITTED_SHARE, SUSTAINMENT_SHARE, airNavalForces, emptyLosses, resolveCombatRound, roundFuelCost, type CombatSideOrders } from './warfare';
+import { fuelCountry, hasTaskGroups, missionEffects } from './taskGroups';
 import { pendingVictory } from './victory';
 import { planTacticalOrders, sideKnowledge } from './tacticalPlanner';
 
@@ -169,7 +170,7 @@ export function startTacticalBattle(s: GameState, id: string): GameState {
 
 /** Fuel these orders require: operational fuel when any order is offensive, plus per-order fuel. The validator checks this. */
 export function tacticalFuel(s: GameState, w: WarState, side: TacticalSide, orders: TacticalOrder[]): number {
-  const c = s.countries[countryId(w, side)];
+  const c = fuelCountry(s, w, side);
   const offensive = orders.some(o => OFFENSIVE.includes(o.kind));
   const operational = offensive ? roundFuelCost(c) * COMMITTED_SHARE : 0;
   return operational + orders.reduce((n, o) => n + (ORDER_FUEL[o.kind] ?? 0), 0);
@@ -180,7 +181,7 @@ export function tacticalFuel(s: GameState, w: WarState, side: TacticalSide, orde
  */
 export function tacticalRoundFuel(s: GameState, w: WarState, side: TacticalSide, orders: TacticalOrder[]): number {
   const offensive = orders.some(o => OFFENSIVE.includes(o.kind));
-  return offensive ? tacticalFuel(s, w, side, orders) : roundFuelCost(s.countries[countryId(w, side)]) * COMMITTED_SHARE * SUSTAINMENT_SHARE + tacticalFuel(s, w, side, orders);
+  return offensive ? tacticalFuel(s, w, side, orders) : roundFuelCost(fuelCountry(s, w, side)) * COMMITTED_SHARE * SUSTAINMENT_SHARE + tacticalFuel(s, w, side, orders);
 }
 
 export function validateTacticalOrders(s: GameState, id: string, side: TacticalSide, orders: TacticalOrder[]): string[] {
@@ -318,7 +319,8 @@ export function sideModifiers(s: GameState, w: WarState, side: TacticalSide, ord
   const own = b.units.filter(u => u.side === side);
   for (const u of own) forces[roleKey(u)] += u.remaining;
   for (const key of ['personnel', 'tanks', 'artillery'] as const) forces[key] = Math.min(m[key], forces[key]);
-  for (const key of ['fighters', 'bombers', 'warships'] as const) forces[key] = Math.floor(m[key] * COMMITTED_SHARE);
+  // Phase 4: aircraft and ships in the battle are the war's ready task groups (the fixed share in older saves).
+  Object.assign(forces, airNavalForces(s.countries[countryId(w, side)], hasTaskGroups(w) ? missionEffects(s, w)[side] : undefined));
   const count = (kind: TacticalOrderKind) => orders.filter(o => o.kind === kind).length;
   // Only bombardments that land on a unit (after simultaneous movement) penalise this side.
   const hits = enemyOrders.filter(o => o.kind === 'bombard').map(o => alive(b.units).find(u => u.side === side && u.cell === o.target)).filter((u): u is TacticalUnit => !!u);

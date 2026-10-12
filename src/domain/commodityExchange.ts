@@ -39,7 +39,7 @@ export interface CommodityPosition {
   tradedToday: number;
 }
 
-export interface CommodityDelivery { countryId: string; good: Commodity; amount: number; arriveDay: number }
+export interface CommodityDelivery { /** Phase 4: the cargo flight's shipmentId; absent in older saves. */ id?: string; countryId: string; good: Commodity; amount: number; arriveDay: number }
 export interface CommoditySettlement { countryId: string; amount: number; day: number }
 export interface CommodityTrade { day: number; countryId: string; good: Commodity; side: 'buy' | 'sell'; quantity: number; price: number; counterpartyId?: string }
 

@@ -1,3 +1,4 @@
+import {MISSION_ASSETS,TASK_MISSIONS,type TaskAsset,type TaskMission} from '../domain/taskGroups';
 import { z } from 'zod';
 import { MAX_BATTLE_CELLS } from '../engine/systems/tactical';
 
@@ -57,6 +58,23 @@ export function validPressureState(s:{day:number;world:{actionFatigue?:unknown;p
   return validStrengths(s.world.programs)&&validStrengths(s.world.living?.activities);
 }
 const history=z.object({countryId:z.string(),points:z.array(z.object({day,gdp:finite.positive(),treasury:finite,inflation:finite,treasuryChange:finite})).min(1).max(180)});
+/** Phase 4: `WarState.taskGroups` (optional). Allocation limits are enforced by the engine (clampTaskGroups), not here. */
+export function validTaskGroups(w:{taskGroups?:unknown;taskReviewDay?:unknown},day:number,countries:Record<string,unknown>):boolean{
+  const review=w.taskReviewDay;
+  if(review!==undefined&&(!review||typeof review!=='object'||Array.isArray(review)||Object.entries(review).some(([k,v])=>(k!=='attacker'&&k!=='defender')||typeof v!=='number'||!Number.isInteger(v)||v<0||v>day)))return false;
+  const groups=w.taskGroups;
+  if(groups===undefined)return true;
+  if(!Array.isArray(groups)||groups.length>60)return false;
+  const ids=new Set<string>();
+  return groups.every((g:Record<string,unknown>)=>{
+    if(!g||typeof g!=='object'||typeof g.id!=='string'||g.id.length>160||ids.has(g.id))return false;ids.add(g.id);
+    if((g.side!=='attacker'&&g.side!=='defender')||typeof g.mission!=='string'||!TASK_MISSIONS.includes(g.mission as TaskMission))return false;
+    if(!MISSION_ASSETS[g.mission as TaskMission].includes(g.asset as TaskAsset))return false;
+    if(typeof g.count!=='number'||!Number.isInteger(g.count)||g.count<=0||g.count>1e7)return false;
+    if(typeof g.readyDay!=='number'||!Number.isInteger(g.readyDay)||g.readyDay<0||g.readyDay>day+3)return false;
+    return typeof g.baseId==='string'&&!!countries[g.baseId];
+  });
+}
 export function valid083State(value:unknown):boolean {
   const s=value as {day:number;playerCountryId:string;countries:Record<string,unknown>;wars:Record<string,{id:string;attackerId:string;defenderId:string;rounds:number;lastCombatDay:number;tactical?:unknown;attackerStartPersonnel?:unknown;defenderStartPersonnel?:unknown}>;world:{economicHistory?:unknown;actionFatigue?:unknown;programs?:unknown;living?:{activities?:unknown}}};
   if(!validPressureState(s))return false;
@@ -69,6 +87,8 @@ export function valid083State(value:unknown):boolean {
     // 0.88 optional co-belligerents: distinct known countries, never a main party; absent in older saves.
     const allies=(w as {defenderAllies?:unknown})?.defenderAllies;
     if(w&&allies!==undefined&&(!Array.isArray(allies)||allies.some(a=>typeof a!=='string'||!s.countries[a]||a===w.attackerId||a===w.defenderId)||new Set(allies).size!==allies.length))return false;
+    // Phase 4 optional task groups and AI review days; absent in older saves.
+    if(w&&!validTaskGroups(w as {taskGroups?:unknown;taskReviewDay?:unknown},s.day,s.countries))return false;
     if(!w||w.tactical===undefined)continue;
     const parsed=tactical.safeParse(w.tactical);if(!parsed.success)return false;
     const t=parsed.data;

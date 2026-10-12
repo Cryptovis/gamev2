@@ -124,6 +124,10 @@ export interface WarState {
   attackerStartPersonnel?: number; defenderStartPersonnel?: number;
   /** 0.88: allies (alliance treaty or collective-security bloc) fighting on the defender's side. Absent in older saves. */
   defenderAllies?: string[];
+  /** Phase 4: air and naval task groups of both sides. Absent in older saves: those wars keep the fixed 25% share. */
+  taskGroups?: import('./taskGroups').TaskGroup[];
+  /** Phase 4: last day each side's government reviewed its task groups (AI review spacing). */
+  taskReviewDay?: Partial<Record<'attacker' | 'defender', number>>;
 }
 
 export interface EventOption { id: string; label: string; consequenceHint: string; }
