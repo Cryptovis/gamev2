@@ -3,6 +3,12 @@ import type {TacticalOrder, TacticalSide} from '../domain/tactical';
 import {makeInitialState} from '../data/initialState';
 import {emptyLosses, getWarPreview, resolveCombatRound, terrainForCountry} from '../engine/systems/warfare';
 import {chooseTacticalOrders, resolveTacticalRound, startTacticalBattle} from '../engine/systems/tactical';
+import {academyFor, governance} from '../engine/systems/governance';
+import {tickGame} from '../engine/tick';
+import {openWar} from '../engine/systems/warRules';
+import {resolveEvent} from '../engine/systems/events';
+import {dismissVictory, pendingVictory} from '../engine/systems/victory';
+import {applyForCredit, arrears, availableCreditOffers, creditApplicationPreview, creditRating, expansion} from '../engine/systems/sovereignCredit';
 
 /**
  * Paired war-balance scenarios (Phase 3). Two identical "twin" countries are cloned from one template so that a
@@ -47,6 +53,13 @@ export interface ScenarioSpec {
   /** Adjust the twins after cloning; both start identical. */
   adjust?: (attacker: CountryState, defender: CountryState) => void;
   war?: Partial<WarState>;
+  /** State-level changes, e.g. grounding a side's pilots. */
+  prepare?: (state: GameState, attackerId: string, defenderId: string) => GameState;
+}
+/** Grounds a side's aircraft by leaving them without trained crews: air superiority changes, counts and personnel do not. */
+export function groundAircraft(state: GameState, id: string): GameState {
+  const g = governance(state);
+  return {...state, world: {...state.world, governance: {...g, academies: {...g.academies, [id]: {...academyFor(state, id), pilots: 0}}}}};
 }
 
 export function scenarioState(spec: ScenarioSpec, seed: number): Setup {
@@ -58,7 +71,9 @@ export function scenarioState(spec: ScenarioSpec, seed: number): Setup {
   const attacker = state.countries[ATTACKER_ID], defender = state.countries[defenderId];
   for (const c of [attacker, defender]) c.processedResources.fuel = 100000;
   spec.adjust?.(attacker, defender);
-  const preview = getWarPreview(attacker, defender, state.infrastructure[ATTACKER_ID], state.infrastructure[defenderId]);
+  if (spec.prepare) state = spec.prepare(state, ATTACKER_ID, defenderId);
+  const crewed = (id: string) => { const c = state.countries[id], a = academyFor(state, id), need = c.military.fighters + c.military.bombers, cover = (need ? Math.min(1, a.pilots / need) : 1) * (a.funded ? 1 : .5); return {...c, military: {...c.military, fighters: c.military.fighters * cover, bombers: c.military.bombers * cover}}; };
+  const preview = getWarPreview(crewed(ATTACKER_ID), crewed(defenderId), state.infrastructure[ATTACKER_ID], state.infrastructure[defenderId]);
   const warId = `${ATTACKER_ID}-${defenderId}`;
   const war: WarState = {
     id: warId, attackerId: ATTACKER_ID, defenderId, startedDay: state.day, progress: 0, rounds: 0, autoAssault: true, status: 'active',
@@ -137,12 +152,48 @@ export const mean = (values: number[]) => values.length ? values.reduce((a, b) =
 export const SCENARIOS: ScenarioSpec[] = [
   {name: 'equal · plains'},
   ...(['urban', 'mountain', 'forest', 'desert', 'coastal'] as const).map(terrain => ({name: `equal · ${terrain}`, terrain})),
-  // Same total military power, but the attacker trades personnel for aircraft until it holds the air.
-  {name: 'attacker air superiority · plains', adjust: (a, d) => { const extra = Math.max(60, d.military.fighters * 2); a.military.personnel = Math.max(1000, a.military.personnel - extra * 8 / 0.002); a.military.fighters += extra; d.military.personnel += d.military.fighters * 8 / 0.002; d.military.fighters = 0; d.military.bombers = 0; }},
-  {name: 'defender air superiority · plains', adjust: (a, d) => { const extra = Math.max(60, a.military.fighters * 2); d.military.personnel = Math.max(1000, d.military.personnel - extra * 8 / 0.002); d.military.fighters += extra; a.military.personnel += a.military.fighters * 8 / 0.002; a.military.fighters = 0; a.military.bombers = 0; }},
+  // Full air superiority: the other side's aircraft have no trained crews (same forces otherwise).
+  {name: 'attacker air superiority · plains', prepare: (s, _, d) => groundAircraft(s, d)},
+  {name: 'defender air superiority · plains', prepare: (s, a) => groundAircraft(s, a)},
+  {name: 'attacker air superiority · mountain', terrain: 'mountain', prepare: (s, _, d) => groundAircraft(s, d)},
   {name: 'attacker low supply', adjust: a => { a.military.logistics = 15; a.industry.utilization = 20; }},
   {name: 'attacker 1.5× forces', adjust: a => { for (const k of ['personnel', 'tanks', 'artillery', 'fighters', 'bombers'] as const) a.military[k] = Math.round(a.military[k] * 1.5); }},
   {name: 'attacker exhausted (50)', war: {attackerExhaustion: 50}},
   {name: 'attacker without fuel', adjust: a => { a.processedResources.fuel = 0; }},
   {name: 'defender without fuel', adjust: (_, d) => { d.processedResources.fuel = 0; }},
 ];
+
+export interface SmallEconomyResult { days: number; status: WarState['status']; minTreasury: number; arrearsDays: number; worstRating: number; rescueOfferDay: number | null; rescueApplied: boolean; rescueApproved: boolean; bankrupt: boolean }
+
+/**
+ * A small economy (the player) defending for up to 90 days against a regional AI attacker, on the full daily tick.
+ * The player applies for the first rescue line offered. "Bankrupt" means arrears that persist for 30+ days.
+ */
+export function runSmallEconomyDefense(seed: number, defenderId = 'ARM', attackerId = 'AZE', days = 90): SmallEconomyResult {
+  let state = makeInitialState();
+  state = {...state, simulationSeed: seed >>> 0, playerCountryId: defenderId, speed: 0, eventCooldownUntil: 100000, advisorCooldownUntil: 100000,
+    playerProfile: {...state.playerProfile, setupComplete: true}, world: {...state.world, tutorial: {...state.world.tutorial, active: false, completed: true}}};
+  const a = state.countries[attackerId];
+  state = {...state, countries: {...state.countries, [attackerId]: {...a, processedResources: {...a.processedResources, fuel: Math.max(a.processedResources.fuel, 5000)}}}};
+  const opened = openWar(state, attackerId, defenderId, true);
+  state = opened.state;
+  const warId = opened.warId!;
+  let minTreasury = Infinity, arrearsDays = 0, worstRating = 100, rescueOfferDay: number | null = null, rescueApplied = false, run = 0;
+  for (let day = 0; day < days; day++) {
+    if (state.activeEvent) state = resolveEvent(state, state.activeEvent.options[0].id);
+    for (let v = pendingVictory(state); v; v = pendingVictory(state)) state = dismissVictory(state, v.warId);
+    const living = state.world.living;
+    state = {...state, activeEvent: null, activeAdvisor: null, world: {...state.world, living: living ? {...living, advice: {...living.advice, active: null}, notice: undefined} : living}};
+    state = tickGame(state);
+    const c = state.countries[defenderId];
+    minTreasury = Math.min(minTreasury, c.economy.treasury);
+    run = arrears(state, defenderId) > 1e-8 ? run + 1 : 0; arrearsDays = Math.max(arrearsDays, run);
+    worstRating = Math.min(worstRating, creditRating(state, defenderId).score);
+    const rescue = availableCreditOffers(state, defenderId).find(o => o.emergency && o.targetCountryId === defenderId);
+    if (rescue && rescueOfferDay === null) rescueOfferDay = day + 1;
+    if (rescue && !rescueApplied && creditApplicationPreview(state, rescue.id, defenderId).allowed) { state = applyForCredit(state, rescue.id, defenderId); rescueApplied = true; }
+    if (state.wars[warId].status !== 'active') break;
+  }
+  const rescueApproved = (expansion(state).creditApplications ?? []).some(x => x.borrowerId === defenderId && x.status === 'approved') || expansion(state).loans.some(l => l.borrowerId === defenderId);
+  return {days: state.day, status: state.wars[warId].status, minTreasury, arrearsDays, worstRating, rescueOfferDay, rescueApplied, rescueApproved, bankrupt: arrearsDays >= 30};
+}
