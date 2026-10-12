@@ -189,12 +189,12 @@ Translation catalogue consolidation/loading, remaining previews, measured perfor
 
 ## Major patch — six-phase plan (Codex, 2026-10-12)
 
-This plan supersedes older phase numbering for the current work. Phases 1–3 are delivered; Phase 4 needs Alper's authorization.
+This plan supersedes older phase numbering for the current work. Phases 1–4 are delivered; Phase 5 needs Alper's authorization.
 
 1. **Reliable foundation:** proven save/transaction/interaction bugs, regression coverage and initial performance measurements. Playtest.9 implements managed victory/crisis focus and expands safety coverage; release CI 38242251836 passed. [Evidence](QA-PHASE1-0909.md).
 2. **UI flow and targeted performance:** measured expensive selectors, typography, parent/child focus and transitions, five languages and zoom/mobile usability. Delivered in playtest.10 together with the Rule of Nations name. [Evidence](FLUID-UI-0910.md).
 3. **Multi-turn tactical AI and balance:** deterministic bounded planning, fog of war, common player/AI costs; fuel/air/small-economy balance measured before changes. Delivered in playtest.12. [Evidence](WAR-AI-0912.md).
-4. **Air/naval task groups and logistics:** allocation, range, readiness and shared validators; unify cargo ownership/cancellation semantics.
+4. **Air/naval task groups and logistics:** allocation, range, readiness and shared validators; unify cargo ownership/cancellation semantics. Delivered in playtest.13. [Evidence](TASKGROUPS-0913.md).
 5. **Terrain, playback and audio:** resolved events drive effects; skip/replay cannot change simulation; accessible static/silent fallbacks.
 6. **Closed Beta acceptance:** complete campaigns, multiwar/defeat, 365/1095 days, all languages, actual StackBlitz/mobile, full tests and CI.
 
@@ -211,3 +211,7 @@ Footer credit is RON Interactive. Phase 3 (multi-turn tactical AI and balance) s
 ## 0.90.0-playtest.12 — Multi-round tactical AI and war balance (Claude)
 
 Delivered Phase 3: bounded deterministic multi-round planner with plan memory, fog-of-war knowledge and single-round fallback; log-ratio front, single-counted air, symmetric fuel and supply roles, rescue lenders during war. Remaining: mountain assaults stay very hard on the tactical board; planner projection is heuristic. Phase 4 (air/naval task groups) has not started.
+
+## 0.90.0-playtest.13 — Air/naval task groups and the cargo chain (Claude)
+
+Delivered Phase 4: six air/naval missions with bases, range, preparation days and stock limits; one preview and validator for the player panel and the AI; the default assignment keeps the playtest.12 balance; one-record cargo chain with blockade interception and the early-delivery fix. Remaining: no air/naval units on the tactical board, no individual airfields or carriers, trade-deal and contract flights stay visual, the AI assumes the enemy's default assignment. Phase 5 (terrain, playback and audio) has not started.

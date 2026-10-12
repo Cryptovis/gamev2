@@ -146,6 +146,20 @@ Footer credit changed to RON Interactive; interface guards now reject any AlpyX 
 
 Validation: 639 unit tests / 81 files, TypeScript and production build passed; all 158 production-browser scenarios passed on GitHub-hosted Chromium (15.4 min). CI on the published commit is the release gate.
 
+## 0.90.0-playtest.13 — Air/naval task groups and the cargo chain (Claude, Phase 4)
+
+Phase 4 only; Phase 5 untouched. Save schema 17 with optional fields. Evidence: [Phase 4 record](TASKGROUPS-0913.md).
+
+Validation: 686 unit tests / 84 files, TypeScript and production build passed; the 365-day long-run invariant passes. All 162 production-browser scenarios passed on GitHub-hosted Chromium (160 earlier + 2 task-group specs at 1440 px Turkish and 390 px English; CI 38312328349 and the full Measure suite on the release tree). War balance measured before and after on GitHub (`measure/war-tg-base`, `measure/war-tg-after`). Not run on StackBlitz: the npm registry is blocked in this session.
+
+### Manual acceptance route
+
+1. Declare war on Greece as Türkiye. The war window shows **Task groups** with fighters on air superiority, bombers on close air support and warships on shore support; the enemy's groups are not shown.
+2. Assign 10 fighters to close air support: they show as preparing with an "On station from day" line; after that day, close air support power rises above 0%.
+3. Try to assign more fighters than are free: the button stays disabled and the reason is shown.
+4. Move your warships from shore support to a blockade: the enemy's supply falls by up to 12%. When an enemy blockades you and you have no convoy escorts, the panel warns that incoming cargo is at risk and a bought cargo may land with a BLOCKADE line in the reports.
+5. Save mid-war, reload and continue: the groups, ready days and front continue unchanged.
+
 ## 0.90.0-playtest.12 — Multi-round tactical AI and war balance (Claude, Phase 3)
 
 Phase 3 only; Phase 4 untouched. Save schema 17 with an optional plan field. Evidence: [Phase 3 record](WAR-AI-0912.md).

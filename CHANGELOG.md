@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.90.0-playtest.13 — Air/naval task groups and the cargo chain (Phase 4)
+Implementation: **Claude (Opus 5.5)**. Branch: `dev/clear-command-090`. Save schema 17 (new optional fields), dependencies unchanged.
+
+- **Task groups.** Each side of a war assigns fighters, bombers and warships to air superiority, close air support, interdiction, shore support, blockade or convoy escort. Only assigned, ready forces fight in that war; one aircraft or ship serves one war at a time; assignments never exceed the national stock and losses come out of the groups. Bases are capitals (own, controlled or allied, nearest to the front), with fighter and bomber ranges and 1–3 preparation days; warships need ports and coasts. Only assigned aircraft burn mission fuel.
+- **Same rules for the AI.** One engine preview and validator serve the player's new war-theatre panel and the AI, which reviews its groups every 14 days without seeing the enemy's assignment.
+- **Balance kept.** A new war starts with groups equal to the earlier fixed 25% share: all 14 playtest.12 scenarios measure the same (one rounding difference: attacker 1.5× forces +3.61 → +3.62 per day). Air superiority with close air support stops at the mountain defensive edge; blockade cuts at most 12% and interdiction at most 15% of enemy front supply, escorts and air cover cancel up to half; shore support is worth a quarter of close air support. Wars saved before this version keep the fixed share.
+- **Cargo chain.** A commodity cargo is one shipment: the map flight and the exchange delivery share an id and land on the same day. Fixed: with many flights in the air, the oldest cargo was delivered at once while the purchase still showed it in transit. Unescorted cargo for a blockaded country may be partly intercepted (seeded, reported, no refund); paid cargo is never cancelled and still lands if the countries go to war or the buyer is occupied.
+- [Phase 4 record](docs/TASKGROUPS-0913.md); capital positions from Natural Earth (public domain).
+
+Validation: 686 unit tests / 84 files, TypeScript and production build passed; the 365-day long-run invariant passes. All 162 production-browser scenarios passed on GitHub-hosted Chromium (160 earlier + 2 task-group specs at 1440 px Turkish and 390 px English; CI 38312328349 and the full Measure suite on the release tree). War balance measured before and after on GitHub (`measure/war-tg-base`, `measure/war-tg-after`). Not run on StackBlitz: the npm registry is blocked in this session.
+
 ## 0.90.0-playtest.12 — Multi-round tactical AI and war balance (Phase 3)
 Implementation: **Claude (Opus 5.5)**. Branch: `dev/clear-command-090`. Save schema 17 (new optional plan field), dependencies unchanged.
 

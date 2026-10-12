@@ -1,5 +1,12 @@
 # Devir notu (yeni konuşma için)
 
+## 0.90.0-playtest.13 — Faz 4 (Claude Opus 5.5)
+
+- Hava/deniz görev grupları (`taskGroups.ts`): hava üstünlüğü, yakın hava desteği, ikmal engelleme, kıyı desteği, abluka, konvoy koruma. Üs = en yakın başkent (kendi, kontrol edilen veya müttefik; Natural Earth, yoksa harita konumu), avcı 2.500 / bombardıman 6.000 km, 1–3 gün hazırlık, stok sınırı (`clampTaskGroups` + okuma anında sınır), kayıplar gruptan, yakıt yalnızca atanmış uçaklardan. Oyuncu paneli ve AI aynı önizleme/doğrulayıcıyı kullanır; AI 14 günde bir, düşman atamasını görmeden değerlendirir.
+- Varsayılan atama eski %25 payına eşit; 14 playtest.12 senaryosu aynı ölçüldü. Eski kayıtlardaki savaşlar sabit payla sürer. Şema 17 (isteğe bağlı alanlar).
+- Kargo: tek `shipmentId` kaydı, uçuş inişi aynı gün pozisyonu işler; liste dolunca kargo erken teslim edilmez (düzeltildi). Eskortsuz ablukada seeded kayıp, sitrep, iade yok.
+- Kanıt: [TASKGROUPS-0913](TASKGROUPS-0913.md). Faz 5 başlamadı. npm registry bu oturumda yine kapalıydı; tam doğrulama GitHub Actions'ta.
+
 ## 0.90.0-playtest.12 — Faz 3 (Claude Opus 5.5)
 
 - Çok turlu taktik AI (`tacticalPlanner.ts`): keşif/ele geçir/kuşat/koru/geri çekil planları, 3 tur projeksiyon, plan tutarlılığı (en az 2 tur, %25 eşik), yalnızca görülen ve son 3 turda görülen düşman bilgisi, deterministik iş bütçesi (3.000) aşılırsa tek turlu AI'ya dönüş. Plan `TacticalBattle.plans` isteğe bağlı alanında; şema 17.
