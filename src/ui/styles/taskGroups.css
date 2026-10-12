@@ -1,0 +1,142 @@
+/* Phase 4 (playtest.13): air and naval task groups inside the war theatre. */
+.task-groups {
+  margin: 16px 0;
+  padding: 16px;
+  border: 1px solid #86a9b866;
+  border-radius: 14px;
+  background: #102e402b;
+}
+.task-groups header h3 {
+  margin: 0 0 4px;
+}
+.task-groups header p,
+.task-groups > p.muted {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.task-groups-effects {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+  margin: 12px 0;
+}
+.task-groups-effects > div {
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: #0b22312e;
+}
+.task-groups-effects dt {
+  font-size: 11px;
+  color: #d4e2ea;
+}
+.task-groups-effects dd {
+  margin: 2px 0 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff0bc;
+  font-variant-numeric: tabular-nums;
+}
+.task-groups-effects .task-groups-alert dd {
+  color: #ffb4a2;
+}
+.task-groups-warning {
+  margin: 0 0 10px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: #7a2f2a55;
+  border: 1px solid #ffb4a266;
+  font-size: 12px;
+}
+.task-groups-rows {
+  list-style: none;
+  margin: 0 0 10px;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.task-groups-rows > li {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) auto;
+  grid-template-areas: "name counts control" "status status status";
+  gap: 6px 12px;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid #86a9b833;
+  background: #0b22311f;
+}
+.task-groups-rows > li.active {
+  border-color: #ffd26b66;
+}
+.task-groups-name {
+  grid-area: name;
+  min-width: 0;
+}
+.task-groups-name strong {
+  font-size: 14px;
+}
+.task-groups-name small {
+  margin-left: 6px;
+  font-size: 11px;
+  color: #d4e2ea;
+}
+.task-groups-name p {
+  margin: 3px 0 0;
+  font-size: 11px;
+  line-height: 1.45;
+  color: #d4e2ea;
+}
+.task-groups-counts {
+  grid-area: counts;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  margin: 0;
+}
+.task-groups-counts dt {
+  font-size: 10px;
+  color: #d4e2ea;
+}
+.task-groups-counts dd {
+  margin: 0;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.task-groups-control {
+  grid-area: control;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.task-groups-control input {
+  width: 84px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  border: 1px solid #9cb4c1;
+  background: #0b2231;
+  color: #f4faff;
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+}
+.task-groups-status {
+  grid-area: status;
+  margin: 0;
+  font-size: 11px;
+  color: #d4e2ea;
+}
+@media (max-width: 760px) {
+  .task-groups {
+    padding: 10px;
+  }
+  .task-groups-effects {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .task-groups-rows > li {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "name" "counts" "control" "status";
+  }
+  .task-groups-control input {
+    flex: 1;
+  }
+}

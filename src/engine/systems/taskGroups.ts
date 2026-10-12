@@ -386,3 +386,45 @@ export function cargoBlockade(state: GameState, countryId: string): CargoBlockad
   }
   return best;
 }
+
+// ---------------------------------------------------------------------------------------------
+// Command panel summary (engine preview for the UI; the panel never recomputes these)
+// ---------------------------------------------------------------------------------------------
+
+/** Mission rows offered to a side, in display order. */
+export const TASK_ROWS: readonly [TaskMission, TaskAsset][] = [
+  ['airSuperiority', 'fighters'], ['closeAirSupport', 'fighters'], ['closeAirSupport', 'bombers'], ['interdiction', 'fighters'], ['interdiction', 'bombers'],
+  ['shoreSupport', 'warships'], ['blockade', 'warships'], ['convoyEscort', 'warships'],
+];
+export interface TaskGroupRow { mission: TaskMission; asset: TaskAsset; stock: number; current: number; ready: number; preparing: number; max: number; nextReadyDay: number | null; reach: Reach }
+export interface TaskGroupSummary {
+  side: TaskSide;
+  rows: TaskGroupRow[];
+  /** −100…100 from this side's perspective. */
+  airSuperiority: number;
+  /** Power added by this side's close air support (0.12 = +12%). */
+  closeAirSupport: number;
+  /** Enemy front supply cut by this side's interdiction and blockade. */
+  interdiction: number;
+  blockade: number;
+  /** This side's own front supply cut by the enemy (observed, not the enemy's assignment). */
+  supplyCut: number;
+  /** Goods arriving here run an enemy blockade without escorts. */
+  cargoAtRisk: boolean;
+}
+export function taskGroupSummary(state: GameState, warId: string, countryId: string): TaskGroupSummary | null {
+  const w = state.wars[warId], side = w ? sideOf(w, countryId) : null;
+  if (!w || !side || !hasTaskGroups(w)) return null;
+  const e = missionEffects(state, w), own = e[side];
+  const rows = TASK_ROWS.filter(([, asset]) => nationalStock(state.countries[countryId], asset) > 0).map(([mission, asset]) => {
+    const groups = missionGroups(w, side, mission, asset), current = sum(groups), ready = sum(groups.filter((g) => g.readyDay <= state.day));
+    const pending = groups.filter((g) => g.readyDay > state.day).map((g) => g.readyDay);
+    return { mission, asset, stock: nationalStock(state.countries[countryId], asset), current, ready, preparing: current - ready,
+      max: Math.max(0, nationalStock(state.countries[countryId], asset) - assignedTotal(state, countryId, asset)) + current,
+      nextReadyDay: pending.length ? Math.min(...pending) : null, reach: missionReach(state, w, side, mission, asset) };
+  });
+  return {
+    side, rows, airSuperiority: side === 'attacker' ? e.airSuperiority : -e.airSuperiority, closeAirSupport: own.cas - 1,
+    interdiction: own.interdiction, blockade: own.blockade, supplyCut: 1 - e.supplyFactor[side], cargoAtRisk: !!cargoBlockade(state, countryId),
+  };
+}

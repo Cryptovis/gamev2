@@ -7,7 +7,8 @@ import { createPortal } from "react-dom";
 import { useGameStore } from "../../store/gameStore";
 import {useWorldView} from '../../store/useWorldView';
 import { flagEmoji } from "../../data/countryThemes";
-import { coalitionSupport, getWarPreview } from "../../engine/systems/warfare";
+import { coalitionSupport, warCombatView } from "../../engine/systems/warfare";
+import { TaskGroupsPanel } from "./TaskGroupsPanel";
 import { AssetThumbnail } from "../icons/AssetThumbnail";
 import {tacticalStartStatus} from '../../engine/systems/tactical';
 import {ErrorBoundary} from '../ErrorBoundary';
@@ -43,7 +44,8 @@ function WarCommand() {
   if (!w) return null;
   const a = s.countries[w.attackerId],
     d = s.countries[w.defenderId],
-    p = getWarPreview({...a,military:{...a.military,fighters:a.military.fighters*pilotCoverage(s,a.id),bombers:a.military.bombers*pilotCoverage(s,a.id)}}, {...d,military:{...d.military,fighters:d.military.fighters*pilotCoverage(s,d.id),bombers:d.military.bombers*pilotCoverage(s,d.id)}}, s.infrastructure[a.id], s.infrastructure[d.id]);
+    // Phase 4: the war as it is fought (assigned task groups and their effects; whole crewed forces in older saves).
+    p = warCombatView(s, w).p;
   const fuel=calculateSupplyNetwork(s.countries[s.playerCountryId]).fuelDays;
   const mine =
     w.attackerId === s.playerCountryId || w.defenderId === s.playerCountryId;
@@ -177,6 +179,7 @@ function WarCommand() {
             </p>
           )}
         </div>
+        {mine && <TaskGroupsPanel warId={w.id} />}
         <footer>
           <button
             disabled={

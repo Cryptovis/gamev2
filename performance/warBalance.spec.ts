@@ -1,10 +1,10 @@
 import {test,expect} from 'vitest';
 import {mkdirSync,writeFileSync} from 'node:fs';
-import {BALANCE_SEEDS,SCENARIOS,mean,runAuto,runSmallEconomyDefense,runTactical} from '../src/tests/warBalanceHarness';
+import {BALANCE_SEEDS,MISSION_SCENARIOS,SCENARIOS,mean,runAuto,runSmallEconomyDefense,runTactical} from '../src/tests/warBalanceHarness';
 
 /** Phase 3 paired war-balance measurement. Writes performance/results/war-balance-<label>.json and a console table. */
 test('measure paired war-balance scenarios',()=>{
- const auto=SCENARIOS.map(spec=>{
+ const auto=[...SCENARIOS,...MISSION_SCENARIOS].map(spec=>{
   const runs=BALANCE_SEEDS.map(seed=>runAuto(spec,seed,90));
   const first30=runs.map(r=>mean(r.deltas.slice(0,30)));
   const ended=runs.filter(r=>r.endDay!==null);
@@ -27,5 +27,5 @@ test('measure paired war-balance scenarios',()=>{
  for(const r of tactical)console.log(`[tactical] ${r.scenario.padEnd(22)} ${r.attackerAi.padEnd(7)} rounds ${r.meanRounds} progress ${r.meanProgress} switches ${JSON.stringify(r.goalSwitchesPerRound)} reversal ${JSON.stringify(r.reversalRate)} held ${JSON.stringify(r.objectiveRoundsHeld)}`);
  const label=(process.env.PERFORMANCE_LABEL??'current').replace(/[^a-zA-Z0-9_-]/g,'_');
  mkdirSync('performance/results',{recursive:true});writeFileSync(`performance/results/war-balance-${label}.json`,JSON.stringify({seeds:BALANCE_SEEDS.length,auto,tactical,small},null,1)+'\n');
- expect(auto.length).toBe(SCENARIOS.length);
+ expect(auto.length).toBe(SCENARIOS.length+MISSION_SCENARIOS.length);
 });
