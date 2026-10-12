@@ -1,0 +1,40 @@
+{
+  "name": "rule-of-nations",
+  "private": true,
+  "version": "0.90.0-playtest.13",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "check": "npm run test && npm run build",
+    "test:e2e": "playwright test",
+    "measure:engine": "vitest run --config performance/vitest.config.ts",
+    "measure:browser": "playwright test --config performance/playwright.config.ts",
+    "measure:renders": "playwright test --config performance/renders.config.ts",
+    "measure:war": "vitest run --config performance/war.vitest.config.ts"
+  },
+  "dependencies": {
+    "chart.js": "4.5.1",
+    "d3-geo": "3.1.1",
+    "dexie": "4.4.6",
+    "howler": "2.2.4",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "zod": "4.6.5",
+    "zustand": "5.0.15"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.61.1",
+    "@types/d3-geo": "3.1.0",
+    "@types/howler": "2.2.13",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "6.1.1",
+    "typescript": "5.9.3",
+    "vite": "8.3.2",
+    "vitest": "5.0.3"
+  }
+}

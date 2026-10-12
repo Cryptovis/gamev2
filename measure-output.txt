@@ -1,0 +1,20 @@
+
+added 2 packages, and audited 59 packages in 768ms
+
+12 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+
+added 1 package, and audited 59 packages in 552ms
+
+12 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+rule-of-nations@0.90.0-playtest.13 /home/runner/work/gamev2/gamev2
+├── @types/howler@2.2.13
+└── howler@2.2.4
+
+node_modules/howler {"version":"2.2.4","resolved":"https://registry.npmjs.org/howler/-/howler-2.2.4.tgz","integrity":"sha512-iARIBPgcQrwtEr+tALF+rapJ8qSc+Set2GJQl7xT1MQzWaVkFebdJhR3alVlSiUf5U7nAANKuj3aWpwerocD5w==","license":"MIT"}
+node_modules/@types/howler {"version":"2.2.13","resolved":"https://registry.npmjs.org/@types/howler/-/howler-2.2.13.tgz","integrity":"sha512-40+EBjqIHHrC4VShlz/7i0lBUsE3QkgzZinQQji74Hd8sBkJZUBaT7LWFLK6rcabsDOOQpoMbEJvtaFQwxOu/g==","dev":true,"license":"MIT"}
