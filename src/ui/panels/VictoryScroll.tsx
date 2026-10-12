@@ -1,3 +1,4 @@
+import { BRAND_NAME } from "../BrandMark";
 import {ManagedDialog} from "../windows/ManagedDialog";
 import {WINDOW_LAYERS} from "../windows/useWindowLifecycle";
 import { createPortal } from "react-dom";
@@ -20,7 +21,7 @@ function VictoryNotice() {
   return createPortal(
     <div className="victory-backdrop">
       <ManagedDialog key={v.warId} className="victory-scroll" label="VICTORY" layer={WINDOW_LAYERS.modal} onClose={() => s.dismissVictory(v.warId)}>
-        <small>THE REAL PRESIDENT</small>
+        <small translate="no">{BRAND_NAME}</small>
         <h1>
           <LocaleText value="VICTORY" />
         </h1>

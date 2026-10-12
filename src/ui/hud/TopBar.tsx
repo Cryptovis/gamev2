@@ -1,3 +1,4 @@
+import {BRAND_NAME} from '../BrandMark';
 import {arrears} from '../../engine/systems/sovereignCredit';
 import {CommandArt} from '../icons/CommandArt';
 import {academyFor} from '../../engine/systems/governance';
@@ -47,7 +48,7 @@ export function TopBar(){
  return <header className="topbar">
   <div className="command-overview-island"><div className="leader-brand">
    <button className="leader-avatar-button" onClick={()=>{useGameStore.getState().openTool(null,false);setOptionsOpen(true)}} title={translateLive("Open commander options")}><AvatarPortrait id={profile.avatarId} size={52}/><span><LocaleText value={"⋯"}/></span></button>
-   <div className="brand-block"><div className="eyebrow">THE REAL PRESIDENT</div><div className="brand-line"><strong><LocaleText value={profile.commanderName}/></strong><span className="day-chip"><LocaleText value={tr(lang,'day')}/> <LocaleText value={day}/></span></div></div>
+   <div className="brand-block"><div className="eyebrow" translate="no">{BRAND_NAME}</div><div className="brand-line"><strong><LocaleText value={profile.commanderName}/></strong><span className="day-chip"><LocaleText value={tr(lang,'day')}/> <LocaleText value={day}/></span></div></div>
   </div>
 
   <div className="metrics governance-metrics" aria-label={translateLive("National command indicators")}>

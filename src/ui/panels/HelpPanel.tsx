@@ -1,3 +1,4 @@
+import { BRAND_NAME } from "../BrandMark";
 import { LocaleText, translateLive } from "../../i18n/localeText";
 import { useState } from "react";
 import { useGameStore } from "../../store/gameStore";
@@ -144,7 +145,7 @@ export function HelpPanel() {
       onClose={state.closeWorkspace}
     >
       <section className="game-notes">
-        <h3>The Real President</h3>
+        <h3 translate="no">{BRAND_NAME}</h3>
         <p>
           <LocaleText value="203 sovereign profiles · economy · population · resource markets · diplomacy · research · military command." />
         </p>
