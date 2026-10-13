@@ -3,12 +3,11 @@
  * Colour is never the only signal: every counter has an arrow shape, a sign and a spoken word; every glow also has text.
  */
 .live-delta{display:inline-flex;align-items:center;gap:3px;margin-top:1px;font-style:normal;font-size:11px;font-weight:700;line-height:1.2;white-space:nowrap}
-.live-delta i{font-style:normal;font-size:9px}
+.live-delta i{font-style:normal;font-size:10px}
 .live-delta.up{color:#5fd68d}
 .live-delta.down{color:#ff8a76}
 .live-delta.flat{color:#b9c4cc}
-.top-metric > span > .live-delta{display:flex}
-.live-flows{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:2px}
+.live-flows{display:flex;flex-wrap:wrap;gap:1px 10px;margin-top:2px;max-width:180px}
 .live-flow{display:inline-flex;align-items:baseline;gap:5px}
 .live-flow small{font-size:10px;letter-spacing:.06em;text-transform:uppercase;opacity:.8}
 @media (max-width:760px){.live-flows{gap:2px 8px}.live-delta{font-size:10px}}

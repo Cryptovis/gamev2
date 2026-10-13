@@ -31,8 +31,8 @@ const TREND_WORD:Record<LiveDelta['direction'],string>={up:'Rising',down:'Fallin
 function LiveChange({delta,unit=''}:{delta:LiveDelta;unit?:string}){
  return <em className={'live-delta '+delta.direction} data-delta={delta.id} aria-label={translateLive(TREND_WORD[delta.direction])+' '+delta.text+unit+' '+translateLive('/day')}><i aria-hidden="true">{ARROW[delta.direction]}</i> {delta.text}{unit}<LocaleText value={"/day"}/></em>;
 }
-function Metric({icon,label,value,tone='neutral',delta}:{icon:ReactNode;label:string;value:string;tone?:'neutral'|'warning'|'good';delta?:LiveDelta}){
- return <div className={'top-metric '+tone}><span className="top-metric-icon"><LocaleText value={icon}/></span><span><small><LocaleText value={label}/></small><strong><LocaleText value={value}/></strong>{delta&&<LiveChange delta={delta}/>}</span></div>;
+function Metric({icon,label,value,tone='neutral'}:{icon:ReactNode;label:string;value:string;tone?:'neutral'|'warning'|'good'}){
+ return <div className={'top-metric '+tone}><span className="top-metric-icon"><LocaleText value={icon}/></span><span><small><LocaleText value={label}/></small><strong><LocaleText value={value}/></strong></span></div>;
 }
 
 export function TopBar(){
@@ -60,11 +60,11 @@ export function TopBar(){
  return <header className="topbar">
   <div className="command-overview-island"><div className="leader-brand">
    <button className="leader-avatar-button" data-mood={mood} onClick={()=>{useGameStore.getState().openTool(null,false);setOptionsOpen(true)}} title={translateLive("Open commander options")}><AvatarPortrait id={profile.avatarId} size={52}/><span><LocaleText value={"⋯"}/></span>{mood!=='calm'&&<b className="mood-note"><LocaleText value={mood==='alarm'?'Crisis alert':'Prosperity'}/></b>}</button>
-   <div className="brand-block"><div className="eyebrow" translate="no">{BRAND_NAME}</div><div className="brand-line"><strong><LocaleText value={profile.commanderName}/></strong><span className="day-chip"><LocaleText value={tr(lang,'day')}/> <LocaleText value={day}/></span></div><div className="live-flows" aria-label={translateLive("Live changes")} title={translateLive("Production minus consumption, per day")}><span className="live-flow"><small><LocaleText value={"Food"}/></small><LiveChange delta={byId.food}/></span><span className="live-flow"><small><LocaleText value={"Oil"}/></small><LiveChange delta={byId.oil}/></span></div></div>
+   <div className="brand-block"><div className="eyebrow" translate="no">{BRAND_NAME}</div><div className="brand-line"><strong><LocaleText value={profile.commanderName}/></strong><span className="day-chip"><LocaleText value={tr(lang,'day')}/> <LocaleText value={day}/></span></div><div className="live-flows" aria-label={translateLive("Live changes")} title={translateLive("Production minus consumption, per day")}><span className="live-flow"><small><LocaleText value={"Treasury"}/></small><LiveChange delta={byId.treasury}/></span><span className="live-flow"><small><LocaleText value={"Food"}/></small><LiveChange delta={byId.food}/></span><span className="live-flow"><small><LocaleText value={"Oil"}/></small><LiveChange delta={byId.oil}/></span></div></div>
   </div>
 
   <div className="metrics governance-metrics" aria-label={translateLive("National command indicators")}>
-   <Metric icon={<CommandArt kind="treasury" size={30}/>} label={arrears(useGameStore.getState(),player.id)>0?translateLive('Fiscal balance'):tr(lang,'treasury')} value={'$'+(player.economy.treasury-arrears(useGameStore.getState(),player.id)).toFixed(1)+'B'} delta={byId.treasury}/>
+   <Metric icon={<CommandArt kind="treasury" size={30}/>} label={arrears(useGameStore.getState(),player.id)>0?translateLive('Fiscal balance'):tr(lang,'treasury')} value={'$'+(player.economy.treasury-arrears(useGameStore.getState(),player.id)).toFixed(1)+'B'}/>
    <Metric icon={<CommandArt kind="budget" size={30}/>} label="BUDGET / DAY" value={(strategicDailyBalance>=0?'+':'')+'$'+strategicDailyBalance.toFixed(3)+'B'} tone={strategicDailyBalance>=0?'good':'warning'}/>
    <Metric icon={<CommandArt kind="approval" size={30}/>} label={tr(lang,'approval')} value={player.politics.approval.toFixed(0)+'%'} tone={player.politics.approval>=60?'good':player.politics.approval<40?'warning':'neutral'}/>
    <Metric icon={<CommandArt kind="stability" size={30}/>} label="STABILITY" value={player.politics.stability.toFixed(0)+'%'} tone={player.politics.stability>=65?'good':player.politics.stability<40?'warning':'neutral'}/>

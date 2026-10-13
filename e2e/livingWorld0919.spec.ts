@@ -36,7 +36,7 @@ test('en 1440px the HUD shows live change counters with arrows and the portrait 
  await page.setViewportSize({width:1440,height:900});
  await resumeFixture(page,fixture('en',{happy:true}));
  await expect(page.locator('.country-shape').first()).toBeAttached();
- const deltas=page.locator('.top-metric .live-delta, .live-flows .live-delta');
+ const deltas=page.locator('.live-flows .live-delta');
  await expect(deltas).toHaveCount(3);
  for(const id of ['treasury','food','oil']){
   const d=page.locator(`.live-delta[data-delta="${id}"]`);
