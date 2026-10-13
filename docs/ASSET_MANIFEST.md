@@ -53,3 +53,6 @@ Drawn at runtime as inline SVG (`src/ui/panels/BattleFxLayer.tsx`, `src/ui/style
 
 ### Library
 Howler.js 2.2.4 (MIT, © James Simpson / GoldFire Studios), bundled with the app; sounds are created only after the first user interaction.
+
+## 0.90.0-playtest.17 shaded relief (Phase 6.3)
+`public/assets/geography/hillshade-2048.webp` (2048 × 1024, about 126 kB) is derived from Natural Earth GRAY_50M_SR_OB (public domain) by `scripts/build-hillshade.mjs`. It is the only third-party raster added in this phase and is drawn as its own layer (multiply blend) above the country shapes. Source, credit and processing: `public/assets/geography/HILLSHADE-ATTRIBUTION.md`. The capital-pin building sprite and flag rings are original project SVG.
