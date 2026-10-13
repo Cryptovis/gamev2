@@ -35,8 +35,9 @@ test('returning from a child window restores the parent scroll position, row foc
  const row=await table.evaluate(el=>{const box=el.getBoundingClientRect();const buttons=[...el.querySelectorAll<HTMLButtonElement>('tbody button')];const i=buttons.findIndex(b=>{const r=b.getBoundingClientRect();return r.top>box.top+30&&r.bottom<box.bottom-10;});buttons[i].focus({preventScroll:true});return i;});
  expect(row).toBeGreaterThan(0);
  await page.keyboard.press('Enter');
- await expect(world).toBeHidden();await expect(page.locator('.command-panel')).toBeVisible();
- await page.locator('.command-panel [data-guide="close-workspace"]').click();
+ // Phase 6.1: a foreign row opens the diplomatic hub; the player's own row opens the full panel.
+ await expect(world).toBeHidden();await expect(page.locator('.target-hub:visible, .command-panel:visible')).toHaveCount(1);
+ await page.locator('[data-guide="close-workspace"]:visible').click();
  await expect(world).toBeVisible();
  await expect.poll(()=>table.evaluate(el=>el.scrollTop)).toBe(offset);
  expect(await table.evaluate((el,i)=>document.activeElement===el.querySelectorAll('tbody button')[i],row)).toBe(true);
