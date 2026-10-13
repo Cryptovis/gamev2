@@ -48,7 +48,10 @@ The card's own footer buttons, including the tutorial hook `data-guide="learn-bu
 
 - `src/tests/cardUi0918.test.ts` (31 tests): six cards in order with typed commands; after the command through `executeCommandResult` the labour card is active with 180 days left and the other four are locked with the engine reason; the days-left countdown and the end of the concession; too little treasury; a controlled government; a foreign country has no commands; no mutation; `facilityBuildBlock` is `null` exactly when `industry/build` is applied, for all 13 facilities in nine situations (ready, six and five projects, no technology, treasury just below and exactly at the cost, empty and full deposits, non-finite treasury); factory view numbers, the electricity and other bottlenecks, paused and unbuilt, the park, the six-project limit; the three drawings; schema 17; the five-language catalog and the placeholders.
 - `e2e/cardUi0918.spec.ts` (5 scenarios; Turkish 1440 px and English 390 px): six cards, the tax panel still below the grid, Adjust focuses the slider, enacting the Labour Charter through the review makes that card active with the ✓ and locks the other four, a foreign country is read-only, no horizontal overflow; the factory modal shows the drawing, exactly two rows, the ×count chip, Pause/Resume, Build another through the review, and closing; with six projects "Limit Reached" shows and Build another is disabled.
-- No existing test was changed.
+
+## Existing test changed
+
+`e2e/audiovisual0914.spec.ts` ("replay draws recorded effects; low effects shows one round summary instead"). After saving it waited for `.campaign-save-status` to be visible and then reloaded. That line also shows the older "Loaded Day N" message written when the fixture was resumed, so it was already visible; if the reload came before `saveNow` had written the manual save, `Load previous progress` loaded the older save (no war) and the battlefield never opened. It now waits for the text "Saved Day". The race exists since Phase 5; the extra work playtest.17 does at load time probably made it likelier (not measured). Evidence: the documentation-only commits f29ab60 (twice) and 3545265 (twice) failed exactly this test (174 and 179 passed) while the commits with the same code passed; after the change CI 38401033922 passed 180 of 180. Five other specs use the same `.campaign-save-status` check; they were not changed.
 
 ## Not done in this session
 
@@ -59,6 +62,7 @@ The card's own footer buttons, including the tutorial hook `data-guide="learn-bu
 ## Validation
 
 - CI 38395400923 (GitHub-hosted Chromium): Vitest, TypeScript, production build and all 180 Playwright scenarios passed (175 earlier + 5 new).
+- CI 38401033922 on 80acf36 (adds the `audiovisual0914` fix): 180 of 180 passed.
 - Unit tests: 793 / 89 files (762 earlier + 31), counted from the sources because the CI log was not readable; the 31 new tests also ran locally under a small compatibility shim before pushing (no `node_modules`; not a substitute for CI).
 - Not run locally: Vitest, `vite build` and the browser, because the npm registry was unreachable.
 - No file under `src/engine/`, `src/domain/`, `src/persistence/` or `src/map/` changed.
