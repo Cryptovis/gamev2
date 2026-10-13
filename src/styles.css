@@ -962,9 +962,9 @@ button,input,select{font:inherit}
 
 /* Right rail consistency */
 .command-rail-right .rail-button>span{display:grid;place-items:center}
-.command-rail-right .rail-button:nth-child(1)>span{color:#a18adc}
-.command-rail-right .rail-button:nth-child(2)>span{color:#df7c65}
-.command-rail-right .rail-button:nth-child(3)>span{color:#65a6d8}
+.command-rail-right .rail-button[data-guide="rail-goals"]>span{color:#a18adc}
+.command-rail-right .rail-button[data-guide="rail-diplo"]>span{color:#df7c65}
+.command-rail-right .rail-button[data-guide="rail-alerts"]>span{color:#65a6d8}
 
 /* Diplomacy action visual language */
 .diplomacy-actions button{

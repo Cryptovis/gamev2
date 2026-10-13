@@ -6,7 +6,8 @@ import {executeCommandResult} from '../src/engine/commands';
 
 /** Phase 6.2: the executive desk gathers incoming proposals (with their expiry), wars, operations and news. */
 function deskFixture(language:'tr'|'en'):GameState{
- let s=campaignFixture(language);
+ // Map view (no country panel): on phones the information rail is hidden while a country panel is open.
+ let s=campaignFixture(language);s.selectedCountryId=null;
  const offer=(senderId:string,type:'embassy'|'trade_pact',expiresIn:number)=>({id:`OFFER-${type}-${senderId}-${s.day}`,type,senderId,receiverId:s.playerCountryId,createdDay:s.day,expiresDay:s.day+expiresIn,message:`${s.countries[senderId].name} proposes cooperation.`});
  // The engine's own step folds offers into pending incoming letters, exactly as during a campaign day.
  s=processLetters({...s,diplomaticOffers:[offer('GRC','trade_pact',20),offer('BRA','embassy',2)]});
@@ -31,7 +32,6 @@ for(const [language,width] of [['tr',1440],['en',390]] as const)test(`${language
  // Soonest deadline first, marked urgent; the later one is calm.
  await expect(cards.nth(0)).toHaveClass(/urgent/);await expect(cards.nth(0).locator('.desk-countdown')).toContainText(TEXT[language].left2);
  await expect(cards.nth(1)).not.toHaveClass(/urgent/);await expect(cards.nth(1).locator('.desk-countdown')).toContainText(TEXT[language].left20);
- await expect(desk.locator('.desk-news li').first()).toBeVisible();
  expect(await desk.evaluate(el=>el.scrollWidth<=el.clientWidth+1)).toBe(true);
  await page.screenshot({path:`test-results/executive-desk-0916-${language}-${width}.png`});
 
@@ -46,6 +46,8 @@ for(const [language,width] of [['tr',1440],['en',390]] as const)test(`${language
 
  await desk.locator('[data-desk-tab="intel"]').click();
  await expect(desk.locator('.desk-card[data-operation-id]')).toHaveCount(1);await expect(desk.locator('.desk-card .desk-countdown')).toContainText(TEXT[language].result);
+ // The launch report (the player's own command) is listed under this tab.
+ await expect(desk.locator('.desk-news li').first()).toBeVisible();
  await desk.locator('[data-desk-tab="war"]').click();
  await expect(desk.locator('.desk-panel > .desk-empty')).toHaveText(TEXT[language].peace);
  await page.keyboard.press('Escape');await expect(page.locator('#desk-window')).toHaveCount(0);
