@@ -232,3 +232,7 @@ Delivered package 6.2 under Alper's decision to keep the engine unchanged: an ex
 ## 0.90.0-playtest.17 — Tactile hillshade map (Claude)
 
 Delivered package 6.3 of the Living World & Executive handoff: a Natural Earth hillshade layer, an 18° desk tilt on the flat map with an analytic pointer mapping, and miniature capital pins, with three map-dock settings; engine, domain and saves unchanged. Remaining for 6.3: the relief frame-cost measurement (`npm run measure:browser`; if over the 1.5× budget, relief ships off by default), screenshots at 1440 (tr) and 390 (en), and Alper's decisions listed in the phase record (when relation pins appear). Remaining in this track: 6.4 card-based policies, factory detail and operation posters (and a decision on folding the Diplomatic Inbox, Alerts and News windows into the desk). [Evidence](HILLSHADE-0917.md).
+
+## 0.90.0-playtest.18 — Card UI and factory modal (Claude)
+
+Delivered package 6.4 of the Living World & Executive handoff: a six-card Policies & Laws grid built from the existing tax policy and faction concessions, and a plain factory modal with an original drawing, two rows and a Limit Reached badge; engine, domain and saves unchanged. Remaining for 6.4: screenshots at 1440 (tr) and 390 (en), Alper's confirmation of the law names, and the optional operation poster cards (not started). Remaining in the track: the 6.3 relief frame-cost measurement; folding the Diplomatic Inbox, Alerts and News into the Executive Desk stays a separate decision.

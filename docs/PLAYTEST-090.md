@@ -230,3 +230,16 @@ Validation: 762 unit tests / 88 files (729 earlier + 33 map desk tests; counted 
 3. Your capital shows a gold-ringed pin at world zoom. Zoom to about 180 %: more countries appear, never more than 48; allies have green rings, enemies red, partners blue. Judge whether the ally pins at world zoom are too many (open question in the phase record).
 4. MAP → turn Desk tilt, Relief shading and Capital pins off one by one, then reload: the choices persist. At phone width there is no tilt.
 5. Repeat in Turkish and at 390 px (no sideways scrolling); on Windows without an emoji flag font check how the pin flags look. Judge the relief strength over the political colours.
+
+## 0.90.0-playtest.18 — Card UI and factory modal (Claude, Phase 6.4)
+
+Phase 6.4. Save schema 17, simulation and game numbers unchanged; no file under `src/engine`, `src/domain`, `src/persistence` or `src/map` changed. Evidence: [Phase 6.4 record](CARD-UI-0918.md).
+
+Validation: 793 unit tests / 89 files (762 earlier + 31 card UI tests; counted from the test sources, because the CI log was not readable here), TypeScript and production build passed; the 365-day long-run invariant passes. All 180 production-browser scenarios passed on GitHub-hosted Chromium (175 earlier + 5 card UI scenarios at 1440 px Turkish and 390 px English; CI 38395400923). The 6.3 records commit (f29ab60) failed twice in CI on `audiovisual0914` (a war save reloaded; battlefield not visible within 5 s) although the same code passed in 13ec391 and 4ec33a9; treated as a timing flake, see the phase record. Nothing ran locally: the npm registry is unreachable in this session, so GitHub Actions was the verifier. Screenshots and the visual judgement are still to do.
+
+### Manual acceptance route
+
+1. Open your country, Policies tab: six cards, the Tax Code first. Press Enact on the Labour Charter and confirm the review: that card turns green with a ✓ and "Active · 180 days left", the other four concession cards are locked with the engine's reason, and the tax slider is still below the grid.
+2. Press Adjust on the Tax Code: the slider below is focused. Open a foreign country's Full Dossier → Policies: the same six cards, no buttons.
+3. Production tab: open Details on a facility you own. The modal shows the drawing, a ×count chip and two rows. With six construction projects "Limit Reached" shows and Build another is disabled with its reason. Pause turns into Resume.
+4. Repeat in Turkish and at 390 px (no sideways scrolling). Judge the drawings, the card colours and the law names.
