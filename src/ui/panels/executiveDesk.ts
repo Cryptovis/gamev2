@@ -68,7 +68,7 @@ export function deskOffers(state: GameState): DeskOffer[] {
   if (!player) return [];
   const actionable = (x: DiplomaticLetter): x is DiplomaticLetter & { kind: 'embassy' | 'trade_pact' } =>
     x.incoming && x.status === 'pending' && x.kind !== 'closure' && x.receiverId === player.id && x.expiresDay >= state.day && Boolean(state.countries[x.senderId]);
-  return living(state).letters.filter(actionable).map((x) => {
+  return living(state).letters.filter(actionable).map((x): DeskOffer => {
     const partner = state.countries[x.senderId];
     const playerShareB = letterCost(state, player.id, x.kind) * 0.5, partnerShareB = letterCost(state, x.senderId, x.kind) * 0.5;
     return {

@@ -12,6 +12,8 @@
 .desk-tabs button{display:flex;align-items:center;justify-content:center;gap:6px;min-height:40px;padding:6px 8px;border:0;border-radius:9px;background:transparent;color:var(--desk-ink-2);font:600 13px/1.2 Inter,system-ui,sans-serif;cursor:pointer;text-align:center}
 .desk-tabs button[aria-selected="true"]{background:var(--desk-card);color:var(--desk-ink);box-shadow:0 1px 0 var(--desk-line),0 2px 6px rgba(24,33,43,.12)}
 .desk-tabs button b{min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:var(--desk-danger);color:#fff;font-size:11px;line-height:20px}
+/* A running operation needs no decision: its count is neutral. */
+.desk-tabs button[data-desk-tab="intel"] b{background:var(--desk-ink-2)}
 .desk-panel{display:flex;flex-direction:column;gap:10px}
 
 .desk-card{display:grid;grid-template-columns:auto 1fr;gap:14px;padding:14px;border-radius:14px;background:var(--desk-card);border:1.5px solid var(--desk-line);box-shadow:0 2px 0 #e7dcc3;animation:ron-fade-in var(--motion-enter,190ms) var(--motion-ease,ease-out) backwards}
@@ -51,8 +53,9 @@
 .desk-footnote{margin:0;font-size:11px;color:#c9d6de}
 
 @media(max-width:520px){
- .desk-card{grid-template-columns:1fr}
- .desk-card-art{width:64px;height:64px}
+ .desk-card{grid-template-columns:56px minmax(0,1fr);gap:10px;padding:12px}
+ .desk-card-art{width:56px;height:56px;border-radius:10px}
+ .desk-card-art>*{transform:scale(.78)}
  .desk-card-body header{grid-template-columns:auto 1fr}
  .desk-card-body header .desk-countdown{grid-column:1/-1;justify-self:start}
  .desk-tabs button{flex-direction:column;gap:2px;font-size:12px}
