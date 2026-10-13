@@ -1,0 +1,39 @@
+/*
+ * Phase 6.5 (playtest.19): live HUD change counters, map event pins, and the commander portrait mood glow.
+ * Colour is never the only signal: every counter has an arrow shape, a sign and a spoken word; every glow also has text.
+ */
+.live-delta{display:inline-flex;align-items:center;gap:3px;margin-top:1px;font-style:normal;font-size:11px;font-weight:700;line-height:1.2;white-space:nowrap}
+.live-delta i{font-style:normal;font-size:9px}
+.live-delta.up{color:#5fd68d}
+.live-delta.down{color:#ff8a76}
+.live-delta.flat{color:#b9c4cc}
+.top-metric > span > .live-delta{display:flex}
+.live-flows{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:2px}
+.live-flow{display:inline-flex;align-items:baseline;gap:5px}
+.live-flow small{font-size:10px;letter-spacing:.06em;text-transform:uppercase;opacity:.8}
+@media (max-width:760px){.live-flows{gap:2px 8px}.live-delta{font-size:10px}}
+
+/* Map event pins: swords on an active war, a megaphone on domestic unrest. */
+.event-pin-layer .event-pin-disc{stroke:#fffdf7;stroke-width:1.6}
+.event-pin.kind-war .event-pin-disc{fill:#8f2b1d}
+.event-pin.kind-unrest .event-pin-disc{fill:#b87612}
+.event-pin-art path{fill:none;stroke:#fffdf7;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.event-pin-art path.fill{fill:#fffdf7;stroke-width:1}
+.event-pin-pulse{fill:none;stroke:currentColor;stroke-width:1.4;opacity:0}
+.event-pin.kind-war{color:#e0634b}
+.event-pin.kind-unrest{color:#e6a93a}
+@media (prefers-reduced-motion:no-preference){
+ .event-pin-pulse{animation:event-pin-pulse 2.4s ease-out infinite}
+ @keyframes event-pin-pulse{0%{opacity:.8;r:11}100%{opacity:0;r:19}}
+}
+
+/* Commander portrait: red alert in a war or crisis, gold in prosperity. */
+.leader-avatar-button .mood-note{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.leader-avatar-button[data-mood="alarm"] .avatar-portrait{box-shadow:0 0 0 2px rgba(224,99,75,.9),0 0 14px 4px rgba(224,99,75,.5)}
+.leader-avatar-button[data-mood="gold"] .avatar-portrait{box-shadow:0 0 0 2px rgba(231,195,90,.95),0 0 14px 4px rgba(231,195,90,.5)}
+@media (prefers-reduced-motion:no-preference){
+ .leader-avatar-button[data-mood="alarm"] .avatar-portrait{animation:portrait-alarm 2.2s ease-in-out infinite}
+ .leader-avatar-button[data-mood="gold"] .avatar-portrait{animation:portrait-gold 3.4s ease-in-out infinite}
+ @keyframes portrait-alarm{0%,100%{box-shadow:0 0 0 2px rgba(224,99,75,.9),0 0 8px 2px rgba(224,99,75,.3)}50%{box-shadow:0 0 0 2px rgba(224,99,75,.9),0 0 18px 6px rgba(224,99,75,.6)}}
+ @keyframes portrait-gold{0%,100%{box-shadow:0 0 0 2px rgba(231,195,90,.95),0 0 8px 2px rgba(231,195,90,.3)}50%{box-shadow:0 0 0 2px rgba(231,195,90,.95),0 0 16px 5px rgba(231,195,90,.55)}}
+}

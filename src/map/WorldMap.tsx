@@ -6,12 +6,14 @@ import {boundPan,clampZoom,wheelZoomFactor,zoomAtPoint} from './cameraControls';
 import {GeographicSurface} from './GeographicSurface';
 import {useMapDesk} from '../presentation/mapDeskSettings';
 import {toViewBox,untilt} from './deskTilt';
-import {capitalPins} from './capitalPins';
+import {capitalPins,capitalPinScale} from './capitalPins';
 import {flagEmoji} from '../data/countryThemes';
 import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { geoArea, geoDistance, geoGraticule10, geoNaturalEarth1, geoOrthographic, geoPath } from 'd3-geo';
 import { countryMapAnchor, microstateVisible, nearestMapMarker, type MapPoint } from './mapCoordinates';
 import { findCountryAtGeoPoint } from './mapSelection';
+import { eventPins } from './eventPins';
+import { CAPITAL_POSITIONS } from '../data/capitalPositions';
 import { labelFontSize, labelRevealThreshold, layoutScreenLabels, maxCountryLabels, type ScreenLabelCandidate } from './labelLayout';
 import { useGameStore } from '../store/gameStore';
 import { calculateMilitaryPower } from '../store/selectors';
@@ -80,6 +82,8 @@ function WorldMapView() {
 
   const embassies=useGameStore(s=>s.embassies),tradeDeals=useGameStore(s=>s.tradeDeals),contracts=useGameStore(s=>s.industrialContracts);
   const countries = useGameStore((s) => s.countries);
+  const wars = useGameStore((s) => s.wars);
+  const openWarWindow = useGameStore((s) => s.openWarWindow);
   const industrialEconomy = useGameStore(s=>s.industrialEconomy);
   const selectedCountryId = useGameStore((s) => s.selectedCountryId);
   const zoomSensitivity=useGameStore(s=>s.mapZoomSensitivity);
@@ -197,6 +201,8 @@ function WorldMapView() {
   // Capital pins (playtest.17): which pins to draw is decided by the pure capitalPins(); the layer below only renders them.
   const embassyPartners=useMemo(()=>connectionIndex(playerCountryId,{},{},embassies).embassyPartners,[playerCountryId,embassies]);
   const pins=useMemo(()=>pinsOn?capitalPins({countries,playerCountryId,selectedCountryId,hovered,project:flightProjector,zoom:mapZoom,flat:projectionMode==='flat',embassyPartners}):[],[pinsOn,countries,playerCountryId,selectedCountryId,hovered,flightProjector,mapZoom,projectionMode,embassyPartners]);
+  // Event pins (playtest.19): crossed swords on active wars, a megaphone on domestic unrest. Click handling goes through the same nearest-marker path as microstates, so pointer capture never swallows it.
+  const eventMarkers=useMemo(()=>eventPins({wars,countries,playerCountryId,capitals:CAPITAL_POSITIONS,project:flightProjector,width:W,height:H}),[wars,countries,playerCountryId,flightProjector]);
   const visibleMarkers=Object.entries(MICROSTATE_POINTS).flatMap(([id,position])=>{
     if(!countries[id]||countries[id].annexedBy||!microstateVisible(mapZoom,projectionMode==='flat',id===selectedCountryId,id===hovered,id===playerCountryId))return [];
     if(projectionMode==='globe'&&geoDistance(position,globeCenter)>Math.PI/2)return [];
@@ -282,6 +288,12 @@ function WorldMapView() {
     if (justDraggedRef.current || !currentProjection || !currentGeojson || !currentProjection.invert) return;
     const clickScreen=screenPoint(e);
     if(!clickScreen.every(Number.isFinite))return;
+    const eventHit=nearestMapMarker(eventMarkers.map(p=>({id:p.id,point:p.point})),clickScreen,14);
+    if(eventHit){
+      const pin=eventMarkers.find(p=>p.id===eventHit.id)!;
+      if(pin.kind==='war')openWarWindow(pin.target);else selectCountry(pin.target);
+      return;
+    }
     const micro=nearestMapMarker(visibleMarkers,clickScreen);
     if(micro){
       selectCountry(micro.id);
@@ -480,6 +492,15 @@ function WorldMapView() {
           <circle className="capital-flag-ring" cy={-22} r={8}/>
           {iso2.length===2&&<text className="capital-flag" y={-18.5} textAnchor="middle" clipPath="url(#capital-flag-clip)">{flagEmoji(iso2)}</text>}
         </g>;})}
+      </g>}
+      {eventMarkers.length>0&&<g className="event-pin-layer" pointerEvents="none" aria-hidden="true">
+        {eventMarkers.map(pin=><g key={pin.id} className={`event-pin kind-${pin.kind}`} transform={`translate(${pin.point[0]},${pin.point[1]}) scale(${capitalPinScale(mapZoom)})`} data-event={pin.id} data-kind={pin.kind}>
+          <circle className="event-pin-pulse" r={13}/>
+          <circle className="event-pin-disc" r={11}/>
+          {pin.kind==='war'
+            ?<g className="event-pin-art"><path d="M-6 -6 L6 6 M6 -6 L-6 6" /><path d="M-7.5 -3.5 L-3.5 -7.5 M7.5 -3.5 L3.5 -7.5" /></g>
+            :<g className="event-pin-art"><path className="fill" d="M-6.5 -2.2 H-2.5 L5 -6.5 V6.5 L-2.5 2.2 H-6.5 Z"/><path d="M-4 2.5 L-3 7"/></g>}
+        </g>)}
       </g>}
       <g className="screen-label-layer" pointerEvents="none">
         {screenLabels.map(label=><g key={label.id}><text x={label.x} y={label.y} className={label.className} style={{fontSize:label.fontSize}}><LocaleText value={label.text}/></text>{mapMode==='resources'&&countries[label.id]&&dominantResources(countries[label.id],industrialEconomy[label.id]).map((r,index,all)=><ResourceMapBadge key={r} resource={r} x={label.x+(index-(all.length-1)/2)*27-11} y={label.y+7}/>)}</g>)}

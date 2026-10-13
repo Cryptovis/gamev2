@@ -49,4 +49,5 @@ import "./ui/styles/typography0910.css";
 import "./ui/styles/targetHub0915.css";
 import "./ui/styles/executiveDesk0916.css";
 import "./ui/styles/cardUi0918.css";
+import "./ui/styles/livingWorld0919.css";
 import "./ui/styles/mapDesk0917.css";

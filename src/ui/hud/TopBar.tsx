@@ -10,6 +10,10 @@ import { flagEmoji } from '../../data/countryThemes';
 import { tr } from '../../i18n/gameI18n';
 import { useGameStore } from '../../store/gameStore';
 import { calculateEconomyForecast } from '../../store/selectors';
+import { simulateResources } from '../../engine/systems/resources';
+import { factionsFor } from '../../engine/systems/factions';
+import { ARROW, liveDeltas, type LiveDelta } from './liveDeltas';
+import { portraitMood } from './portraitMood';
 import { AvatarPortrait } from '../profile/AvatarPortrait';
 import { PlayerOptionsMenu } from '../panels/PlayerOptionsMenu';
 import { ApprovalIcon, EconomyIcon, SocietyIcon, TreasuryIcon } from '../icons/GameIcons';
@@ -22,8 +26,13 @@ const speeds:Array<{speed:GameSpeed;label:string;hint:string}>=[
  {speed:5,label:'5×',hint:'1s/day'},
 ];
 
-function Metric({icon,label,value,tone='neutral'}:{icon:ReactNode;label:string;value:string;tone?:'neutral'|'warning'|'good'}){
- return <div className={'top-metric '+tone}><span className="top-metric-icon"><LocaleText value={icon}/></span><span><small><LocaleText value={label}/></small><strong><LocaleText value={value}/></strong></span></div>;
+const TREND_WORD:Record<LiveDelta['direction'],string>={up:'Rising',down:'Falling',flat:'Steady'};
+/** Phase 6.5: a small change counter: arrow, signed amount and "/day". Colour is never the only signal (arrow shape, sign and a spoken word). */
+function LiveChange({delta,unit=''}:{delta:LiveDelta;unit?:string}){
+ return <em className={'live-delta '+delta.direction} data-delta={delta.id} aria-label={translateLive(TREND_WORD[delta.direction])+' '+delta.text+unit+' '+translateLive('/day')}><i aria-hidden="true">{ARROW[delta.direction]}</i> {delta.text}{unit}<LocaleText value={"/day"}/></em>;
+}
+function Metric({icon,label,value,tone='neutral',delta}:{icon:ReactNode;label:string;value:string;tone?:'neutral'|'warning'|'good';delta?:LiveDelta}){
+ return <div className={'top-metric '+tone}><span className="top-metric-icon"><LocaleText value={icon}/></span><span><small><LocaleText value={label}/></small><strong><LocaleText value={value}/></strong>{delta&&<LiveChange delta={delta}/>}</span></div>;
 }
 
 export function TopBar(){
@@ -42,17 +51,20 @@ export function TopBar(){
  const infrastructure=useGameStore(s=>s.infrastructure[playerCountryId]);
  const energy=useGameStore(s=>s.world.energy?.[playerCountryId]);
  const lang=profile.language;
+ const mood=useGameStore(s=>{const p=s.countries[s.playerCountryId];return portraitMood({atWar:Object.values(s.wars).some(w=>w.status==='active'&&(w.attackerId===s.playerCountryId||w.defenderId===s.playerCountryId)),regimeCrisis:!!factionsFor(p).crisis,stability:p.politics.stability,approval:p.politics.approval});});
  const forecast=calculateEconomyForecast(player);
  const strategicDailyBalance=forecast.dailyBalance-(production?.lastInputUse.treasury??0)-(infrastructure?.maintenance??0)-(industrial?.lastCosts??0)-(academyFor(useGameStore.getState(),playerCountryId).lastUpkeep)-(energy?.lastCosts??0);
 
+ const flows=simulateResources(player).net,deltas=liveDeltas({dailyBalance:strategicDailyBalance,net:flows}),byId=Object.fromEntries(deltas.map(d=>[d.id,d])) as Record<LiveDelta['id'],LiveDelta>;
+
  return <header className="topbar">
   <div className="command-overview-island"><div className="leader-brand">
-   <button className="leader-avatar-button" onClick={()=>{useGameStore.getState().openTool(null,false);setOptionsOpen(true)}} title={translateLive("Open commander options")}><AvatarPortrait id={profile.avatarId} size={52}/><span><LocaleText value={"⋯"}/></span></button>
-   <div className="brand-block"><div className="eyebrow" translate="no">{BRAND_NAME}</div><div className="brand-line"><strong><LocaleText value={profile.commanderName}/></strong><span className="day-chip"><LocaleText value={tr(lang,'day')}/> <LocaleText value={day}/></span></div></div>
+   <button className="leader-avatar-button" data-mood={mood} onClick={()=>{useGameStore.getState().openTool(null,false);setOptionsOpen(true)}} title={translateLive("Open commander options")}><AvatarPortrait id={profile.avatarId} size={52}/><span><LocaleText value={"⋯"}/></span>{mood!=='calm'&&<b className="mood-note"><LocaleText value={mood==='alarm'?'Crisis alert':'Prosperity'}/></b>}</button>
+   <div className="brand-block"><div className="eyebrow" translate="no">{BRAND_NAME}</div><div className="brand-line"><strong><LocaleText value={profile.commanderName}/></strong><span className="day-chip"><LocaleText value={tr(lang,'day')}/> <LocaleText value={day}/></span></div><div className="live-flows" aria-label={translateLive("Live changes")} title={translateLive("Production minus consumption, per day")}><span className="live-flow"><small><LocaleText value={"Food"}/></small><LiveChange delta={byId.food}/></span><span className="live-flow"><small><LocaleText value={"Oil"}/></small><LiveChange delta={byId.oil}/></span></div></div>
   </div>
 
   <div className="metrics governance-metrics" aria-label={translateLive("National command indicators")}>
-   <Metric icon={<CommandArt kind="treasury" size={30}/>} label={arrears(useGameStore.getState(),player.id)>0?translateLive('Fiscal balance'):tr(lang,'treasury')} value={'$'+(player.economy.treasury-arrears(useGameStore.getState(),player.id)).toFixed(1)+'B'}/>
+   <Metric icon={<CommandArt kind="treasury" size={30}/>} label={arrears(useGameStore.getState(),player.id)>0?translateLive('Fiscal balance'):tr(lang,'treasury')} value={'$'+(player.economy.treasury-arrears(useGameStore.getState(),player.id)).toFixed(1)+'B'} delta={byId.treasury}/>
    <Metric icon={<CommandArt kind="budget" size={30}/>} label="BUDGET / DAY" value={(strategicDailyBalance>=0?'+':'')+'$'+strategicDailyBalance.toFixed(3)+'B'} tone={strategicDailyBalance>=0?'good':'warning'}/>
    <Metric icon={<CommandArt kind="approval" size={30}/>} label={tr(lang,'approval')} value={player.politics.approval.toFixed(0)+'%'} tone={player.politics.approval>=60?'good':player.politics.approval<40?'warning':'neutral'}/>
    <Metric icon={<CommandArt kind="stability" size={30}/>} label="STABILITY" value={player.politics.stability.toFixed(0)+'%'} tone={player.politics.stability>=65?'good':player.politics.stability<40?'warning':'neutral'}/>
