@@ -18,6 +18,8 @@ import {GovernanceWindow} from '../panels/GovernanceWindow';
 import {HelpPanel} from '../panels/HelpPanel';
 import {NavigationArt} from '../icons/NavigationArt';
 import {CommandAlerts,CommandNews} from '../panels/CommandIntelligence';
+import {ExecutiveDesk} from '../panels/ExecutiveDesk';
+import {deskOffers} from '../panels/executiveDesk';
 import {commandAlerts,newsEntries} from '../../store/commandIntelligence';
 import {Suspense,useEffect, useMemo, useState, type ReactNode } from 'react';
 import { MARKET_RESOURCES, getMarketBoard, resourceReserveDays, resourceStrategicStatus } from '../../store/marketSelectors';
@@ -27,7 +29,7 @@ import { DraggableWindow } from '../windows/DraggableWindow';
 import { MapModeBar } from './MapModeBar';
 import {ResourceCommandWindow} from '../panels/ResourceCommandWindow';
 
-type ToolId='objectives'|'market'|'pulse'|'map'|'resources'|'sitrep'|'alerts'|'diplomacy';
+type ToolId='objectives'|'market'|'pulse'|'map'|'resources'|'sitrep'|'alerts'|'diplomacy'|'desk';
 
 function RailButton({active,badge,label,children,onClick}:{active:boolean;badge?:number|string;label:string;children:ReactNode;onClick:()=>void}){
  return <button data-guide={'rail-'+(label==='DIPLOMACY'?'diplo':label.toLowerCase())} className={active?'rail-button active':'rail-button'} onClick={onClick} aria-pressed={active} title={translateLive(`${label} · ${active?'Open — click to close':'Closed — click to open'}`)}><span><LocaleText value={children}/></span>{badge!==undefined&&badge!==0&&<b><LocaleText value={badge}/></b>}<small><LocaleText value={label}/></small></button>;
@@ -65,6 +67,7 @@ export function CommandRails(){
    <RailButton active={open.has('resources')} badge={critical.length} label="SUPPLY" onClick={()=>toggle('resources')}><NavigationArt kind="alerts"/></RailButton>
   </nav>
   <nav className={`command-rail command-rail-right ${state.selectedCountryId?'country-open':'country-closed'}`} aria-label={translateLive("Information tools")}>
+   <RailButton active={open.has('desk')} badge={deskOffers(state).length} label="DESK" onClick={()=>toggle('desk')}><CivicArt kind="letter" size={36}/></RailButton>
    <RailButton active={open.has('objectives')} badge={`${done}/6`} label="GOALS" onClick={()=>toggle('objectives')}><NavigationArt kind="objectives"/></RailButton>
    <RailButton active={open.has('diplomacy')} badge={living(state).letters.filter(m=>!m.read).length+state.leadership.messages.filter(m=>!m.read).length} label="DIPLOMACY" onClick={()=>toggle('diplomacy')}><NavigationArt kind="diplomacy"/></RailButton>
    <RailButton active={open.has('alerts')} badge={commandAlerts(state).length} label="ALERTS" onClick={()=>toggle('alerts')}><NavigationArt kind="alerts"/></RailButton>
@@ -92,6 +95,7 @@ export function CommandRails(){
   </DraggableWindow>}
 
   {mounted.has('pulse')&&<WorldRankingsWindow/>}
+  {mounted.has('desk')&&<ExecutiveDesk onClose={()=>close('desk')}/>}
 
   {mounted.has('diplomacy')&&<DraggableWindow id="diplomacy-window" kicker="FOREIGN MINISTRY" title={translateLive("Diplomatic Inbox")} initialX={window.innerWidth-650} initialY={150} width={590} onClose={()=>close('diplomacy')}>
    <DiplomaticPost/><section className="diplomatic-messages"><header><strong><LocaleText value={"Leader correspondence"}/></strong><button onClick={state.readDiplomaticMessages}><LocaleText value={"Mark read"}/></button></header>{state.leadership.messages.map(m=><article key={m.id} className={m.tone}><small><LocaleText value={m.kind.toUpperCase()}/><LocaleText value={" · DAY "}/><LocaleText value={m.day}/><LocaleText value={" · "}/><LocaleText value={m.read?'READ':'NEW'}/></small><strong><LocaleText value={state.countries[m.senderId]?.name}/></strong><p><LocaleText value={m.text}/></p></article>)}{!state.leadership.messages.length&&<p><LocaleText value={"Friends and rivals may react to your birthday and national achievements."}/></p>}</section>

@@ -1,0 +1,61 @@
+/*
+ * Phase 6.2 (playtest.16): executive desk. The same ivory table cards as the Phase 6.1 hub, set inside the existing
+ * command window. Ink on ivory meets WCAG AA; the urgent countdown is red with text, never colour alone.
+ */
+.executive-desk{
+ --desk-paper:#f8f3e6;--desk-card:#fffdf7;--desk-ink:#18212b;--desk-ink-2:#3d4a57;--desk-line:#d9cfb8;--desk-gold:#7a520c;
+ --desk-good:#1f7a45;--desk-danger:#a8321f;--desk-danger-bg:#fbe9e4;--desk-focus:#1d5fbf;
+ display:flex;flex-direction:column;gap:12px;color:var(--desk-ink);
+}
+.executive-desk :focus-visible{outline:3px solid var(--desk-focus);outline-offset:2px}
+.desk-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:4px;border-radius:12px;background:var(--desk-paper);border:1px solid var(--desk-line)}
+.desk-tabs button{display:flex;align-items:center;justify-content:center;gap:6px;min-height:40px;padding:6px 8px;border:0;border-radius:9px;background:transparent;color:var(--desk-ink-2);font:600 13px/1.2 Inter,system-ui,sans-serif;cursor:pointer;text-align:center}
+.desk-tabs button[aria-selected="true"]{background:var(--desk-card);color:var(--desk-ink);box-shadow:0 1px 0 var(--desk-line),0 2px 6px rgba(24,33,43,.12)}
+.desk-tabs button b{min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:var(--desk-danger);color:#fff;font-size:11px;line-height:20px}
+.desk-panel{display:flex;flex-direction:column;gap:10px}
+
+.desk-card{display:grid;grid-template-columns:auto 1fr;gap:14px;padding:14px;border-radius:14px;background:var(--desk-card);border:1.5px solid var(--desk-line);box-shadow:0 2px 0 #e7dcc3;animation:ron-fade-in var(--motion-enter,190ms) var(--motion-ease,ease-out) backwards}
+.desk-card.urgent{border-color:var(--desk-danger);box-shadow:0 2px 0 #ebbdb2}
+.desk-card-art{display:grid;place-items:center;width:84px;height:84px;border-radius:12px;overflow:hidden;background:radial-gradient(circle at 40% 35%,#fff,#efe5cf);border:1px solid var(--desk-line)}
+.desk-card-body{min-width:0;display:flex;flex-direction:column;gap:6px}
+.desk-card-body header{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px}
+.desk-flag{font-size:28px;line-height:1}
+.desk-card-body small{display:block;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--desk-gold)}
+.desk-card-body h4{margin:1px 0 0;font:700 17px/1.2 Georgia,'Times New Roman',serif;color:var(--desk-ink)}
+.desk-card-body p{margin:0;font-size:12px;line-height:1.45;color:var(--desk-ink-2)}
+.desk-card-cost b{color:var(--desk-ink)}
+.desk-countdown{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:999px;background:#eef4ee;border:1px solid #b7dcc4;color:var(--desk-good);font-size:12px;font-weight:700;white-space:nowrap}
+.desk-countdown.urgent{background:var(--desk-danger-bg);border-color:#e3a99c;color:var(--desk-danger)}
+.desk-card-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:2px}
+.desk-card-actions button{min-height:36px;padding:7px 16px;border-radius:999px;font-weight:700;font-size:13px;cursor:pointer}
+.desk-decline{border:1px solid var(--desk-ink-2);background:#fff;color:var(--desk-ink)}
+.desk-decline:hover{background:#f1ece0}
+.desk-accept{border:1px solid var(--desk-good);background:var(--desk-good);color:#fff}
+.desk-accept:hover:not(:disabled){background:#17633a}
+.desk-accept:disabled{border-color:var(--desk-line);background:#e9e3d4;color:#5f6a73;cursor:not-allowed}
+.desk-front{display:grid;grid-template-columns:auto auto 1fr;align-items:center;gap:10px;font-size:11px;font-weight:700;color:var(--desk-ink-2)}
+.desk-front strong{font:700 16px Georgia,serif}
+.desk-front .positive{color:var(--desk-good)}.desk-front .negative{color:var(--desk-danger)}
+.desk-front i{display:block;height:6px;border-radius:999px;background:#ece4d1;overflow:hidden}
+.desk-front i b{display:block;height:100%;background:linear-gradient(90deg,var(--desk-danger),#d9b45a 50%,var(--desk-good))}
+.desk-card.tone-war .desk-card-body small{color:var(--desk-danger)}
+
+.desk-empty{margin:0;padding:12px 14px;border-radius:12px;background:var(--desk-paper);border:1px dashed var(--desk-line);color:var(--desk-ink-2);font-size:12px}
+.desk-news{padding:12px 14px;border-radius:14px;background:var(--desk-paper);border:1px solid var(--desk-line)}
+.desk-news h4{margin:0 0 8px;font:700 14px Georgia,'Times New Roman',serif;color:var(--desk-ink)}
+.desk-news ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.desk-news li{display:flex;flex-direction:column;gap:1px;padding-bottom:6px;border-bottom:1px solid #e7dfcb}
+.desk-news li:last-child{border-bottom:0;padding-bottom:0}
+.desk-news small{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--desk-gold)}
+.desk-news span{font-size:12px;color:var(--desk-ink)}
+.desk-footnote{margin:0;font-size:11px;color:#c9d6de}
+
+@media(max-width:520px){
+ .desk-card{grid-template-columns:1fr}
+ .desk-card-art{width:64px;height:64px}
+ .desk-card-body header{grid-template-columns:auto 1fr}
+ .desk-card-body header .desk-countdown{grid-column:1/-1;justify-self:start}
+ .desk-tabs button{flex-direction:column;gap:2px;font-size:12px}
+ .desk-card-actions button{flex:1}
+}
+@media(prefers-reduced-motion:reduce){.desk-card{animation:none}}
