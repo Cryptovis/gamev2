@@ -1,5 +1,5 @@
 import { LocaleText, translateLive } from "../../i18n/localeText";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useSyncExternalStore } from "react";
 import { useGameStore } from "../../store/gameStore";
 import {useWorldView} from '../../store/useWorldView';
 const steps = [
@@ -76,9 +76,58 @@ type Phase =
   | "reading"
   | "dismiss"
   | "reviewReading";
+/**
+ * 0.91.0 feature tour: four short, skippable cards for the Phase 6 features. It is UI-only (never saved): the engine's
+ * tutorial state is limited to the ten original lessons, so the tour runs after FINISH or from Help > Replay feature tour.
+ */
+export const FEATURE_TOUR = [
+  ["Live trend arrows", "Under Treasury, Food, Oil, Approval and Stability, an arrow shows the daily trend: ▲ rising, ▼ falling, – steady.", "top-metrics"],
+  ["Target Country Hub", "Click any foreign country on the map to open its Diplomatic Hub. War Planning opens that country's war briefing; Full Dossier opens its profile inside the hub.", ""],
+  ["Policy cards & factories", "Open your nation: Policies shows six Policy & Law cards in a 2×3 grid, and Production opens the factory window with output, power and a pause switch.", "nation"],
+  ["Executive Desk", "The Desk is your inbox for offers and decisions waiting for an answer. Its badge counts what needs you.", "rail-desk"],
+] as const;
+let tourStep: number | null = null;
+const tourListeners = new Set<() => void>();
+const setTour = (step: number | null) => { tourStep = step; tourListeners.forEach((listener) => listener()); };
+export const startFeatureTour = () => setTour(0);
+const subscribeTour = (listener: () => void) => { tourListeners.add(listener); return () => { tourListeners.delete(listener); }; };
+function FeatureTour({ step }: { step: number }) {
+  const ready = useGameStore((s) => s.playerProfile.setupComplete),
+    [rect, setRect] = useState<DOMRect | null>(null),
+    [title, body, target] = FEATURE_TOUR[step];
+  useEffect(() => {
+    const measure = () => {
+      const el = target ? [...document.querySelectorAll<HTMLElement>(`[data-guide="${target}"]`)].find((node) => node.getClientRects().length && getComputedStyle(node).visibility !== "hidden") : undefined;
+      setRect(el ? el.getBoundingClientRect() : null);
+    };
+    measure();
+    const timer = window.setInterval(measure, 250);
+    const key = (event: KeyboardEvent) => { if (event.key === "Escape") setTour(null); };
+    document.addEventListener("keydown", key);
+    return () => { clearInterval(timer); document.removeEventListener("keydown", key); };
+  }, [target]);
+  if (!ready) return null;
+  return (
+    <div className="feature-tour-layer">
+      {rect && <div className="tutorial-target-ring" style={{ left: rect.left - 5, top: rect.top - 5, width: rect.width + 10, height: rect.height + 10 }} />}
+      <section className="tutorial-dialog feature-tour" role="dialog" aria-label={translateLive("Feature tour")} data-tour-step={step}>
+        <small><LocaleText value="WHAT'S NEW" />{" · "}<LocaleText value={step + 1} /><LocaleText value={"/" + FEATURE_TOUR.length} /></small>
+        <h2><LocaleText value={title} /></h2>
+        <p><LocaleText value={body} /></p>
+        <footer>
+          <button className="tour-skip" onClick={() => setTour(null)}><LocaleText value="SKIP" /></button>
+          <button disabled={step === 0} onClick={() => setTour(step - 1)}><LocaleText value="BACK" /></button>
+          <button className="primary" onClick={() => setTour(step + 1 < FEATURE_TOUR.length ? step + 1 : null)}><LocaleText value={step + 1 < FEATURE_TOUR.length ? "NEXT" : "FINISH"} /></button>
+        </footer>
+      </section>
+    </div>
+  );
+}
 // Always mounted: the lesson body (and its full-state subscription) exists only during a tutorial.
 export function CampaignTutorial() {
-  return useGameStore((s) => s.world.tutorial.active) ? <ActiveTutorial /> : null;
+  const active = useGameStore((s) => s.world.tutorial.active),
+    tour = useSyncExternalStore(subscribeTour, () => tourStep, () => null);
+  return active ? <ActiveTutorial /> : tour !== null ? <FeatureTour step={tour} /> : null;
 }
 function ActiveTutorial() {
   const state = useWorldView(),
@@ -331,7 +380,10 @@ function ActiveTutorial() {
           <button
             className="primary"
             disabled={phase !== "done"}
-            onClick={() => state.setTutorial(t.step + 1, t.step < 9)}
+            onClick={() => {
+              state.setTutorial(t.step + 1, t.step < 9);
+              if (t.step === 9) startFeatureTour();
+            }}
           >
             <LocaleText value={t.step === 9 ? "FINISH" : "NEXT"} />
           </button>

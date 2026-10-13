@@ -7,7 +7,7 @@ import { embassyFor, relationFor } from '../engine/systems/diplomacy';
 import { CURRENT_SCHEMA_VERSION } from '../persistence/migrations';
 import { UI_CATALOG_0916 } from '../i18n/uiCatalog0916';
 import { translateText } from '../i18n/localeText';
-import { countdown, deskCounts, deskNews, deskOffers, deskOperations, deskTabForCategory, deskWars, newsCategory } from '../ui/panels/executiveDesk';
+import { countdown, deskCounts, deskNews, deskOffers, deskOperations, deskTabForCategory, deskWars, newsCategory } from '../ui/panels/executiveDeskModel';
 
 /** A foreign proposal as the engine creates it (diplomaticOffers), folded into a letter by the real processLetters step. */
 function withOffer(s: GameState, senderId: string, type: 'embassy' | 'trade_pact', expiresIn: number): GameState {

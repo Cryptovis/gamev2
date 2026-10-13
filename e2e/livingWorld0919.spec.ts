@@ -36,10 +36,10 @@ test('en 1440px the HUD shows live change counters with arrows and the portrait 
  await page.setViewportSize({width:1440,height:900});
  await resumeFixture(page,fixture('en',{happy:true}));
  await expect(page.locator('.country-shape').first()).toBeAttached();
- const deltas=page.locator('.live-flows .live-delta');
+ const deltas=page.locator('.top-metric .live-delta');
  await expect(deltas).toHaveCount(3);
  for(const id of ['treasury','food','oil']){
-  const d=page.locator(`.live-delta[data-delta="${id}"]`);
+  const d=page.locator(`.top-metric[data-metric="${id}"] .live-delta`);
   await expect(d).toBeVisible();
   await expect(d).toHaveText(/^[▲▼■]\s/);
   await expect(d).toHaveText(/\/day$/);
@@ -82,8 +82,8 @@ test('en 390px phone: counters fit, the portrait names its mood, no horizontal o
  await page.setViewportSize({width:390,height:844});
  await resumeFixture(page,fixture('en',{war:true}));
  await expect(page.locator('.country-shape').first()).toBeAttached();
- await expect(page.locator('.live-delta[data-delta="treasury"]')).toBeVisible();
- await expect(page.locator('.live-delta[data-delta="food"]')).toBeVisible();
+ await expect(page.locator('.top-metric[data-metric="treasury"] .live-delta')).toBeVisible();
+ await expect(page.locator('.top-metric[data-metric="food"] .live-delta')).toBeVisible();
  await expect(page.locator('.leader-avatar-button')).toHaveAttribute('data-mood','alarm');
  await expect(page.locator('.leader-avatar-button .mood-note')).toHaveText('Crisis alert');
  expect(await noOverflow(page)).toBe(true);

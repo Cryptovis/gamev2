@@ -100,3 +100,60 @@ div.hub-card-main{cursor:default}
  .hub-card:has(button.hub-card-main:not(:disabled)):hover{transform:none}
 }
 .target-hub.low-effects .target-hub-flag{animation:none}
+
+/* 0.91.0: War Planning and Full Dossier sub-views, War Planning footer button. Ivory card shell, dark-slate glass briefing. */
+.target-hub-footer-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.target-hub-warplan{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:999px;border:1px solid var(--hub-danger);background:var(--hub-danger);color:#fff;font-weight:700;cursor:pointer;white-space:nowrap;transition:transform .14s ease,box-shadow .14s ease,background .14s ease}
+.target-hub-warplan:hover{background:#8c2717;transform:translateY(-1px);box-shadow:0 6px 16px rgba(168,50,31,.35)}
+.target-hub-dossier{transition:transform .14s ease,box-shadow .14s ease,background .14s ease}
+.target-hub-dossier:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(24,33,43,.3)}
+.target-hub-back{align-self:flex-start;padding:7px 14px;border-radius:999px;border:1px solid var(--hub-line);background:var(--hub-card);color:var(--hub-ink);font-weight:700;cursor:pointer;transition:background .14s ease,border-color .14s ease,transform .14s ease}
+.target-hub-back:hover{background:#fff;border-color:var(--hub-ink-2);transform:translateX(-2px)}
+
+.war-plan{display:grid;gap:14px}
+.war-plan-glass{display:grid;gap:14px;padding:18px 20px;border-radius:16px;border:1px solid #a991625c;background:linear-gradient(135deg,#24373df2,#162730f2);color:#f4ecd8;box-shadow:0 10px 28px rgba(7,19,27,.35),0 1px 0 rgba(255,255,255,.08) inset}
+.war-plan-glass header{display:grid;gap:2px}
+.war-plan-glass header small{font-size:10px;font-weight:700;letter-spacing:.14em;color:#e5c987}
+.war-plan-glass header strong{font:700 22px/1.2 Georgia,'Times New Roman',serif}
+.war-plan-glass header em{font-style:normal;font-size:12px;opacity:.85;text-transform:capitalize}
+.war-ratio-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.war-ratio-head span{font-size:11px;font-weight:700;letter-spacing:.1em;color:#e5c987}
+.war-ratio-head b{font-size:24px;font-weight:800}
+.war-outlook{font-style:normal;font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;border:1px solid currentColor}
+.war-outlook.favourable{color:#7bd6a0}.war-outlook.balanced{color:#f1c46b}.war-outlook.unfavourable{color:#ff8f7a}
+.war-ratio-bar{display:flex;height:14px;margin-top:8px;border-radius:999px;overflow:hidden;background:#ffffff14;border:1px solid #ffffff22}
+.war-ratio-bar .ours{background:linear-gradient(90deg,#c9a24e,#f1d58e);transition:width .4s ease}
+.war-ratio-bar .theirs{flex:1;background:linear-gradient(90deg,#6c7f8c,#4d6070)}
+.war-ratio-legend{display:flex;justify-content:space-between;margin-top:4px;font-size:11px;opacity:.85}
+.war-plan-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:12px}
+.war-plan-grid small{display:block;font-size:10px;font-weight:700;letter-spacing:.1em;color:#e5c987;margin-bottom:6px}
+.war-air,.war-logistics{padding:12px;border-radius:12px;border:1px solid #a9916240;background:#ffffff0a}
+.war-air strong{display:inline-block;font-size:12px;font-weight:700;padding:4px 10px;border-radius:999px;border:1px solid currentColor}
+.war-air.superiority strong{color:#7bd6a0}.war-air.contested strong{color:#f1c46b}.war-air.inferiority strong{color:#ff8f7a}
+.war-air em{display:block;margin-top:8px;font-style:normal;font-size:22px;font-weight:800}
+.war-meter{display:grid;grid-template-columns:96px minmax(0,1fr) auto;align-items:center;gap:8px;margin-top:6px;font-size:11px}
+.war-meter span{font-weight:700;letter-spacing:.06em}
+.war-meter i{display:block;height:8px;border-radius:999px;background:#ffffff1a;overflow:hidden}
+.war-meter b{display:block;height:100%;background:#7bd6a0;border-radius:inherit;transition:width .4s ease}
+.war-meter.enemy b{background:#9fb4c2}.war-meter.fuel.short b{background:#ff8f7a}
+.war-meter em{font-style:normal;min-width:48px;text-align:right}
+.war-plan-note{margin:0;font-size:12px;line-height:1.5;opacity:.9}
+.war-plan-block{margin:0;padding:8px 12px;border-radius:8px;border-left:3px solid #ff8f7a;background:#ff8f7a1f;font-size:12px}
+.war-plan-declare{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:14px 18px;border-radius:12px;border:1px solid var(--hub-danger);background:var(--hub-danger);color:#fff;font:800 15px/1.2 Inter,ui-sans-serif,system-ui,sans-serif;letter-spacing:.06em;cursor:pointer;transition:transform .14s ease,box-shadow .14s ease,background .14s ease}
+.war-plan-declare:hover:not(:disabled){background:#8c2717;transform:translateY(-1px);box-shadow:0 10px 22px rgba(168,50,31,.4)}
+.war-plan-declare:disabled{background:#d9cfb8;border-color:#d9cfb8;color:#5d6770;cursor:not-allowed}
+
+.dossier-sub{display:grid;gap:12px}
+.dossier-tabs{display:flex;gap:6px;flex-wrap:wrap;border-bottom:1px solid var(--hub-line);padding-bottom:8px}
+.dossier-tabs button{padding:7px 14px;border-radius:999px;border:1px solid var(--hub-line);background:var(--hub-card);color:var(--hub-ink);font-weight:700;cursor:pointer;transition:background .14s ease,border-color .14s ease}
+.dossier-tabs button:hover{border-color:var(--hub-ink-2);background:#fff}
+.dossier-tabs button[aria-selected="true"]{background:var(--hub-ink);border-color:var(--hub-ink);color:#fff8e6}
+.dossier-body dl{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:0}
+.dossier-body dl div{padding:10px 12px;border-radius:10px;border:1px solid var(--hub-line);background:var(--hub-card)}
+.dossier-body dt{font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--hub-ink-2);text-transform:uppercase}
+.dossier-body dd{margin:4px 0 0;font-size:18px;font-weight:700;color:var(--hub-ink);text-transform:capitalize}
+.dossier-full-panel{justify-self:end;padding:8px 14px;border-radius:999px;border:1px solid var(--hub-gold);background:transparent;color:var(--hub-gold);font-weight:700;cursor:pointer}
+.dossier-full-panel:hover{background:var(--hub-gold);color:#fff}
+.war-plan-declare:focus-visible,.target-hub-warplan:focus-visible,.target-hub-back:focus-visible,.dossier-tabs button:focus-visible{outline:3px solid var(--hub-focus);outline-offset:2px}
+@media(max-width:820px){.war-plan-grid{grid-template-columns:1fr}.war-meter{grid-template-columns:80px minmax(0,1fr) auto}}
+@media(prefers-reduced-motion:reduce){.target-hub-warplan,.target-hub-dossier,.target-hub-back,.war-plan-declare,.war-ratio-bar .ours,.war-meter b{transition:none}.target-hub-warplan:hover,.target-hub-dossier:hover,.target-hub-back:hover,.war-plan-declare:hover:not(:disabled){transform:none}}

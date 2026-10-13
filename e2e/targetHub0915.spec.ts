@@ -35,8 +35,11 @@ for(const [language,width] of [['tr',1440],['en',390]] as const)test(`${language
  await page.locator('[data-guide="review-dismiss"]').first().click();
  await expect(hub).toBeVisible();await expect.poll(relation).toBeGreaterThan(before);
 
- // Full Dossier opens the existing panel for France; the country list keeps it there.
+ // 0.91.0: Full Dossier is a sub-view of the hub with a back button; the complete 14-section panel is one more click away.
  await hub.locator('.target-hub-dossier').click();
+ await expect(hub.locator('.dossier-sub')).toBeVisible();await expect(page.locator('.command-panel')).toHaveCount(0);
+ await hub.locator('.target-hub-back').click();await expect(hub.locator('.target-hub-grid')).toBeVisible();
+ await hub.locator('.target-hub-dossier').click();await hub.locator('.dossier-full-panel').click();
  await expect(page.locator('.command-panel')).toBeVisible();await expect(page.locator('.target-hub')).toHaveCount(0);
  await expect(page.locator('.country-select')).toHaveValue('FRA');
  await page.locator('.country-select').selectOption('GRC');await expect(page.locator('.command-panel')).toBeVisible();await expect(page.locator('.target-hub')).toHaveCount(0);

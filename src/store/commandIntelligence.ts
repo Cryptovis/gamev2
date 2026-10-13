@@ -23,6 +23,21 @@ export function commandAlerts(s:GameState):CommandAlert[]{
  if(unread)alerts.push({id:'messages',category:'diplomacy',severity:'info',title:'Unread diplomatic messages',value:String(unread),panel:'diplomacy'});
  const order={critical:0,warning:1,info:2};return alerts.sort((a,b)=>order[a.severity]-order[b.severity]);
 }
+/** The six campaign goals shown on the GOALS rail and in the Help briefing. Pure reads of the state. */
+export function strategicObjectives(s:GameState):{label:string;done:boolean}[]{
+ const p=s.countries[s.playerCountryId];
+ return [
+  {label:'Establish a player trade flow',done:Object.values(s.tradeDeals).some(d=>d.active&&(d.buyerId===p.id||d.sellerId===p.id))},
+  {label:'Resolve a covert operation',done:Object.values(s.intelOperations).some(o=>o.sourceCountryId===p.id&&o.status!=='active')},
+  {label:'Unlock a technology',done:p.technology.unlocked.length>0},
+  {label:'Join or form an alliance bloc',done:Object.values(s.blocs).some(b=>b.memberIds.includes(p.id))},
+  {label:'Execute a combat round',done:Object.values(s.wars).some(w=>(w.attackerId===p.id||w.defenderId===p.id)&&w.rounds>0)},
+  {label:'Reach Day 30',done:s.day>=30},
+ ];
+}
+/** Resource alert wording: "Oil · Import Needed" rather than the engine's raw "IMPORT NEED" status. */
+export const ALERT_STATUS_TITLE:Record<string,string>={'IMPORT NEED':'Import Needed',CRITICAL:'Critical'};
+export const sentenceCase=(text:string,language?:string)=>text.charAt(0).toLocaleUpperCase(language)+text.slice(1);
 /** Empty journal must not suppress opening messages; unknown dates stay unknown. */
 export function newsEntries(s:GameState){
  const journal=[...(s.world.journal??[])].sort((a,b)=>b.day-a.day),seen=new Set(journal.map(e=>e.message));

@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.91.0 — The Living World & Executive Release
+Implementation: **Claude (Sonnet 5.5)**. Branch: `dev/ron-release-091`. Save schema 17, simulation and game numbers unchanged; no file under `src/engine`, `src/domain`, `src/persistence` or `src/map` changed; dependencies unchanged. [Release record](docs/RELEASE-091.md) · [Handoff to Astra](docs/HANDOFF-ASTRA.md).
+
+- **macOS hotfix.** `executiveDesk.ts` collided with `ExecutiveDesk.tsx` on case-insensitive file systems (white screen, TS1149 / TS2305); the model is now `executiveDeskModel.ts`, and a test forbids files that differ only by case.
+- **Top bar.** The cramped three-line live-flow block beside the portrait is removed. The left island and its five cards (Treasury, Food, Oil, Approval, Stability) use the clock card's glass style, and each trend (▲/▼ amount per day) sits inside its own card without repeating the label.
+- **War Planning and Full Dossier inside the diplomatic hub.** A War Planning button beside Full Dossier opens that country's war briefing: power-ratio bar, air superiority badge, logistics readiness (supply and fuel), the engine's reason when war is blocked, and a firm DECLARE WAR ON [COUNTRY] button that keeps the strategic review. Full Dossier is a four-tab sub-view with a "← Diplomatic Hub" back button; the complete 14-section panel stays reachable from it.
+- **Help** has three tabs: Briefing (strategic situation, next goals, urgent risks), Programs and Questions.
+- **Feature tour.** Four short, skippable cards (live trend arrows, Target Country Hub and War Planning, policy cards and factory window, Executive Desk) after the ten-step tutorial or from Help. UI-only, because the engine limits the tutorial to ten steps.
+- **Micro fixes.** "Oil · Import Needed" replaces "oil · IMPORT NEED"; the DIPLOMACY rail label no longer wraps.
+- Existing tests changed by necessity: `compactWorkspaces0908` (five top-bar cards), `livingWorld0919` (counter selectors), `targetHub0915` (Full Dossier sub-view), `executiveDesk0916` (import path).
+- The Cursor HelpPanel backup named in the brief was not available; the three tabs were designed from the description.
+
+Validation: 826 unit tests / 91 files (813 earlier + 13 release tests; counted from the test sources, because the CI log was not readable here), TypeScript and production build passed; the 365-day long-run invariant passes. All 191 production-browser scenarios passed on GitHub-hosted Chromium (186 earlier + 5 release scenarios; CI 38429509251, browser step 16.1 min). Earlier runs on this branch failed and were fixed: the first release test used Node types the project does not have (now `import.meta.glob`), and 7 browser scenarios failed once: the five top-bar width checks (the island is up to 910 px wide with five cards, so the old 780 px limit became "under 960 px and ending before the clock island") and my two new Help scenarios (they now close the country panel first). The CI job timeout was raised from 20 to 25 minutes because the whole job takes about 19.8 minutes. Nothing ran locally: the npm registry is unreachable in this session, so GitHub Actions was the verifier. Screenshots and the visual judgement are still to do.
+
 ## 0.90.0-playtest.19 — Living world polish (Phase 6.5)
 Implementation: **Claude (Sonnet 5.5)**. Branch: `dev/ron-living-world-0915`. Save schema 17, simulation and game numbers unchanged; no file under `src/engine`, `src/domain` or `src/persistence` changed; dependencies unchanged. Everything shown is read from state the engine already keeps.
 

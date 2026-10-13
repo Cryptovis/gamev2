@@ -7,8 +7,9 @@ for(const [width,language] of [[1440,'en'],[2048,'tr'],[390,'tr'],[1440,'es'],[1
   const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
   await resumeFixture(page,campaignFixture(language));
   if(width>1100){
-   const overview=await page.locator('.command-overview-island').boundingBox();expect(overview!.width).toBeLessThan(780);
-   await expect(page.locator('.top-metric')).toHaveCount(4);
+   // 0.91.0: five cards, each with its own trend, widen the island from 780 px to at most 960 px; it must still end before the clock island.
+   const overview=await page.locator('.command-overview-island').boundingBox(),clock=await page.locator('.clock-island').boundingBox();expect(overview!.width).toBeLessThan(960);expect(overview!.x+overview!.width).toBeLessThanOrEqual(clock!.x);
+   await expect(page.locator('.top-metric')).toHaveCount(5); // 0.91.0: Treasury (with the daily balance), Food, Oil, Approval, Stability
   }
   await page.locator('[data-guide="rail-world"]').click();
   const frame=page.locator('#pulse-window');await expect(frame).toBeVisible();

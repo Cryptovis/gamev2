@@ -379,3 +379,28 @@ button:active:not(:disabled) {
   font-size: 22px;
   padding: 4px 12px;
 }
+
+/* 0.91.0 Help: three tabs (Briefing / Programs / Questions) on the shared section menu. */
+#help-window .section-menu { margin-bottom: 12px; }
+#help-window .section-menu button { min-height: 40px; }
+.help-situation { padding: 14px; border: 1px solid #a991625c; border-radius: 12px; background: linear-gradient(135deg, #24373df2, #162730f2); margin: 12px 0; }
+.help-situation h3, .help-situation h4 { margin: 0 0 8px; }
+.help-situation h4 { margin-top: 14px; font-size: 13px; letter-spacing: .04em; text-transform: uppercase; color: #f8e4a8; }
+.help-situation dl { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 8px; margin: 0; }
+.help-situation dl div { padding: 8px 10px; border: 1px solid #a9916240; border-radius: 10px; background: #ffffff0a; }
+.help-situation dt { font-size: 11px; opacity: .8; }
+.help-situation dd { margin: 2px 0 0; font-size: 16px; font-weight: 700; }
+.help-situation ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.help-situation li { padding: 8px 10px; border-radius: 8px; background: #ffffff0a; font-size: 13px; line-height: 1.4; }
+.help-risks li.critical { border-left: 3px solid #ff8f7a; }
+.help-risks li.warning { border-left: 3px solid #f1c46b; }
+.help-risks li.calm, .help-goals li.done { border-left: 3px solid #7bd6a0; }
+.help-goals li { border-left: 3px solid #a99162; }
+
+/* 0.91.0 feature tour: non-blocking cards (no shade), above the HUD, below modals. */
+.feature-tour-layer { position: fixed; inset: 0; z-index: 1400; pointer-events: none; }
+.feature-tour-layer .tutorial-target-ring { position: fixed; pointer-events: none; }
+.tutorial-dialog.feature-tour { pointer-events: auto; bottom: 18px; z-index: 1401; }
+.tutorial-dialog.feature-tour button { transition: background .14s ease, transform .14s ease; }
+.tutorial-dialog.feature-tour button:hover:not(:disabled) { transform: translateY(-1px); }
+@media (prefers-reduced-motion: reduce) { .tutorial-dialog.feature-tour button { transition: none; } }

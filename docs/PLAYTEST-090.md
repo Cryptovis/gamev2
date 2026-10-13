@@ -258,3 +258,19 @@ Validation: 813 unit tests / 90 files (793 earlier + 20 living world tests; coun
 4. With approval of 70% or more and stability of 60% or more and no war the portrait glows gold.
 5. Full Dossier of a foreign country → Intelligence: four poster cards (Gather Intelligence, Influence Campaign, Sabotage Industry, Counter Network) at 3:4; they start the same operations as before.
 6. Repeat in Turkish and Russian and at 390 px. Judge whether the strip crowds the top bar, the glow strength, and whether the pins collide with the capital pins.
+
+## 0.91.0 — The Living World & Executive Release (Claude)
+
+Release package. Save schema 17, simulation and game numbers unchanged; no file under `src/engine`, `src/domain`, `src/persistence` or `src/map` changed. Evidence: [Release record](RELEASE-091.md).
+
+Validation: 826 unit tests / 91 files (813 earlier + 13 release tests; counted from the test sources, because the CI log was not readable here), TypeScript and production build passed; the 365-day long-run invariant passes. All 191 production-browser scenarios passed on GitHub-hosted Chromium (186 earlier + 5 release scenarios; CI 38429509251, browser step 16.1 min). Earlier runs on this branch failed and were fixed: the first release test used Node types the project does not have (now `import.meta.glob`), and 7 browser scenarios failed once: the five top-bar width checks (the island is up to 910 px wide with five cards, so the old 780 px limit became "under 960 px and ending before the clock island") and my two new Help scenarios (they now close the country panel first). The CI job timeout was raised from 20 to 25 minutes because the whole job takes about 19.8 minutes. Nothing ran locally: the npm registry is unreachable in this session, so GitHub Actions was the verifier. Screenshots and the visual judgement are still to do.
+
+### Manual acceptance route
+
+1. Top bar: no three-line block beside the portrait; five glass cards with ▲/▼ amounts under Treasury, Food and Oil; the DIPLOMACY label on one line.
+2. Select a foreign country: War Planning and Full Dossier side by side. War Planning shows the ratio bar, air badge and logistics; Escape returns to the hub; the red button asks for review before declaring.
+3. Full Dossier: four tabs, the back button, and "Open complete country panel" for the old panel.
+4. Help: Briefing / Programs / Questions. Help → Replay feature tour: four skippable cards.
+5. Supply alerts read "Oil · Import Needed".
+6. Repeat in Turkish and at 390 px. Judge the glass cards against the clock card, the war briefing colours, and whether five cards crowd the top bar in Russian.
+

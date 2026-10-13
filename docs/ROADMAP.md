@@ -240,3 +240,8 @@ Delivered package 6.4 of the Living World & Executive handoff: a six-card Polici
 ## 0.90.0-playtest.19 — Living world polish (Claude)
 
 Delivered package 6.5: live change counters in the top bar, swords and megaphone event pins on the map, a mood glow on the commander portrait, and the optional poster-style covert operations (B.4); engine, domain and saves unchanged. Remaining: screenshots at 1440 (tr) and 390 (en), Alper's judgement of the visual strength, the 6.3 relief frame-cost measurement; strikes as a separate engine state (the megaphone reads stability and regime crises only).
+
+## 0.91.0 — The Living World & Executive Release (Claude)
+
+Delivered: macOS case-collision fix, top-bar redesign, War Planning and a four-tab Full Dossier inside the diplomatic hub, a three-tab Help, a four-card feature tour and the Astra handoff ([record](RELEASE-091.md)); engine, domain and saves unchanged. Next: the cloud layer (Supabase Auth, Cloud Save, Cloudflare Pages) is delegated to Astra in [HANDOFF-ASTRA](HANDOFF-ASTRA.md). Remaining: screenshots at 1440 (tr) and 390 (en), Alper's judgement of the new cards and war briefing, unit labels on the Food and Oil cards, the 6.3 relief frame-cost measurement, and Phase 6 Closed Beta acceptance (needs Alper's authorization).
+

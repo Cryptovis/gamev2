@@ -19,5 +19,5 @@ export function CountryWorkspace({ selectedCountryId }: { selectedCountryId: str
   const view = workspaceForSelection({ playerCountryId, selectedCountryId: liveSelection, navigation: navigationCountry ? { countryId: navigationCountry } : null }, selectedCountryId, dossierFor);
   if (view === 'none') return null;
   if (view === 'panel') return <CountryPanel onBrowse={setDossierFor} />;
-  return <TargetCountryModal countryId={selectedCountryId} onOpenDossier={() => setDossierFor(selectedCountryId)} />;
+  return <TargetCountryModal key={selectedCountryId} countryId={selectedCountryId} onOpenDossier={() => setDossierFor(selectedCountryId)} />;
 }

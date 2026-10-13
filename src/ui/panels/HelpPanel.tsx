@@ -14,6 +14,15 @@ import {
 } from "../../engine/systems/nationalPrograms";
 import { formatCostB } from "../../engine/systems/policyPressure";
 import { translateText } from "../../i18n/localeText";
+import { startFeatureTour } from "./CampaignTutorial";
+import { SectionMenu } from "../windows/SectionMenu";
+import { ALERT_STATUS_TITLE, commandAlerts, sentenceCase, strategicObjectives } from "../../store/commandIntelligence";
+type HelpTab = "briefing" | "programs" | "questions";
+const HELP_TABS: { id: HelpTab; label: string; icon: string }[] = [
+  { id: "briefing", label: "Briefing", icon: "◈" },
+  { id: "programs", label: "Programs", icon: "▣" },
+  { id: "questions", label: "Questions", icon: "?" },
+];
 const faq = [
  ["Where are my proposals?","Open Diplomacy, then Proposal tracker and Sent proposals. Pending replies arrive after three campaign days; advance time to receive them. Sending again will not accelerate the answer. No fee is charged at submission; accepted outgoing proposals charge the stated fee once."],
  ["How does the energy grid work?","Open Production and National Energy Grid. Fuel plants consume coal, oil or uranium and operating funds. Renewable plants need no fuel. Review construction time, research and budget before investing. Power shortages slow production and reduce public confidence."],
@@ -106,7 +115,26 @@ export function HelpPanel() {
     ),
     language = useGameStore((s) => s.playerProfile.language),
     [query, setQuery] = useState(""),
-    [review, setReview] = useState<ProgramKind | null>(null);
+    [review, setReview] = useState<ProgramKind | null>(null),
+    [tab, setTab] = useState<HelpTab>("briefing");
+  // The briefing is a small derived view: situation figures, the next goals and the most urgent risks.
+  const briefing = useStoreView((s) => {
+    const p = s.countries[s.playerCountryId];
+    return {
+      day: s.day,
+      treasury: p.economy.treasury,
+      approval: p.politics.approval,
+      stability: p.politics.stability,
+      wars: Object.values(s.wars).filter((w) => w.status === "active" && (w.attackerId === p.id || w.defenderId === p.id)).length,
+      goals: strategicObjectives(s),
+      risks: commandAlerts(s)
+        .filter((a) => a.severity !== "info")
+        .slice(0, 4)
+        .map((a) => ({ id: a.id, severity: a.severity, title: a.title, resource: a.resource ?? null, value: a.value })),
+    };
+  });
+  const goalsDone = briefing.goals.filter((g) => g.done).length,
+    nextGoals = briefing.goals.filter((g) => !g.done).slice(0, 3);
   // Only the displayed program figures are watched, not the whole campaign state.
   const programs = useStoreView((s) => {
     const treasury = s.countries[s.playerCountryId].economy.treasury;
@@ -144,6 +172,9 @@ export function HelpPanel() {
       width={640}
       onClose={state.closeWorkspace}
     >
+      <SectionMenu items={HELP_TABS} selected={tab} onSelect={(id) => setTab(id as HelpTab)} contentId="help-tab-content" label="Help sections" />
+      <div id="help-tab-content" className="help-tab-content" data-tab={tab}>
+      {tab === "briefing" && <>
       <section className="game-notes">
         <h3 translate="no">{BRAND_NAME}</h3>
         <p>
@@ -164,6 +195,30 @@ export function HelpPanel() {
         <p>
           <LocaleText value="New screens use dollars, thousands (K), millions (M) and billions (B). Engine amounts remain in billions; strategic commodity units are game lots unless tonnes or vehicles are specified." />
         </p>
+      </section>
+      <section className="help-situation" aria-label={translateLive("Strategic situation")}>
+        <h3><LocaleText value="Strategic situation" /></h3>
+        <dl>
+          <div><dt><LocaleText value="Day" /></dt><dd>{briefing.day}</dd></div>
+          <div><dt><LocaleText value="Treasury" /></dt><dd>${briefing.treasury.toFixed(1)}B</dd></div>
+          <div><dt><LocaleText value="Approval" /></dt><dd>{briefing.approval.toFixed(0)}%</dd></div>
+          <div><dt><LocaleText value="Stability" /></dt><dd>{briefing.stability.toFixed(0)}%</dd></div>
+          <div><dt><LocaleText value="Active wars" /></dt><dd>{briefing.wars}</dd></div>
+        </dl>
+        <h4><LocaleText value="Key goals" /> · {goalsDone}/{briefing.goals.length}</h4>
+        <ul className="help-goals">
+          {nextGoals.map((g) => <li key={g.label}><LocaleText value={g.label} /></li>)}
+          {!nextGoals.length && <li className="done"><LocaleText value="All campaign goals complete." /></li>}
+        </ul>
+        <h4><LocaleText value="Urgent risks" /></h4>
+        <ul className="help-risks">
+          {briefing.risks.map((r) => <li key={r.id} className={r.severity}>
+            {r.resource && <>{sentenceCase(translateLive(r.resource), language)} · </>}
+            <LocaleText value={ALERT_STATUS_TITLE[r.title] ?? r.title} />
+            {r.value && !r.resource && <> · <LocaleText value={r.value} /></>}
+          </li>)}
+          {!briefing.risks.length && <li className="calm"><LocaleText value="No urgent risks. Monitoring continues." /></li>}
+        </ul>
       </section>
       <section className="help-intro">
         <h3>
@@ -194,9 +249,18 @@ export function HelpPanel() {
           >
             <LocaleText value={"Replay tutorial"} />
           </button>
+          <button
+            onClick={() => {
+              state.closeWorkspace();
+              startFeatureTour();
+            }}
+          >
+            <LocaleText value={"Replay feature tour"} />
+          </button>
         </div>
       </section>
-      <section>
+      </>}
+      {tab === "programs" && <section>
         <h3>
           <LocaleText value={"National development programs"} />
         </h3>
@@ -240,8 +304,8 @@ export function HelpPanel() {
             );
           })}
         </div>
-      </section>
-      <section className="faq">
+      </section>}
+      {tab === "questions" && <section className="faq">
         <h3>
           <LocaleText value={"Frequently asked questions"} />
         </h3>
@@ -266,8 +330,8 @@ export function HelpPanel() {
             <LocaleText value={"No matching questions."} />
           </p>
         )}
-      </section>
-      <section>
+      </section>}
+      {tab === "briefing" && <section>
         <h3>
           <LocaleText value={"HD War Experience roadmap"} />
         </h3>
@@ -278,7 +342,8 @@ export function HelpPanel() {
             }
           />
         </p>
-      </section>
+      </section>}
+      </div>
       {review && reviewed && (() => {
         const preview = reviewed;
         return (

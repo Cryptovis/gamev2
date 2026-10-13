@@ -8,7 +8,7 @@ import { ReviewDialog } from './ReviewDialog';
 import { AssetThumbnail } from '../icons/AssetThumbnail';
 import { CivicArt } from '../icons/CivicArt';
 import { CommandArt } from '../icons/CommandArt';
-import { deskCounts, deskNews, deskOffers, deskOperations, deskWars, DESK_TABS, type DeskCountdown, type DeskOffer, type DeskTab } from './executiveDesk';
+import { deskCounts, deskNews, deskOffers, deskOperations, deskWars, DESK_TABS, type DeskCountdown, type DeskOffer, type DeskTab } from './executiveDeskModel';
 
 const TAB_META: Record<DeskTab, { icon: string; label: string; empty: string }> = {
   diplomacy: { icon: '✉️', label: 'Diplomacy', empty: 'No proposals are waiting for your answer.' },

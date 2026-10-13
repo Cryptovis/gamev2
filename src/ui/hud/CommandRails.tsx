@@ -19,8 +19,8 @@ import {HelpPanel} from '../panels/HelpPanel';
 import {NavigationArt} from '../icons/NavigationArt';
 import {CommandAlerts,CommandNews} from '../panels/CommandIntelligence';
 import {ExecutiveDesk} from '../panels/ExecutiveDesk';
-import {deskOffers} from '../panels/executiveDesk';
-import {commandAlerts,newsEntries} from '../../store/commandIntelligence';
+import {deskOffers} from '../panels/executiveDeskModel';
+import {commandAlerts,newsEntries,strategicObjectives} from '../../store/commandIntelligence';
 import {Suspense,useEffect, useMemo, useState, type ReactNode } from 'react';
 import { MARKET_RESOURCES, getMarketBoard, resourceReserveDays, resourceStrategicStatus } from '../../store/marketSelectors';
 import { useGameStore } from '../../store/gameStore';
@@ -47,14 +47,7 @@ export function CommandRails(){
  const sanctions=activeCountries(state.countries).filter(c=>c.globalSanctions);
  const offers=state.diplomaticOffers.filter(o=>o.expiresDay>=state.day);
  const embassies=Object.values(state.embassies).filter(e=>e.countryA===player.id||e.countryB===player.id);
- const objectives=useMemo(()=>[
-  {label:'Establish a player trade flow',done:activeTrades.some(d=>d.buyerId===player.id||d.sellerId===player.id)},
-  {label:'Resolve a covert operation',done:Object.values(state.intelOperations).some(o=>o.sourceCountryId===player.id&&o.status!=='active')},
-  {label:'Unlock a technology',done:player.technology.unlocked.length>0},
-  {label:'Join or form an alliance bloc',done:Object.values(state.blocs).some(b=>b.memberIds.includes(player.id))},
-  {label:'Execute a combat round',done:Object.values(state.wars).some(w=>(w.attackerId===player.id||w.defenderId===player.id)&&w.rounds>0)},
-  {label:'Reach Day 30',done:state.day>=30},
- ],[state.tradeDeals,state.intelOperations,state.blocs,state.wars,state.day,player.id,player.technology.unlocked.length]);
+ const objectives=useMemo(()=>strategicObjectives(state),[state.tradeDeals,state.intelOperations,state.blocs,state.wars,state.day,player.id,player.technology.unlocked.length]);
  const critical=MARKET_RESOURCES.map(resource=>({resource,status:resourceStrategicStatus(player,resource),days:resourceReserveDays(player,resource)})).filter(x=>x.status==='CRITICAL'||x.status==='IMPORT NEED');
  const toggle=(id:ToolId)=>state.openTool(state.activeTool===id?null:id,false);
  const close=(_id:ToolId)=>state.closeWorkspace();
