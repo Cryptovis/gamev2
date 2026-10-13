@@ -6,7 +6,9 @@ function creditFixture(){
  const relation={score:70,status:'friendly' as const,sanctions:false,treaties:[]};s.countries.TUR.diplomacy.relations.FRA={...relation};s.countries.FRA.diplomacy.relations.TUR={...relation};return postCredit(s,'lend',5,5,365,'FRA');
 }
 for(const width of [1440,390])test(`${width}px every command menu works without click-time module downloads; training and investments are separate`,async({page})=>{
- await page.setViewportSize({width,height:900});await resumeFixture(page,campaignFixture('en'));let downloads=0;
+ await page.setViewportSize({width,height:900});await resumeFixture(page,campaignFixture('en'));
+ // playtest.17: the map now starts its relief worker on load (hillshade layer). Wait for it, so only click-time menu chunks are counted below.
+ await expect(page.locator('[data-relief-render="worker-ready"]')).toBeAttached({timeout:30000});let downloads=0;
  await page.route(/\/(src|assets)\/.*\.(tsx?|js)(\?.*)?$/,route=>{downloads++;return route.abort('failed');});
  await page.locator('[data-guide="nation"]').click();await expect(page.locator('.national-development-shortcuts')).toHaveCount(0);
  await page.locator('[data-guide="tab-technology"]').click();await expect(page.locator('.technology-sections')).toBeVisible();await page.locator('.technology-sections .section-menu').getByRole('button',{name:'Investments',exact:true}).click();await expect(page.locator('[data-development="investments"] .campus-grid article')).toHaveCount(2);await expect(page.locator('.pilot-recruitment')).toHaveCount(0);
