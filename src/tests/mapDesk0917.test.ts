@@ -6,6 +6,8 @@ import type { CountryState, RelationStatus, TreatyType } from '../domain/game';
 import { capitalPinScale, capitalPins, type CapitalPinInput } from '../map/capitalPins';
 import { DESK_TILT, tilt, toViewBox, untilt } from '../map/deskTilt';
 import { renderSurface, type SurfaceView } from '../map/surfaceRaster';
+import { UI_CATALOG_0917 } from '../i18n/uiCatalog0917';
+import { translateText } from '../i18n/localeText';
 import { DEFAULT_MAP_DESK, parseMapDesk } from '../presentation/mapDeskSettings';
 
 // A small deterministic generator keeps the "random point" checks reproducible.
@@ -220,5 +222,21 @@ describe('capital pins', () => {
     const w = world({ GRC: { status: 'war' } }), before = JSON.stringify(w.countries.TUR.diplomacy);
     capitalPins(inputFor(w, { zoom: 3 }));
     expect(JSON.stringify(w.countries.TUR.diplomacy)).toBe(before);
+  });
+});
+
+describe('map desk translations', () => {
+  it('every map desk label translates in all four non-English languages', () => {
+    for (const [key, values] of Object.entries(UI_CATALOG_0917)) {
+      expect(values).toHaveLength(4);
+      for (const [i, lang] of ['tr', 'es', 'zh', 'ru'].entries()) {
+        expect(values[i].trim()).not.toBe('');
+        expect(translateText(lang, key)).toBe(key === key.toUpperCase() ? values[i].toLocaleUpperCase(lang) : values[i]);
+      }
+    }
+  });
+  it('keeps the proper noun Natural Earth in every language and has no artefacts', () => {
+    for (const value of UI_CATALOG_0917['Shaded relief: Natural Earth (public domain)']) expect(value).toContain('Natural Earth');
+    for (const values of Object.values(UI_CATALOG_0917)) for (const value of values) expect(/\{\\f|&(?:amp|quot|lt|gt|apos|#\d+);/.test(value)).toBe(false);
   });
 });

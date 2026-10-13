@@ -2,6 +2,7 @@ import {LocaleText,translateLive} from '../../i18n/localeText';
 import type { MapMode } from '../../domain/map';
 import { tr } from '../../i18n/gameI18n';
 import { useGameStore } from '../../store/gameStore';
+import { useMapDesk } from '../../presentation/mapDeskSettings';
 
 const modes:Array<{mode:MapMode;key:string;glyph:string}>=[
  {mode:'political',key:'political',glyph:'◉'},
@@ -28,6 +29,7 @@ export function MapModeBar(){
  const setProjection=useGameStore(s=>s.setMapProjection);
  const issueMapControl=useGameStore(s=>s.issueMapControl);
  const selectedCountryId=useGameStore(s=>s.selectedCountryId);
+ const deskTilt=useMapDesk(s=>s.tilt),deskRelief=useMapDesk(s=>s.relief),deskPins=useMapDesk(s=>s.pins),setDesk=useMapDesk(s=>s.set);
  return <section className="map-mode-bar" aria-label={translateLive("Map modes")}>
   <header className="map-mode-heading"><span><small><LocaleText value={"STRATEGIC VIEW"}/></small><strong><LocaleText value={"MAP COMMAND"}/></strong></span><em><LocaleText value={mapMode.toUpperCase()}/></em></header>
   <div className="map-mode-buttons">{modes.map(({mode,key,glyph})=><button key={mode} className={mode===mapMode?'active':''} onClick={()=>setMapMode(mode)}><span><LocaleText value={glyph}/></span><LocaleText value={mode==='relations'?'RELATIONS':tr(lang,key)}/></button>)}</div>
@@ -39,6 +41,12 @@ export function MapModeBar(){
   </div>
   <label className="map-label-control"><LocaleText value={"ZOOM SPEED "}/><input aria-label={translateLive("Map zoom speed")} type="range" min="0.3" max="1.5" step="0.05" value={zoomSpeed} onChange={e=>setZoomSpeed(Number(e.target.value))}/><output><LocaleText value={zoomSpeed<.5?'SLOW':zoomSpeed>.9?'FAST':'NORMAL'}/></output></label>
   <label className="map-label-control"><LocaleText value={"LABEL SIZE "}/><input aria-label={translateLive("Map label size")} type="range" min="0.85" max="1.4" step="0.05" value={labelScale} onChange={e=>setLabelScale(Number(e.target.value))}/><output><LocaleText value={Math.round(labelScale*100)}/><LocaleText value={"%"}/></output></label>
+  <div className="map-desk-controls">
+   <label title={translateLive("Applies to the flat map on wide screens")}><input type="checkbox" checked={deskTilt} onChange={e=>setDesk({tilt:e.target.checked})}/><LocaleText value={"Desk tilt"}/></label>
+   <label><input type="checkbox" checked={deskRelief} onChange={e=>setDesk({relief:e.target.checked})}/><LocaleText value={"Relief shading"}/></label>
+   <label><input type="checkbox" checked={deskPins} onChange={e=>setDesk({pins:e.target.checked})}/><LocaleText value={"Capital pins"}/></label>
+   {deskRelief&&<small className="map-desk-credit"><LocaleText value={"Shaded relief: Natural Earth (public domain)"}/></small>}
+  </div>
   <div className="map-notice"><LocaleText value={mapNotice}/></div>
  </section>;
 }

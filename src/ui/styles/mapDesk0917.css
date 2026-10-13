@@ -28,3 +28,9 @@
 .capital-pin.role-enemy .capital-flag-ring{stroke:#d0533e}
 .capital-pin.role-partner .capital-flag-ring{stroke:#5a9fd0}
 .capital-pin.role-other .capital-flag-ring{stroke:#efe6cf}
+
+/* Map dock: the three desk settings. */
+.map-desk-controls{display:grid;gap:7px;margin-top:12px}
+.map-desk-controls label{display:flex;align-items:center;gap:8px;color:#b3c7d3;font-size:11px;font-weight:700;cursor:pointer}
+.map-desk-controls input{accent-color:#ddb34f;width:15px;height:15px;margin:0;flex:none}
+.map-desk-credit{color:#8aa0ae;font-size:10px;line-height:1.35}
