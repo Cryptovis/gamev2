@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.90.0-playtest.15 — Target-country diplomatic hub (Phase 6.1)
+Implementation: **Claude (Opus 5.5)**. Branch: `dev/ron-living-world-0915`. Save schema 17, simulation and game numbers unchanged; dependencies unchanged.
+
+- **Another country opens a diplomatic hub.** Selecting a foreign nation on the map or in World rankings opens a centred card instead of the player's 14-section panel: the two flags facing each other, country and capital (201 Natural Earth capitals), treasury, GFP rank, population and the relationship (mood, stance, index).
+- **Eight actions, same rules.** Open Embassy, Trade Pact, Non-Aggression Pact, Defensive Alliance, Impose/Lift Embargo, Economic Aid ($1/5/10B), Diplomatic Mission and Espionage Operation each send a typed command with the Full Dossier's strategic review and engine validators; active agreements show a green tick, blocked ones the engine's reason, pending letters link to the proposal tracker. The embassy card uses the typed `diplomacy/request` command.
+- **Full Dossier.** One button opens the existing country panel; its country list keeps the full panel, and requests from other windows for a country's tab open the panel directly. The player's own nation always opens the full panel.
+- **Light card theme** with WCAG AA text contrast, a two-column phone layout, and no flag motion with reduced motion or Low effects.
+- **Translations.** All new labels in five languages, three previously untranslated diplomatic-mission reasons, and reviewed replacements for machine translations shown on the hub (relationship stances, embassy, embargo and Turkish pact capitalisation; game-wide). [Phase 6.1 record](docs/TARGET-HUB-0915.md).
+
+Validation: 714 unit tests / 86 files (699 earlier + 15 hub tests), TypeScript and production build passed; the 365-day long-run invariant passes. All 168 production-browser scenarios passed on GitHub-hosted Chromium (165 earlier + 3 hub scenarios; 2 ranking specs updated to expect the hub; CI 38364367517 first run, and CI 38366955805 on the release tree after two style fixes). Not run on StackBlitz: the npm registry is blocked in this session.
+
 ## 0.90.0-playtest.14 — Sound, battle effects and terrain (Phase 5)
 Implementation: **Claude (Opus 5.5)**. Branch: `dev/clear-command-090`. Save schema 17 and simulation unchanged; new dependency Howler.js 2.2.4 (MIT).
 

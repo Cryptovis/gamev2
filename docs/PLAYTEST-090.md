@@ -187,3 +187,18 @@ Validation: 660 unit tests / 83 files, TypeScript and production build passed; t
 3. Save mid-battle, reload and continue: rounds play on with the same plans.
 4. Defend for several rounds: the fuel reserve falls slowly (sustainment) and defending stays allowed at zero fuel.
 5. With a small country short of cash at war, a rescue credit offer appears from a non-hostile country; apply and wait for approval.
+
+## 0.90.0-playtest.15 — Target-country diplomatic hub (Claude, Phase 6.1)
+
+Phase 6.1 of the Living World & Executive handoff. Save schema 17, simulation and game numbers unchanged; no file under `src/engine`, `src/domain`, `src/persistence` or `src/map` changed. Evidence: [Phase 6.1 record](TARGET-HUB-0915.md).
+
+Validation: 714 unit tests / 86 files (699 earlier + 15 hub tests), TypeScript and production build passed; the 365-day long-run invariant passes. All 168 production-browser scenarios passed on GitHub-hosted Chromium (165 earlier + 3 hub scenarios; 2 ranking specs updated to expect the hub; CI 38364367517 first run, and CI 38366955805 on the release tree after two style fixes). Not run on StackBlitz: the npm registry is blocked in this session.
+
+### Manual acceptance route
+
+1. Click France on the map: a light card opens in the centre with 🇹🇷 ⇄ 🇫🇷, "France · Paris", treasury, GFP rank, population and the relationship; the 14-section panel does not open.
+2. The alliance card shows a green tick (Türkiye and France start as allies). Send $5B economic aid: the strategic review appears, the receipt follows and the relationship index rises.
+3. Open Embassy, then reopen France: the card now links to the proposal tracker. Launch the espionage operation: the card shows it in progress.
+4. Press Full Dossier: the familiar panel opens for France; switching to Greece in its country list keeps the panel. Close, click France again: the hub returns. Your own flag still opens the full panel.
+5. Repeat at phone width and in Turkish: two columns, no sideways scrolling, Turkish labels ("Tam Dosya", "Casusluk Operasyonu").
+

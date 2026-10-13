@@ -219,3 +219,8 @@ Delivered Phase 4: six air/naval missions with bases, range, preparation days an
 ## 0.90.0-playtest.14 — Sound, battle effects and terrain (Claude)
 
 Delivered Phase 5: a central Howler.js sound service (interface, battle and ambience channels, mute, four-sound limit, once-per-event cues, gesture start, silent fallback); battle effects and summaries derived only from recorded round actions; original terrain tiles and synthesized sounds in the asset manifest. Remaining: no map sound or effects, synthesized placeholder sounds, event memory per tab. Phase 6 (Closed Beta acceptance) has not started.
+
+## 0.90.0-playtest.15 — Target-country diplomatic hub (Claude)
+
+Delivered package 6.1 of the Living World & Executive handoff (Alper, 13 October 2026), a visual/UX track on branch `dev/ron-living-world-0915`; the Closed Beta acceptance step above keeps its own authorization. Foreign countries open a diplomatic hub with eight typed actions and a Full Dossier link. Remaining in this track: 6.2 executive inbox with expiring requests (needs an engine rule, Alper's decision on save fields), 6.3 hillshade map with desk tilt and capital pins, 6.4 card-based policies, factory detail and operation posters. [Evidence](TARGET-HUB-0915.md).
+
