@@ -22,6 +22,8 @@ export const UI_CATALOG_0915:Record<string,[string,string,string,string]>={
  'Insufficient treasury for diplomatic mission.':['Diplomatik heyet için hazine yetersiz.','Tesoro insuficiente para la misión diplomática.','国库不足，无法派遣外交使团。','Недостаточно средств в казне для дипломатической миссии.'],
  // Reviewed replacements for older machine translations that the hub shows prominently.
  'Open Embassy':['Büyükelçilik Aç','Abrir embajada','开设大使馆','Открыть посольство'],
+ 'Trade Pact':['Ticaret Paktı','Pacto comercial','贸易协定','Торговый пакт'],
+ 'Non-Aggression Pact':['Saldırmazlık Paktı','Pacto de no agresión','互不侵犯条约','Пакт о ненападении'],
  'Lift Embargo':['Ambargoyu Kaldır','Levantar el embargo','解除禁运','Снять эмбарго'],
  'Impose Embargo':['Ambargo Uygula','Imponer embargo','实施禁运','Ввести эмбарго'],
  'trade cancelled · relations fall':['ticaret iptal edilir · ilişkiler bozulur','se cancela el comercio · las relaciones empeoran','贸易取消 · 关系下降','торговля отменяется · отношения ухудшаются'],
