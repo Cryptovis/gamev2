@@ -98,3 +98,21 @@ test('en 1440px a quiet world has no event pins and a calm portrait',async({page
  await expect(page.locator('.leader-avatar-button')).toHaveAttribute('data-mood','calm');
  await expect(page.locator('.leader-avatar-button .mood-note')).toHaveCount(0);
 });
+
+for(const [width,lang] of [[1440,'tr'],[390,'en']] as const)test(`${lang} ${width}px covert operations are 3:4 poster cards with the same buttons`,async({page})=>{
+ await page.setViewportSize({width,height:900});
+ await resumeFixture(page,fixture(lang));
+ await page.locator('[data-guide="nation"]').click();
+ await page.locator('.country-select').selectOption('GRC');
+ await page.locator('[data-guide="tab-intel"]').click();
+ const posters=page.locator('.intel-actions .op-poster');
+ await expect(posters).toHaveCount(4);
+ for(let i=0;i<4;i++){
+  const box=(await posters.nth(i).boundingBox())!;
+  expect(box.height/box.width).toBeGreaterThan(1.3);expect(box.height/box.width).toBeLessThan(1.37);
+  await expect(posters.nth(i).locator('.op-poster-art')).toBeVisible();
+  await expect(posters.nth(i).locator('small')).toBeVisible();
+ }
+ expect(await noOverflow(page)).toBe(true);
+ await page.screenshot({path:`test-results/living-world-0919-posters-${lang}-${width}.png`});
+});
