@@ -1,4 +1,4 @@
-import {workspaceParent,type WorkspaceFrame} from './workspaceNavigation';
+import {workspaceParent,intentFrame,intentCountry,sameDestination,type WorkspaceFrame,type WorkspaceIntent,type WorkspaceNavigation} from './workspaceNavigation';
 import {commandReceipt} from './commandReceipt';
 import {recordEconomicHistory} from '../engine/systems/economicHistory';
 import {buildPlant,togglePlant,cancelPowerProject} from '../engine/systems/energy';
@@ -80,7 +80,8 @@ interface GameActions {
  voteWorld:(id:string,choice:VoteChoice)=>void;
  startOutreach:(id:string,religion:ReligionType,commandId?:string)=>void;
  setTutorial:(step:number,active:boolean)=>void;
- navigation:{panel:string;countryId:string;nonce:number}|null;
+ navigation:WorkspaceNavigation|null;
+ routeWorkspace:(intent:WorkspaceIntent)=>boolean;
  navigate:(panel:string,countryId?:string)=>void;
   buildFacility:(kind:FacilityKind,commandId?:string)=>void;
   toggleFacility:(kind:FacilityKind)=>void;
@@ -172,7 +173,16 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
   acceptElectionOffer:(id,commandId)=>set(s=>commandWithReceipt(s,{...{type:'politics/acceptElection',id},commandId})),
   startProgram:(kind,commandId)=>set(s=>commandWithReceipt(s,{...{type:'program/start',kind},commandId})),
   workspaceTrail:[],activeTool:null,warWindowId:null,openWarWindow:(warWindowId)=>{if(!warWindowId){get().closeWorkspace();return;}set(s=>{const next={warWindowId,selectedCountryId:null,activeTool:null,navigation:null};return {...next,workspaceTrail:workspaceParent(s,next)};});},
-  closeWorkspace:()=>set(s=>{const parent=s.workspaceTrail.at(-1);return parent?{...parent,workspaceTrail:s.workspaceTrail.slice(0,-1)}:{selectedCountryId:null,activeTool:null,warWindowId:null,navigation:null,workspaceTrail:[]};}),
+  closeWorkspace:()=>set(s=>{
+    const trail=[...s.workspaceTrail];
+    let parent=trail.pop();
+    const available=(frame:WorkspaceFrame)=>{
+      const id=frame.selectedCountryId??(frame.navigation?.intent?intentCountry(frame.navigation.intent):undefined);
+      return !id||!!s.countries[id]&&!s.countries[id].annexedBy;
+    };
+    while(parent&&!available(parent))parent=trail.pop();
+    return parent?{...parent,workspaceTrail:trail}:{selectedCountryId:null,activeTool:null,warWindowId:null,navigation:null,workspaceTrail:[]};
+  }),
   postCredit:(kind,principal,apr,days,commandId)=>set(s=>commandWithReceipt(s,{...{type:'credit/post',kind,principal,apr,days},commandId})),
   acceptCredit:(id,commandId)=>set(s=>commandWithReceipt(s,{...{type:'credit/accept',id},commandId})),
   repayCredit:(id,commandId)=>set(s=>commandWithReceipt(s,{type:'credit/repay',id,commandId})),
@@ -195,7 +205,25 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
   readLetters:()=>set(s=>applyGameCommand(s,{type:'inbox/read',scope:'letters'})),
   openTool:(activeTool,remember=true)=>set(s=>{const next={activeTool,selectedCountryId:null,warWindowId:null,navigation:null};return {...next,workspaceTrail:workspaceParent(s,next,remember&&activeTool!==null)};}),
   actionReceipt:null,showReceipt:(actionReceipt)=>set({actionReceipt}),
-  navigation:null,navigate:(panel,countryId)=>set(s=>{const next={activeTool:['objectives','market','pulse','map','resources','sitrep','alerts','diplomacy-inbox','help','research','investment','governance','society','credit'].includes(panel)?(panel==='diplomacy-inbox'?'diplomacy':panel):null,warWindowId:null,selectedCountryId:['objectives','market','pulse','map','resources','sitrep','alerts','diplomacy-inbox','help','research','investment','governance','society','credit'].includes(panel)?null:countryId??s.playerCountryId,navigation:{panel,countryId:countryId??s.playerCountryId,nonce:(s.navigation?.nonce??0)+1},...(countryId?{mapControlCommand:{action:'focus' as const,nonce:(s.mapControlCommand?.nonce??0)+1}}:{})};return {...next,workspaceTrail:workspaceParent(s,next)};}),
+  routeWorkspace:(intent)=>{
+    const state=get();
+    const valid=(destination:WorkspaceIntent)=>{const id=intentCountry(destination);return !id||!!state.countries[id]&&!state.countries[id].annexedBy;};
+    if(!valid(intent)||(intent.returnTo&&!valid(intent.returnTo)))return false;
+    if((intent.kind==='operational-assessment'||intent.kind==='fuel-help')&&intent.targetCountryId===state.playerCountryId)return false;
+    set(s=>{
+      const nonce=(s.navigation?.nonce??0)+1;
+      const next=intentFrame(intent,s.playerCountryId,nonce);
+      let workspaceTrail=workspaceParent(s,next);
+      if(intent.returnTo){
+        const parent=intentFrame(intent.returnTo,s.playerCountryId,nonce);
+        const matches=(frame:WorkspaceFrame)=>sameDestination(frame.navigation?.intent,intent.returnTo!);
+        // A helper shortcut may skip the helper on return, but never duplicate its assessment parent.
+        if(!matches(s))workspaceTrail=s.workspaceTrail.at(-1)&&matches(s.workspaceTrail.at(-1)!)?s.workspaceTrail:[...s.workspaceTrail,parent].slice(-16);
+      }
+      return {...next,workspaceTrail};
+    });return true;
+  },
+  navigation:null,navigate:(panel,countryId)=>{if(panel==='operational-assessment'&&countryId&&countryId!==get().playerCountryId){get().routeWorkspace({kind:'operational-assessment',targetCountryId:countryId});return;}if(panel==='diplomacy-inbox'){get().routeWorkspace({kind:'diplomatic-inbox',tab:'correspondence',countryId});return;}set(s=>{const next={activeTool:['objectives','market','pulse','map','resources','sitrep','alerts','diplomacy-inbox','help','research','investment','governance','society','credit'].includes(panel)?(panel==='diplomacy-inbox'?'diplomacy':panel):null,warWindowId:null,selectedCountryId:['objectives','market','pulse','map','resources','sitrep','alerts','diplomacy-inbox','help','research','investment','governance','society','credit'].includes(panel)?null:countryId??s.playerCountryId,navigation:{panel,countryId:countryId??s.playerCountryId,nonce:(s.navigation?.nonce??0)+1},...(countryId?{mapControlCommand:{action:'focus' as const,nonce:(s.mapControlCommand?.nonce??0)+1}}:{})};return {...next,workspaceTrail:workspaceParent(s,next)};});},
   setTutorial:(step,active)=>set(s=>applyGameCommand(s,{type:'tutorial/set',step,active})),
   cancelConstruction:(id,commandId)=>set(s=>commandWithReceipt(s,{...{type:'construction/cancel',id},commandId})),
   applyMembership:(id,commandId)=>set(s=>commandWithReceipt(s,{...{type:'world/membership',id},commandId})),

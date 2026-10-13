@@ -1,3 +1,4 @@
+import {useScrollMemory} from '../windows/useScrollMemory';
 import {useWindowLifecycle,WINDOW_LAYERS} from '../windows/useWindowLifecycle';
 import {CountrySectionFrame} from './CountrySectionFrame';
 import {PowerChartIcon} from '../icons/PowerChartIcon';
@@ -56,7 +57,7 @@ function MinistryIcon({id}:{id:MinistryKey}){ if(id==='economy')return <Industry
 function PanelTabIcon({id}:{id:PanelTab}){return id==='trade'?<CivicArt kind="trade" size={26}/>:<CommandArt kind={id==='policies'?'governance':id} size={26}/>;}
 
 /** `onBrowse`: the country list inside the full panel keeps the full panel for the newly chosen country (Phase 6.1). */
-export function CountryPanel({onBrowse}:{onBrowse?:(countryId:string)=>void}={}){
+export function CountryPanel({onBrowse,suspended=false}:{onBrowse?:(countryId:string)=>void;suspended?:boolean}={}){
   const [supplyResource,setSupplyResource]=useState<TradeResource|null>(null);
   const [tab,setTab]=useState<PanelTab>('overview');
   const [expanded,setExpanded]=useState(false);
@@ -67,7 +68,7 @@ export function CountryPanel({onBrowse}:{onBrowse?:(countryId:string)=>void}={})
   const [pendingDecision,setPendingDecision]=useState<{spec:StrategicDecisionSpec;execute:()=>void}|null>(null);
   const state=useGameStore(useShallow(s=>{const {actionReceipt,saveMessage,mapControlCommand,mapZoomSensitivity,mapLabelScale,...view}=s;return view;}));
   const seenNavigation=useRef(new WeakSet<object>());
-  useEffect(()=>{if(!state.navigation||seenNavigation.current.has(state.navigation))return;seenNavigation.current.add(state.navigation);if(['overview','economy','policies','trade','production','diplomacy','military','intel','cabinet','technology','world','war'].includes(state.navigation.panel))chooseTab(state.navigation.panel as PanelTab);},[state.navigation]);
+  useEffect(()=>{if(suspended||!state.selectedCountryId||!state.navigation||seenNavigation.current.has(state.navigation))return;seenNavigation.current.add(state.navigation);if(['overview','economy','policies','trade','production','diplomacy','military','intel','cabinet','technology','world','war'].includes(state.navigation.panel))chooseTab(state.navigation.panel as PanelTab);},[state.navigation,suspended,state.selectedCountryId]);
   const language=state.playerProfile.language;
   const selected=state.countries[state.selectedCountryId ?? [...state.workspaceTrail].reverse().find(f=>f.selectedCountryId)?.selectedCountryId ?? state.playerCountryId];
   const player=state.countries[state.playerCountryId];
@@ -86,8 +87,9 @@ export function CountryPanel({onBrowse}:{onBrowse?:(countryId:string)=>void}={})
 
   useEffect(()=>setSupplyResource(null),[selected.id]);
   const panelRef=useRef<HTMLElement>(null);
-  useWindowLifecycle(panelRef,{onClose:state.closeWorkspace,layer:WINDOW_LAYERS.workspace,modal:false,backdrop:false,enabled:!!state.selectedCountryId&&!commandWindow&&!supplyResource&&!expanded});
-  return <aside ref={panelRef} className="command-panel" style={commandWindow||supplyResource||expanded||!state.selectedCountryId?{visibility:'hidden',opacity:0}:undefined}>
+  useWindowLifecycle(panelRef,{onClose:state.closeWorkspace,layer:WINDOW_LAYERS.workspace,modal:false,backdrop:false,enabled:!suspended&&!!state.selectedCountryId&&!commandWindow&&!supplyResource&&!expanded});
+  useScrollMemory(panelRef,!suspended&&!!state.selectedCountryId);
+  return <aside ref={panelRef} className="command-panel" style={suspended||commandWindow||supplyResource||expanded||!state.selectedCountryId?{visibility:'hidden',opacity:0}:undefined}>
     <div className="national-panel-heading"><div className="panel-kicker"><LocaleText value={tr(language,'state_command','STATE / NATIONAL COMMAND')}/></div><button data-guide="close-workspace" onClick={()=>state.selectCountry(null)} aria-label={translateLive("Close country panel")} title={translateLive("Return to map")}><LocaleText value={"×"}/></button></div>
     <select className="country-select" value={selected.id} onChange={(e)=>{onBrowse?.(e.target.value);state.selectCountry(e.target.value);}} aria-label={translateLive("Select country")}>{countryList.map((country)=><option key={country.id} value={country.id}><LocaleText value={country.name}/><LocaleText value={" ("}/><LocaleText value={country.iso2}/><LocaleText value={")"}/></option>)}</select>
     <div className="panel-title-row"><div className="country-title-identity"><span className="country-panel-flag"><LocaleText value={flagEmoji(selected.iso2)}/></span><div><h1><LocaleText value={selected.name}/></h1><p className="muted"><LocaleText value={isPlayer?'Player nation':'Observed nation'}/><LocaleText value={" · "}/><LocaleText value={humanize(selected.politics.regime)}/><LocaleText value={" · "}/><LocaleText value={selected.region || 'Global'}/></p></div></div>{selected.controllerCountryId&&<span className="occupation-badge"><LocaleText value={"CONTROLLED"}/></span>}</div>

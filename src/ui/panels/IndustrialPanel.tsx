@@ -1,6 +1,6 @@
 import {useWorldView} from '../../store/useWorldView';
 import {LocaleText,translateLive} from '../../i18n/localeText';
-import {useState} from 'react';
+import {useEffect,useRef,useState} from 'react';
 import {ReviewDialog} from './ReviewDialog';
 import {investmentReview,constructionRefund} from '../../engine/systems/investmentReview';
 import {AssetThumbnail} from '../icons/AssetThumbnail';
@@ -16,8 +16,15 @@ import {facilityBuildBlock} from './factoryView';
 export function IndustrialPanel({country}:{country:CountryState}){
  const [pending,setPending]=useState<FacilityKind|null>(null),[cancelId,setCancelId]=useState<string|null>(null),[detail,setDetail]=useState<FacilityKind|null>(null);
  const state=useWorldView(),n=state.industrialEconomy[country.id],own=country.id===state.playerCountryId;
+ const navigation=useGameStore(s=>s.navigation),root=useRef<HTMLElement>(null);
+ useEffect(()=>{
+  const intent=navigation?.intent;
+  if(intent?.kind!=='factory'||country.id!==state.playerCountryId)return;
+  const card=root.current?.querySelector<HTMLElement>(`[data-factory="${intent.focusedFactory}"]`);
+  card?.scrollIntoView({block:'nearest'});card?.focus({preventScroll:true});
+ },[navigation,country.id,state.playerCountryId]);
  if(!n)return null;
- return <section className="industrial-command">
+ return <section ref={root} className="industrial-command">
   <header className="industrial-heading"><IndustryIcon size={30}/><div><small><LocaleText value={"REAL ECONOMY / INDUSTRIAL DEVELOPMENT"}/></small><h3><LocaleText value={"National Industry"}/></h3><p><LocaleText value={"Invest in extraction, turn raw materials into components, secure supply through trade."}/></p></div></header>
   <div className="industrial-summary"><span><small><LocaleText value={"OPERATING COST / DAY"}/></small><b><LocaleText value={"$"}/><LocaleText value={n.lastCosts.toFixed(3)}/><LocaleText value={"B"}/></b></span><span><small><LocaleText value={"TRADE BALANCE / TOTAL"}/></small><b className={n.lastTradeBalance>=0?'positive':'negative'}><LocaleText value={"$"}/><LocaleText value={n.lastTradeBalance.toFixed(3)}/><LocaleText value={"B"}/></b></span><span><small><LocaleText value={"ACTIVE CONSTRUCTION"}/></small><b><LocaleText value={n.projects.length}/><LocaleText value={"/6"}/></b></span></div>
   {own&&state.day<state.leadership.celebrationUntilDay&&<div className="celebration-banner"><LocaleText value={"PUBLIC CELEBRATION · +12% production · "}/><LocaleText value={state.leadership.celebrationUntilDay-state.day}/><LocaleText value={" days remaining"}/></div>}
@@ -29,7 +36,7 @@ export function IndustrialPanel({country}:{country:CountryState}){
   <div className="facility-grid">{(Object.entries(FACILITIES) as Array<[FacilityKind,typeof FACILITIES[FacilityKind]]>).map(([kind,d])=>{
    const techReady=!d.tech||country.technology.unlocked.includes(d.tech),canBuild=facilityBuildBlock(state,country.id,kind)===null;
    const inputs=Object.entries(d.inputs).map(([good,amount])=>`${amount} ${GOODS[good as IndustrialGood].label}`).join(' + ');
-   return <article key={kind} className="facility-card"><header><IndustryIcon size={20}/><strong><LocaleText value={d.label}/></strong><b><LocaleText value={"×"}/><LocaleText value={n.facilities[kind]}/></b><button className="facility-details" onClick={()=>setDetail(kind)}><LocaleText value={"Details"}/></button></header><p><LocaleText value={d.description}/></p><small><LocaleText value={inputs||'Local resource potential'}/><LocaleText value={d.output?` → ${GOODS[d.output].label}`:''}/></small><div className="facility-status"><LocaleText value={n.facilities[kind]?n.enabled[kind]?(n.bottlenecks[kind]??'Ready'):'Paused':'Not built'}/></div><footer>{own&&<><button data-guide={canBuild?'learn-build':undefined} disabled={!canBuild} title={translateLive(!techReady?`Research ${d.tech}`:d.description)} onClick={()=>setPending(kind)}><LocaleText value={!techReady?'Research required':`REVIEW BUILD $${d.cost}B`}/><small><LocaleText value={d.days}/><LocaleText value={" days"}/></small></button><button disabled={!n.facilities[kind]} onClick={()=>state.toggleFacility(kind)}><LocaleText value={n.enabled[kind]?'PAUSE':'RESUME'}/></button></>}</footer></article>;
+   return <article key={kind} data-factory={kind} tabIndex={-1} className="facility-card"><header><IndustryIcon size={20}/><strong><LocaleText value={d.label}/></strong><b><LocaleText value={"×"}/><LocaleText value={n.facilities[kind]}/></b><button className="facility-details" onClick={()=>setDetail(kind)}><LocaleText value={"Details"}/></button></header><p><LocaleText value={d.description}/></p><small><LocaleText value={inputs||'Local resource potential'}/><LocaleText value={d.output?` → ${GOODS[d.output].label}`:''}/></small><div className="facility-status"><LocaleText value={n.facilities[kind]?n.enabled[kind]?(n.bottlenecks[kind]??'Ready'):'Paused':'Not built'}/></div><footer>{own&&<><button data-guide={canBuild?'learn-build':undefined} disabled={!canBuild} title={translateLive(!techReady?`Research ${d.tech}`:d.description)} onClick={()=>setPending(kind)}><LocaleText value={!techReady?'Research required':`REVIEW BUILD $${d.cost}B`}/><small><LocaleText value={d.days}/><LocaleText value={" days"}/></small></button><button disabled={!n.facilities[kind]} onClick={()=>state.toggleFacility(kind)}><LocaleText value={n.enabled[kind]?'PAUSE':'RESUME'}/></button></>}</footer></article>;
   })}</div>
   {n.projects.length>0&&<div className="construction-list">{n.projects.map(p=><div key={p.id}><strong><LocaleText value={FACILITIES[p.kind].label}/></strong><span><LocaleText value={Math.max(0,p.readyDay-state.day)}/><LocaleText value={" days to completion"}/></span>{own&&<button onClick={()=>setCancelId(p.id)}><LocaleText value={"CANCEL / REFUND"}/></button>}</div>)}</div>}
   <div className="assembly-card"><TankIcon size={30}/><div><strong><LocaleText value={"Armored Vehicle Assembly"}/></strong><p><LocaleText value={Object.entries(TANK_COMPONENTS).map(([good,amount])=>`${amount} ${GOODS[good as IndustrialGood].label}`).join(' + ')}/><LocaleText value={" → 1 vehicle"}/></p><small><LocaleText value={"Requires Armored Vehicle Assembly research plus assigned military factories, steel, fuel and power. Buy components if you cannot manufacture them locally."}/></small></div><b><LocaleText value={country.technology.unlocked.includes('mil-armor-assembly')?'RESEARCH READY':'TECH LOCKED'}/></b></div>

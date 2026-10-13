@@ -1,4 +1,5 @@
 import {useState,useRef,useEffect} from 'react';
+import {useGameStore} from '../../store/gameStore';
 import {useWorldView} from '../../store/useWorldView';
 import {translateLive} from '../../i18n/localeText';
 import {NavigationArt} from '../icons/NavigationArt';
@@ -21,6 +22,8 @@ const items=[
 ];
 export function MarketWindow() {
  const s=useWorldView();
+ const navigation=useGameStore(s=>s.navigation);
+ useEffect(()=>{if(navigation?.intent?.kind==='market')setSection(navigation.intent.tab);},[navigation]);
  const [section,setSection]=useState('open');
  const selected=s.activeTool==='exchange'?'exchange':s.activeTool==='credit'?'credit':section;
  const content=useRef<HTMLDivElement>(null);

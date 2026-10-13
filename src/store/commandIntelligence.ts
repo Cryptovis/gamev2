@@ -4,7 +4,7 @@ import {living} from '../engine/systems/livingEconomy';
 import {expansion} from '../engine/systems/sovereignCredit';
 export const ALERT_CATEGORIES=['resources','finance','security','domestic','diplomacy'] as const;
 export type AlertCategory=typeof ALERT_CATEGORIES[number];
-export interface CommandAlert {id:string;category:AlertCategory;severity:'critical'|'warning'|'info';title:string;value:string;panel:'resources'|'credit'|'military'|'society'|'diplomacy'|'economy';resource?:TradeResource}
+export interface CommandAlert {id:string;category:AlertCategory;severity:'critical'|'warning'|'info';title:string;value:string;panel:'resources'|'credit'|'military'|'society'|'diplomacy'|'diplomacy-inbox'|'economy';resource?:TradeResource}
 /** Presentation thresholds only: all reserve/credit calculations remain engine-owned. */
 export function commandAlerts(s:GameState):CommandAlert[]{
  const p=s.countries[s.playerCountryId],alerts:CommandAlert[]=[];
@@ -13,14 +13,14 @@ export function commandAlerts(s:GameState):CommandAlert[]{
  for(const loan of expansion(s).loans.filter(l=>l.borrowerId===p.id&&l.status!=='paid'&&(l.status==='arrears'||l.dueDay-s.day<=30)))alerts.push({id:loan.id,category:'finance',severity:loan.status==='arrears'?'critical':'warning',title:loan.status==='arrears'?'Loan in arrears':'Loan payment approaching',value:`${s.countries[loan.lenderId]?.name??loan.lenderId} · ${loan.dueDay}`,panel:'credit'});
  const wars=Object.values(s.wars).filter(w=>w.status==='active'&&(w.attackerId===p.id||w.defenderId===p.id));
  if(wars.length)alerts.push({id:'wars',category:'security',severity:'critical',title:'Active national wars',value:String(wars.length),panel:'military'});
- if(p.globalSanctions)alerts.push({id:'sanctions',category:'security',severity:'warning',title:'Country under sanctions',value:'',panel:'diplomacy'});
+ if(p.globalSanctions)alerts.push({id:'sanctions',category:'security',severity:'warning',title:'Country under sanctions',value:'',panel:'diplomacy-inbox'});
  if(p.military.readiness<40)alerts.push({id:'readiness',category:'security',severity:'warning',title:'Low military readiness',value:`${p.military.readiness.toFixed(0)}%`,panel:'military'});
  for(const key of ['approval','stability'] as const)if(p.politics[key]<40)alerts.push({id:key,category:'domestic',severity:p.politics[key]<25?'critical':'warning',title:key==='approval'?'Low public approval':'Low national stability',value:`${p.politics[key].toFixed(0)}%`,panel:'society'});
  if(['democracy','republic'].includes(p.politics.regime)&&p.politics.electionDaysRemaining<=30)alerts.push({id:'election',category:'domestic',severity:'info',title:'Election approaching',value:String(p.politics.electionDaysRemaining),panel:'society'});
  const pending=s.diplomaticOffers.filter(o=>o.receiverId===p.id&&o.expiresDay>=s.day).length+living(s).letters.filter(l=>l.receiverId===p.id&&l.incoming&&l.status==='pending'&&l.expiresDay>=s.day).length;
- if(pending)alerts.push({id:'offers',category:'diplomacy',severity:'info',title:'Incoming diplomatic offers',value:String(pending),panel:'diplomacy'});
+ if(pending)alerts.push({id:'offers',category:'diplomacy',severity:'info',title:'Incoming diplomatic offers',value:String(pending),panel:'diplomacy-inbox'});
  const unread=living(s).letters.filter(l=>l.receiverId===p.id&&!l.read).length+s.leadership.messages.filter(m=>!m.read).length;
- if(unread)alerts.push({id:'messages',category:'diplomacy',severity:'info',title:'Unread diplomatic messages',value:String(unread),panel:'diplomacy'});
+ if(unread)alerts.push({id:'messages',category:'diplomacy',severity:'info',title:'Unread diplomatic messages',value:String(unread),panel:'diplomacy-inbox'});
  const order={critical:0,warning:1,info:2};return alerts.sort((a,b)=>order[a.severity]-order[b.severity]);
 }
 /** The six campaign goals shown on the GOALS rail and in the Help briefing. Pure reads of the state. */

@@ -15,6 +15,10 @@ const pauseOwners = new Set<Entry>();
 
 function sorted() {return [...entries].sort((a,b)=>layerOrder.indexOf(a.layer)-layerOrder.indexOf(b.layer)||a.order-b.order);}
 function top() {return sorted().at(-1);}
+/** Backdrops may dismiss only the layer that currently owns Escape. */
+export function ownsWindowDismissal(dialog: HTMLElement | null) {
+ const entry=top();return !!entry && entry.dialog===dialog && entry.dismissible;
+}
 function refreshLayers() {
  const ranks = new Map<WindowLayer,number>();
  for (const entry of sorted()) {
@@ -62,6 +66,7 @@ export function useWindowLifecycle(ref:RefObject<HTMLElement|null>, {
  const active = useRef<Entry|null>(null);
  // Capture the opener before React hides its parent during the commit.
  const initialFocus = useRef(typeof document==='undefined'?null:document.activeElement as HTMLElement|null);
+ const lastFocus = useRef<HTMLElement|null>(null);
  const enabledNow = useRef(enabled);enabledNow.current=enabled;
  useEffect(()=>{
   const dialog=ref.current;if(!enabled||!dialog)return;
@@ -70,15 +75,21 @@ export function useWindowLifecycle(ref:RefObject<HTMLElement|null>, {
   active.current=entry;
   if (!entries.size) document.addEventListener('keydown',handleKey,true);
   entries.add(entry);refreshLayers();
+  const rememberFocus=(event:FocusEvent)=>{if(event.target instanceof HTMLElement)lastFocus.current=event.target;};
+  dialog.addEventListener('focusin',rememberFocus);
   if (pause) {
    if (pausedSpeed===undefined) pausedSpeed=useGameStore.getState().speed;
    pauseOwners.add(entry);
    if (!stopWatching) stopWatching=useGameStore.subscribe(resumeWhenReleased);
    useGameStore.getState().setSpeed(0);
   }
-  if (top()===entry&&!dialog.contains(document.activeElement)) focusFirst(entry);
+  if (top()===entry&&!dialog.contains(document.activeElement)) {
+   if(lastFocus.current?.isConnected&&dialog.contains(lastFocus.current)&&lastFocus.current.getClientRects().length)lastFocus.current.focus({preventScroll:true});
+   else focusFirst(entry);
+  }
   return ()=>{
    const wasTop=top()===entry;
+   dialog.removeEventListener('focusin',rememberFocus);
    entries.delete(entry);pauseOwners.delete(entry);active.current=null;refreshLayers();resumeWhenReleased();
    if (!entries.size) document.removeEventListener('keydown',handleKey,true);
    if (wasTop&&enabledNow.current) {

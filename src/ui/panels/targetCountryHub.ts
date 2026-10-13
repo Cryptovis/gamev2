@@ -4,6 +4,7 @@
  * check that enables it. Nothing here computes simulation numbers; costs, eligibility and stances come from
  * the same engine functions DiplomacyPanel uses, so the hub and the Full Dossier can never disagree.
  */
+import type { WorkspaceIntent } from '../../store/workspaceNavigation';
 import type { GameCommand } from '../../domain/commands';
 import type { GameState } from '../../domain/game';
 import type { StrategicActionKind } from '../../domain/interaction';
@@ -63,11 +64,13 @@ const AID_AMOUNTS = [1, 5, 10] as const;
 
 /** Which workspace a country selection opens: the hub for foreign states, the full panel for the player and for tab requests. */
 export function workspaceForSelection(
-  state: Pick<GameState, 'playerCountryId'> & { selectedCountryId?: string | null; navigation?: { countryId: string } | null },
+  state: Pick<GameState, 'playerCountryId'> & { selectedCountryId?: string | null; navigation?: { countryId: string; intent?: WorkspaceIntent } | null },
   selectedId: string | null | undefined,
   dossierFor: string | null,
 ): 'none' | 'panel' | 'hub' {
   if (!selectedId) return 'none';
+  const kind = state.navigation?.intent?.kind;
+  if (state.selectedCountryId === selectedId && ['country-hub', 'country-info', 'operational-assessment'].includes(kind ?? '')) return 'hub';
   if (selectedId === state.playerCountryId) return 'panel';
   if (dossierFor === selectedId) return 'panel';
   // Another window asked for a specific tab of this country (e.g. "open partner diplomacy"): honour it.

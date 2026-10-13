@@ -1,6 +1,7 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { LocaleText, translateLive } from '../../i18n/localeText';
 import { flagEmoji } from '../../data/countryThemes';
+import { useGameStore } from '../../store/gameStore';
 import { useWorldView } from '../../store/useWorldView';
 import { money } from '../formatMoney';
 import { DraggableWindow } from '../windows/DraggableWindow';
@@ -32,6 +33,8 @@ function Countdown({ value, kind }: { value: DeskCountdown; kind: 'expiry' | 're
 export function ExecutiveDesk({ onClose }: { onClose: () => void }) {
   const state = useWorldView();
   const [tab, setTab] = useState<DeskTab>('diplomacy');
+  const navigation = useGameStore(s => s.navigation);
+  useEffect(() => { if (navigation?.intent?.kind === 'diplomatic-inbox' && navigation.intent.tab === 'offers') setTab('diplomacy'); }, [navigation]);
   const [review, setReview] = useState<DeskOffer | null>(null);
   const counts = useMemo(() => deskCounts(state), [state]);
   const offers = useMemo(() => deskOffers(state), [state]);

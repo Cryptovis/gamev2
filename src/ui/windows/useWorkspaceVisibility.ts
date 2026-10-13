@@ -6,6 +6,7 @@ export function useWorkspaceVisibility() {
   const tool = useGameStore(s => s.activeTool);
   const country = useGameStore(s => s.selectedCountryId);
   const war = useGameStore(s => s.warWindowId);
-  const owner = useRef({activeTool:tool, selectedCountryId:country, warWindowId:war});
-  return workspaceVisible(owner.current,{activeTool:tool,selectedCountryId:country,warWindowId:war});
+  const navigation = useGameStore(s => s.navigation);
+  const owner = useRef({activeTool:tool, selectedCountryId:country, warWindowId:war,navigation});
+  return workspaceVisible(owner.current,{activeTool:tool,selectedCountryId:country,warWindowId:war,navigation});
 }

@@ -1,5 +1,5 @@
 import {useWorldView} from '../../store/useWorldView';
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useGameStore } from "../../store/gameStore";
 import { LocaleText,translateLive } from "../../i18n/localeText";
 import {
@@ -31,6 +31,13 @@ export function OpenExchange() {
     [review, setReview] = useState<
       (ReviewContent & { execute: (commandId:string) => void; allowed?: boolean }) | null
     >(null);
+  const navigation=useGameStore(s=>s.navigation),root=useRef<HTMLElement>(null);
+  useEffect(()=>{
+    const intent=navigation?.intent;
+    if(intent?.kind!=='market'||!intent.focusedGood)return;
+    setGood(intent.focusedGood);setReview(null);
+    root.current?.querySelector<HTMLButtonElement>(`[data-good="${intent.focusedGood}"]`)?.focus({preventScroll:true});
+  },[navigation]);
   const reference = exchangePrice(s, good),
     price = ask || reference,
     offers = l.listings
@@ -47,7 +54,7 @@ export function OpenExchange() {
   const money=(value:number)=>formatMoney(value,s.playerProfile.language);
   const displayLabel=(g:ExchangeGood)=>{const text=translateLive(label(g));return text.charAt(0).toLocaleUpperCase(s.playerProfile.language)+text.slice(1).toLocaleLowerCase(s.playerProfile.language);};
   return (
-    <section className="open-exchange">
+    <section ref={root} className="open-exchange">
       <header>
         <h3>
           <LocaleText value="Open Market & Precious Metals" />
@@ -60,7 +67,7 @@ export function OpenExchange() {
         {EXCHANGE_GOODS.map((g) => (
           <button
             className={g === good ? "active" : ""}
-            key={g}
+            key={g} data-good={g}
             onClick={() => {
               setGood(g);
               setAsk(0);

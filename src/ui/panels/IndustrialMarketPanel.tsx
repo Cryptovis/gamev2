@@ -1,10 +1,11 @@
+import {useGameStore} from '../../store/gameStore';
 import {activeCountries} from '../../domain/sovereignty';
 import {OpenExchange} from './OpenExchange';
 import {money} from '../formatMoney';
 import {LocaleText,translateLive} from '../../i18n/localeText';
 import {AssetThumbnail} from '../icons/AssetThumbnail';
 import {ReviewDialog} from './ReviewDialog';
-import {useState} from 'react';
+import {useEffect,useRef,useState} from 'react';
 import type {IndustrialGood} from '../../domain/industrial';
 import {GOODS} from '../../data/industrialCatalog';
 import {goodStock} from '../../engine/systems/industrialEconomy';
@@ -17,13 +18,20 @@ export function IndustrialMarketPanel({contractsOnly=false}:{contractsOnly?:bool
  const [cancelId,setCancelId]=useState<string|null>(null);
  const state=useWorldView(),player=state.countries[state.playerCountryId];
  const [good,setGood]=useState<IndustrialGood>('water'),[partner,setPartner]=useState(''),[direction,setDirection]=useState<'buy'|'sell'>('buy'),[quantity,setQuantity]=useState(5),[years,setYears]=useState<0|1|3|5|10>(0),[review,setReview]=useState(false);
+ const navigation=useGameStore(s=>s.navigation),root=useRef<HTMLElement>(null);
+ useEffect(()=>{
+  const intent=navigation?.intent;
+  if(intent?.kind!=='market'||!intent.focusedGood)return;
+  setGood(intent.focusedGood);setReview(false);setPartner('');
+  root.current?.querySelector<HTMLButtonElement>(`[data-good="${intent.focusedGood}"]`)?.focus({preventScroll:true});
+ },[navigation]);
  const eligible=activeCountries(state.countries).filter(c=>canTradeIndustrial(state,direction==='buy'?c.id:player.id,direction==='buy'?player.id:c.id,good));
  const target=eligible.find(c=>c.id===partner)??eligible[0];
  const sellerId=direction==='buy'?target?.id??'':player.id,buyerId=direction==='buy'?player.id:target?.id??'';
  const quote=industrialQuote(state,sellerId,buyerId,good,quantity);
  const contracts=Object.values(state.industrialContracts).filter(c=>c.active&&(c.sellerId===player.id||c.buyerId===player.id));
  const error=target?industrialOrderError(state,target.id,good,quantity,direction,years):quote.error;
- return <section className="industrial-market supply-contract-panel">
+ return <section ref={root} className="industrial-market supply-contract-panel">
   {!contractsOnly&&<><SupplierFinder/><OpenExchange/></>}<details className="legacy-exchange" open={contractsOnly||undefined}><summary><LocaleText value="Direct partner shipments & recurring contracts"/></summary><header className="industrial-heading"><IndustryIcon size={27}/><div><small><LocaleText value={"COMMODITIES / COMPONENTS / DEFENSE"}/></small><h3><LocaleText value={"Industrial Exchange"}/></h3><p><LocaleText value={"Buy supplies or sell reserves. Every shipment transfers real stock and treasury."}/></p></div></header>
   <div className="exchange-board">{(Object.entries(GOODS) as Array<[IndustrialGood,typeof GOODS[IndustrialGood]]>).map(([id,d])=>{
    const stock=goodStock(state,player.id,id),level=stock===0?'critical':stock<d.reserve?'low':'ready';
