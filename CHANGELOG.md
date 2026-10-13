@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.90.0-playtest.16 — Executive desk (Phase 6.2)
+Implementation: **Claude (Opus 5.5)**. Branch: `dev/ron-living-world-0915`. Save schema 17, simulation and game numbers unchanged; dependencies unchanged. No new engine rule: proposals still expire exactly as before (no relation penalty).
+
+- **One desk for what needs an answer.** A new Desk button tops the right rail (badge: proposals awaiting your answer) and opens three tabs: ✉️ Diplomacy, 🪖 Wars, 🕵️ Intelligence & crises.
+- **Countdown on every proposal.** Incoming embassy and trade proposals show "Time left: X days ⏳" from their existing expiry day, soonest first; three days or fewer is urgent (red), day 0 reads "Last day". Each card shows both sides' share of the setup fee.
+- **Decide on the card.** Decline is immediate and free; Accept opens the familiar shared-fee review. Both send the existing typed `diplomacy/resolveLetter` command, with the usual receipt.
+- **Wars and operations.** Your wars with the front from your side and a direct Open war command button; your running operations with days until the result.
+- **Reports about you.** Each tab lists up to 12 categorised reports from your own commands, offers, wars, events and crises, or naming your country; AI-to-AI treaties and foreign elections stay in News.
+- **Translations** for all desk labels and countdowns in five languages, ten news categories that had none, and the previously untranslated "proposal received" notice. Right-rail icon colours now follow each tool instead of its position. [Phase 6.2 record](docs/EXECUTIVE-DESK-0916.md).
+
+Validation: 729 unit tests / 87 files (714 earlier + 15 desk tests), TypeScript and production build passed; the 365-day long-run invariant passes. All 170 production-browser scenarios passed on GitHub-hosted Chromium (168 earlier + 2 desk scenarios at 1440 px Turkish and 390 px English; CI 38376708485). Playwright failures are now also reported as GitHub check-run annotations. Not run on StackBlitz: the npm registry is blocked in this session.
+
 ## 0.90.0-playtest.15 — Target-country diplomatic hub (Phase 6.1)
 Implementation: **Claude (Opus 5.5)**. Branch: `dev/ron-living-world-0915`. Save schema 17, simulation and game numbers unchanged; dependencies unchanged.
 

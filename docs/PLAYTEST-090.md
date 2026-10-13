@@ -202,3 +202,17 @@ Validation: 714 unit tests / 86 files (699 earlier + 15 hub tests), TypeScript a
 4. Press Full Dossier: the familiar panel opens for France; switching to Greece in its country list keeps the panel. Close, click France again: the hub returns. Your own flag still opens the full panel.
 5. Repeat at phone width and in Turkish: two columns, no sideways scrolling, Turkish labels ("Tam Dosya", "Casusluk Operasyonu").
 
+## 0.90.0-playtest.16 — Executive desk (Claude, Phase 6.2)
+
+Phase 6.2. Save schema 17, simulation and game numbers unchanged; no file under `src/engine`, `src/domain`, `src/persistence` or `src/map` changed; no new expiry penalty. Evidence: [Phase 6.2 record](EXECUTIVE-DESK-0916.md).
+
+Validation: 729 unit tests / 87 files (714 earlier + 15 desk tests), TypeScript and production build passed; the 365-day long-run invariant passes. All 170 production-browser scenarios passed on GitHub-hosted Chromium (168 earlier + 2 desk scenarios at 1440 px Turkish and 390 px English; CI 38376708485). Playwright failures are now also reported as GitHub check-run annotations. Not run on StackBlitz: the npm registry is blocked in this session.
+
+### Manual acceptance route
+
+1. Play until a foreign proposal arrives (or wait for the 14-day offer check): the Desk button at the top of the right rail shows a badge.
+2. Open the Desk: the proposal shows the sender, "Time left: X days ⏳", the message and both fee shares. Let one run down to three days: the card and chip turn red; on its last day the chip reads "Last day"; the next day it is gone.
+3. Accept a proposal: the shared-fee review appears, then the receipt; the agreement is active in the partner's Full Dossier and the badge drops. Decline another: no money is spent.
+4. Declare a war and open the Wars tab: the war is listed with the front from your side; Open war command works. Launch an operation: it appears under Intelligence & crises with days until the result.
+5. Check the reports under each tab: AI-to-AI treaties and foreign elections are not listed (they remain in News). Repeat at phone width (with no country panel open) and in Turkish.
+

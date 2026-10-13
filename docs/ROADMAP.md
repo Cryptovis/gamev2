@@ -224,3 +224,7 @@ Delivered Phase 5: a central Howler.js sound service (interface, battle and ambi
 
 Delivered package 6.1 of the Living World & Executive handoff (Alper, 13 October 2026), a visual/UX track on branch `dev/ron-living-world-0915`; the Closed Beta acceptance step above keeps its own authorization. Foreign countries open a diplomatic hub with eight typed actions and a Full Dossier link. Remaining in this track: 6.2 executive inbox with expiring requests (needs an engine rule, Alper's decision on save fields), 6.3 hillshade map with desk tilt and capital pins, 6.4 card-based policies, factory detail and operation posters. [Evidence](TARGET-HUB-0915.md).
 
+## 0.90.0-playtest.16 — Executive desk (Claude)
+
+Delivered package 6.2 under Alper's decision to keep the engine unchanged: an executive desk over the existing letters (expiry), wars, operations and journal, with Accept/Decline through the typed `diplomacy/resolveLetter` command. Not implemented by decision: relation penalties for unanswered requests. Remaining in this track: 6.3 hillshade map with desk tilt and capital pins, 6.4 card-based policies, factory detail and operation posters (and a decision on folding the Diplomatic Inbox, Alerts and News windows into the desk). [Evidence](EXECUTIVE-DESK-0916.md).
+
