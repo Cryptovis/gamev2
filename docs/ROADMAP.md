@@ -236,3 +236,7 @@ Delivered package 6.3 of the Living World & Executive handoff: a Natural Earth h
 ## 0.90.0-playtest.18 — Card UI and factory modal (Claude)
 
 Delivered package 6.4 of the Living World & Executive handoff: a six-card Policies & Laws grid built from the existing tax policy and faction concessions, and a plain factory modal with an original drawing, two rows and a Limit Reached badge; engine, domain and saves unchanged. Remaining for 6.4: screenshots at 1440 (tr) and 390 (en), Alper's confirmation of the law names, and the optional operation poster cards (not started). Remaining in the track: the 6.3 relief frame-cost measurement; folding the Diplomatic Inbox, Alerts and News into the Executive Desk stays a separate decision.
+
+## 0.90.0-playtest.19 — Living world polish (Claude)
+
+Delivered package 6.5: live change counters in the top bar, swords and megaphone event pins on the map, a mood glow on the commander portrait, and the optional poster-style covert operations (B.4); engine, domain and saves unchanged. Remaining: screenshots at 1440 (tr) and 390 (en), Alper's judgement of the visual strength, the 6.3 relief frame-cost measurement; strikes as a separate engine state (the megaphone reads stability and regime crises only).

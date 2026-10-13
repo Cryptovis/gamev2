@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.90.0-playtest.19 — Living world polish (Phase 6.5)
+Implementation: **Claude (Sonnet 5.5)**. Branch: `dev/ron-living-world-0915`. Save schema 17, simulation and game numbers unchanged; no file under `src/engine`, `src/domain` or `src/persistence` changed; dependencies unchanged. Everything shown is read from state the engine already keeps.
+
+- **Live change counters** in the top bar: treasury (the strategic daily balance), food and oil (production minus consumption), each as an arrow, a signed amount and "/day" (▲ +$1.2B/day, ▼ -0.4/day); green up, red down, grey when flat. Colour is never the only signal: arrow shape, sign and a spoken word for screen readers.
+- **Map event pins.** Crossed swords at the middle of the two capitals of every active war (yours first, at most 12) and a megaphone above the capital of a country in domestic trouble (open regime crisis or stability under 30; at most 12). Clicking a swords pin opens the war window, a megaphone pin the country's hub. Pins pulse gently unless reduced motion is on.
+- **Commander portrait mood.** A red alert glow in a war, a regime crisis or stability under 30; a gold glow at 70% approval and 60% stability or more; plain otherwise. The portrait button also carries the words "Crisis alert" or "Prosperity" for screen readers.
+- **Covert operations as 3:4 poster cards** in the Full Dossier's Intelligence tab (the optional B.4): the same four buttons and commands, drawn as posters. [Phase 6.5 record](docs/LIVING-WORLD-0919.md).
+- No existing test changed.
+
+Validation: 813 unit tests / 90 files (793 earlier + 20 living world tests; counted from the test sources, because the CI log was not readable here), TypeScript and production build passed; the 365-day long-run invariant passes. All 186 production-browser scenarios passed on GitHub-hosted Chromium (180 earlier + 6 living world scenarios; CI 38408670761). The first run (38406424038) passed 182 of 186: my live counters used 9 px arrows (the 10 px text floor) and widened the Russian top bar to 803 px (limit 780); both fixed in the code, no test changed. Nothing ran locally: the npm registry is unreachable in this session, so GitHub Actions was the verifier. Screenshots and the visual judgement are still to do.
+
 ## 0.90.0-playtest.18 — Card UI and factory modal (Phase 6.4)
 Implementation: **Claude (Sonnet 5.5)**. Branch: `dev/ron-living-world-0915`. Save schema 17, simulation and game numbers unchanged; no file under `src/engine`, `src/domain`, `src/persistence` or `src/map` changed; dependencies unchanged. There is still no laws system in the engine: the cards are presentation names for the existing tax policy and faction concessions.
 

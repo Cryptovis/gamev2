@@ -243,3 +243,18 @@ Validation: 793 unit tests / 89 files (762 earlier + 31 card UI tests; counted f
 2. Press Adjust on the Tax Code: the slider below is focused. Open a foreign country's Full Dossier → Policies: the same six cards, no buttons.
 3. Production tab: open Details on a facility you own. The modal shows the drawing, a ×count chip and two rows. With six construction projects "Limit Reached" shows and Build another is disabled with its reason. Pause turns into Resume.
 4. Repeat in Turkish and at 390 px (no sideways scrolling). Judge the drawings, the card colours and the law names.
+
+## 0.90.0-playtest.19 — Living world polish (Claude, Phase 6.5)
+
+Phase 6.5. Save schema 17, simulation and game numbers unchanged; no file under `src/engine`, `src/domain` or `src/persistence` changed. Evidence: [Phase 6.5 record](LIVING-WORLD-0919.md).
+
+Validation: 813 unit tests / 90 files (793 earlier + 20 living world tests; counted from the test sources, because the CI log was not readable here), TypeScript and production build passed; the 365-day long-run invariant passes. All 186 production-browser scenarios passed on GitHub-hosted Chromium (180 earlier + 6 living world scenarios; CI 38408670761). The first run (38406424038) passed 182 of 186: my live counters used 9 px arrows (the 10 px text floor) and widened the Russian top bar to 803 px (limit 780); both fixed in the code, no test changed. Nothing ran locally: the npm registry is unreachable in this session, so GitHub Actions was the verifier. Screenshots and the visual judgement are still to do.
+
+### Manual acceptance route
+
+1. Look at the top bar next to the commander name: Treasury, Food and Oil each show an arrow, a signed amount and "/day". Let a few days pass: the arrows follow the sign. Hover the strip for its meaning.
+2. Declare a war (or load a save with one): the portrait turns red, "Crisis alert" is read out, and crossed swords appear between the two capitals on the map. Click them: the war window opens.
+3. Find a country with stability under 30 or an open regime crisis (the Full Dossier's Politics section): a megaphone appears above its capital; click it to open that country's hub.
+4. With approval of 70% or more and stability of 60% or more and no war the portrait glows gold.
+5. Full Dossier of a foreign country → Intelligence: four poster cards (Gather Intelligence, Influence Campaign, Sabotage Industry, Counter Network) at 3:4; they start the same operations as before.
+6. Repeat in Turkish and Russian and at 390 px. Judge whether the strip crowds the top bar, the glow strength, and whether the pins collide with the capital pins.
