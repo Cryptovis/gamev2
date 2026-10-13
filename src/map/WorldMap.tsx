@@ -6,6 +6,8 @@ import {boundPan,clampZoom,wheelZoomFactor,zoomAtPoint} from './cameraControls';
 import {GeographicSurface} from './GeographicSurface';
 import {useMapDesk} from '../presentation/mapDeskSettings';
 import {toViewBox,untilt} from './deskTilt';
+import {capitalPins} from './capitalPins';
+import {flagEmoji} from '../data/countryThemes';
 import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { geoArea, geoDistance, geoGraticule10, geoNaturalEarth1, geoOrthographic, geoPath } from 'd3-geo';
 import { countryMapAnchor, microstateVisible, nearestMapMarker, type MapPoint } from './mapCoordinates';
@@ -83,7 +85,7 @@ function WorldMapView() {
   const zoomSensitivity=useGameStore(s=>s.mapZoomSensitivity);
   const labelScale = useGameStore((s) => s.mapLabelScale);
   const [surfaceReady,setSurfaceReady]=useState(false);
-  const reliefOn=useMapDesk(s=>s.relief);
+  const reliefOn=useMapDesk(s=>s.relief),pinsOn=useMapDesk(s=>s.pins);
   const mapMode = useGameStore((s) => s.mapMode);
   const mapPresentation = useGameStore((s) => s.mapPresentation);
   const projectionMode = useGameStore((s) => s.mapProjection);
@@ -192,6 +194,9 @@ function WorldMapView() {
   },[projection,projectionMode,rotation,flatPan,flatZoom]);
   const mapZoom=projectionMode==='globe'?globeZoom:flatZoom;
   const globeCenter:MapPoint=[-rotation[0],-rotation[1]];
+  // Capital pins (playtest.17): which pins to draw is decided by the pure capitalPins(); the layer below only renders them.
+  const embassyPartners=useMemo(()=>connectionIndex(playerCountryId,{},{},embassies).embassyPartners,[playerCountryId,embassies]);
+  const pins=useMemo(()=>pinsOn?capitalPins({countries,playerCountryId,selectedCountryId,hovered,project:flightProjector,zoom:mapZoom,flat:projectionMode==='flat',embassyPartners}):[],[pinsOn,countries,playerCountryId,selectedCountryId,hovered,flightProjector,mapZoom,projectionMode,embassyPartners]);
   const visibleMarkers=Object.entries(MICROSTATE_POINTS).flatMap(([id,position])=>{
     if(!countries[id]||countries[id].annexedBy||!microstateVisible(mapZoom,projectionMode==='flat',id===selectedCountryId,id===hovered,id===playerCountryId))return [];
     if(projectionMode==='globe'&&geoDistance(position,globeCenter)>Math.PI/2)return [];
@@ -443,6 +448,19 @@ function WorldMapView() {
         <radialGradient id="globe-atmosphere"><stop offset=".9" stopColor="#7fb8d4" stopOpacity="0"/><stop offset=".945" stopColor="#8fc4dc" stopOpacity=".26"/><stop offset="1" stopColor="#8fc4dc" stopOpacity="0"/></radialGradient>
         <radialGradient id="globe-shade" cx=".38" cy=".32" r=".72"><stop offset="0" stopColor="#fff6dc" stopOpacity=".07"/><stop offset=".55" stopColor="#000" stopOpacity="0"/><stop offset="1" stopColor="#01070c" stopOpacity=".38"/></radialGradient>
         <pattern id="terrain-coastal" width="18" height="18" patternUnits="userSpaceOnUse"><rect width="18" height="18" fill="#53796c"/><path d="M0 5c5 3 9-3 18 0M0 12c6 3 11-2 18 0" fill="none" stroke="#8fb6a8" strokeOpacity=".26"/></pattern>
+        {/* Original miniature capitol (domed, columned front) for the capital pins. Three flat colours, 1 px dark outline. */}
+        <symbol id="capital-building" viewBox="0 0 14 14">
+          <g stroke="#1b2a33" strokeWidth=".9" strokeLinejoin="round">
+            <rect x="1" y="11.6" width="12" height="1.9" fill="#b8ab8a"/>
+            <rect x="2.2" y="7.6" width="9.6" height="4" fill="#efe6cf"/>
+            <path d="M11.8 7.6l1.2.9v3.1l-1.2 0z" fill="#b8ab8a"/>
+            <path d="M1.4 7.6 7 4.7l5.6 2.9z" fill="#b8ab8a"/>
+            <path d="M4.6 4.7a2.4 2.4 0 0 1 4.8 0z" fill="#d9ad48"/>
+          </g>
+          <path d="M4.3 8.3v3M6.1 8.3v3M7.9 8.3v3M9.7 8.3v3" stroke="#b8ab8a" strokeWidth=".8" fill="none"/>
+          <path d="M7 .8v1.5" stroke="#1b2a33" strokeWidth=".8"/>
+        </symbol>
+        <clipPath id="capital-flag-clip"><circle r="7" cy="-22"/></clipPath>
       </defs>
       {projectionMode === 'flat' && <rect x="0" y="0" width={W} height={H} className="flat-ocean"/>}
       {projectionMode === 'globe' && <>
@@ -456,6 +474,13 @@ function WorldMapView() {
       </g>
       {reliefOn&&<g className={`relief-layer ${photographic?'over-surface':''}`} pointerEvents="none"><GeographicSurface variant="relief" src={RELIEF_SRC} projection={projection} flat={projectionMode==='flat'} pan={flatPan} zoom={flatZoom} onReady={noop}/></g>}
       {projectionMode === 'globe' && <circle cx={W/2} cy={H/2+8} r={286*globeZoom} fill="url(#globe-shade)" className="globe-shade" pointerEvents="none"/>}
+      {pinsOn&&<g className="capital-pin-layer" pointerEvents="none" aria-hidden="true">
+        {pins.map(pin=>{const iso2=countries[pin.id]?.iso2??'';return <g key={pin.id} className={`capital-pin role-${pin.role}`} transform={`translate(${pin.x},${pin.y}) scale(${pin.scale})`} data-capital={pin.id}>
+          <use href="#capital-building" x={-7} y={-14} width={14} height={14}/>
+          <circle className="capital-flag-ring" cy={-22} r={8}/>
+          {iso2.length===2&&<text className="capital-flag" y={-18.5} textAnchor="middle" clipPath="url(#capital-flag-clip)">{flagEmoji(iso2)}</text>}
+        </g>;})}
+      </g>}
       <g className="screen-label-layer" pointerEvents="none">
         {screenLabels.map(label=><g key={label.id}><text x={label.x} y={label.y} className={label.className} style={{fontSize:label.fontSize}}><LocaleText value={label.text}/></text>{mapMode==='resources'&&countries[label.id]&&dominantResources(countries[label.id],industrialEconomy[label.id]).map((r,index,all)=><ResourceMapBadge key={r} resource={r} x={label.x+(index-(all.length-1)/2)*27-11} y={label.y+7}/>)}</g>)}
       </g>

@@ -14,3 +14,17 @@
 .world-map.desk-tilt::before{/* soft desk edge shadow at the top */content:"";position:absolute;inset:0 0 auto 0;height:90px;pointer-events:none;background:linear-gradient(#000a,#0000);z-index:1}
 @media (max-width:760px){.world-map.desk-tilt .strategy-svg{transform:none}}
 @media (prefers-reduced-motion:reduce){.world-map.desk-tilt .strategy-svg{transition:none}}
+
+/* Capital pins: miniature capitol plus a round flag. Decorative; a click lands on the country polygon underneath.
+   Role colours (ring): player gold, ally green, enemy red, partner blue, other ivory; the selected capital gets a brighter, thicker ring.
+   The pins are drawn in screen space inside the SVG, so with the desk tilt they lean back with the map. They are deliberately NOT counter-rotated:
+   a CSS rotateX on an SVG child has no 3D context in Chromium and flattens to a 2D scale, and the foreshortening of a 30 px pin is about 5%. */
+.capital-pin-layer,.capital-pin{pointer-events:none}
+.capital-flag-ring{fill:#10222c;stroke:#efe6cf;stroke-width:1.5}
+.capital-flag{fill:#efe6cf;stroke:none;font-size:11.5px;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;user-select:none}
+.capital-pin.role-player .capital-flag-ring{stroke:#e7c35a}
+.capital-pin.role-selected .capital-flag-ring{stroke:#f5e3a1;stroke-width:2}
+.capital-pin.role-ally .capital-flag-ring{stroke:#3fa66b}
+.capital-pin.role-enemy .capital-flag-ring{stroke:#d0533e}
+.capital-pin.role-partner .capital-flag-ring{stroke:#5a9fd0}
+.capital-pin.role-other .capital-flag-ring{stroke:#efe6cf}
