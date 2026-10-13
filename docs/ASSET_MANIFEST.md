@@ -52,4 +52,4 @@ Hand-written SVG tiles (48 × 48), one per battlefield terrain: `plains.svg`, `f
 Drawn at runtime as inline SVG (`src/ui/panels/BattleFxLayer.tsx`, `src/ui/styles/battleFx.css`); no image files.
 
 ### Library
-Howler.js 2.2.4 (MIT, © James Simpson / GoldFire Studios), loaded on the first user interaction.
+Howler.js 2.2.4 (MIT, © James Simpson / GoldFire Studios), bundled with the app; sounds are created only after the first user interaction.

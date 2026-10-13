@@ -22,6 +22,7 @@ Owner: **Claude (Opus 5.5)**. 13 October 2026. Base: playtest.13, GitHub `37a1ec
 - **Library:** Howler.js 2.2.4 (MIT) and `@types/howler` 2.2.13 (MIT, dev). The npm registry is blocked in this session, so the lockfile was produced by npm on a GitHub-hosted runner (`measure/lock-howler`, run 38319516957). The reviewed diff adds exactly these two packages, with no transitive dependencies, from registry.npmjs.org with sha512 integrity.
 - **Cues** (each played at most once per event id): war alarm when a war involving the player starts (not for wars already in a loaded save); radio report per resolved round of a player war; capture or group-lost when the player's war ends; artillery fire with impact (hit) or distant impact (miss), capture and group lost during step replay; click and confirm sounds for buttons, tabs and selectors. Ambience: command loop in peacetime, war loop while the player is at war, with a 1.5 s fade.
 - **Settings** (`trp-audio-v1` in this browser): mute, master 80%, interface 60%, battle and radio 80%, ambience 35%, low effects off. Malformed values fall back to the defaults. Settings are never written to a save.
+- **Bundle:** Howler adds 36 kB (9.6 kB gzip) to the main script; no module is downloaded when a menu is clicked (guarded by `commandCredit0904`).
 - **Files:** 11 sounds × (WebM/Opus + MP3) = 1.3 MB, loaded only when first played.
 
 ## 2. Battle effects and terrain
@@ -39,4 +40,4 @@ Owner: **Claude (Opus 5.5)**. 13 October 2026. Base: playtest.13, GitHub `37a1ec
 
 ## 4. Validation
 
-See CHANGELOG and PLAYTEST-090 for the release validation of this branch.
+699 unit tests / 85 files, TypeScript and production build passed; the 365-day long-run invariant passes. All 165 production-browser scenarios passed on GitHub-hosted Chromium (162 earlier + 3 Phase 5 specs: sound options with every sound file blocked, recorded-effect replay and low-effects summary, reduced motion; CI 38323118652 and the full Measure suite on the release tree). The war-balance measurement is line-for-line identical to playtest.13 (`measure/war-av-0914`). Not run on StackBlitz: the npm registry is blocked in this session.

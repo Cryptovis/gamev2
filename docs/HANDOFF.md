@@ -1,5 +1,12 @@
 # Devir notu (yeni konuşma için)
 
+## 0.90.0-playtest.14 — Faz 5 (Claude Opus 5.5)
+
+- Ses: `src/audio/audioService.ts` (Howler.js 2.2.4, MIT; ana pakette, ilk tıklama/tuşa kadar ses yok), UI/savaş/ambiyans + ana ses + sessiz, en fazla 4 eşzamanlı ses, olay kimliğiyle tek çalma, yükleme hatasında sessiz devam. Ayarlar `trp-audio-v1` (tarayıcıda, kayda girmez). `AudioDirector` store'u yalnızca okur.
+- Efektler: `src/presentation/battleEffects.ts` saf; yalnızca `TacticalRoundEvent.actions`. `BattleFxLayer` SVG; 4× oynatma, 5× saat, düşük efekt veya azaltılmış harekette tur özeti. Arazi SVG karoları. Motor/RNG/kayıt kodu değişmedi; savaş ölçümü playtest.13 ile satır satır aynı.
+- Varlıklar özgün: sesler `docs/audio/synthesize_audio.py` ile sentezlendi; hepsi `docs/ASSET_MANIFEST.md`'de. Kanıt: [AUDIOVISUAL-0914](AUDIOVISUAL-0914.md).
+- Lockfile npm registry kapalı olduğu için GitHub runner'da üretildi (`measure/lock-howler`); diff incelendi: yalnızca howler ve @types/howler. Faz 6 (Closed Beta kabul) başlamadı.
+
 ## 0.90.0-playtest.13 — Faz 4 (Claude Opus 5.5)
 
 - Hava/deniz görev grupları (`taskGroups.ts`): hava üstünlüğü, yakın hava desteği, ikmal engelleme, kıyı desteği, abluka, konvoy koruma. Üs = en yakın başkent (kendi, kontrol edilen veya müttefik; Natural Earth, yoksa harita konumu), avcı 2.500 / bombardıman 6.000 km, 1–3 gün hazırlık, stok sınırı (`clampTaskGroups` + okuma anında sınır), kayıplar gruptan, yakıt yalnızca atanmış uçaklardan. Oyuncu paneli ve AI aynı önizleme/doğrulayıcıyı kullanır; AI 14 günde bir, düşman atamasını görmeden değerlendirir.

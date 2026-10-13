@@ -146,6 +146,20 @@ Footer credit changed to RON Interactive; interface guards now reject any AlpyX 
 
 Validation: 639 unit tests / 81 files, TypeScript and production build passed; all 158 production-browser scenarios passed on GitHub-hosted Chromium (15.4 min). CI on the published commit is the release gate.
 
+## 0.90.0-playtest.14 — Sound, battle effects and terrain (Claude, Phase 5)
+
+Phase 5. Save schema 17, simulation and game numbers unchanged. Evidence: [Phase 5 record](AUDIOVISUAL-0914.md).
+
+Validation: 699 unit tests / 85 files, TypeScript and production build passed; the 365-day long-run invariant passes. All 165 production-browser scenarios passed on GitHub-hosted Chromium (162 earlier + 3 Phase 5 specs: sound options with every sound file blocked, recorded-effect replay and low-effects summary, reduced motion; CI 38323118652 and the full Measure suite on the release tree). The war-balance measurement is line-for-line identical to playtest.13 (`measure/war-av-0914`). Not run on StackBlitz: the npm registry is blocked in this session.
+
+### Manual acceptance route
+
+1. Open a campaign and click anything: the interface clicks and the command ambience start. Player options → Sound: mute, then change each volume; reload and check the settings are kept.
+2. Declare war on Greece: a war alarm sounds once, and the ambience changes to the war loop.
+3. Open the tactical battlefield, fight a round with a bombardment and replay it at 1×: trails, artillery arcs and impacts follow the round log; the final step equals the result.
+4. Replay at 4×, or turn on Low effects, or turn on your system's reduced-motion setting: the round shows one summary and the replay jumps to the result. Losses, fuel and front are unchanged.
+5. Turn on 5× auto assault in a war: radio reports come once per five rounds, not every day.
+
 ## 0.90.0-playtest.13 — Air/naval task groups and the cargo chain (Claude, Phase 4)
 
 Phase 4 only; Phase 5 untouched. Save schema 17 with optional fields. Evidence: [Phase 4 record](TASKGROUPS-0913.md).

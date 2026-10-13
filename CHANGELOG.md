@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.90.0-playtest.14 — Sound, battle effects and terrain (Phase 5)
+Implementation: **Claude (Opus 5.5)**. Branch: `dev/clear-command-090`. Save schema 17 and simulation unchanged; new dependency Howler.js 2.2.4 (MIT).
+
+- **Sound.** One audio service plays interface clicks and confirmations, war alarms, radio round reports, artillery, impacts, captures and losses, and a peacetime or wartime ambience. Interface, battle and ambience have their own volumes, plus master volume and mute (Player options → Sound, stored in this browser only). Nothing plays before your first click or key press; at most four sounds play at once; each event sounds once. If sound cannot load, the game continues silently.
+- **Battle effects from recorded results only.** Replays draw movement trails, artillery arcs with impacts or misses, recon sweeps, contact flashes and objective captures from the round's recorded actions. Watching, summarising or skipping never changes casualties, fuel or the random sequence (tests prove the state is identical).
+- **Summaries.** At 4× replay, the 5× clock, with the new low-effects option or with reduced motion, each round shows one summary (moves, bombardments, losses, captures, front change) instead of step animation; at 5× an auto-resolved war gives one radio report per five rounds.
+- **Terrain.** Original tiles for plains, forest, mountain, desert, urban and coastal sectors; the earlier colours remain as the fallback and hidden sectors stay dark.
+- All sounds are original (synthesized; generator in `docs/audio/`) and recorded with the terrain tiles in `docs/ASSET_MANIFEST.md`. [Phase 5 record](docs/AUDIOVISUAL-0914.md).
+
+Validation: 699 unit tests / 85 files, TypeScript and production build passed; the 365-day long-run invariant passes. All 165 production-browser scenarios passed on GitHub-hosted Chromium (162 earlier + 3 Phase 5 specs: sound options with every sound file blocked, recorded-effect replay and low-effects summary, reduced motion; CI 38323118652 and the full Measure suite on the release tree). The war-balance measurement is line-for-line identical to playtest.13 (`measure/war-av-0914`). Not run on StackBlitz: the npm registry is blocked in this session.
+
 ## 0.90.0-playtest.13 — Air/naval task groups and the cargo chain (Phase 4)
 Implementation: **Claude (Opus 5.5)**. Branch: `dev/clear-command-090`. Save schema 17 (new optional fields), dependencies unchanged.
 
