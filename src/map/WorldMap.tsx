@@ -5,6 +5,7 @@ import {LocaleText,translateLive} from '../i18n/localeText';
 import {boundPan,clampZoom,wheelZoomFactor,zoomAtPoint} from './cameraControls';
 import {GeographicSurface} from './GeographicSurface';
 import {useMapDesk} from '../presentation/mapDeskSettings';
+import {toViewBox,untilt} from './deskTilt';
 import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { geoArea, geoDistance, geoGraticule10, geoNaturalEarth1, geoOrthographic, geoPath } from 'd3-geo';
 import { countryMapAnchor, microstateVisible, nearestMapMarker, type MapPoint } from './mapCoordinates';
@@ -91,6 +92,35 @@ function WorldMapView() {
   const connections=useMemo(()=>mapMode==='relations'?connectionIndex(playerCountryId,tradeDeals,contracts,embassies):null,[mapMode,playerCountryId,tradeDeals,contracts,embassies]);
   const selectCountry = useGameStore((s) => s.selectCountry);
   const setMapNotice = useGameStore((s) => s.setMapNotice);
+
+  // Desk tilt (playtest.17): flat map only, desktop widths only (matches the max-width:760px rule in mapDesk0917.css); the globe stays upright.
+  const tiltOn=useMapDesk(s=>s.tilt);
+  const [wide,setWide]=useState(()=>typeof window.matchMedia!=='function'||window.matchMedia('(min-width: 761px)').matches);
+  useEffect(()=>{
+    if(typeof window.matchMedia!=='function')return;
+    const query=window.matchMedia('(min-width: 761px)'),update=()=>setWide(query.matches);
+    update();query.addEventListener('change',update);
+    return()=>query.removeEventListener('change',update);
+  },[]);
+  const deskTiltActive=tiltOn&&projectionMode==='flat'&&wide;
+  // Read through a ref so the native wheel listener, which is not re-created on every render, never sees a stale value.
+  const deskTiltRef=useRef(deskTiltActive);
+  deskTiltRef.current=deskTiltActive;
+  // Client point -> viewBox units. getScreenCTM() is a 2D affine matrix and cannot express the tilt's CSS perspective,
+  // so a tilted map un-projects analytically (deskTilt.ts). Used by clicks, drag and the wheel zoom anchor alike.
+  const toMapPoint=(clientX:number,clientY:number):MapPoint=>{
+    const svg=svgRef.current;
+    if(!svg)return [NaN,NaN];
+    if(deskTiltRef.current&&svg.parentElement){
+      const box=svg.parentElement.getBoundingClientRect();
+      const [lx,ly]=untilt(clientX-box.left,clientY-box.top,box.width,box.height);
+      return toViewBox(lx,ly,box.width,box.height);
+    }
+    const matrix=svg.getScreenCTM();
+    if(!matrix)return [NaN,NaN];
+    const point=new DOMPoint(clientX,clientY).matrixTransform(matrix.inverse());
+    return [point.x,point.y];
+  };
 
   useEffect(() => {
     let alive = true;
@@ -224,10 +254,9 @@ function WorldMapView() {
     const wheel=(e:WheelEvent)=>{
       if(e.deltaY===0||!Number.isFinite(e.deltaY))return;
       e.preventDefault();
-      const matrix=svg.getScreenCTM();if(!matrix)return;
-      const point=new DOMPoint(e.clientX,e.clientY).matrixTransform(matrix.inverse());
+      const point=toMapPoint(e.clientX,e.clientY);if(!point.every(Number.isFinite))return;
       pendingWheel.current.factor*=wheelZoomFactor(e.deltaY,e.deltaMode,zoomSensitivity);
-      pendingWheel.current.point=[point.x,point.y];
+      pendingWheel.current.point=point;
       if(wheelFrame.current!==null)return;
       wheelFrame.current=requestAnimationFrame(()=>{
         wheelFrame.current=null;
@@ -240,12 +269,7 @@ function WorldMapView() {
     return ()=>{svg.removeEventListener('wheel',wheel);if(wheelFrame.current!==null)cancelAnimationFrame(wheelFrame.current);wheelFrame.current=null;pendingWheel.current.factor=1;};
   },[projectionMode,zoomSensitivity,Boolean(geojson)]);
 
-  const screenPoint = (e: React.MouseEvent<SVGSVGElement>) => {
-    const matrix=e.currentTarget.getScreenCTM();
-    if(!matrix)return [NaN,NaN] as MapPoint;
-    const point=new DOMPoint(e.clientX,e.clientY).matrixTransform(matrix.inverse());
-    return [point.x,point.y] as MapPoint;
-  };
+  const screenPoint = (e: React.MouseEvent<SVGSVGElement>) => toMapPoint(e.clientX,e.clientY);
 
   const selectFromSurface = (e: React.MouseEvent<SVGSVGElement>) => {
     const currentProjection=projection;
@@ -392,7 +416,7 @@ function WorldMapView() {
     </g>;
   });
 
-  return <div className="world-map political-map">
+  return <div className={`world-map political-map${deskTiltActive?' desk-tilt':''}`}>
     <div className="map-hover-readout">
       <strong><LocaleText value={hoveredCountry?.name ?? selectedCountry?.name ?? 'WORLD COMMAND'}/></strong>
       <span><LocaleText value={hoveredCountry ? `${hoveredCountry.region || 'Global'} · ${hoveredCountry.military.assessment.capability.toFixed(0)} MIL` : projectionMode === 'globe' ? 'drag globe · wheel zoom · click sovereign territory' : 'drag to pan · wheel zoom · click sovereign territory'}/></span>
