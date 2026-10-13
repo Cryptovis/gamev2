@@ -4,7 +4,7 @@
  * every text size used here. Motion is opacity/transform only and is removed by reduced motion and low effects.
  */
 .target-hub-backdrop{
- --hub-paper:#f8f3e6;--hub-card:#fffdf7;--hub-ink:#18212b;--hub-ink-2:#3d4a57;--hub-line:#d9cfb8;--hub-gold:#9a6a12;
+ --hub-paper:#f8f3e6;--hub-card:#fffdf7;--hub-ink:#18212b;--hub-ink-2:#3d4a57;--hub-line:#d9cfb8;--hub-gold:#7a520c;
  --hub-good:#1f7a45;--hub-good-bg:#e5f4ea;--hub-danger:#a8321f;--hub-danger-bg:#fbe9e4;--hub-focus:#1d5fbf;
  position:fixed;inset:0;z-index:var(--layer-workspace);display:grid;place-items:center;padding:16px;
  background:radial-gradient(circle at 50% 40%,rgba(8,18,28,.42),rgba(4,10,16,.72));
