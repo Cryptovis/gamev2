@@ -10,6 +10,7 @@ import {activeCountries} from '../../domain/sovereignty';
 import {money} from '../formatMoney';
 import {GuideBriefing} from './GuideBriefing';
 import {PopulationPanel,RecruitmentPanel} from './PopulationPanel';
+import {PolicyCardGrid} from './PolicyCardGrid';
 import {CommandArt} from '../icons/CommandArt';
 import {LocaleText,translateLive} from '../../i18n/localeText';
 import {WorldInstitutionsPanel} from './WorldInstitutionsPanel';
@@ -116,6 +117,7 @@ export function CountryPanel({onBrowse}:{onBrowse?:(countryId:string)=>void}={})
 
     {tab==='policies'&&<div className="country-policies">
       <header className="policy-heading"><CommandArt kind="governance" size={40}/><div><h3><LocaleText value="Policies"/></h3><p><LocaleText value="Review taxes and state spending before you change them."/></p></div></header>
+      <PolicyCardGrid country={selected}/>
       <PopulationPanel country={selected} policyOnly/>
       <section className="policy-budget"><h3><LocaleText value="State spending"/></h3><div className="stat-grid"><div><span><LocaleText value="Treasury"/></span><strong>{money(selected.economy.treasury)}</strong></div><div><span><LocaleText value="Budget / day"/></span><strong className={economy.dailyBalance>=0?'positive':'negative'}>{economy.dailyBalance>=0?'+':''}{money(economy.dailyBalance,language)}</strong></div></div>
       {isPlayer&&<button className="policy-budget-link" onClick={()=>chooseTab('cabinet')}><CabinetIcon size={24}/><LocaleText value="Manage ministry budgets"/></button>}</section>

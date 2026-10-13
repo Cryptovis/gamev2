@@ -1,0 +1,52 @@
+/*
+ * Phase 6.4 (playtest.18): card UI. The Policies & Laws card grid and the factory modal use the same ivory tokens as the
+ * Phase 6.1 hub and the 6.2 desk. Ink on ivory meets WCAG AA; state is always text or a symbol as well as colour.
+ */
+.policy-card-grid,.factory-modal{
+ --card-paper:#f8f3e6;--card-card:#fffdf7;--card-ink:#18212b;--card-ink-2:#3d4a57;--card-line:#d9cfb8;--card-gold:#7a520c;
+ --card-good:#1f7a45;--card-good-bg:#e5f4ea;--card-danger:#a8321f;--card-danger-bg:#fbe9e4;--card-focus:#1d5fbf;
+}
+.policy-card-grid :focus-visible,.factory-modal :focus-visible{outline:3px solid var(--card-focus);outline-offset:2px}
+.policy-card-grid{display:flex;flex-direction:column;gap:10px;margin:0 0 14px}
+.policy-card-heading{margin:0;font-size:15px}
+/* 3 columns x 2 rows from 900 px, 2 x 3 below, 1 column on phones. */
+.policy-card-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:899px){.policy-card-list{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:420px){.policy-card-list{grid-template-columns:minmax(0,1fr)}}
+.policy-card{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 12px 12px;border-radius:14px;background:var(--card-card);color:var(--card-ink);border:2px solid var(--card-line);box-shadow:0 2px 0 #e7dcc3;text-align:center;min-width:0}
+.policy-card-art{display:grid;place-items:center;width:64px;height:64px;border-radius:50%;overflow:hidden;background:radial-gradient(circle at 40% 35%,#fff,#efe5cf);border:1px solid var(--card-line)}
+.policy-card h5{margin:2px 0 0;font:700 15px/1.2 Georgia,'Times New Roman',serif;color:var(--card-ink)}
+.policy-card p{margin:0;font-size:12px;line-height:1.4;color:var(--card-ink-2)}
+.policy-card-meta{min-height:16px;font-size:11px;line-height:1.35;color:var(--card-ink-2)}
+.policy-card-meta b{color:var(--card-good)}
+.policy-card.status-active{border-color:var(--card-good);box-shadow:0 2px 0 #b7dcc4}
+.policy-card.status-locked{background:#f1ecdf}
+.policy-card-check{position:absolute;top:8px;right:8px;display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--card-good);color:#fff;font:700 14px/1 system-ui,sans-serif}
+.policy-card-action{margin-top:auto;min-height:36px;padding:7px 14px;border-radius:9px;border:1px solid var(--card-gold);background:var(--card-paper);color:var(--card-ink);font-size:13px;font-weight:700;cursor:pointer}
+.policy-card-action:hover{background:#fff;border-color:var(--card-ink-2)}
+
+.facility-card header .facility-details{margin-left:auto;padding:3px 9px;border-radius:7px;border:1px solid currentColor;background:transparent;color:inherit;font-size:11px;font-weight:700;cursor:pointer}
+.factory-modal .factory-hero{position:relative;display:grid;place-items:center;padding:14px;border-radius:14px;background:radial-gradient(circle at 50% 40%,#fff,#efe5cf);border:1px solid var(--card-line)}
+.factory-art{display:block;max-width:100%;height:auto}
+.factory-badges{position:absolute;top:10px;left:10px;right:10px;display:flex;flex-wrap:wrap;gap:6px;justify-content:space-between}
+.factory-count-chip,.factory-paused-badge,.factory-limit-badge{padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700;border:1px solid var(--card-line);background:var(--card-card);color:var(--card-ink)}
+.factory-paused-badge{border-color:var(--card-gold);color:var(--card-gold)}
+.factory-limit-badge{background:var(--card-danger);border-color:var(--card-danger);color:#fff}
+.factory-rows{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.factory-row{display:grid;grid-template-columns:1fr auto;align-items:baseline;gap:2px 12px;padding:12px 14px;border-radius:12px;background:var(--card-card);border:2px solid var(--card-line);color:var(--card-ink)}
+.factory-row span{font-size:13px;font-weight:600;color:var(--card-ink-2)}
+.factory-row b{font:700 18px/1.2 Georgia,'Times New Roman',serif}
+.factory-row small{grid-column:1/-1;font-size:12px;font-weight:700}
+.factory-row.healthy{border-color:var(--card-good);background:var(--card-good-bg)}
+.factory-row.healthy b{color:var(--card-good)}
+.factory-row.unhealthy{border-color:var(--card-danger);background:var(--card-danger-bg)}
+.factory-row.unhealthy b,.factory-row.unhealthy small{color:var(--card-danger)}
+/* A facility that is not built or is paused is idle, not failing: muted, but still the unhealthy state in the markup. */
+.factory-row.idle{border-color:var(--card-line);background:var(--card-card)}
+.factory-row.idle b{color:var(--card-ink-2)}
+.factory-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.factory-actions button{min-height:42px;border-radius:10px;border:1px solid var(--card-gold);background:var(--card-paper);color:var(--card-ink);font-size:14px;font-weight:700;cursor:pointer}
+.factory-actions button:disabled{opacity:.55;cursor:not-allowed}
+.factory-block-reason{margin:8px 0 0;padding:6px 10px;border-radius:8px;background:var(--card-danger-bg);color:var(--card-danger);font-size:12px;font-weight:600}
+@media (max-width:420px){.factory-actions{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:no-preference){.policy-card{transition:border-color .15s}}
