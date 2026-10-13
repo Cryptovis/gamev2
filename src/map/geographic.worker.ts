@@ -30,6 +30,7 @@ self.onmessage = async (event: MessageEvent) => {
         pixels,
         row,
         Math.min(m.height, row + 24),
+        m.mode === "relief" ? "relief" : "color",
       );
       await new Promise((resolve) => setTimeout(resolve, 0));
       if (m.id < latest) {

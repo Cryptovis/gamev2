@@ -4,6 +4,7 @@ import {sovereignId} from '../domain/sovereignty';
 import {LocaleText,translateLive} from '../i18n/localeText';
 import {boundPan,clampZoom,wheelZoomFactor,zoomAtPoint} from './cameraControls';
 import {GeographicSurface} from './GeographicSurface';
+import {useMapDesk} from '../presentation/mapDeskSettings';
 import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { geoArea, geoDistance, geoGraticule10, geoNaturalEarth1, geoOrthographic, geoPath } from 'd3-geo';
 import { countryMapAnchor, microstateVisible, nearestMapMarker, type MapPoint } from './mapCoordinates';
@@ -19,6 +20,9 @@ import { connectionIndex } from './connectionIndex';
 
 const W = 1200;
 const H = 700;
+const RELIEF_SRC = '/assets/geography/hillshade-2048.webp';
+// The relief layer must never delay the Blue Marble surface's own ready flag.
+const noop = () => {};
 
 type Feature = { type: 'Feature'; geometry: any; properties: { iso_a3?: string; name?: string } };
 type FeatureCollection = { type: 'FeatureCollection'; features: Feature[] };
@@ -78,6 +82,7 @@ function WorldMapView() {
   const zoomSensitivity=useGameStore(s=>s.mapZoomSensitivity);
   const labelScale = useGameStore((s) => s.mapLabelScale);
   const [surfaceReady,setSurfaceReady]=useState(false);
+  const reliefOn=useMapDesk(s=>s.relief);
   const mapMode = useGameStore((s) => s.mapMode);
   const mapPresentation = useGameStore((s) => s.mapPresentation);
   const projectionMode = useGameStore((s) => s.mapProjection);
@@ -425,6 +430,7 @@ function WorldMapView() {
       <g className="map-viewport" transform={projectionMode === 'flat' ? flatTransform : undefined}>
         <g className="country-layer">{shapeLayer}</g>
       </g>
+      {reliefOn&&<g className={`relief-layer ${photographic?'over-surface':''}`} pointerEvents="none"><GeographicSurface variant="relief" src={RELIEF_SRC} projection={projection} flat={projectionMode==='flat'} pan={flatPan} zoom={flatZoom} onReady={noop}/></g>}
       {projectionMode === 'globe' && <circle cx={W/2} cy={H/2+8} r={286*globeZoom} fill="url(#globe-shade)" className="globe-shade" pointerEvents="none"/>}
       <g className="screen-label-layer" pointerEvents="none">
         {screenLabels.map(label=><g key={label.id}><text x={label.x} y={label.y} className={label.className} style={{fontSize:label.fontSize}}><LocaleText value={label.text}/></text>{mapMode==='resources'&&countries[label.id]&&dominantResources(countries[label.id],industrialEconomy[label.id]).map((r,index,all)=><ResourceMapBadge key={r} resource={r} x={label.x+(index-(all.length-1)/2)*27-11} y={label.y+7}/>)}</g>)}

@@ -1,0 +1,7 @@
+/* playtest.17 (Phase 6.3): tactile map. Imported last so it wins over the earlier map rules. */
+
+/* Natural Earth hillshade: its own layer, multiplied over the country shapes. Never takes pointer events. */
+.relief-layer{pointer-events:none}
+.relief-layer image{mix-blend-mode:multiply;opacity:.55;pointer-events:none}
+/* The Blue Marble surface already carries its own shading. */
+.relief-layer.over-surface image{opacity:.35}

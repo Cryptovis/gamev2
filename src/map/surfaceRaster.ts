@@ -15,7 +15,10 @@ export function renderSurface(
   existing?: Uint8ClampedArray<ArrayBuffer>,
   startRow = 0,
   endRow = height,
+  // 'relief' reprojects a greyscale hillshade: luminance only, no globe limb shading (it is drawn with a multiply blend).
+  mode: "color" | "relief" = "color",
 ) {
+  const relief = mode === "relief";
   const projection = (view.flat ? geoNaturalEarth1() : geoOrthographic())
       .rotate(view.rotate)
       .translate(view.translate)
@@ -59,7 +62,9 @@ export function renderSurface(
         dx = fx - Math.floor(fx),
         dy = fy - y0,
         to = (y * width + x) * 4;
-      const shade = view.flat
+      const shade = relief
+        ? 1
+        : view.flat
         ? 0.91
         : 0.76 +
           0.18 *
@@ -72,7 +77,7 @@ export function renderSurface(
                     view.scale ** 2,
               ),
             );
-      for (let channel = 0; channel < 3; channel++) {
+      for (let channel = 0; channel < (relief ? 1 : 3); channel++) {
         const sample =
           (src[(y0 * source.width + x0) * 4 + channel] * (1 - dx) +
             src[(y0 * source.width + x1) * 4 + channel] * dx) *
@@ -81,6 +86,10 @@ export function renderSurface(
             src[(y1 * source.width + x1) * 4 + channel] * dx) *
             dy;
         pixels[to + channel] = sample * shade;
+      }
+      if (relief) {
+        pixels[to + 1] = pixels[to];
+        pixels[to + 2] = pixels[to];
       }
       pixels[to + 3] = 255;
     }

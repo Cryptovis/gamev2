@@ -1,12 +1,16 @@
 import { LocaleText, translateLive } from "../i18n/localeText";
 import { useEffect, useRef, useState } from "react";
 import type { GeoProjection } from "d3-geo";
-let texture: ImageData | null = null;
-let loading: Promise<ImageData> | null = null;
-function loadTexture() {
-  if (texture) return Promise.resolve(texture);
-  if (!loading)
-    loading = new Promise<ImageData>((resolve, reject) => {
+export const BLUE_MARBLE_SRC = "/assets/geography/blue-marble-surface.svg";
+// Decoded textures by source URL, so the surface and the relief layer each load (and cache) their own image once.
+const textures = new Map<string, ImageData>();
+const loading = new Map<string, Promise<ImageData>>();
+function loadTexture(src: string) {
+  const ready = textures.get(src);
+  if (ready) return Promise.resolve(ready);
+  let pending = loading.get(src);
+  if (!pending) {
+    pending = new Promise<ImageData>((resolve, reject) => {
       const image = new Image();
       image.onload = () => {
         const c = document.createElement("canvas");
@@ -14,20 +18,24 @@ function loadTexture() {
         c.height = image.height;
         const ctx = c.getContext("2d");
         if (!ctx) {
+          loading.delete(src);
           reject(new Error("Canvas unavailable"));
           return;
         }
         ctx.drawImage(image, 0, 0);
-        texture = ctx.getImageData(0, 0, c.width, c.height);
-        resolve(texture);
+        const data = ctx.getImageData(0, 0, c.width, c.height);
+        textures.set(src, data);
+        resolve(data);
       };
       image.onerror = () => {
-        loading = null;
+        loading.delete(src);
         reject(new Error("Geographic imagery unavailable"));
       };
-      image.src = "/assets/geography/blue-marble-surface.svg";
+      image.src = src;
     });
-  return loading;
+    loading.set(src, pending);
+  }
+  return pending;
 }
 export function GeographicSurface({
   projection,
@@ -35,16 +43,26 @@ export function GeographicSurface({
   pan,
   zoom,
   onReady,
+  src = BLUE_MARBLE_SRC,
+  variant = "surface",
 }: {
   projection: GeoProjection;
   flat: boolean;
   pan: { x: number; y: number };
   zoom: number;
   onReady: () => void;
+  /** Texture to reproject. Default: the Blue Marble surface. */
+  src?: string;
+  /** 'relief' is the greyscale hillshade layer: it reuses the same reprojection, renders a smaller full frame and never shows a loading label. */
+  variant?: "surface" | "relief";
 }) {
+  const isRelief = variant === "relief",
+    mode = isRelief ? "relief" : "color",
+    fullWidth = isRelief ? 960 : 1200,
+    fullHeight = isRelief ? 560 : 700;
   const [raster, setRaster] = useState<string | null>(null),
     [failed, setFailed] = useState(false),
-    [source, setSource] = useState<ImageData | null>(texture),
+    [source, setSource] = useState<ImageData | null>(textures.get(src) ?? null),
     worker = useRef<Worker | null>(null),
     url = useRef<string | null>(null),
     ready = useRef(onReady),
@@ -56,7 +74,7 @@ export function GeographicSurface({
   ready.current = onReady;
   useEffect(() => {
     let alive = true;
-    loadTexture()
+    loadTexture(src)
       .then((s) => {
         if (alive) setSource(s);
       })
@@ -66,7 +84,7 @@ export function GeographicSurface({
     return () => {
       alive = false;
     };
-  }, []);
+  }, [src]);
   useEffect(() => {
     if (!source) return;
     let alive = true;
@@ -86,7 +104,7 @@ export function GeographicSurface({
       ready.current();
       window.dispatchEvent(
         new CustomEvent("geographic-frame", {
-          detail: { duration, width, worker: usedWorker },
+          detail: { duration, width, worker: usedWorker, variant },
         }),
       );
     };
@@ -95,7 +113,7 @@ export function GeographicSurface({
         const start = performance.now(),
           { renderSurface } = await import("./surfaceRaster");
         if (!alive || m.id !== sequence.current) return;
-        const pixels = renderSurface(source, m.view, 600, 350),
+        const pixels = renderSurface(source, m.view, 600, 350, undefined, 0, 350, mode),
           canvas = document.createElement("canvas");
         canvas.width = 600;
         canvas.height = 350;
@@ -209,20 +227,35 @@ export function GeographicSurface({
         translate: projection.translate(),
       },
       id = ++sequence.current;
-    sender.current?.({ type: "render", view, id, width:url.current?480:720, height:url.current?280:420 });
+    sender.current?.({ type: "render", view, id, mode, width:url.current?480:720, height:url.current?280:420 });
     const settle = setTimeout(
       () =>
         sender.current?.({
           type: "render",
           view,
           id,
-          width: 1200,
-          height: 700,
+          mode,
+          width: fullWidth,
+          height: fullHeight,
         }),
       180,
     );
     return () => clearTimeout(settle);
   }, [source, projection, flat, pan.x, pan.y, zoom]);
+  if (isRelief)
+    // Decorative shading: no label, no loading or failure text; the map is complete without it.
+    return raster ? (
+      <image
+        data-relief-render="worker-ready"
+        x="0"
+        y="0"
+        width="1200"
+        height="700"
+        href={raster}
+        pointerEvents="none"
+        aria-hidden="true"
+      />
+    ) : null;
   return raster ? (
     <image
       data-geographic-render="worker-ready"

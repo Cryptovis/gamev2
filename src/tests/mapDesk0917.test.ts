@@ -5,6 +5,7 @@ import { MICROSTATE_POINTS } from '../data/microstates';
 import type { CountryState, RelationStatus, TreatyType } from '../domain/game';
 import { capitalPinScale, capitalPins, type CapitalPinInput } from '../map/capitalPins';
 import { DESK_TILT, tilt, toViewBox, untilt } from '../map/deskTilt';
+import { renderSurface, type SurfaceView } from '../map/surfaceRaster';
 import { DEFAULT_MAP_DESK, parseMapDesk } from '../presentation/mapDeskSettings';
 
 // A small deterministic generator keeps the "random point" checks reproducible.
@@ -51,6 +52,35 @@ describe('desk tilt pointer mapping', () => {
     const [sx, sy] = tilt(ox + bx * k, oy + by * k, w, h);
     const [lx, ly] = untilt(sx, sy, w, h), [vx, vy] = toViewBox(lx, ly, w, h);
     expect(vx).toBeCloseTo(bx, 6); expect(vy).toBeCloseTo(by, 6);
+  });
+});
+
+describe('relief reprojection mode', () => {
+  // A uniform grey 8×4 "hillshade": every sample is 100.
+  const grey = { width: 8, height: 4, data: new Uint8ClampedArray(8 * 4 * 4).map((_, i) => (i % 4 === 3 ? 255 : 100)) };
+  const flat: SurfaceView = { flat: true, rotate: [0, 0, 0], scale: 190, translate: [600, 350], pan: { x: 0, y: 0 }, zoom: 1 };
+  const globe: SurfaceView = { flat: false, rotate: [0, 0, 0], scale: 286, translate: [600, 358], pan: { x: 0, y: 0 }, zoom: 1 };
+  const px = (a: Uint8ClampedArray, x: number, y: number) => Array.from(a.slice((y * 120 + x) * 4, (y * 120 + x) * 4 + 4));
+
+  it('writes the luminance sample unshaded to R, G and B with full alpha (flat)', () => {
+    expect(px(renderSurface(grey, flat, 120, 70, undefined, 0, 70, 'relief'), 60, 35)).toEqual([100, 100, 100, 255]);
+  });
+  it('colour mode still applies the flat shade, so relief is a distinct mode', () => {
+    expect(px(renderSurface(grey, flat, 120, 70), 60, 35)).toEqual([91, 91, 91, 255]);
+    expect(px(renderSurface(grey, flat, 120, 70, undefined, 0, 70, 'color'), 60, 35)).toEqual([91, 91, 91, 255]);
+  });
+  it('skips the globe limb shading and leaves pixels outside the sphere transparent', () => {
+    const relief = renderSurface(grey, globe, 120, 70, undefined, 0, 70, 'relief'), color = renderSurface(grey, globe, 120, 70);
+    expect(px(relief, 60, 7)).toEqual([100, 100, 100, 255]);   // close to the limb: no darkening
+    expect(px(color, 60, 7)[0]).toBeLessThan(85);              // the colour surface darkens there
+    expect(px(relief, 0, 0)).toEqual([0, 0, 0, 0]);            // outside the sphere
+    expect(px(color, 0, 0)).toEqual([0, 0, 0, 0]);
+  });
+  it('renders in row bands exactly like a single pass', () => {
+    const whole = renderSurface(grey, globe, 120, 70, undefined, 0, 70, 'relief'), banded = new Uint8ClampedArray(120 * 70 * 4);
+    renderSurface(grey, globe, 120, 70, banded, 0, 35, 'relief');
+    renderSurface(grey, globe, 120, 70, banded, 35, 70, 'relief');
+    expect(Array.from(banded)).toEqual(Array.from(whole));
   });
 });
 
