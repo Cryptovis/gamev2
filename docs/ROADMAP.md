@@ -228,3 +228,7 @@ Delivered package 6.1 of the Living World & Executive handoff (Alper, 13 October
 
 Delivered package 6.2 under Alper's decision to keep the engine unchanged: an executive desk over the existing letters (expiry), wars, operations and journal, with Accept/Decline through the typed `diplomacy/resolveLetter` command. Not implemented by decision: relation penalties for unanswered requests. Remaining in this track: 6.3 hillshade map with desk tilt and capital pins, 6.4 card-based policies, factory detail and operation posters (and a decision on folding the Diplomatic Inbox, Alerts and News windows into the desk). [Evidence](EXECUTIVE-DESK-0916.md).
 
+
+## 0.90.0-playtest.17 — Tactile hillshade map (Claude)
+
+Delivered package 6.3 of the Living World & Executive handoff: a Natural Earth hillshade layer, an 18° desk tilt on the flat map with an analytic pointer mapping, and miniature capital pins, with three map-dock settings; engine, domain and saves unchanged. Remaining for 6.3: the relief frame-cost measurement (`npm run measure:browser`; if over the 1.5× budget, relief ships off by default), screenshots at 1440 (tr) and 390 (en), and Alper's decisions listed in the phase record (when relation pins appear). Remaining in this track: 6.4 card-based policies, factory detail and operation posters (and a decision on folding the Diplomatic Inbox, Alerts and News windows into the desk). [Evidence](HILLSHADE-0917.md).

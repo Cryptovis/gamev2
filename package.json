@@ -1,7 +1,7 @@
 {
   "name": "rule-of-nations",
   "private": true,
-  "version": "0.90.0-playtest.16",
+  "version": "0.90.0-playtest.17",
   "type": "module",
   "scripts": {
     "dev": "vite",

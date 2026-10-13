@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.90.0-playtest.17 — Tactile hillshade map (Phase 6.3)
+Implementation: **Claude (Sonnet 5.5)**. Branch: `dev/ron-living-world-0915`. Save schema 17, simulation and game numbers unchanged; no file under `src/engine`, `src/domain` or `src/persistence` changed; dependencies unchanged.
+
+- **Shaded relief under the labels.** A Natural Earth hillshade (public domain, 126 kB) is drawn as its own layer above the country shapes and below the labels, in the flat and globe views and over both base maps. It takes no clicks and never delays the satellite surface.
+- **Desk tilt.** The flat map tips back 18° on screens wider than 760 px, with a soft shadow along the far edge; the globe and phones stay upright. Clicks, drag and wheel zoom use an analytic un-projection (`deskTilt.ts`) instead of `getScreenCTM()`, so the country you click is the one under the cursor.
+- **Capital pins.** Miniature domed capitols with round flags on the 201 Natural Earth capitals: your capital, the selected and the hovered one always; enemies, allies and partners (ring colours); other countries once zoomed in. At most 48, never closer than 18 px.
+- **Three settings** in the map dock (Desk tilt, Relief shading, Capital pins), remembered in this browser and never in a save; labels and the Natural Earth credit in five languages. [Phase 6.3 record](docs/HILLSHADE-0917.md).
+- **One existing test adjusted:** the click-time-download test now waits for the map's relief worker, which starts on load.
+
+Validation: 762 unit tests / 88 files (729 earlier + 33 map desk tests; counted from the test sources, because the CI log was not readable here), TypeScript and production build passed; the 365-day long-run invariant passes. All 175 production-browser scenarios passed on GitHub-hosted Chromium (170 earlier + 5 map desk scenarios at 1440 px Turkish and 390 px English; CI 38387235473). The first run (38385269101) passed Vitest, TypeScript and the build and 173 of 175 scenarios; the two failures were the existing click-time-download test, adjusted as described in the phase record. Relief frame cost has not been measured yet. Nothing ran locally: the npm registry is unreachable in this session, so GitHub Actions was the verifier. Limits: relief is on by default but its frame cost is not measured yet (the measurement is in `performance/browser.spec.ts`; if it exceeds the budget the rule is to ship relief off by default); no screenshots attached yet; pins are not counter-rotated under the tilt; browsers without an emoji flag font show the pin flags as letters.
+
 ## 0.90.0-playtest.16 — Executive desk (Phase 6.2)
 Implementation: **Claude (Opus 5.5)**. Branch: `dev/ron-living-world-0915`. Save schema 17, simulation and game numbers unchanged; dependencies unchanged. No new engine rule: proposals still expire exactly as before (no relation penalty).
 

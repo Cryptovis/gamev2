@@ -216,3 +216,17 @@ Validation: 729 unit tests / 87 files (714 earlier + 15 desk tests), TypeScript 
 4. Declare a war and open the Wars tab: the war is listed with the front from your side; Open war command works. Launch an operation: it appears under Intelligence & crises with days until the result.
 5. Check the reports under each tab: AI-to-AI treaties and foreign elections are not listed (they remain in News). Repeat at phone width (with no country panel open) and in Turkish.
 
+
+## 0.90.0-playtest.17 — Tactile hillshade map (Claude, Phase 6.3)
+
+Phase 6.3. Save schema 17, simulation and game numbers unchanged; no file under `src/engine`, `src/domain` or `src/persistence` changed; within `src/map` only the presentation files approved for this phase. Evidence: [Phase 6.3 record](HILLSHADE-0917.md).
+
+Validation: 762 unit tests / 88 files (729 earlier + 33 map desk tests; counted from the test sources, because the CI log was not readable here), TypeScript and production build passed; the 365-day long-run invariant passes. All 175 production-browser scenarios passed on GitHub-hosted Chromium (170 earlier + 5 map desk scenarios at 1440 px Turkish and 390 px English; CI 38387235473). The first run (38385269101) passed Vitest, TypeScript and the build and 173 of 175 scenarios; the two failures were the existing click-time-download test, adjusted as described in the phase record. Relief frame cost has not been measured yet. Nothing ran locally: the npm registry is unreachable in this session, so GitHub Actions was the verifier.
+
+### Manual acceptance route
+
+1. Open the map, switch to Flat on a wide screen: the map is tipped back with a soft shadow along the far edge and relief shading shows under the labels. Switch to Globe: it stands upright and keeps the shading.
+2. Click a large country near the top edge (Russia) and ones near the bottom (Brazil, Australia): each opens its own hub. Drag near the far edge: the map follows the pointer. Wheel zoom keeps the point under the cursor.
+3. Your capital shows a gold-ringed pin at world zoom. Zoom to about 180 %: more countries appear, never more than 48; allies have green rings, enemies red, partners blue. Judge whether the ally pins at world zoom are too many (open question in the phase record).
+4. MAP → turn Desk tilt, Relief shading and Capital pins off one by one, then reload: the choices persist. At phone width there is no tilt.
+5. Repeat in Turkish and at 390 px (no sideways scrolling); on Windows without an emoji flag font check how the pin flags look. Judge the relief strength over the political colours.
