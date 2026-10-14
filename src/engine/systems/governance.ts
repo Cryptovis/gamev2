@@ -1,3 +1,4 @@
+import {leaderModifiers} from './leaderPerks';
 import {activeCountries} from '../../domain/sovereignty';
 import type { GameState, CountryState } from "../../domain/game";
 import type {
@@ -129,7 +130,7 @@ export function campusPreview(s:GameState,kind:CampusKind){
 }
 export function pilotTrainingPreview(s:GameState,count:number){
  const c=s.countries[s.playerCountryId],a=academyFor(s,c.id);
- const rate=1+a.buildings.academy*.005+(c.technology.unlocked.includes('mil-flight-school')?.1:0);
+ const rate=(1+a.buildings.academy*.005+(c.technology.unlocked.includes('mil-flight-school')?.1:0))*leaderModifiers(s,c.id).recruitment;
  const committed=a.pilots+a.training.reduce((n,t)=>n+t.count,0),cost=count*.0001;
  return {allowed:Number.isInteger(count)&&count>=1&&count<=1000&&c.economy.treasury>=cost&&committed+count<=Math.floor(c.military.personnel*.05),cost,days:Math.ceil(30/rate),monthlyWages:count*.0000002*30,pilotsAfter:committed+count};
 }

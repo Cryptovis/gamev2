@@ -1,3 +1,4 @@
+import {leaderModifiers} from '../../engine/systems/leaderPerks';
 import {LeaderCapsule,MetricsIsland} from './HudIslands';
 import {displayCountry} from '../../presentation/countryIdentity';
 import {BRAND_NAME} from '../BrandMark';
@@ -54,10 +55,11 @@ export function TopBar(){
  const energy=useGameStore(s=>s.world.energy?.[playerCountryId]);
  const lang=profile.language;
  const mood=useGameStore(s=>{const p=s.countries[s.playerCountryId];return portraitMood({atWar:Object.values(s.wars).some(w=>w.status==='active'&&(w.attackerId===s.playerCountryId||w.defenderId===s.playerCountryId)),regimeCrisis:!!factionsFor(p).crisis,stability:p.politics.stability,approval:p.politics.approval});});
- const forecast=calculateEconomyForecast(player);
+ const leadership=useGameStore(s=>s.leadership),perks=leaderModifiers({leadership,playerCountryId},player.id);
+ const forecast=calculateEconomyForecast(player,perks);
  const strategicDailyBalance=forecast.dailyBalance-(production?.lastInputUse.treasury??0)-(infrastructure?.maintenance??0)-(industrial?.lastCosts??0)-(academyFor(useGameStore.getState(),playerCountryId).lastUpkeep)-(energy?.lastCosts??0);
 
- const flows=simulateResources(player).net,deltas=liveDeltas({dailyBalance:strategicDailyBalance,net:flows}),byId=Object.fromEntries(deltas.map(d=>[d.id,d])) as Record<LiveDelta['id'],LiveDelta>;
+ const flows=simulateResources(player,1,undefined,perks.consumer).net,deltas=liveDeltas({dailyBalance:strategicDailyBalance,net:flows}),byId=Object.fromEntries(deltas.map(d=>[d.id,d])) as Record<LiveDelta['id'],LiveDelta>;
 
  return <header className="topbar">
   <div className="command-overview-island"><LeaderCapsule>

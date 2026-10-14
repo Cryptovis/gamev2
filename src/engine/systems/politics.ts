@@ -26,6 +26,7 @@ export function simulatePolitics(
   country: CountryState,
   economy: EconomyFlow,
   resources: ResourceFlow,
+  recovery=1,
 ): PoliticsState {
   let approvalDelta = 0;
   let stabilityDelta = 0;
@@ -42,7 +43,8 @@ export function simulatePolitics(
     stabilityDelta -= 0.2;
   }
   if (resources.oilShortage) approvalDelta -= 0.08;
-  stabilityDelta += (stabilityTarget(country) - country.politics.stability) * STABILITY_DRIFT;
+  const gap=stabilityTarget(country)-country.politics.stability;
+  stabilityDelta += gap * STABILITY_DRIFT * (gap>0?recovery:1);
 
   return {
     ...country.politics,

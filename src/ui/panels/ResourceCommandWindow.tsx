@@ -1,3 +1,4 @@
+import {leaderModifiers} from '../../engine/systems/leaderPerks';
 import {naturalCase} from '../../i18n/naturalCase';
 import {useWorldView} from '../../store/useWorldView';
 import {LocaleText,translateLive} from '../../i18n/localeText';
@@ -23,9 +24,9 @@ export function ResourceCommandWindow({onClose,resource:initialResource}:{onClos
   <nav className="resource-filter"><button className={!selectedResource?'active':''} onClick={()=>setSelectedResource(null)}><NavigationArt kind="alerts" size={24}/><LocaleText value="All resources"/></button>{MARKET_RESOURCES.map(r=><button key={r} className={selectedResource===r?'active':''} onClick={()=>setSelectedResource(r)}><ResourceIcon resource={r} size={20}/>{naturalCase(translateLive(r[0].toUpperCase()+r.slice(1)),state.playerProfile.language)}</button>)}</nav>
   <div className="resource-command-grid">
    {MARKET_RESOURCES.filter(r=>!selectedResource||r===selectedResource).map(resource=>{
-    const status=resourceStrategicStatus(player,resource);
-    const days=resourceReserveDays(player,resource);
-    const self=resourceSelfSufficiency(player,resource);
+    const status=resourceStrategicStatus(player,resource,leaderModifiers(state,player.id).consumer);
+    const days=resourceReserveDays(player,resource,leaderModifiers(state,player.id).consumer);
+    const self=resourceSelfSufficiency(player,resource,leaderModifiers(state,player.id).consumer);
     return <article key={resource} className={'resource-command-card '+(status==='CRITICAL'?'critical':'')}>
       <header><ResourceIcon resource={resource} size={40}/><span className="resource-card-values"><small><LocaleText value={resource.toUpperCase()}/></small><strong><LocaleText value={player.resources[resource].toFixed(resource==='uranium'?1:0)}/></strong></span><em><LocaleText value={status}/></em></header>
       <div className="resource-command-meta"><span><LocaleText value={days>365?'365+':Math.max(0,days).toFixed(0)}/><LocaleText value={" reserve days"}/></span><span><LocaleText value={Math.min(999,self*100).toFixed(0)}/><LocaleText value={"% self-sufficient"}/></span></div>

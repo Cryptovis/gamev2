@@ -85,7 +85,7 @@ function fakeBackend(opts: { createThrows?: boolean } = {}) {
   const backend: AudioBackend = {
     create(name, urls, loop) {
       if (opts.createThrows) throw new Error('decode');
-      expect(urls[0]).toMatch(/\.webm$/); expect(urls[1]).toMatch(/\.mp3$/);
+      expect(urls[0]).toMatch(/\.mp3$/); expect(urls[1]).toMatch(/\.webm$/);
       return {
         play(volume, onEnd) { if (loop) ambient.push(`play:${name}`); else calls.push({ name, volume, end: onEnd }); },
         setVolume(v) { ambient.push(`volume:${name}:${v.toFixed(2)}`); },

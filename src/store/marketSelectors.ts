@@ -6,22 +6,22 @@ import { rankSuppliers } from '../engine/systems/tradeOptions';
 
 export const MARKET_RESOURCES: TradeResource[] = ['food','oil','iron','uranium'];
 
-export function resourceSelfSufficiency(country: CountryState, resource: TradeResource) {
-  const flow = simulateResources(country);
+export function resourceSelfSufficiency(country: CountryState, resource: TradeResource,consumer=1) {
+  const flow = simulateResources(country,1,undefined,consumer);
   return flow.consumption[resource] <= 0 ? 999 : flow.production[resource] / flow.consumption[resource];
 }
 
-export function resourceReserveDays(country: CountryState, resource: TradeResource) {
-  const flow = simulateResources(country);
+export function resourceReserveDays(country: CountryState, resource: TradeResource,consumer=1) {
+  const flow = simulateResources(country,1,undefined,consumer);
   const consumption = flow.consumption[resource];
   if (consumption <= 0.0001) return 9999;
   return country.resources[resource] / consumption;
 }
 
-export function resourceStrategicStatus(country: CountryState, resource: TradeResource): 'EXPORTER'|'BALANCED'|'IMPORT NEED'|'CRITICAL' {
-  const flow = simulateResources(country);
-  const sufficiency = resourceSelfSufficiency(country, resource);
-  const days = resourceReserveDays(country, resource);
+export function resourceStrategicStatus(country: CountryState, resource: TradeResource,consumer=1): 'EXPORTER'|'BALANCED'|'IMPORT NEED'|'CRITICAL' {
+  const flow = simulateResources(country,1,undefined,consumer);
+  const sufficiency = resourceSelfSufficiency(country, resource,consumer);
+  const days = resourceReserveDays(country, resource,consumer);
   if (days < 20 || (flow.net[resource] < 0 && days < 60)) return 'CRITICAL';
   if (sufficiency >= 1.2 && flow.net[resource] > 0) return 'EXPORTER';
   if (sufficiency < 0.8 || flow.net[resource] < -0.2) return 'IMPORT NEED';

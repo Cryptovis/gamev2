@@ -1,10 +1,11 @@
-import {useEffect,useRef,useState} from 'react';
+import {useEffect,useLayoutEffect,useRef,useState} from 'react';
 import {useGameStore} from '../../store/gameStore';
 import {useWorldView} from '../../store/useWorldView';
 import {commandAlerts} from '../../store/commandIntelligence';
 import {alertNewsChannel,enqueueToasts,newJournalToasts,type ToastEvent} from '../../presentation/newsChannels';
 import {LocaleText,translateLive} from '../../i18n/localeText';
 export function SitrepToasts(){
+ const card=useRef<HTMLElement>(null);
  const state=useWorldView(),marker=useGameStore(s=>s.saveMessage),previous=useRef(state),loadMarker=useRef(marker);
  const [queue,setQueue]=useState<ToastEvent[]>([]),[hovered,setHovered]=useState(false),[focused,setFocused]=useState(false);
  const paused=hovered||focused;
@@ -23,8 +24,15 @@ export function SitrepToasts(){
  },[state,marker]);
  const toast=queue[0];useEffect(()=>{if(!toast||paused)return;const timer=setTimeout(()=>setQueue(q=>q.slice(1)),6000);return()=>clearTimeout(timer);},[toast?.id,paused]);
  useEffect(()=>{if(!toast){setHovered(false);setFocused(false);}},[toast?.id]);
+ useLayoutEffect(()=>{
+  const node=card.current;if(!node)return;
+  const measure=()=>document.documentElement.style.setProperty('--sitrep-toast-height',`${node.getBoundingClientRect().height}px`);
+  measure();const observer=typeof ResizeObserver==='undefined'?null:new ResizeObserver(measure);observer?.observe(node);
+  window.addEventListener('resize',measure);
+  return()=>{observer?.disconnect();window.removeEventListener('resize',measure);document.documentElement.style.removeProperty('--sitrep-toast-height');};
+ },[toast?.id]);
  if(!toast)return null;
- return <aside className="sitrep-toast" role="status" aria-live="polite" data-toast-id={toast.id} onMouseEnter={()=>setHovered(true)} onMouseLeave={()=>setHovered(false)} onFocusCapture={()=>setFocused(true)} onBlurCapture={e=>{if(!e.currentTarget.contains(e.relatedTarget as Node))setFocused(false);}}>
+ return <aside ref={card} className="sitrep-toast" role="status" aria-live="polite" data-toast-id={toast.id} onMouseEnter={()=>setHovered(true)} onMouseLeave={()=>setHovered(false)} onFocusCapture={()=>setFocused(true)} onBlurCapture={e=>{if(!e.currentTarget.contains(e.relatedTarget as Node))setFocused(false);}}>
   <p><LocaleText value={toast.message}/>{toast.count>1&&<small> · +{toast.count-1}</small>}</p>
   <button onClick={()=>useGameStore.getState().routeWorkspace({kind:'news',filter:toast.channel==='economy'?'economy':toast.channel})}><LocaleText value="View in News"/></button>
   <button aria-label={translateLive('Dismiss alert')} onClick={()=>setQueue(q=>q.slice(1))}>×</button>

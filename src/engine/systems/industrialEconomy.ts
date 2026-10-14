@@ -1,3 +1,4 @@
+import {leaderModifiers,facilityLeaderFactor} from './leaderPerks';
 import {activeCountries} from '../../domain/sovereignty';
 import {GOLD_PRODUCERS,SILVER_PRODUCERS} from '../../data/preciousMetals';
 import {occupationFor} from './governance';
@@ -61,7 +62,7 @@ export interface FacilityEconomics {output:number;outputValue:number;inputCost:n
 export function facilityDailyEconomics(state:GameState,id:string,kind:FacilityKind,priceOf:(good:IndustrialGood)=>number=good=>GOODS[good].price):FacilityEconomics|null {
  const c=state.countries[id],n=state.industrialEconomy[id],d=FACILITIES[kind];
  if(!c||!n||!d)return null;
- const output=d.yield*facilityPotential(n,kind)*c.industry.utilization/100;
+ const output=d.yield*facilityPotential(n,kind)*c.industry.utilization/100*facilityLeaderFactor(state,id,kind);
  const outputValue=d.output?output*priceOf(d.output):0;
  const inputCost=Object.entries(d.inputs).reduce((sum,[good,amount])=>sum+(amount??0)*output*priceOf(good as IndustrialGood),0);
  const upkeep=facilityUpkeep(c,n,kind,1);
@@ -105,7 +106,8 @@ export function processIndustrialEconomy(state:GameState):GameState {
   const boost=(id===state.playerCountryId&&state.day<state.leadership.celebrationUntilDay?1.12:1)*((occupationFor(state,id)?.unrest??0)>=80?.7:1);
   for(const [kind,d] of Object.entries(FACILITIES) as Array<[FacilityKind,typeof FACILITIES[FacilityKind]]>){
    const count=n.facilities[kind];if(!count||!n.enabled[kind])continue;
-   const output=d.yield*count*facilityPotential(n,kind)*(c.industry.utilization/100)*boost;
+   const factory=facilityLeaderFactor(state,id,kind);
+   const output=d.yield*count*facilityPotential(n,kind)*(c.industry.utilization/100)*boost*factory;
    const upkeep=facilityUpkeep(c,n,kind,count);
    let ratio=1,reason='';
    const constrain=(available:number,needed:number,label:string)=>{if(needed>0&&available/needed<ratio){ratio=clamp(available/needed,0,1);reason=label;}};
@@ -122,7 +124,7 @@ export function processIndustrialEconomy(state:GameState):GameState {
    n.bottlenecks={...n.bottlenecks,[kind]:ratio<.999?reason:'operational'};
    if(d.deposit)n.deposits[d.deposit]=Math.max(0,n.deposits[d.deposit]-actual);
   }
-  changeStock('water',-Math.max(.1,c.demographics.population/1e6*.04));
+  changeStock('water',-Math.max(.1,c.demographics.population/1e6*.04)*leaderModifiers(state,id).consumer);
   countries[id]=c;industrialEconomy[id]=n;
   if(armorTouched){const p=production[id];production={...production,[id]:{...p,stockpile:{...p.stockpile,armor:armor??0}}};}
  }

@@ -1,3 +1,4 @@
+import {leaderModifiers} from './leaderPerks';
 import type {GameState,CountryState} from '../../domain/game';
 import {getWarPreview,warForceComparison} from './warfare';
 
@@ -23,7 +24,7 @@ export function operationalVisibility(state:GameState,targetId:string){
  const own=state.countries[state.playerCountryId],target=state.countries[targetId];if(!own||!target||own.id===target.id)return null;
  const coverage=state.intelligenceLedger[targetId]??12,known=coverage>=INTEL_ESTIMATE_MIN;
  const enemy=Object.fromEntries(FORCE_KEYS.map(key=>[key,known?forceBand(target.military[key],key):null])) as EstimatedInventory;
- const actual=getWarPreview(own,target,state.infrastructure[own.id],state.infrastructure[targetId]);
+ const actual=getWarPreview(own,target,state.infrastructure[own.id],state.infrastructure[targetId],leaderModifiers(state,targetId).defense,leaderModifiers(state,own.id).consumer,leaderModifiers(state,targetId).consumer);
  const lastReconDay=Object.values(state.intelOperations).filter(op=>op.sourceCountryId===own.id&&op.targetCountryId===targetId&&op.type==='gather_intelligence'&&op.status==='success').reduce<number|null>((day,op)=>Math.max(day??0,op.completeDay),null);
  const enemySupply=known?supplyBand(actual.defenderSupply):null;
  let comparison:ReturnType<typeof warForceComparison>|null=null;
@@ -31,7 +32,7 @@ export function operationalVisibility(state:GameState,targetId:string){
   // Forecast only from published bands. Hidden differences inside these bands cannot leak through decimal ratios or air badges.
   const values=Object.fromEntries(FORCE_KEYS.map(key=>[key,representative(enemy[key]!)]));
   const projected={...target,military:{...target.military,...values,readiness:quality(target.military.readiness),morale:quality(target.military.morale),logistics:quality(target.military.logistics),technology:quality(target.military.technology)}};
-  comparison=warForceComparison(own,projected,actual.attackerSupply,representative(enemySupply));
+  comparison=warForceComparison(own,projected,actual.attackerSupply,representative(enemySupply),leaderModifiers(state,targetId).defense);
  }
  return {terrain:actual.terrain,own:inventory(own),enemy,ownSupply:actual.attackerSupply,enemySupply,enemyReadiness:known?qualityBand(target.military.readiness):null,comparison,confidence:known?(coverage>=70?'established':'limited'):'unknown',lastReconDay} as const;
 }

@@ -1,3 +1,4 @@
+import {leaderModifiers} from './leaderPerks';
 import { activeCountries } from '../../domain/sovereignty';
 import type { GameState, TradeResource } from '../../domain/game';
 import type { IndustrialGood } from '../../domain/industrial';
@@ -228,7 +229,7 @@ export function rankSuppliers(state: GameState, buyerId: string, good: ExchangeG
 export function monthlyDemand(state: GameState, buyerId: string, good: ExchangeGood): number {
   const buyer = state.countries[buyerId];
   if (!buyer) return 0;
-  if (isRaw(good)) return Math.max(0, -simulateResources(buyer).net[good]) * 30;
+  if (isRaw(good)) return Math.max(0, -simulateResources(buyer,1,undefined,leaderModifiers(state,buyer.id).consumer).net[good]) * 30;
   return industrialBuyerDemand(state, buyerId, good as IndustrialGood).shortfall;
 }
 

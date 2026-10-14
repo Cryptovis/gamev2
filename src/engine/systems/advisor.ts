@@ -1,3 +1,4 @@
+import {leaderModifiers} from './leaderPerks';
 import {activeCountries} from '../../domain/sovereignty';
 import {letterCost,requestDiplomacy} from './livingEconomy';
 import type { GameState, TradeResource } from '../../domain/game';
@@ -12,7 +13,7 @@ const resources: TradeResource[]=['food','oil','iron','uranium'];
 
 function reserveDays(state:GameState,resource:TradeResource){
  const player=state.countries[state.playerCountryId];
- const flow=simulateResources(player);
+ const flow=simulateResources(player,1,undefined,leaderModifiers(state,player.id).consumer);
  const daily=Math.max(.0001,flow.consumption[resource]);
  return player.resources[resource]/daily;
 }

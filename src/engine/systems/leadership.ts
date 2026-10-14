@@ -1,7 +1,8 @@
+import {leaderOpeningValues} from './leaderPerks';
 import {activeCountries} from '../../domain/sovereignty';
 import type {GameState} from '../../domain/game';
-import type {LeadershipState,DiplomaticMessage} from '../../domain/industrial';
-import {relationFor,relationshipIndex} from './diplomacy';
+import type {LeadershipState,DiplomaticMessage,LeaderArchetype} from '../../domain/industrial';
+import {relationFor,relationshipIndex,changeRelations} from './diplomacy';
 export const CAMPAIGN_START_DATE='2026-01-01';
 export function gameDate(state:Pick<GameState,'day'|'leadership'>):string {
  const date=new Date(state.leadership.campaignStartDate+'T00:00:00Z');date.setUTCDate(date.getUTCDate()+state.day-1);return date.toISOString().slice(0,10);
@@ -31,4 +32,13 @@ export function processLeadership(state:GameState):GameState {
   sitrep=[`DIPLOMACY // International reactions to national economic progress received.`,...sitrep].slice(0,12);
  }
  return {...state,leadership,sitrep};
+}
+
+/** New-campaign initialization only; loading or changing a portrait must never reapply opening bonuses. */
+export function initializeLeaderArchetype(state:GameState,archetype:LeaderArchetype):GameState{
+ if(state.leadership.archetype)return state;
+ const p=state.countries[state.playerCountryId],opening=leaderOpeningValues(p,archetype);
+ let next:GameState={...state,leadership:{...state.leadership,archetype},countries:{...state.countries,[p.id]:{...p,economy:{...p.economy,treasury:opening.treasury},politics:{...p.politics,approval:opening.approval}}}};
+ if(archetype==='diplomat')for(const id of Object.keys(state.countries))if(id!==p.id)next=changeRelations(next,p.id,id,15);
+ return next;
 }

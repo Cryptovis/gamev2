@@ -20,7 +20,10 @@ export interface IndustrialContract {
 export interface DiplomaticMessage {
  id:string;senderId:string;day:number;kind:'birthday'|'achievement';tone:'warm'|'rival';text:string;read:boolean;
 }
+export type LeaderArchetype='executive'|'reformer'|'diplomat'|'commander'|'chancellor'|'governor';
 export interface LeadershipState {
+ /** Optional so schema-17 campaigns created before 0.94 retain neutral gameplay. */
+ archetype?:LeaderArchetype;
  campaignStartDate:string;
  lastBirthdayYear:number|null;
  celebrationUntilDay:number;

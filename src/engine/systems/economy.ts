@@ -1,3 +1,4 @@
+import {NEUTRAL_LEADER,type LeaderModifiers} from './leaderPerks';
 import type { CountryState, EconomyState } from '../../domain/game';
 import type { ResourceFlow } from './resources';
 
@@ -12,16 +13,16 @@ export interface EconomyFlow {
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 
-export function simulateEconomy(country: CountryState, resources: ResourceFlow): EconomyFlow {
+export function simulateEconomy(country: CountryState, resources: ResourceFlow,perks:Readonly<LeaderModifiers>=NEUTRAL_LEADER): EconomyFlow {
   const economy = country.economy;
   const utilization = country.industry.utilization / 100;
   const productivity = economy.productivity / 100;
 
-  const taxRevenue = (economy.gdp * (economy.taxRate / 100)) / 365;
+  const taxRevenue = (economy.gdp * (economy.taxRate / 100)) / 365 * perks.tax;
   const publicSpending = economy.gdp * 0.00035 + country.military.personnel*.00000006;
   // Debt service (audit C4): interest rises with leverage, so a heavily indebted state pays more of its revenue back.
   const debtRate = 0.03 + 0.05 * clamp(economy.debt / Math.max(1, economy.gdp), 0, 2);
-  const debtService = (economy.debt * debtRate) / 365;
+  const debtService = (economy.debt * debtRate) / 365 * perks.debtInterest;
   const dailyBalance = taxRevenue - publicSpending - debtService;
 
   // High tax rates dampen private investment (audit C4): no effect up to 25%, then -1% of growth per point, floored at 70%.

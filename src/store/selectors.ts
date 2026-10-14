@@ -1,11 +1,12 @@
+import {NEUTRAL_LEADER,type LeaderModifiers} from '../engine/systems/leaderPerks';
 import type { CountryState, GameState } from '../domain/game';
 import { simulateEconomy } from '../engine/systems/economy';
 import { simulateResources } from '../engine/systems/resources';
 
 export const selectPlayerCountry = (state: GameState): CountryState => state.countries[state.playerCountryId];
 
-export const calculateDailyTaxRevenue = (country: CountryState): number =>
-  (country.economy.gdp * (country.economy.taxRate / 100)) / 365;
+export const calculateDailyTaxRevenue = (country: CountryState,perks:Readonly<LeaderModifiers>=NEUTRAL_LEADER): number =>
+  (country.economy.gdp * (country.economy.taxRate / 100)) / 365 * perks.tax;
 
 export const calculateMilitaryPower = (country: CountryState): number => {
   const units =
@@ -42,11 +43,11 @@ export const calculateResourcePressure = (country: CountryState): number => {
 export const selectRelation = (state: GameState, fromId: string, toId: string) =>
   state.countries[fromId]?.diplomacy.relations[toId] ?? null;
 
-export const calculateDailyResourceFlow = (country: CountryState) => simulateResources(country);
+export const calculateDailyResourceFlow = (country: CountryState,perks:Readonly<LeaderModifiers>=NEUTRAL_LEADER) => simulateResources(country,1,undefined,perks.consumer);
 
-export const calculateEconomyForecast = (country: CountryState) => {
-  const resources = simulateResources(country);
-  return simulateEconomy(country, resources);
+export const calculateEconomyForecast = (country: CountryState,perks:Readonly<LeaderModifiers>=NEUTRAL_LEADER) => {
+  const resources = simulateResources(country,1,undefined,perks.consumer);
+  return simulateEconomy(country, resources,perks);
 };
 
 export const calculateEconomicHealth = (country: CountryState): number => {

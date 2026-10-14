@@ -1,3 +1,4 @@
+import {leaderModifiers} from './leaderPerks';
 import {activeCountries} from '../../domain/sovereignty';
 import type { CountryState, GameState, TradeResource } from "../../domain/game";
 import type {
@@ -454,16 +455,14 @@ export function startActivity(s: GameState, kind: ActivityKind): GameState {
     ].slice(0, 80),
   }), c.id, `activity/${kind}`);
 }
+export function recruitmentPreview(s:GameState,requested:number){
+ const c=s.countries[s.playerCountryId],count=Math.floor(requested*leaderModifiers(s,c.id).recruitment),cost=count*.000025;
+ return {count,cost,allowed:Number.isInteger(requested)&&requested>0&&requested<=100000&&count<=Math.max(0,c.demographics.population-c.military.personnel)*.01&&c.economy.treasury>=cost};
+}
 export function recruitPersonnel(s: GameState, count: number): GameState {
-  const c = s.countries[s.playerCountryId],
-    civil = Math.max(0, c.demographics.population - c.military.personnel),
-    cost = count * 0.000025;
+  const c=s.countries[s.playerCountryId],quote=recruitmentPreview(s,count),cost=quote.cost,actual=quote.count;
   if (
-    !Number.isInteger(count) ||
-    count <= 0 ||
-    count > 100000 ||
-    count > civil * 0.01 ||
-    c.economy.treasury < cost
+    !quote.allowed
   )
     return s;
   return {
@@ -477,12 +476,12 @@ export function recruitPersonnel(s: GameState, count: number): GameState {
           ...c.demographics,
           workforce: Math.max(
             0,
-            c.demographics.workforce - Math.round(count * 0.4),
+            c.demographics.workforce - Math.round(actual * 0.4),
           ),
         },
         military: {
           ...c.military,
-          personnel: c.military.personnel + count,
+          personnel: c.military.personnel + actual,
           readiness: Math.max(0, c.military.readiness - 2),
         },
       },

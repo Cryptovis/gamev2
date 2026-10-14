@@ -1,3 +1,4 @@
+import {leaderModifiers} from '../../engine/systems/leaderPerks';
 import {LocaleText,translateLive} from '../../i18n/localeText';
 import {ReviewDialog} from './ReviewDialog';
 import {InfrastructureIcon} from '../icons/InfrastructureIcon';
@@ -26,9 +27,10 @@ export function SupplyCommandWindow({country,war,onClose}:{country:CountryState;
  const isPlayer=useGameStore(s=>country.id===s.playerCountryId);
  // Engine-owned investment costs for the four assets, compared by value.
  const investmentCosts=useStoreView(s=>Object.fromEntries((['roads','rail','ports','hubs'] as InfrastructureAsset[]).map(asset=>[asset,infrastructureInvestmentCost(s,country.id,asset)])) as Record<InfrastructureAsset,number>);
+ const consumer=useGameStore(s=>leaderModifiers(s,country.id).consumer);
  const side=war?(war.attackerId===country.id?'attacker':'defender'):'home';
  const terrain=war?.terrain??'plains';
- const supply=useMemo(()=>calculateSupplyNetwork(country,terrain,side,infra),[country,terrain,side,infra]);
+ const supply=useMemo(()=>calculateSupplyNetwork(country,terrain,side,infra,consumer),[country,terrain,side,infra,consumer]);
  const frontSupply=war?(war.attackerId===country.id?war.attackerSupply:war.defenderSupply):supply.supplyScore;
  const exhaustion=war?(war.attackerId===country.id?war.attackerExhaustion:war.defenderExhaustion):0;
 

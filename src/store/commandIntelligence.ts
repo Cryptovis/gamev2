@@ -1,3 +1,4 @@
+import {leaderModifiers} from '../engine/systems/leaderPerks';
 import {fuelGuidance} from '../engine/systems/fuelGuidance';
 import type {GameState,TradeResource} from '../domain/game';
 import {MARKET_RESOURCES,resourceReserveDays,resourceStrategicStatus} from './marketSelectors';
@@ -9,7 +10,7 @@ export interface CommandAlert {id:string;category:AlertCategory;severity:'critic
 /** Presentation thresholds only: all reserve/credit calculations remain engine-owned. */
 export function commandAlerts(s:GameState):CommandAlert[]{
  const p=s.countries[s.playerCountryId],alerts:CommandAlert[]=[];
- for(const resource of MARKET_RESOURCES){const status=resourceStrategicStatus(p,resource),days=resourceReserveDays(p,resource);if(status==='CRITICAL'||status==='IMPORT NEED')alerts.push({id:resource,category:'resources',severity:status==='CRITICAL'?'critical':'warning',title:status,value:String(Math.max(0,Math.min(365,days)).toFixed(0)),resource,panel:'resources'});}
+ for(const resource of MARKET_RESOURCES){const status=resourceStrategicStatus(p,resource,leaderModifiers(s,p.id).consumer),days=resourceReserveDays(p,resource,leaderModifiers(s,p.id).consumer);if(status==='CRITICAL'||status==='IMPORT NEED')alerts.push({id:resource,category:'resources',severity:status==='CRITICAL'?'critical':'warning',title:status,value:String(Math.max(0,Math.min(365,days)).toFixed(0)),resource,panel:'resources'});}
  const fuel=fuelGuidance(s)!;if(fuel.oilDeclining&&!alerts.some(a=>a.resource==='oil'))alerts.push({id:'oil-declining',category:'resources',severity:'warning',title:'Crude oil consumption exceeds production',value:p.resources.oil.toFixed(1),panel:'fuel-help'});if(fuel.low||fuel.declining)alerts.push({id:'refined-fuel',category:'resources',severity:fuel.low?'critical':'warning',title:fuel.low?'Refined fuel reserves low':'Refined fuel consumption exceeds production',value:fuel.stock.toFixed(1),panel:'fuel-help'});
  if(p.economy.treasury<=0)alerts.push({id:'treasury',category:'finance',severity:'critical',title:'Treasury depleted',value:'',panel:'economy'});
  for(const loan of expansion(s).loans.filter(l=>l.borrowerId===p.id&&l.status!=='paid'&&(l.status==='arrears'||l.dueDay-s.day<=30)))alerts.push({id:loan.id,category:'finance',severity:loan.status==='arrears'?'critical':'warning',title:loan.status==='arrears'?'Loan in arrears':'Loan payment approaching',value:`${s.countries[loan.lenderId]?.name??loan.lenderId} · ${loan.dueDay}`,panel:'credit'});

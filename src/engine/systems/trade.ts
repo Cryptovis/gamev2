@@ -1,3 +1,4 @@
+import {leaderModifiers} from './leaderPerks';
 import {activeCountries} from '../../domain/sovereignty';
 import type { CountryState, GameState, TradeDeal, TradeResource } from '../../domain/game';
 import { simulateResources } from './resources';
@@ -21,7 +22,7 @@ export function getGlobalMarketPrice(state: GameState, resource: TradeResource):
   let production = 0;
   let consumption = 0;
   for (const country of activeCountries(state.countries)) {
-    const flow = simulateResources(country);
+    const flow = simulateResources(country,1,undefined,leaderModifiers(state,country.id).consumer);
     production += flow.production[resource];
     consumption += flow.consumption[resource];
   }
@@ -29,8 +30,8 @@ export function getGlobalMarketPrice(state: GameState, resource: TradeResource):
   return Number((TRADE_PRICES[resource] * scarcity).toFixed(4));
 }
 
-export function getExportCapacity(country: CountryState, resource: TradeResource): number {
-  const flow = simulateResources(country);
+export function getExportCapacity(country: CountryState, resource: TradeResource,consumer=1): number {
+  const flow = simulateResources(country,1,undefined,consumer);
   const floor = reserveFloor(country, resource);
   const stockExcess = Math.max(0, country.resources[resource] - floor);
   const structuralSurplus = Math.max(0, flow.net[resource]);
@@ -43,7 +44,7 @@ export function getTradeQuote(state: GameState, sellerId: string, resource: Trad
   const seller = state.countries[sellerId];
   const global = marketPrice ?? getGlobalMarketPrice(state, resource);
   if (!seller || seller.globalSanctions) return { available: 0, price: global, dailyCost: 0, quantity: 0 };
-  const available = getExportCapacity(seller, resource);
+  const available = getExportCapacity(seller, resource,leaderModifiers(state,seller.id).consumer);
   const abundanceDiscount = clamp(1 - available / (resource === 'uranium' ? 2.5 : 22), 0.78, 1.08);
   const embassy=embassyFor(state,buyerId,sellerId);
   const embassyDiscount=embassy?Math.max(.91,1-embassy.level*.02):1;

@@ -1,3 +1,5 @@
+import {leaderModifiers} from '../../engine/systems/leaderPerks';
+import {recruitmentPreview} from '../../engine/systems/livingEconomy';
 import {CivicArt} from '../icons/CivicArt';
 import { arrears } from "../../engine/systems/sovereignCredit";
 import { useState, useEffect } from "react";
@@ -16,9 +18,9 @@ export function PopulationPanel({ country: c, policyOnly=false, showPolicy=true 
     own = c.id === s.playerCountryId,
     [tax, setTax] = useState(c.economy.taxRate),
     [review, setReview] = useState(false),
-    forecast = populationForecast(c, simulateResources(c)),
+    forecast = populationForecast(c, simulateResources(c,1,undefined,leaderModifiers(s,c.id).consumer)),
     next = { ...c, economy: { ...c.economy, taxRate: tax } },
-    after = populationForecast(next, simulateResources(next));
+    after = populationForecast(next, simulateResources(next,1,undefined,leaderModifiers(s,c.id).consumer));
   useEffect(() => setTax(c.economy.taxRate), [c.id, c.economy.taxRate]);
   return (
     <section className={policyOnly?"population-panel tax-policy-panel":"population-panel"}>
@@ -123,7 +125,8 @@ export function RecruitmentPanel() {
     c = s.countries[s.playerCountryId],
     [count, setCount] = useState(10000),
     [review, setReview] = useState(false),
-    cost = count * 0.000025;
+    quote = recruitmentPreview(s,count),
+    cost = quote.cost;
   return (
     <section className="recruitment-panel">
       <h3>
@@ -156,12 +159,12 @@ export function RecruitmentPanel() {
           title="Review recruitment"
           summary="Personnel transfer from civilians into active military service. Total national population remains unchanged."
           metrics={[
-            ["Personnel", count.toLocaleString()],
+            ["Personnel", quote.count.toLocaleString(s.playerProfile.language)],
             ["Mobilization cost", money(cost)],
-            ["Daily personnel upkeep", money(count * 0.00000006)],
+            ["Daily personnel upkeep", money(quote.count * 0.00000006)],
             [
               "Civilian population after",
-              Math.max(0, civilianPopulation(c) - count).toLocaleString(
+              Math.max(0, civilianPopulation(c) - quote.count).toLocaleString(
                 "en-US",
                 { maximumFractionDigits: 0 },
               ),
@@ -169,7 +172,7 @@ export function RecruitmentPanel() {
             ["Treasury after", money(c.economy.treasury - cost)],
           ]}
           allowed={
-            c.economy.treasury >= cost && count <= civilianPopulation(c) * 0.01
+            quote.allowed
           }
           onCancel={() => setReview(false)}
           onConfirm={(commandId) => {

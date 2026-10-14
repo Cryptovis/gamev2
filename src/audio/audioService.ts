@@ -60,8 +60,8 @@ function assetBase(): string {
   const base = (import.meta as unknown as { env?: { BASE_URL?: string } }).env?.BASE_URL ?? '/';
   return `${base.replace(/\/?$/, '/')}assets/audio/`;
 }
-/** Opus in WebM first, MP3 for browsers without Opus. */
-export const soundUrls = (name: string, base = assetBase()) => [`${base}${name}.webm`, `${base}${name}.mp3`];
+/** MP3 first for browser compatibility, WebM as the codec fallback. */
+export const soundUrls = (name: string, base = assetBase()) => [`${base}${name}.mp3`, `${base}${name}.webm`];
 
 export interface AudioService {
   readonly state: () => AudioState;

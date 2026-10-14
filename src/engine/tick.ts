@@ -1,3 +1,4 @@
+import {leaderModifiers,NEUTRAL_LEADER,type LeaderModifiers} from './systems/leaderPerks';
 import { processFlights } from './systems/flights';
 import { processTradeFlights, reportFlightArrivals } from './systems/flightHooks';
 import { processCommodityExchange } from './systems/commodityExchange';
@@ -40,11 +41,11 @@ import {processLeadership} from './systems/leadership';
 import { processInfrastructure, processInfrastructureAI } from './systems/infrastructure';
 import { processAiWars } from './systems/aiWar';
 
-export function tickCountry(country: CountryState,boost=1,managedEnergy=false,tradeInflow?: TradeInflow): CountryState {
+export function tickCountry(country: CountryState,boost=1,managedEnergy=false,tradeInflow?: TradeInflow,perks:Readonly<LeaderModifiers>=NEUTRAL_LEADER): CountryState {
   const administered = processMinistries(country);
-  const resources = simulateResources(administered,boost,tradeInflow);
-  const economy = simulateEconomy(administered, resources);
-  const politics = simulatePolitics(administered, economy, resources);
+  const resources = simulateResources(administered,boost,tradeInflow,perks.consumer);
+  const economy = simulateEconomy(administered, resources,perks);
+  const politics = simulatePolitics(administered, economy, resources,perks.stabilityRecovery);
   const base: CountryState = {
     ...administered,
     demographics: populationForecast(administered,resources),
@@ -52,7 +53,7 @@ export function tickCountry(country: CountryState,boost=1,managedEnergy=false,tr
     resources: resources.next,
     politics,
   };
-  return processIndustry(base,boost,managedEnergy);
+  return processIndustry(base,boost,managedEnergy,perks.factory);
 }
 
 /** Average daily food/oil each country receives (+) or ships (-) under active trade deals. */
@@ -77,7 +78,7 @@ export function tickGame(state: GameState): GameState {
   const dated=processLeadership({...state,day:state.day+1});
   const boostActive=dated.day<dated.leadership.celebrationUntilDay;
   const inflow = contractedTradeInflow(state);
-  const countries = distributeMigration(Object.fromEntries(Object.entries(state.countries).map(([id, country]) => [id, country.annexedBy?country:tickCountry(country,(id===state.playerCountryId&&boostActive?1.12:1)*((occupationFor(dated,id)?.unrest??0)>=80?.7:1),true,inflow[id])])));
+  const countries = distributeMigration(Object.fromEntries(Object.entries(state.countries).map(([id, country]) => [id, country.annexedBy?country:tickCountry(country,(id===state.playerCountryId&&boostActive?1.12:1)*((occupationFor(dated,id)?.unrest??0)>=80?.7:1),true,inflow[id],leaderModifiers(state,id))])));
   const nextDay = state.day + 1;
   const player = countries[state.playerCountryId];
   const notices: string[] = [];

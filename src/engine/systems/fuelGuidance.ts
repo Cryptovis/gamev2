@@ -1,3 +1,4 @@
+import {leaderModifiers} from './leaderPerks';
 import type {GameState} from '../../domain/game';
 import {processIndustry} from './industry';
 import {industrialDailyUse} from './industrialMarket';
@@ -11,8 +12,8 @@ export function fuelGuidance(state:GameState,countryId=state.playerCountryId){
  const country=state.countries[countryId];if(!country)return null;
  // Current domestic planning flow includes both refinery and power-plant crude use.
  // Scheduled trade/contract deliveries and combat remain conditional, not guaranteed output.
- const resources=simulateResources(country);
- const refined=processIndustry({...country,resources:resources.next},1,true);
+ const resources=simulateResources(country,1,undefined,leaderModifiers(state,countryId).consumer);
+ const refined=processIndustry({...country,resources:resources.next},1,true,leaderModifiers(state,countryId).factory);
  const powered=processEnergy({...state,countries:{[countryId]:refined}}).countries[countryId];
  const produced=Math.max(0,refined.processedResources.fuel-country.processedResources.fuel);
  const net=produced-industrialDailyUse(state,countryId,'fuel');

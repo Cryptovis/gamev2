@@ -1,3 +1,4 @@
+import {leaderModifiers} from './leaderPerks';
 import {activeCountries} from '../../domain/sovereignty';
 import type { GameState, TradeResource } from '../../domain/game';
 import { changeRelations, relationFor } from './diplomacy';
@@ -12,11 +13,11 @@ export function processLivingEconomyAI(state: GameState): GameState {
   if (state.day % 7 !== 0) return state;
 
   const countryList = activeCountries(state.countries);
-  const flows = Object.fromEntries(countryList.map((country) => [country.id, simulateResources(country)]));
+  const flows = Object.fromEntries(countryList.map((country) => [country.id, simulateResources(country,1,undefined,leaderModifiers(state,country.id).consumer)]));
   const marketPrices = Object.fromEntries(resources.map((resource) => [resource, getGlobalMarketPrice(state, resource)])) as Record<TradeResource, number>;
   const exportCapacity = Object.fromEntries(countryList.map((country) => [
     country.id,
-    Object.fromEntries(resources.map((resource) => [resource, getExportCapacity(country, resource)])) as Record<TradeResource, number>,
+    Object.fromEntries(resources.map((resource) => [resource, getExportCapacity(country, resource,leaderModifiers(state,country.id).consumer)])) as Record<TradeResource, number>,
   ])) as Record<string, Record<TradeResource, number>>;
 
   const reserveDays = (countryId: string, resource: TradeResource) => {

@@ -1,3 +1,4 @@
+import {leaderModifiers} from './leaderPerks';
 import type { GameState, WarState } from '../../domain/game';
 import { activeCountries } from '../../domain/sovereignty';
 import { nextRandom } from '../rng';
@@ -33,7 +34,7 @@ export const WAR_MIN_FUEL_DAYS = 14;
 export function warFuelReadiness(state: GameState, attackerId: string) {
   const country = state.countries[attackerId];
   if (!country) return { allowed: false, days: 0, required: 0, missing: 0 };
-  const supply = calculateSupplyNetwork(country);
+  const supply = calculateSupplyNetwork(country,'plains','home',undefined,leaderModifiers(state,attackerId).consumer);
   const required = supply.militaryFuelDemand * WAR_MIN_FUEL_DAYS;
   return { allowed: country.processedResources.fuel >= required, days: supply.fuelDays,
     required, missing: Math.max(0, required - country.processedResources.fuel) };
@@ -73,7 +74,7 @@ export function combatPreview(state: GameState, attackerId: string, defenderId: 
     const c = state.countries[id], cover = pilotCoverage(state, id);
     return { ...c, military: { ...c.military, fighters: c.military.fighters * cover, bombers: c.military.bombers * cover } };
   };
-  return getWarPreview(crewed(attackerId), crewed(defenderId), state.infrastructure[attackerId], state.infrastructure[defenderId]);
+  return getWarPreview(crewed(attackerId), crewed(defenderId), state.infrastructure[attackerId], state.infrastructure[defenderId],leaderModifiers(state,defenderId).defense,leaderModifiers(state,attackerId).consumer,leaderModifiers(state,defenderId).consumer);
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -152,7 +153,7 @@ export function openWar(state: GameState, attackerId: string, defenderId: string
   const attacker = state.countries[attackerId], defender = state.countries[defenderId];
   let warId = `${attacker.id}-${defender.id}-${state.day}`;
   let suffix = 0; while (state.wars[warId]) warId = `${attacker.id}-${defender.id}-${state.day}-${++suffix}`;
-  const preview = getWarPreview(attacker, defender, state.infrastructure[attacker.id], state.infrastructure[defender.id]);
+  const preview = getWarPreview(attacker, defender, state.infrastructure[attacker.id], state.infrastructure[defender.id],leaderModifiers(state,defender.id).defense,leaderModifiers(state,attacker.id).consumer,leaderModifiers(state,defender.id).consumer);
   const war: WarState = { id: warId, attackerId: attacker.id, defenderId: defender.id, startedDay: state.day, progress: 0, rounds: 0, autoAssault, status: 'active', terrain: preview.terrain, attackerSupply: preview.attackerSupply, defenderSupply: preview.defenderSupply, airSuperiority: preview.airSuperiority, attackerExhaustion: 0, defenderExhaustion: 0, lastCombatDay: state.day - 1, attackerLosses: emptyLosses(), defenderLosses: emptyLosses(), attackerStartPersonnel: attacker.military.personnel, defenderStartPersonnel: defender.military.personnel, lastReport: `Mobilization ordered · ${preview.terrain.toUpperCase()} theatre · supply ${preview.attackerSupply.toFixed(0)}%.` };
   let next = cancelPairTrades(state, attacker.id, defender.id);
   next = setWarRelation(next, attacker.id, defender.id);

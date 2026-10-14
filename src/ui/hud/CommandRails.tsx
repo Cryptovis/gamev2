@@ -1,3 +1,4 @@
+import {leaderModifiers} from '../../engine/systems/leaderPerks';
 import {FuelHelper} from '../panels/FuelHelper';
 import {ExecutiveWorkspaceShell} from '../windows/ExecutiveWorkspaceShell';
 import {MarketWindow} from '../panels/MarketWindow';
@@ -47,7 +48,7 @@ export function CommandRails(){
  const offers=state.diplomaticOffers.filter(o=>o.expiresDay>=state.day);
  const embassies=Object.values(state.embassies).filter(e=>e.countryA===player.id||e.countryB===player.id);
  const objectives=useMemo(()=>strategicObjectives(state),[state.tradeDeals,state.intelOperations,state.blocs,state.wars,state.day,player.id,player.technology.unlocked.length]);
- const critical=MARKET_RESOURCES.map(resource=>({resource,status:resourceStrategicStatus(player,resource),days:resourceReserveDays(player,resource)})).filter(x=>x.status==='CRITICAL'||x.status==='IMPORT NEED');
+ const critical=MARKET_RESOURCES.map(resource=>({resource,status:resourceStrategicStatus(player,resource,leaderModifiers(state,player.id).consumer),days:resourceReserveDays(player,resource,leaderModifiers(state,player.id).consumer)})).filter(x=>x.status==='CRITICAL'||x.status==='IMPORT NEED');
  const toggle=(id:ToolId)=>state.openTool(state.activeTool===id?null:id,false);
  const close=(_id:ToolId)=>state.closeWorkspace();
  const done=objectives.filter(x=>x.done).length;

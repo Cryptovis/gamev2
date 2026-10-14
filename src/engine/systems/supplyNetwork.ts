@@ -21,8 +21,8 @@ export interface SupplyNetworkSnapshot {
   stages:{id:'production'|'depots'|'transport'|'front';label:string;value:number;detail:string}[];
 }
 
-export function calculateSupplyNetwork(country:CountryState,terrain:BattlefieldTerrain='plains',role:'home'|'attacker'|'defender'='home',network?:NationalInfrastructureState):SupplyNetworkSnapshot{
-  const flow=simulateResources(country);
+export function calculateSupplyNetwork(country:CountryState,terrain:BattlefieldTerrain='plains',role:'home'|'attacker'|'defender'='home',network?:NationalInfrastructureState,consumer=1):SupplyNetworkSnapshot{
+  const flow=simulateResources(country,1,undefined,consumer);
   const militaryFuelDemand=Math.max(.8,1+country.military.tanks*.0014+country.military.fighters*.018+country.military.bombers*.028+country.military.warships*.005);
   const militarySteelDemand=Math.max(.35,.45+country.military.tanks*.00032+country.military.artillery*.00028+country.industry.factories*.0035);
   const fuelDays=country.processedResources.fuel/Math.max(.01,militaryFuelDemand);

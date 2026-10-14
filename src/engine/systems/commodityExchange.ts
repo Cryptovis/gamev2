@@ -1,3 +1,4 @@
+import {leaderModifiers} from './leaderPerks';
 import { activeCountries } from '../../domain/sovereignty';
 import type { CountryState, EventKind, GameState } from '../../domain/game';
 import type {
@@ -113,7 +114,7 @@ export function worldSupply(s: GameState): WorldSupply {
   const oilProduction: Record<string, number> = {}, foodProduction: Record<string, number> = {};
   let worldGdp = 0;
   for (const c of activeCountries(s.countries)) {
-    const flow = simulateResources(c);
+    const flow = simulateResources(c,1,undefined,leaderModifiers(s,c.id).consumer);
     for (const r of ['food', 'oil', 'iron', 'uranium'] as const) { prod[r] += flow.production[r]; cons[r] += flow.consumption[r]; }
     oilProduction[c.id] = flow.production.oil; foodProduction[c.id] = flow.production.food;
     worldGdp += Math.max(0, c.economy.gdp);
@@ -229,7 +230,7 @@ export function exchangeSeller(s: GameState, buyerId: string, g: Commodity, quan
 }
 
 function importNeed(s: GameState, c: CountryState, g: Commodity): number {
-  if (RAW.has(g)) { const f = simulateResources(c); const r = g as 'food' | 'oil' | 'iron' | 'uranium'; return Math.max(0, f.consumption[r] - f.production[r]) * 30; }
+  if (RAW.has(g)) { const f = simulateResources(c,1,undefined,leaderModifiers(s,c.id).consumer); const r = g as 'food' | 'oil' | 'iron' | 'uranium'; return Math.max(0, f.consumption[r] - f.production[r]) * 30; }
   const reserve = g in GOODS ? GOODS[g as keyof typeof GOODS].reserve : 0;
   return Math.max(0, reserve * 3 - exchangeStock(s, c.id, g));
 }

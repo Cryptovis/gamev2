@@ -1,3 +1,4 @@
+import {LeaderPerkCard} from './LeaderPerkCard';
 import {AppearanceOptions} from './AppearanceOptions';
 import {ManagedDialog} from '../windows/ManagedDialog';
 import {WINDOW_LAYERS} from '../windows/useWindowLifecycle';
@@ -21,7 +22,7 @@ export function PlayerOptionsMenu({onClose}:{onClose:()=>void}){
  const world=useGameStore(s=>s.world);
  const [avatarOpen,setAvatarOpen]=useState(false);
  const [confirmNew,setConfirmNew]=useState(false);
- const profile=useGameStore(s=>s.playerProfile);
+ const profile=useGameStore(s=>s.playerProfile),archetype=useGameStore(s=>s.leadership.archetype);
  const countries=useGameStore(s=>s.countries);
  const setIdentity=useGameStore(s=>s.setLeaderIdentity);
  const [citizenship,setCitizenship]=useState(profile.nationalityCountryId??useGameStore.getState().playerCountryId);
@@ -51,7 +52,7 @@ export function PlayerOptionsMenu({onClose}:{onClose:()=>void}){
       </div>
       <small><LocaleText value={"COMMANDER"}/></small>
       <h3><LocaleText value={profile.commanderName}/></h3>
-      <strong><LocaleText value={player.name}/></strong>
+      <strong><LocaleText value={player.name}/></strong>{archetype&&<LeaderPerkCard archetype={archetype}/>}
       <p><LocaleText value={player.politics.regime.replaceAll('_',' ')}/><LocaleText value={" · "}/><LocaleText value={player.region}/></p>
       <button className="change-portrait-button" onClick={()=>setAvatarOpen(true)}><LocaleText value={"CHANGE PORTRAIT"}/></button>
      </aside>

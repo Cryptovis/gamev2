@@ -1,3 +1,4 @@
+import {leaderModifiers,facilityLeaderFactor} from './leaderPerks';
 import {activeCountries} from '../../domain/sovereignty';
 import {EQUIPMENT_CATALOG,EQUIPMENT_TYPES} from '../../data/equipmentCatalog';
 import {TANK_COMPONENTS} from '../../data/industrialCatalog';
@@ -20,10 +21,10 @@ export const AI_CONTRACT_MAX_YEARS=3,AI_SHIPMENT_TREASURY_SHARE=.05;
 /** Estimated daily use of a good by a country's facilities, population (water) and production lines. */
 export function industrialDailyUse(state:GameState,id:string,good:IndustrialGood){
  const c=state.countries[id],n=state.industrialEconomy[id];if(!c||!n)return 0;
- let use=good==='water'?Math.max(.1,c.demographics.population/1e6*.04):0;
+ let use=good==='water'?Math.max(.1,c.demographics.population/1e6*.04)*leaderModifiers(state,id).consumer:0;
  for(const [kind,d] of Object.entries(FACILITIES) as Array<[FacilityKind,typeof FACILITIES[FacilityKind]]>){
   const count=n.facilities[kind],amount=d.inputs[good];
-  if(count&&n.enabled[kind]&&amount)use+=amount*d.yield*count*facilityPotential(n,kind)*c.industry.utilization/100;
+  if(count&&n.enabled[kind]&&amount)use+=amount*d.yield*count*facilityPotential(n,kind)*c.industry.utilization/100*facilityLeaderFactor(state,id,kind);
  }
  const p=state.production[id];
  if(p){
@@ -36,7 +37,7 @@ export function industrialDailyUse(state:GameState,id:string,good:IndustrialGood
 /** Daily domestic output of a good: last facility output, or this day's refinery/steelworks gain for fuel and steel. */
 function domesticDailyOutput(state:GameState,id:string,good:IndustrialGood){
  const c=state.countries[id];if(!c)return 0;
- if(good==='steel'||good==='fuel')return Math.max(0,processIndustry(c,1,true).processedResources[good]-c.processedResources[good]);
+ if(good==='steel'||good==='fuel')return Math.max(0,processIndustry(c,1,true,leaderModifiers(state,id).factory).processedResources[good]-c.processedResources[good]);
  return state.industrialEconomy[id]?.lastOutput[good]??0;
 }
 /**

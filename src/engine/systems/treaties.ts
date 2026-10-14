@@ -1,3 +1,4 @@
+import {leaderModifiers} from './leaderPerks';
 import { activeCountries } from '../../domain/sovereignty';
 import type { CountryState, DiplomaticRelation, GameState, TreatyType } from '../../domain/game';
 import { nextRandom } from '../rng';
@@ -29,7 +30,7 @@ export const agreementCostScale = (country: CountryState) => costScale(country);
 export function agreementCost(state: GameState, countryId: string, kind: AgreementKind): number {
   const country = state.countries[countryId];
   const base = AGREEMENT_BASE_COST[kind];
-  return country ? scaledCostB(country, base) : base;
+  return country ? scaledCostB(country, base)*(kind==='embassy'?leaderModifiers(state,countryId).embassy:1) : base;
 }
 
 /** "4", "0.25": the number shown in "$...B" labels. */

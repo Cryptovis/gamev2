@@ -56,3 +56,7 @@ Howler.js 2.2.4 (MIT, © James Simpson / GoldFire Studios), bundled with the app
 
 ## 0.90.0-playtest.17 shaded relief (Phase 6.3)
 `public/assets/geography/hillshade-2048.webp` (2048 × 1024, about 126 kB) is derived from Natural Earth GRAY_50M_SR_OB (public domain) by `scripts/build-hillshade.mjs`. It is the only third-party raster added in this phase and is drawn as its own layer (multiply blend) above the country shapes. Source, credit and processing: `public/assets/geography/HILLSHADE-ATTRIBUTION.md`. The capital-pin building sprite and flag rings are original project SVG.
+
+## 0.94 soundtrack replacement
+
+`public/assets/audio/ambient-command.mp3` is the owner-supplied Diplomatic-Tension2.mp3 soundtrack, replacing the original synthesized command MP3. The staging filename is removed. `ambient-command.webm` retains the original synthesized codec fallback. Runtime source preference is now MP3, then WebM. Other audio filenames and cue channels are unchanged.
