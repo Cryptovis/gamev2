@@ -125,6 +125,7 @@ export function CountryPanel({onBrowse,suspended=false,countryId,navigationFrame
     {tab==='policies'&&<div className="country-policies">
       <header className="policy-heading"><CommandArt kind="governance" size={40}/><div><h3><LocaleText value="Policies"/></h3><p><LocaleText value="Review taxes and state spending before you change them."/></p></div></header>
       <PolicyCardGrid country={selected}/>
+      {isPlayer&&<button className="policy-relief-banner" onClick={()=>state.openTool('society')}><CivicArt kind="festival" size={44}/><span><strong><LocaleText value="Public Events & Relief"/></strong><small><LocaleText value="National Approval"/>: {selected.politics.approval.toFixed(0)}% · <LocaleText value="Stability"/>: {selected.politics.stability.toFixed(0)}%</small></span><b aria-hidden="true">→</b></button>}
       <PopulationPanel country={selected} policyOnly/>
       <section className="policy-budget"><h3><LocaleText value="State spending"/></h3><div className="stat-grid"><div><span><LocaleText value="Treasury"/></span><strong>{money(selected.economy.treasury)}</strong></div><div><span><LocaleText value="Budget / day"/></span><strong className={economy.dailyBalance>=0?'positive':'negative'}>{economy.dailyBalance>=0?'+':''}{money(economy.dailyBalance,language)}</strong></div></div>
       {isPlayer&&<button className="policy-budget-link" onClick={()=>chooseTab('cabinet')}><CabinetIcon size={24}/><LocaleText value="Manage ministry budgets"/></button>}</section>

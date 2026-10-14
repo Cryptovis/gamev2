@@ -18,9 +18,19 @@ export interface CommodityChartProps {
   rising: boolean;
 }
 
+/** Canvas labels use the same semantic palette as the enclosing exchange card. */
+function applyPalette(current:Chart<'line'>,rising:boolean){
+  const style=getComputedStyle(document.documentElement),color=(key:string)=>style.getPropertyValue(key).trim();
+  for(const key of ['x','y']){const axis=current.options.scales?.[key];if(axis){axis.ticks={...axis.ticks,color:color('--ink-muted')};axis.grid={...axis.grid,color:color('--border')};}}
+  const [price,cost,fair]=current.data.datasets,tone=color(rising?'--success':'--danger');
+  price.borderColor=tone;price.backgroundColor=/^#[0-9a-f]{6}$/i.test(tone)?`${tone}20`:color('--surface-inset');price.pointBackgroundColor=color('--focus');
+  cost.borderColor=color('--focus');fair.borderColor=color('--ink-muted');
+}
+
 /** Lazily loaded Chart.js price chart (same approach as EconomicTrends): created once, updated in place. */
 export default function CommodityPriceChart({ closes, firstDay, label, language, avgCost, fundamental, shockDays, rising }: CommodityChartProps) {
-  const canvas = useRef<HTMLCanvasElement>(null), chart = useRef<Chart<'line'>>(null);
+  const canvas = useRef<HTMLCanvasElement>(null), chart = useRef<Chart<'line'>>(null),direction=useRef(rising);
+  direction.current=rising;
   useEffect(() => {
     if (!canvas.current) return;
     chart.current = new Chart<'line'>(canvas.current, {
@@ -41,7 +51,10 @@ export default function CommodityPriceChart({ closes, firstDay, label, language,
         },
       },
     });
-    return () => { chart.current?.destroy(); chart.current = null; };
+    const repaint=()=>{const current=chart.current;if(current){applyPalette(current,direction.current);current.update('none');}};
+    repaint();
+    const observer=new MutationObserver(repaint);observer.observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+    return () => { observer.disconnect();chart.current?.destroy(); chart.current = null; };
   }, [language]);
   useEffect(() => {
     const current = chart.current;
@@ -51,14 +64,14 @@ export default function CommodityPriceChart({ closes, firstDay, label, language,
     current.data.labels = closes.map((_, i) => `${translateLive('Day')} ${firstDay + i}`);
     price.label = label;
     price.data = closes;
-    price.borderColor = rising ? '#e1bc70' : '#df6b73';
-    price.backgroundColor = rising ? 'rgba(225,188,112,.12)' : 'rgba(223,107,115,.1)';
+
     price.pointRadius = closes.map((_, i) => (shocks.has(firstDay + i) ? 4 : 0));
-    price.pointBackgroundColor = '#71c9e8';
+
     cost.label = translateLive('Average cost');
     cost.data = avgCost ? closes.map(() => avgCost) : [];
     fair.label = translateLive('Fundamental');
     fair.data = closes.map(() => fundamental);
+    applyPalette(current,rising);
     current.update('none');
   }, [closes, firstDay, label, avgCost, fundamental, shockDays, rising, language]);
   return <canvas ref={canvas} role="img" aria-label={`${label} · ${closes.length} ${translateLive('days')}`} />;

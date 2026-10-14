@@ -1,4 +1,4 @@
-# Rule of Nations (RON) — 0.96.0
+# Rule of Nations (RON) — 0.97.0
 
 Rule of Nations is a browser-based geopolitical grand-strategy prototype built with React, TypeScript, Zustand, D3 Geo and Dexie. Lead a country through its economy, resources, diplomacy, development and military conflicts. Chart.js provides economic charts; Vitest and Playwright verify gameplay and browser flows.
 
@@ -6,10 +6,10 @@ Rule of Nations is a browser-based geopolitical grand-strategy prototype built w
 
 | Item | Current state |
 |---|---|
-| Version | **0.96.0 — Master UI/UX, War Planning & HUD Symmetry** |
+| Version | **0.97.0 — Semantic Light Panels & Policy Workspace** |
 | Development branch | `dev/ron-phase7` (development release; not merged into main) |
 | Save schema | 17; optional leader archetype metadata, old records retain neutral gameplay; existing migrations unchanged |
-| Validation | 915/915 unit tests / 98 files; TypeScript and production build passed, zero build errors. 12/12 targeted production-browser scenarios passed (10 release scenarios plus 2 HUD regressions). Full browser/native macOS suites were not rerun for 0.96. [Validation record](docs/RELEASE-096.md) |
+| Validation | 922/922 unit tests / 99 files; TypeScript and Vite production build passed, zero build errors. 15/15 targeted production-browser checks passed (12 release scenarios plus 3 HUD/Dark-modal regressions). Full browser/native macOS suites were not rerun for 0.97. [Validation record](docs/RELEASE-097.md) |
 | V3 | Reserved for the complete-playability milestone; the current plan builds on the existing engine |
 
 These details describe this development branch. Another branch, including `main`, can contain an older release. Check `package.json` and your checked-out branch when comparing previews.
@@ -34,6 +34,8 @@ npm run test:e2e
 `check` runs tests, TypeScript checks and the production build. Browser tests run separately against the production preview. Optional `npm run measure:engine`, `npm run measure:browser` `npm run measure:renders` (React render attribution on a profiling build) and `npm run measure:war` (paired war-balance scenarios) write local performance reports; run browser measurements separately from other builds/tests. See [measurement method](docs/PERFORMANCE-0906.md).
 
 ## Recent changelog
+
+- **0.97.0:** expanded portrait step, semantic day badge, subtle viewport grid, complete Light treatment for specified subpanels and a wide live Public Events & Relief card below policies. [Release record](docs/RELEASE-097.md). Schema 17 and simulation unchanged.
 
 - **0.96.0:** stable onboarding footer, clearer Light command/review/supply cards, responsive supplier grid, relocated fuel help and balanced HUD rails. [Release record](docs/RELEASE-096.md). Schema 17 and simulation unchanged.
 
@@ -218,6 +220,7 @@ Delivered milestones are retained here when new releases are added. This table s
 
 | Milestone | Delivered foundation | Record |
 |---|---|---|
+| 0.97 — Semantic Light Panels & Policies | Phase 7 Sprint 7: portrait layout, day badge, viewport atmosphere, Light subpanels and policy action/relief card | [Playtest 0.97](docs/PLAYTEST-097.md) |
 | 0.96 — Master UI/UX & HUD Symmetry | Phase 7 Sprint 6: wizard layout, Light surfaces, supplier cards, assessment actions and 72 px rails | [Playtest 0.96](docs/PLAYTEST-096.md) |
 | 0.95 — National Command & Audio Settings | Phase 7 Sprint 5: Light modal contrast, audio controls and persistent exit footer | [Playtest 0.95](docs/PLAYTEST-095.md) |
 | 0.94 — Audio, UI & Character Perks | Phase 7 Sprint 4: audio integration, independent HUD, viewport/notification polish and six persistent campaign archetypes | [Playtest 0.94](docs/PLAYTEST-094.md) |

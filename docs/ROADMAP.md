@@ -1,5 +1,9 @@
 # Rule of Nations roadmap (formerly AlpyX) after 0.31
 
+## 0.97.0 — Phase 7 Sprint 7
+
+Delivered on `dev/ron-phase7`: portrait workspace, day badge, subtle viewport grid, specified Light subpanels and policy action/relief banner. [Release](RELEASE-097.md) · [Playtest](PLAYTEST-097.md). Schema 17, deterministic RNG and engine formulas unchanged; V3 remains the complete-playability milestone. Existing profiling/bundle work remains pending.
+
 ## 0.96.0 — Phase 7 Sprint 6
 
 Delivered on `dev/ron-phase7`: entry/wizard layout polish, consistent Light command and strategic review surfaces, supply card grid, assessment fuel-action placement and balanced HUD rails. [Release](RELEASE-096.md) · [Playtest](PLAYTEST-096.md). Schema 17 and deterministic simulation unchanged; V3 remains the complete-playability milestone. Existing profiling work remains pending.

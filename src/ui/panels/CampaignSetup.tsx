@@ -104,7 +104,7 @@ export function CampaignSetup({onReturnToMenu}:{onReturnToMenu?:()=>void}={}){
     </div>}
 
     {step===2&&<div className="wizard-portrait-stage">
-      <div className="wizard-intro compact"><span className="wizard-kicker"><LocaleText value={"STEP 02 / COMMAND PROFILE"}/></span><h2><LocaleText value={tr(language,'choose_avatar')}/></h2></div>
+      <div className="wizard-intro compact"><span className="wizard-kicker"><LocaleText value={"STEP 02 / COMMAND PROFILE"}/></span></div>
       <LeaderStyleFilter value={portraitStyle} onChange={setPortraitStyle} turkish={language==='tr'}/><div className="wizard-avatar-layout"><div className="wizard-avatar-grid">{AVATAR_PRESETS.filter(a=>portraitStyle==='all'||a.category===portraitStyle).map(a=><button key={a.id} aria-pressed={avatar===a.id} className={avatar===a.id?'active':''} onClick={()=>setAvatar(a.id)}><AvatarPortrait id={a.id} size={72}/><span><LocaleText value={a.label}/></span><small className="avatar-perk-name"><LocaleText value={LEADER_PERKS[portraitArchetype(a.id)].title}/></small></button>)}</div><aside className="wizard-avatar-preview"><AvatarPortrait id={avatar} size={152}/><small><LocaleText value={"COMMANDER"}/></small><strong><LocaleText value={name||'Commander'}/></strong><span><LocaleText value={AVATAR_PRESETS.find(a=>a.id===avatar)?.label}/></span><LeaderPerkCard archetype={archetype}/></aside></div>
     </div>}
 

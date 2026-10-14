@@ -454,6 +454,7 @@ function WorldMapView() {
       else setFlatPan(p=>boundPan({x:p.x+dx,y:p.y+dy},flatZoom));
     }} ref={svgRef} data-zoom={mapZoom.toFixed(4)} aria-label={translateLive("Interactive world map")} viewBox={`0 0 ${W} ${H}`} className={projectionMode === 'globe' ? 'strategy-svg globe-svg' : 'strategy-svg flat-svg'} onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerCancel={pointerUp} onClick={selectFromSurface} shapeRendering="geometricPrecision">
       <defs>
+        <pattern id="executive-coordinate-grid" width="48" height="48" patternUnits="userSpaceOnUse"><path d="M48 0H0V48" fill="none" stroke="var(--ink)" strokeWidth="1"/></pattern>
         <pattern id="terrain-plains" width="18" height="18" patternUnits="userSpaceOnUse"><rect width="18" height="18" fill="#6d8061"/><path d="M0 14C5 11 10 16 18 12" fill="none" stroke="#9aab83" strokeOpacity=".22" strokeWidth="1"/></pattern>
         <pattern id="terrain-forest" width="14" height="14" patternUnits="userSpaceOnUse"><rect width="14" height="14" fill="#3f6b52"/><circle cx="3" cy="4" r="1.5" fill="#234936" fillOpacity=".65"/><circle cx="10" cy="9" r="1.7" fill="#2a513c" fillOpacity=".7"/></pattern>
         <pattern id="terrain-desert" width="20" height="16" patternUnits="userSpaceOnUse"><rect width="20" height="16" fill="#a88a5a"/><path d="M0 10Q5 6 10 10t10 0" fill="none" stroke="#d5bb7d" strokeOpacity=".35"/></pattern>
@@ -477,6 +478,7 @@ function WorldMapView() {
         <clipPath id="capital-flag-clip"><circle r="7" cy="-22"/></clipPath>
       </defs>
       {projectionMode === 'flat' && <rect x="0" y="0" width={W} height={H} className="flat-ocean"/>}
+      <rect className="executive-coordinate-grid" width={W} height={H} fill="url(#executive-coordinate-grid)" aria-hidden="true" pointerEvents="none"/>
       {projectionMode === 'globe' && <>
         <circle cx={W/2} cy={H/2+8} r={286*globeZoom*1.06} fill="url(#globe-atmosphere)" className="globe-atmosphere" pointerEvents="none"/>
         <path d={path({ type: 'Sphere' } as any) ?? ''} className="ocean-sphere"/>

@@ -1,6 +1,5 @@
 import {leaderModifiers} from '../../engine/systems/leaderPerks';
 import {recruitmentPreview} from '../../engine/systems/livingEconomy';
-import {CivicArt} from '../icons/CivicArt';
 import { arrears } from "../../engine/systems/sovereignCredit";
 import { useState, useEffect } from "react";
 import type { CountryState } from "../../domain/game";
@@ -75,14 +74,11 @@ export function PopulationPanel({ country: c, policyOnly=false, showPolicy=true 
               onChange={(e) => setTax(Number(e.target.value))}
             />
           </label>
-          <button
+          <button className="tax-policy-apply primary"
             disabled={tax === c.economy.taxRate}
             onClick={() => setReview(true)}
           >
-            <LocaleText value="Review tax policy" />
-          </button>
-          <button onClick={() => s.openTool("society")}>
-            <CivicArt kind="festival" size={34}/><LocaleText value="Public Events & Relief" />
+            <LocaleText value="Apply changes on tax policy" />
           </button>
         </>
       )}

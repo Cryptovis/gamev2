@@ -1,0 +1,105 @@
+/* Wider portrait workspace; the helper remains in the persistent footer. */
+@media (min-width: 761px) {
+  :root .campaign-wizard-backdrop .campaign-wizard[data-step="2"] { grid-template-columns: minmax(0, 34fr) minmax(0, 66fr); }
+  :root .campaign-wizard[data-step="2"] .wizard-avatar-layout { grid-template-columns: minmax(0, 1fr) 208px; gap: 16px; }
+}
+@media (min-width: 761px) and (min-height: 700px) {
+  :root .campaign-wizard[data-step="2"] .wizard-portrait-stage { height: 100%; min-height: 0; grid-template-rows: auto auto minmax(0, 1fr); }
+  :root .campaign-wizard[data-step="2"] .wizard-avatar-layout { min-height: 0; height: 100%; }
+  :root .campaign-wizard[data-step="2"] .wizard-avatar-grid { height: 100%; max-height: none; min-height: 0; align-content: start; }
+}
+:root .topbar .leader-capsule .brand-line { display: flex; flex-wrap: wrap; align-items: center; gap: 5px 8px; }
+:root .topbar .leader-capsule .brand-line > strong { line-height: 1.25; margin: 0; }
+:root[data-theme="light"] .topbar .leader-capsule .day-chip {
+  display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+  background: var(--surface-raised) !important; border: 1px solid var(--border) !important;
+  color: var(--ink) !important; line-height: 1.25; margin: 0; padding: 3px 6px;
+}
+@media (max-width: 760px) {
+  :root .topbar .leader-capsule .day-chip { font-size: 10px; padding: 2px 5px; }
+}
+.executive-coordinate-grid { display: none; pointer-events: none; }
+:root[data-theme="light"] .executive-coordinate-grid { display: block; opacity: .04; }
+
+/* Scoped Light surfaces override legacy cards while leaving Dark intact. */
+:root[data-theme="light"] :is(.floating-command-window, .command-window, .executive-workspace, .command-panel, #country-section-window) :is(
+  .floating-objectives > div, .gold-vault, .listing-form, .exchange-buy, .exchange-sell, .market-facts > span, .seller-offers > article, .own-listings > article,
+  .cx-chart, .cx-order, .cx-limits, .cx-preview, .cx-holdings, .cx-quote, .cx-board > button, .cx-tape,
+  .industrial-heading, .exchange-board > button, .exchange-order, .exchange-confirm, .industrial-contract-list > article, .order-summary, .contract-first-delivery,
+  .dossier-economy-grid > div, .dossier-score-stack > div, .dossier-identity, .society-identity-grid > article, .society-indicators > article, .society-composition article, .trade-desk-hero,
+  .cabinet-hero, .ministry-row, .intel-hero, .intel-home-grid > div, .intel-log > div, .ai-doctrine-card,
+  .war-theatre, .war-theatre > span, .war-progress, .front-metrics, .casualty-grid, .casualty-grid > div, .logistics-strip,
+  .policy-budget, .policy-budget .stat-grid > div, .affairs-hero, .affairs-guidance, .affairs-thresholds, .affairs-thresholds > div, .affairs-action, .occupation-summary, .occupation-summary > span, .activity-cards > article,
+  .supply-summary > div:not(.supply-ring), .supply-summary > span, .supply-bottleneck, .supply-doctrine > div, .infrastructure-summary > span, .infrastructure-grid > article, .reserve-command-card, .front-command-hero
+) {
+  background: var(--surface-raised) !important; border: 1px solid var(--border) !important; color: var(--ink) !important;
+}
+:root[data-theme="light"] :is(.floating-command-window, .command-window, .executive-workspace, .command-panel, #country-section-window) :is(
+  .floating-objectives, .open-exchange, .commodity-exchange, .industrial-market, .country-dossier-window,
+  .cabinet-panel, .intel-panel, .war-command, .policy-budget, .affairs-shell, .activity-cards, .national-supply-window
+) :is(h2, h3, h4, h5, strong, small, p, label, span, b, em, dt, dd, th, td) { color: var(--ink) !important; }
+:root[data-theme="light"] :is(.floating-command-window, .command-window, .executive-workspace, .command-panel, #country-section-window) :is(input, select, textarea) { color-scheme: light; }
+:root[data-theme="light"] :is(.floating-command-window, .command-window, .executive-workspace, .command-panel, #country-section-window) :is(.commodity-exchange, .industrial-market, .floating-objectives, .country-policies, .war-command, .country-dossier-window) :is(.positive, .up, .met, .stock-ready strong) { color: var(--success) !important; }
+:root[data-theme="light"] :is(.floating-command-window, .command-window, .executive-workspace, .command-panel, #country-section-window) :is(.commodity-exchange, .industrial-market, .country-policies, .war-command, .country-dossier-window) :is(.negative, .down, .stock-critical, .stock-critical strong, .cx-reasons, .exchange-error) { color: var(--danger) !important; }
+:root[data-theme="light"] :is(.floating-command-window, .command-window, .executive-workspace, .command-panel, #country-section-window) button:is(.active, [aria-pressed="true"], [aria-selected="true"]) {
+  background: var(--accent-surface) !important; color: var(--accent-ink) !important; border-color: var(--focus) !important;
+}
+:root[data-theme="light"] :is(.floating-command-window, .command-window, .executive-workspace, .command-panel, #country-section-window) button:is(.active, [aria-pressed="true"], [aria-selected="true"]) :is(span, strong, small, b, em) { color: var(--accent-ink) !important; }
+
+:root[data-theme="light"] .floating-command-window .floating-objectives > div { grid-template-columns: 48px minmax(0, 1fr); }
+:root[data-theme="light"] .floating-command-window .floating-objectives > div > b {
+  width: 44px; min-height: 32px; height: auto; padding: 4px 2px;
+  background: var(--surface) !important; color: var(--ink) !important; border: 1px solid var(--border);
+}
+:root[data-theme="light"] :is(.floating-command-window, #country-section-window) .floating-objectives > div.done > b { background: var(--success) !important; color: #fff !important; }
+:root[data-theme="light"] .floating-command-window .floating-objectives > div.done strong { color: var(--ink) !important; }
+:root[data-theme="light"] :is(.floating-command-window, #country-section-window) .industrial-heading p { color: var(--ink-muted) !important; }
+:root[data-theme="light"] :is(.floating-command-window, #country-section-window) .industrial-market .exchange-board > button:is(:hover, :focus-visible) { background: var(--accent-surface) !important; border-color: var(--focus) !important; }
+:root[data-theme="light"] :is(.floating-command-window, #country-section-window) .industrial-market .exchange-board > button:is(:hover, :focus-visible) :is(span, strong, small, b) { color: var(--accent-ink) !important; }
+:root[data-theme="light"] .floating-command-window .cx-side button:not(.active) { background: var(--surface-raised) !important; color: var(--ink) !important; border: 1px solid var(--border); }
+:root[data-theme="light"] :is(.floating-command-window, #country-section-window) .commodity-exchange .cx-side button.active { color: #fff !important; background: var(--success) !important; }
+:root[data-theme="light"] :is(.floating-command-window, #country-section-window) .commodity-exchange .cx-side button.active.sell { background: var(--danger) !important; }
+:root[data-theme="light"] .country-dossier-window .radar-label { fill: var(--ink); }
+:root[data-theme="light"] .country-dossier-window :is(.radar-grid, .radar-axis) { stroke: var(--border); }
+:root[data-theme="light"] .country-dossier-window .radar-value { stroke: var(--focus); fill: #145ca51a; }
+:root[data-theme="light"] .national-supply-window .supply-flow-svg circle { fill: var(--surface-raised); }
+:root[data-theme="light"] .national-supply-window :is(.supply-svg-value, .supply-svg-label, .supply-svg-detail) { fill: var(--ink); }
+
+:root .country-policies .policy-relief-banner {
+  display: grid; grid-template-columns: 44px minmax(0, 1fr) 24px; gap: 14px; align-items: center;
+  width: 100%; margin: 14px 0; padding: 18px; text-align: left;
+  background: var(--surface-raised); border: 1px solid var(--border); border-radius: 12px; color: var(--ink);
+}
+:root .country-policies .policy-relief-banner > span { display: grid; gap: 7px; }
+:root .country-policies .policy-relief-banner strong { font-size: 16px; }
+:root .country-policies .policy-relief-banner small { line-height: 1.5; }
+:root .tax-policy-panel .tax-policy-apply {
+  background: var(--accent-surface) !important; color: var(--accent-ink) !important; border: 1px solid var(--focus) !important;
+  min-height: 44px; padding: 10px 16px; border-radius: 9px; cursor: pointer;
+  transition: box-shadow 150ms ease, transform 150ms ease;
+}
+:root .tax-policy-panel .tax-policy-apply:not(:disabled):is(:hover, :focus-visible) { box-shadow: 0 0 0 3px #145ca526, 0 6px 18px #145ca538; transform: translateY(-2px); }
+:root .tax-policy-panel .tax-policy-apply:disabled { cursor: not-allowed; opacity: .6; }
+:root[data-theme="light"] :is(.command-panel, .executive-workspace, #country-section-window) .tax-policy-panel .tax-policy-apply { color: var(--accent-ink) !important; }
+:root[data-theme="light"] .executive-workspace .diplomatic-messages article {
+  background: var(--surface-raised) !important; border: 1px solid var(--border) !important;
+  border-left: 3px solid #73b9ac !important; color: var(--ink) !important;
+}
+:root[data-theme="light"] .executive-workspace .diplomatic-messages article.rival { border-left-color: #cf9674 !important; }
+:root[data-theme="light"] .executive-workspace .diplomatic-messages article :is(small, strong, p) { color: var(--ink) !important; }
+@media (prefers-reduced-motion: reduce) {
+  :root .tax-policy-panel .tax-policy-apply { transition: none !important; transform: none !important; }
+}
+
+:root[data-theme="light"] :is(.command-panel, .executive-workspace, #country-section-window) .country-policies .policy-relief-banner { background: var(--surface-raised) !important; border: 1px solid var(--border) !important; color: var(--ink) !important; }
+
+:root[data-theme="light"] .national-supply-window .supply-ring { background: conic-gradient(var(--focus) var(--ring), var(--surface-inset) 0); }
+:root[data-theme="light"] .national-supply-window .supply-ring::after { background: var(--surface-raised); border: 1px solid var(--border); }
+:root[data-theme="light"] .floating-command-window .open-exchange a { color: var(--focus); }
+
+:root .campaign-wizard[data-step="2"] .wizard-avatar-preview .leader-perk strong { font-size: 18px; line-height: 1.25; overflow-wrap: normal; }
+:root[data-theme="light"] :is(.floating-command-window, .command-window, #country-section-window) :is(.cx-board, .cx-range, .exchange-board, .exchange-filters) > button:is(.active, [aria-pressed="true"]) { background: var(--accent-surface) !important; color: var(--accent-ink) !important; border-color: var(--focus) !important; }
+:root[data-theme="light"] .commodity-exchange .cx-spark.up polyline { stroke: var(--success); }
+:root[data-theme="light"] .commodity-exchange .cx-spark.down polyline { stroke: var(--danger); }
+:root[data-theme="light"] :is(.floating-command-window, .command-window, #country-section-window) :is(.cx-board, .cx-range, .exchange-board, .exchange-filters) > button:is(.active, [aria-pressed="true"]) :is(span, strong, small, b, em) { color: var(--accent-ink) !important; }
+:root[data-theme="light"] .topbar .leader-capsule .brand-block .eyebrow { color: var(--ink-muted) !important; }

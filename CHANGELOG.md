@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.97.0 — Semantic Light Panels & Policy Workspace
+
+Development release on `dev/ron-phase7`; Schema 17, RNG and engine formulas unchanged. [Release record](docs/RELEASE-097.md).
+
+- Portrait step removes the duplicate heading, widens the selection workspace and uses available vertical space; preview perk titles stay readable and guidance remains above Back/Continue.
+- Leader day badge uses Light semantic surfaces with aligned commander text. A static 4%-opacity coordinate grid adds viewport atmosphere without intercepting pointer input.
+- Goals/victory paths, gold vault/listing forms, commodity order/chart/holdings, industrial contracts, dossier, cabinet, intel/logs, affairs, war metrics and ministry spending gain semantic Light surfaces and readable text. Selected commodities and critical stock states retain visible contrast; commodity canvas colors follow theme changes.
+- Apply changes on tax policy is a prominent localized action that still opens the existing review/confirmation; Public Events & Relief becomes a wide card immediately below Policies & Laws, showing live approval/stability and opening the existing Society tool.
+- Diplomatic message backgrounds are readable while their warm/rival edge colors remain unchanged. Supply rings retain their progress geometry with Light centers.
+
 ## 0.96.0 — Master UI/UX, War Planning & HUD Symmetry
 
 Development release on `dev/ron-phase7`; Schema 17 and simulation unchanged. [Release record](docs/RELEASE-096.md).
