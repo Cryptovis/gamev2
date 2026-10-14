@@ -9,8 +9,8 @@ import {translateText} from '../i18n/localeText';
 import {UI_CATALOG_097} from '../i18n/uiCatalog097';
 
 describe('0.97 release contract',()=>{
- it('publishes version 0.97.0 on frozen schema 17',()=>{
-  expect(version).toBe('0.97.0');expect(makeInitialState().schemaVersion).toBe(17);
+ it('publishes version 0.98.0 on frozen schema 17',()=>{
+  expect(version).toBe('0.98.0');expect(makeInitialState().schemaVersion).toBe(17);
  });
  it('replays the same seeded simulation and retains its seed/countries through schema 17 save loading',()=>{
   let a=makeInitialState();a.eventCooldownUntil=10000;a.advisorCooldownUntil=10000;

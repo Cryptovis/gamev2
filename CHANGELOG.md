@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.98.0 — Readable Light Subpanels & Menu Cleanup
+
+Development release on `dev/ron-phase7`; Schema 17, RNG and engine formulas unchanged. [Release record](docs/RELEASE-098.md).
+
+- Leadership quotations return to readable 14–15px sizing with accessible wizard navigation.
+- Light credit guidance/active offers, diplomatic inbox counters, Help situation/goals/risks, energy/bilateral cards, map notices, Affairs requirements, religious composition and World institution/influence cards use semantic surfaces and readable ink. Success/warning distinctions remain visible.
+- Remove the duplicate foreign-influence shortcut; use consistent uppercase Dossier tabs without changing electrical Power labels.
+- Stack institution artwork and abbreviations without overlap, center cultural identity icons, title-case translated values with locale rules, translate the Region caption in all five languages and reserve target-button hover/focus clearance.
+
 ## 0.97.0 — Semantic Light Panels & Policy Workspace
 
 Development release on `dev/ron-phase7`; Schema 17, RNG and engine formulas unchanged. [Release record](docs/RELEASE-097.md).

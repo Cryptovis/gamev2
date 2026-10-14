@@ -1,0 +1,50 @@
+/* Readable quotes, including the compact wizard override from 0.96. */
+:root .campaign-wizard-backdrop .campaign-wizard[data-step="1"] .wizard-leadership-quote blockquote { font-size: 15px; line-height: 1.3; }
+@media (max-width: 760px) {
+  :root .campaign-wizard-backdrop .campaign-wizard[data-step="1"] .wizard-leadership-quote blockquote { font-size: 14px; }
+}
+
+:root[data-theme="light"] :is(.floating-command-window, .command-window, .executive-workspace, .command-panel, #country-section-window) :is(
+  .credit-status, .credit-overview > article, .credit-board > article, .credit-compose, .credit-applications > article, .credit-loan,
+  .proposal-assessment, .proposal-status, .diplomatic-summary > span, .diplomacy-home-empty, .relation-hero, .relation-context > span, .goodwill-card, .deal-list > div, .diplomacy-rule-note,
+  .help-situation, .help-situation dl > div, .help-goals > li, .help-risks > li,
+  .energy-summary > span, .power-plant-grid > article, .energy-warning,
+  .map-notice, .affairs-blockers, .society-composition, .world-card, .institution-card, .ballot-card, .outreach-card
+) { background: var(--surface-raised) !important; border: 1px solid var(--border) !important; color: var(--ink) !important; }
+:root[data-theme="light"] :is(.floating-command-window, .command-window, .executive-workspace, .command-panel, #country-section-window) :is(
+  .credit-desk, .proposal-assessment, .diplomatic-summary, .diplomacy-v2, .diplomacy-home-empty,
+  .help-situation, .energy-command, .society-composition, .world-panel
+) :is(h2, h3, h4, p, small, strong, b, em, span, dt, dd, label, li) { color: var(--ink) !important; }
+:root[data-theme="light"] #market-window .credit-desk .section-menu button[aria-pressed="true"] {
+  background: var(--surface-raised) !important; color: var(--ink) !important; border: 1px solid var(--border) !important;
+  box-shadow: inset 0 -3px 0 var(--focus);
+}
+:root[data-theme="light"] #market-window .credit-desk .section-menu button[aria-pressed="true"] :is(span, strong, small, b) { color: var(--ink) !important; }
+:root[data-theme="light"] :is(.floating-command-window, .command-window, .executive-workspace, .command-panel, #country-section-window) :is(.diplomacy-v2, .energy-command, .world-panel) :is(.positive, .met) { color: var(--success) !important; }
+:root[data-theme="light"] :is(.floating-command-window, .command-window, .executive-workspace, .command-panel, #country-section-window) :is(.diplomacy-v2, .energy-command, .world-panel) :is(.negative, .unmet) { color: var(--danger) !important; }
+:root[data-theme="light"] :is(.command-window, #country-section-window) .affairs-blockers {
+  color: var(--danger) !important; border-left: 3px solid var(--danger) !important;
+}
+:root[data-theme="light"] :is(.command-window, #country-section-window) .affairs-blockers li { color: var(--danger) !important; }
+:root[data-theme="light"] :is(.floating-command-window, #country-section-window) .help-risks > li.critical { border-left: 3px solid var(--danger) !important; }
+:root[data-theme="light"] :is(.floating-command-window, #country-section-window) .help-risks > li.warning { border-left: 3px solid #a47b16 !important; }
+:root[data-theme="light"] :is(.floating-command-window, #country-section-window) :is(.help-risks > li.calm, .help-goals > li.done) { border-left: 3px solid var(--success) !important; }
+/* The map dock is a HUD surface, outside the command-window ancestors. */
+:root[data-theme="light"] .map-mode-bar .map-notice { background: var(--surface-raised) !important; border: 1px solid var(--border) !important; color: var(--ink) !important; }
+
+:root .country-dossier-window .command-subtabs button { text-transform: uppercase; }
+:root .world-institutions .institution-card > header { grid-template-columns: 64px minmax(0, 1fr); gap: 14px; align-items: center; }
+:root .world-institutions .institution-mark {
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  width: 64px; min-height: 76px; height: auto; padding: 6px; gap: 4px; flex-shrink: 0;
+}
+:root .world-institutions .institution-abbreviation { display: block; font-size: 10px; line-height: 1.2; letter-spacing: .08em; }
+:root[data-theme="light"] .world-institutions .institution-mark { background: var(--surface); border: 1px solid var(--border); color: var(--ink); }
+:root .cultural-identity-cards > article { display: grid; justify-items: center; align-content: start; gap: 6px; text-align: center; }
+:root .cultural-identity-cards > article > :is(svg, .religion-glyph) { display: block; margin-inline: auto; color: var(--focus); }
+:root .cultural-identity-cards strong { overflow-wrap: anywhere; }
+/* Reserve the 2px moved by the existing tactile hover/focus transform. */
+:root :is(.target-hub, .dossier-sub, .operational-assessment) button { margin-block: 2px !important; }
+:root :is(.dossier-tabs, .hub-card-variants, .target-hub-footer-actions) { padding-block: 2px; }
+/* Preserve readable active text inside the remaining bilateral/world panels. */
+:root[data-theme="light"] :is(.command-panel, .command-window, #country-section-window) :is(.diplomacy-v2, .world-panel) button:is(.active, [aria-pressed="true"]) :is(span, strong, small, b) { color: var(--accent-ink) !important; }

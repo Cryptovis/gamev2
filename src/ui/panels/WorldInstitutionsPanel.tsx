@@ -102,7 +102,7 @@ export function WorldInstitutionsPanel() {
         return (
           <article className="institution-card" key={id}>
             <header>
-              <span className="institution-mark"><NavigationArt kind={id==='security'?'military':'world'} size={46}/><LocaleText value={d.short}/></span>
+              <span className="institution-mark"><NavigationArt kind={id==='security'?'military':'world'} size={46}/><b className="institution-abbreviation" translate="no">{d.short}</b></span>
               <div>
                 <h3><LocaleText value={d.name}/></h3>
                 <small>

@@ -27,7 +27,7 @@ export function GovernanceWindow() {
      <div className="occupation-summary"><span><LocaleText value="Approval"/><strong>{c.politics.approval.toFixed(1)}%</strong></span><span><LocaleText value="Stability"/><strong>{c.politics.stability.toFixed(1)}%</strong></span><span><LocaleText value={mine?'Unrest':'Estimated chance'}/><strong>{mine?o.unrest.toFixed(1):(politicalChance(s,c.id)*100).toFixed(0)}%</strong></span></div>
      {g.foreignLeaders[c.id]&&<p><LocaleText value="Current government"/>: <LocaleText value={g.foreignLeaders[c.id]}/></p>}
      <p className="affairs-guidance"><LocaleText value={mine?'Shortages and weak stability raise unrest. At 80% unrest, output falls by 30%; at 95%, daily rebellion can restore independence. Military suppression reduces unrest temporarily but harms cohesion and reputation.':c.id===p.id?'Choose another country to review its political affairs.':'Integration is only available for territories you control. Foreign influence has separate conditions; money alone is not enough.'}/></p>
-     {c.id!==p.id&&<button onClick={()=>setSection(mine?'administration':'influence')}><LocaleText value={mine?'Administration':'Foreign political influence'}/></button>}
+     {mine&&<button onClick={()=>setSection('administration')}><LocaleText value="Administration"/></button>}
     </>}
     {current==='administration'&&mine&&o&&<>
      <div className="affairs-actions-grid">
