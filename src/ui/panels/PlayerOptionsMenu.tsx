@@ -37,7 +37,7 @@ export function PlayerOptionsMenu({onClose}:{onClose:()=>void}){
  const saveMessage=useGameStore(s=>s.saveMessage);
 
  const node=<>
-  <div className="player-options-backdrop" hidden={avatarOpen||confirmNew} onMouseDown={onClose}>
+  <div className="player-options-backdrop" hidden={avatarOpen||confirmNew} onMouseDown={event=>{event.preventDefault();onClose();}}>
    <ManagedDialog enabled={!avatarOpen&&!confirmNew} className="player-options-modal" label="National Command" onClose={onClose} layer={WINDOW_LAYERS.modal}>
     <header className="player-options-header">
      <div><small><LocaleText value={"COMMANDER / CAMPAIGN"}/></small><h2><LocaleText value={"National Command"}/></h2><p><LocaleText value={"Manage your profile and current campaign without cluttering the strategic HUD."}/></p></div>
@@ -80,11 +80,11 @@ export function PlayerOptionsMenu({onClose}:{onClose:()=>void}){
        {saveMessage&&<div className="campaign-save-status"><LocaleText value={saveMessage}/></div>}
       </section>}
 
-      <footer className="player-options-footer">
-       <button onClick={onClose}><LocaleText value={"RETURN TO COMMAND"}/></button>
-      </footer>
      </div>
     </div>
+    <footer className="player-options-footer">
+     <button onClick={onClose}><LocaleText value={"RETURN TO COMMAND"}/></button>
+    </footer>
    </ManagedDialog>
   </div>
 

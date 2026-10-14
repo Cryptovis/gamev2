@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.95.0 — National Command & Audio Settings Polish
+
+Branch `dev/ron-phase7`; Schema 17 and simulation unchanged. [Release record](docs/RELEASE-095.md).
+
+- National Command shell, commander sidebar, profile/history/session cards and controls use consistent Light semantic surfaces and readable ink.
+- Sound sliders have visible tracks, focus-colored thumbs and percentage badges; mute, low-effects labels and status remain readable.
+- One scrolling content region keeps the header and Return to Command footer reachable on mobile and short landscape viewports. Existing focus return, Escape and backdrop dismissal remain intact.
+- Version and release assertions updated to 0.95.0; existing five-language copy reused, no new translations required.
+
 ## 0.94.0 — Audio, UI & Character Perks
 
 Branch `dev/ron-phase7`; Schema 17 retained with optional leader metadata. [Release record](docs/RELEASE-094.md).
