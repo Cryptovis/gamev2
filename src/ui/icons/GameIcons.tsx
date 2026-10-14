@@ -12,6 +12,10 @@ const Svg = ({ size = 18, className, children, viewBox = '0 0 24 24' }: IconProp
 export function TreasuryIcon(props: IconProps) {
   return <Svg {...props}><path d="M4 8h16v11H4z" stroke="currentColor" strokeWidth="1.6"/><path d="M7 8V5h10v3M8 13h8M8 16h5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></Svg>;
 }
+/** One neutral scripture symbol; the nation's religion is stated in text. */
+export function SacredScriptureIcon(props: IconProps) {
+  return <Svg {...props}><path d="M12 6C9 4 5.5 4 3 5v14c3-1 6-1 9 1 3-2 6-2 9-1V5c-2.5-1-6-1-9 1Z" fill="currentColor" fillOpacity=".16" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"/><path d="M12 6v14M6 9l3 .5M6 12l3 .5M15 9.5l3-.5M15 12.5l3-.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></Svg>;
+}
 export function FoodIcon(props: IconProps) {
   return <Svg {...props}><path d="M12 20V8M12 11c-3.5 0-5.5-2-6-5 3.5 0 5.5 2 6 5Zm0 4c3.5 0 5.5-2 6-5-3.5 0-5.5 2-6 5Z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></Svg>;
 }

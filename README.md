@@ -1,4 +1,4 @@
-# Rule of Nations (RON) — 0.95.0
+# Rule of Nations (RON) — 0.96.0
 
 Rule of Nations is a browser-based geopolitical grand-strategy prototype built with React, TypeScript, Zustand, D3 Geo and Dexie. Lead a country through its economy, resources, diplomacy, development and military conflicts. Chart.js provides economic charts; Vitest and Playwright verify gameplay and browser flows.
 
@@ -6,10 +6,10 @@ Rule of Nations is a browser-based geopolitical grand-strategy prototype built w
 
 | Item | Current state |
 |---|---|
-| Version | **0.95.0 — National Command & Audio Settings Polish** |
+| Version | **0.96.0 — Master UI/UX, War Planning & HUD Symmetry** |
 | Development branch | `dev/ron-phase7` (development release; not merged into main) |
 | Save schema | 17; optional leader archetype metadata, old records retain neutral gameplay; existing migrations unchanged |
-| Validation | 909/909 unit tests / 97 files; TypeScript and production build passed, zero build errors; 7/7 targeted production-browser scenarios passed. Full browser/native macOS suites were not rerun for 0.95. [Validation record](docs/RELEASE-095.md) |
+| Validation | 915/915 unit tests / 98 files; TypeScript and production build passed, zero build errors. 12/12 targeted production-browser scenarios passed (10 release scenarios plus 2 HUD regressions). Full browser/native macOS suites were not rerun for 0.96. [Validation record](docs/RELEASE-096.md) |
 | V3 | Reserved for the complete-playability milestone; the current plan builds on the existing engine |
 
 These details describe this development branch. Another branch, including `main`, can contain an older release. Check `package.json` and your checked-out branch when comparing previews.
@@ -34,6 +34,8 @@ npm run test:e2e
 `check` runs tests, TypeScript checks and the production build. Browser tests run separately against the production preview. Optional `npm run measure:engine`, `npm run measure:browser` `npm run measure:renders` (React render attribution on a profiling build) and `npm run measure:war` (paired war-balance scenarios) write local performance reports; run browser measurements separately from other builds/tests. See [measurement method](docs/PERFORMANCE-0906.md).
 
 ## Recent changelog
+
+- **0.96.0:** stable onboarding footer, clearer Light command/review/supply cards, responsive supplier grid, relocated fuel help and balanced HUD rails. [Release record](docs/RELEASE-096.md). Schema 17 and simulation unchanged.
 
 - **0.95.0:** consistent Light National Command surfaces, readable audio sliders and persistent modal exit footer. [Release record](docs/RELEASE-095.md). Schema 17 and simulation unchanged.
 
@@ -216,6 +218,7 @@ Delivered milestones are retained here when new releases are added. This table s
 
 | Milestone | Delivered foundation | Record |
 |---|---|---|
+| 0.96 — Master UI/UX & HUD Symmetry | Phase 7 Sprint 6: wizard layout, Light surfaces, supplier cards, assessment actions and 72 px rails | [Playtest 0.96](docs/PLAYTEST-096.md) |
 | 0.95 — National Command & Audio Settings | Phase 7 Sprint 5: Light modal contrast, audio controls and persistent exit footer | [Playtest 0.95](docs/PLAYTEST-095.md) |
 | 0.94 — Audio, UI & Character Perks | Phase 7 Sprint 4: audio integration, independent HUD, viewport/notification polish and six persistent campaign archetypes | [Playtest 0.94](docs/PLAYTEST-094.md) |
 | 0.90 — Clear Command | 0.91.0 release: war planning and dossier inside the hub, three-tab Help, feature tour, top-bar redesign, Astra handoff; Phase 6.5 living world polish; Phase 6.4 card UI and factory modal; Phase 6.3 tactile hillshade map; Phase 6.2 executive desk; Phase 6.1 target-country diplomatic hub; Phase 5 sound, battle effects and terrain; Phase 4 air/naval task groups and the cargo chain; Phase 3 multi-round tactical AI and war balance; Rule of Nations name; Phase 2 store subscriptions, window motion/return state and typography; Phase 1 managed victory/crisis focus and save/transaction regressions; compact ten-row World rankings, dense Supply and illustrated national workspaces; compact two-column Open Market, national intelligence alerts and opening news, source-linked contemporary diplomacy; repeatable long-campaign performance measurements, indexed map connections and deferred supplier disclosures; spacious workspaces with parent return navigation, framed HUD and world activity/list scrolling; illustrated Affairs and shared action gates; reliable command panels, separated investments/pilots, World rankings and rated/delayed sovereign credit with early repayment; market review/window hotfix, compact trading choices and execution receipts, Policies, national flag shortcut, current country names, readable events, quote rotation, keyboard map controls and verified simulation fixes | [Playtest 0.90](docs/PLAYTEST-090.md) |

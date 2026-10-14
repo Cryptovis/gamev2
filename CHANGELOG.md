@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.96.0 — Master UI/UX, War Planning & HUD Symmetry
+
+Development release on `dev/ron-phase7`; Schema 17 and simulation unchanged. [Release record](docs/RELEASE-096.md).
+
+- Sign-in language pills lose their dark enclosing tray and gain gold hover/focus borders.
+- Wizard footer sizes to its contents; identity quote and fields fit without scrolling at tested desktop/mobile sizes. Return to sign in actually leaves the local session and opens sign-in; its button matches Load previous progress. Very short screens retain body scrolling for access.
+- Portrait help moves below selection, filters stay by the heading, and portrait/nation/confirmation cards use readable Light surfaces. Loading gains a subtle static tactical-grid watermark.
+- Economy, population, policy and military cards use semantic Light surfaces; chart axes and line colors follow theme changes without rebuilding the chart.
+- Identity badges are centered with a neutral gold scripture icon. Supply summaries are readable and suppliers form three cards per desktop row, with actions beneath route facts and responsive wrapping.
+- Date and speed remain separate floating pills; strategic review emblems, impact cards, warnings and auto-confirm labels gain Light contrast.
+- Fuel help joins the assessment action area; declaration review, confirmation and helper return target remain intact. All rails share 72 px footprints and a 10 px text floor.
+- New return/status copy is translated in English, Turkish, Spanish, Chinese and Russian.
+
 ## 0.95.0 — National Command & Audio Settings Polish
 
 Branch `dev/ron-phase7`; Schema 17 and simulation unchanged. [Release record](docs/RELEASE-095.md).

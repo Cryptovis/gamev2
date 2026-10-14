@@ -15,7 +15,18 @@ export function EconomicTrends() {
   useEffect(()=>{
     if(!canvas.current||!ready)return;
     chart.current=new Chart<'line'>(canvas.current,{type:'line',data:{labels:[],datasets:[{label:'',data:[],borderColor:'#e1bc70',backgroundColor:'rgba(225,188,112,.12)',fill:true,pointRadius:2,tension:.2}]},options:{responsive:true,maintainAspectRatio:false,animation:matchMedia('(prefers-reduced-motion: reduce)').matches?false:{duration:350},scales:{x:{ticks:{color:'#bac9cc',maxTicksLimit:5},grid:{display:false}},y:{ticks:{color:'#bac9cc'},grid:{color:'rgba(180,200,205,.12)'}}}}});
-    return ()=>{chart.current?.destroy();chart.current=null;};
+    // Canvas text cannot inherit CSS; follow the same semantic palette as its card.
+    const applyPalette=()=>{
+      const current=chart.current;if(!current)return;
+      const style=getComputedStyle(document.documentElement),ink=style.getPropertyValue('--ink-muted').trim(),focus=style.getPropertyValue('--focus').trim();
+      for(const key of ['x','y']){const axis=current.options.scales?.[key];if(axis){axis.ticks={...axis.ticks,color:ink};axis.grid={...axis.grid,color:style.getPropertyValue('--border').trim()};}}
+      current.data.datasets[0].borderColor=focus;
+      current.data.datasets[0].backgroundColor=/^#[0-9a-f]{6}$/i.test(focus)?`${focus}20`:style.getPropertyValue('--surface-inset').trim();
+      current.update('none');
+    };
+    applyPalette();
+    const themeObserver=new MutationObserver(applyPalette);themeObserver.observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+    return ()=>{themeObserver.disconnect();chart.current?.destroy();chart.current=null;};
   },[ready]);
   useEffect(()=>{
     const current=chart.current;if(!current||!ready)return;

@@ -1,0 +1,165 @@
+/* Entry pills have individual surfaces without a dark enclosing tray. */
+:root .entry-backdrop .entry-languages {
+  background: transparent !important; box-shadow: none !important;
+  border: 0; padding: 0; gap: 6px;
+}
+:root .entry-backdrop .entry-languages button {
+  border: 1px solid transparent;
+  box-shadow: none;
+  transition: border-color 150ms ease, background-color 150ms ease;
+}
+:root[data-theme] .entry-backdrop .entry-languages button:is(:hover, :focus-visible) { border-color: #d4af37 !important; }
+
+/* Content can scroll on unusually short screens; the footer never scrolls away. */
+:root .campaign-wizard-backdrop .campaign-wizard {
+  grid-template-rows: auto minmax(0, 1fr) auto !important;
+  max-height: calc(100dvh - 48px) !important;
+}
+:root .campaign-wizard-backdrop .campaign-wizard .wizard-header { padding: 14px 22px !important; }
+:root .campaign-wizard-backdrop .campaign-wizard .wizard-body { padding: 14px 22px !important; }
+:root .campaign-wizard-backdrop .campaign-wizard .wizard-footer { padding: 10px 22px !important; gap: 8px; }
+:root .campaign-wizard .wizard-save-tools { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+:root .campaign-wizard .wizard-save-tools:empty { display: none; }
+:root .campaign-wizard .wizard-save-tools > button {
+  min-height: 40px; height: 100%; padding: 7px 10px; border-radius: 8px;
+  font-size: 11px; line-height: 1.25; margin: 0;
+}
+:root .campaign-wizard .wizard-save-tools > small { grid-column: 1 / -1; }
+:root .campaign-wizard[data-step="1"] .wizard-single-column { gap: 10px !important; }
+:root .campaign-wizard[data-step="1"] .appearance-options { margin: 0; padding: 6px 10px; }
+:root .campaign-wizard[data-step="1"] .appearance-options button { min-height: 32px; padding: 5px 12px; }
+:root .campaign-wizard[data-step="1"] .appearance-options small { margin-top: 3px; }
+:root .campaign-wizard[data-step="1"] .wizard-intro h2 { font-size: 22px; margin: 4px 0; }
+:root .campaign-wizard-backdrop .campaign-wizard[data-step="1"] .wizard-intro p { font-size: 12px; line-height: 1.35; }
+:root .campaign-wizard[data-step="1"] .wizard-name-field { gap: 4px; }
+:root .campaign-wizard[data-step="1"] .wizard-name-field input { height: 40px; min-height: 40px; }
+:root .campaign-wizard-backdrop .campaign-wizard .wizard-leadership-quote { margin: 4px 0 0; position: relative; padding: 0 12px; }
+:root .campaign-wizard-backdrop .campaign-wizard .wizard-leadership-quote > span { position: absolute; font-size: 24px; line-height: 1; }
+:root .campaign-wizard .quote-opening { left: 0; top: 0; }
+:root .campaign-wizard .quote-closing { right: 0; bottom: 16px; }
+:root .campaign-wizard-backdrop .campaign-wizard .wizard-leadership-quote blockquote {
+  margin: 0; font-size: 15px; line-height: 1.3; text-wrap: balance;
+}
+:root .campaign-wizard-backdrop .campaign-wizard .wizard-leadership-quote figcaption { margin-top: 4px; line-height: 1.2; }
+:root .campaign-wizard .wizard-portrait-stage { display: grid; gap: 8px; }
+:root .campaign-wizard .leader-style-filter { margin: 0; }
+:root .campaign-wizard .wizard-portrait-helper { margin: 0; font-size: 12px; line-height: 1.35; color: var(--ink-muted); }
+
+/* Higher specificity than legacy setup and command-card rules. */
+:root[data-theme="light"] .campaign-wizard :is(.wizard-avatar-preview, .wizard-country-preview, .wizard-stat-grid > span, .opening-profile, .confirm-leader-card, .confirm-summary-grid > span, .confirm-message, .difficulty-chip) {
+  background: var(--surface-raised) !important; border: 1px solid var(--border) !important; color: var(--ink) !important;
+}
+:root[data-theme="light"] .campaign-wizard :is(.wizard-avatar-preview, .wizard-country-preview, .confirm-leader-card, .confirm-brief) :is(small, strong, b, p, h2, span) { color: var(--ink) !important; }
+:root[data-theme="light"] .campaign-wizard .wizard-header h1 { color: var(--ink) !important; }
+:root[data-theme="light"] .campaign-wizard :is(.wizard-intro, .confirm-brief) > p { color: var(--ink) !important; }
+:root[data-theme="light"] .campaign-loading::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .1;
+  background-image: linear-gradient(var(--ink) 1px, transparent 1px), linear-gradient(90deg, var(--ink) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse at center, #000, transparent 85%);
+}
+:root[data-theme="light"] .campaign-loading .loading-command-card {
+  background: var(--surface) !important; color: var(--ink); border: 1px solid var(--border);
+  box-shadow: 0 16px 48px #142c4629;
+}
+:root[data-theme="light"] .campaign-loading .loading-command-card :is(small, p, span, strong, h1, b) { color: var(--ink) !important; }
+
+:root[data-theme="light"] :is(.command-panel, .executive-workspace, #country-section-window) :is(.economic-trends, .economic-chart, .economic-table-scroll, .economic-trend-summary, .population-panel, .population-metrics > span, .policy-heading, .policy-card, .policy-card-meta, .recruitment-panel, .military-score > div, .unit-stat, .quality-bars, .quality-bars > div, .resource-card, .investment-summary > span, .campus-grid > article, .pilot-recruitment, .construction-list > div) {
+  background: var(--surface-raised) !important; border: 1px solid var(--border) !important; color: var(--ink) !important;
+}
+:root[data-theme="light"] :is(.command-panel, .executive-workspace, #country-section-window) :is(.economy-panel, .country-policies, .military-panel) :is(h3, h4, h5, p, label, small, strong, b, em, span, td, th) { color: var(--ink) !important; }
+/* Keep meaning and selection visible after the contrast bridge. */
+:root[data-theme="light"] :is(.command-panel, .executive-workspace, #country-section-window) :is(.positive, .status-active .policy-card-meta b) { color: var(--success) !important; }
+:root[data-theme="light"] :is(.command-panel, .executive-workspace, #country-section-window) .negative { color: var(--danger) !important; }
+:root[data-theme="light"] :is(.command-panel, .executive-workspace, #country-section-window) button:is(.active, [aria-pressed="true"], [aria-selected="true"]) :is(span, strong, small) { color: var(--accent-ink) !important; }
+
+:root .command-panel .identity-strip > .identity-with-icon { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 7px; }
+:root .command-panel .identity-strip .identity-with-icon > i { display: grid; justify-items: center; text-align: center; min-width: 0; }
+:root .command-panel .identity-strip .identity-scripture { color: #a47b16; flex-shrink: 0; filter: drop-shadow(0 1px 2px #a47b1630); }
+:root[data-theme="dark"] .command-panel .identity-strip .identity-scripture { color: #e8c570; }
+
+:root[data-theme="light"] #resource-command-window .resource-command-summary > span {
+  background: var(--surface-raised) !important; border: 1px solid var(--border) !important; color: var(--ink) !important;
+}
+:root[data-theme="light"] #resource-command-window .resource-command-summary :is(small, strong) { color: var(--ink) !important; }
+:root #resource-command-window .resource-command-grid { grid-template-columns: minmax(0, 1fr); max-width: none; }
+:root #resource-command-window .resource-command-grid:has(> article:only-child) { max-width: none; }
+:root[data-theme="light"] #resource-command-window .resource-command-card > header em { background: var(--surface-inset); color: var(--ink); border: 1px solid var(--border); }
+:root[data-theme="light"] #resource-command-window .resource-command-card .subhead { color: var(--ink-muted); }
+:root #resource-command-window .resource-command-card .trade-ranking,
+:root #resource-command-window .resource-command-card .trade-more {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(min(220px, 100%), 1fr)); gap: 12px;
+}
+:root #resource-command-window .trade-ranking > :is(.trade-more, .trade-empty, .trade-footnote),
+:root #resource-command-window .trade-more > summary { grid-column: 1 / -1; }
+:root #resource-command-window .trade-row {
+  grid-template-columns: 28px minmax(0, 1fr);
+  grid-template-areas: "lead main" "stats stats" "action action";
+  align-content: start; padding: 12px; gap: 10px 6px;
+}
+:root #resource-command-window .trade-row-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+:root[data-theme="light"] #resource-command-window .trade-row { background: var(--surface-raised) !important; border-color: var(--border) !important; }
+:root[data-theme="light"] #resource-command-window .trade-row :is(small, strong, b, em, p) { color: var(--ink) !important; }
+
+:root[data-theme="light"] .topbar .clock-speed-card { background: transparent !important; border: none !important; box-shadow: none !important; padding: 0 !important; }
+:root[data-theme="light"] .topbar .campaign-clock { background: var(--surface) !important; border: 1px solid var(--border); border-radius: 10px; padding: 5px 10px; box-shadow: 0 3px 12px #142c4626; }
+:root[data-theme="light"] .strategic-decision-modal :is(.strategic-decision-visual, .strategic-impact-grid > div, .strategic-warning-list, .strategic-autoconfirm, .strategic-block-reason) {
+  background: var(--surface-raised) !important; border: 1px solid var(--border) !important; color: var(--ink) !important;
+}
+:root[data-theme="light"] .strategic-decision-modal :is(.strategic-decision-visual, .strategic-impact-grid, .strategic-warning-list, .strategic-autoconfirm) :is(small, strong, p, span) { color: var(--ink) !important; }
+:root[data-theme="light"] .strategic-decision-modal .strategic-autoconfirm input { accent-color: var(--focus); }
+
+:root .operational-assessment .assessment-actions { display: flex; flex-wrap: wrap; align-items: stretch; gap: 10px; }
+:root .operational-assessment .assessment-actions > button { flex: 1 1 170px; min-height: 44px; margin: 0; padding: 10px 14px; width: auto; }
+:root .operational-assessment .assessment-actions > :is(.assessment-fuel-help, .assessment-review-blocked) { border: 1px solid var(--border); border-radius: 8px; background: var(--surface-raised); color: var(--ink); cursor: pointer; }
+
+/* Equal floating footprints; complete localized words wrap, never split. */
+:root :is(.command-rail-left, .command-rail-right) { width: 72px !important; }
+:root :is(.command-rail-left, .command-rail-right, .map-help-cluster) .rail-button {
+  width: 72px !important; min-height: 64px; padding: 6px 2px !important;
+  border-radius: 12px; box-shadow: 0 3px 12px #142c4626 !important;
+}
+:root :is(.command-rail-left, .command-rail-right, .map-help-cluster) .rail-button small {
+  font-size: 10px !important; line-height: 1.15; letter-spacing: 0 !important;
+  white-space: normal; overflow-wrap: normal; word-break: normal;
+}
+@media (max-width: 760px) {
+  :root .campaign-wizard-backdrop .campaign-wizard { grid-template-rows: auto minmax(0, 1fr) auto !important; max-height: calc(100dvh - 24px) !important; }
+  :root .campaign-wizard-backdrop .setup-cover { display: none; }
+  :root .campaign-wizard-backdrop .campaign-wizard .wizard-header { grid-row: 1; padding: 10px 14px !important; }
+  :root .campaign-wizard-backdrop .campaign-wizard .wizard-header h1 { font-size: 23px; }
+  :root .campaign-wizard-backdrop .campaign-wizard .wizard-body { grid-row: 2; padding: 10px 14px !important; }
+  :root .campaign-wizard-backdrop .campaign-wizard .wizard-footer { grid-row: 3; padding: 8px 14px !important; }
+  :root .campaign-wizard[data-step="1"] .wizard-single-column { gap: 8px !important; }
+  :root .campaign-wizard[data-step="1"] .wizard-intro h2 { font-size: 20px; }
+  :root .campaign-wizard[data-step="1"] .wizard-personal-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  :root .campaign-wizard[data-step="1"] .wizard-personal-fields :is(input, select) { width: 100%; min-width: 0; font-size: 13px; }
+  :root .campaign-wizard-backdrop .campaign-wizard .wizard-leadership-quote blockquote { font-size: 14px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  :root .entry-backdrop .entry-languages button { transition: none; }
+}
+
+:root[data-theme="light"] .campaign-wizard .wizard-stepper span:not(.active) b { background: var(--surface-raised); color: var(--ink); border: 1px solid var(--border); }
+:root[data-theme="light"] .campaign-wizard .wizard-personal-fields :is(input, select) { color-scheme: light; }
+
+:root #resource-command-window .resource-command-card { container-type: inline-size; }
+@container (min-width: 740px) {
+  :root #resource-command-window .resource-command-card :is(.trade-ranking, .trade-more) { grid-template-columns: repeat(3, minmax(220px, 1fr)); }
+}
+:root[data-theme="light"] #resource-command-window .trade-more > summary { background: var(--surface); border-color: var(--border); color: var(--ink-muted); }
+@media (max-width: 760px) and (max-height: 700px) {
+  :root .campaign-wizard-backdrop .campaign-wizard .wizard-header { padding-block: 8px !important; }
+  :root .campaign-wizard-backdrop .campaign-wizard .wizard-body { padding-block: 8px !important; }
+  :root .campaign-wizard[data-step="1"] .wizard-single-column { gap: 6px !important; }
+  :root .campaign-wizard[data-step="1"] .appearance-options { padding-block: 4px; }
+}
+
+@media (max-width: 760px) and (max-height: 700px) {
+  :root .campaign-wizard-backdrop .campaign-wizard[data-step="1"] .wizard-header h1 { font-size: 18px; }
+  :root .campaign-wizard-backdrop .campaign-wizard[data-step="1"] .wizard-intro p { font-size: 11px; line-height: 1.3; }
+  :root .campaign-wizard[data-step="1"] .wizard-personal-fields small { font-size: 10px; line-height: 1.3; }
+  :root .campaign-wizard-backdrop .campaign-wizard[data-step="1"] .wizard-leadership-quote blockquote { font-size: 13px; }
+}
+:root .command-rail-right .rail-button { padding-inline: 0 !important; }
+:root .command-rail-right .rail-button small { font-weight: 700; width: 100%; min-width: 0; }

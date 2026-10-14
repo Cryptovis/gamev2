@@ -15,7 +15,7 @@ export function CampaignEntry({onPlaying}:{onPlaying:(playing:boolean)=>void}){
  useEffect(()=>{onPlaying(screen==='game');},[screen,onPlaying]);
  useEffect(()=>{if(screen!=='game')useGameStore.getState().setSpeed(0);},[screen]);
  if(screen==='game')return null;
- if(screen==='setup')return <CampaignSetup onReturnToMenu={()=>setScreen('hub')}/>;
+ if(screen==='setup')return <CampaignSetup onReturnToMenu={()=>{leaveDemoSession();setPassword('');setError('');setScreen('login');}}/>;
  const demo=()=>{enterDemoSession();setPassword('');setError('');setScreen('hub');};
  return <div className="entry-backdrop"><section className="entry-shell" aria-label={translateLive('Game entry')}><aside className="entry-art"><BrandMark/><span className="entry-tagline"><LocaleText value="Be the president you have always dreamed of."/></span><small translate="no">{version}</small></aside><div className="entry-content"><header><small><LocaleText value="DEMO / LOCAL PLAY"/></small><h1><LocaleText value={screen==='hub'?'Welcome to command':screen==='register'?'Create a demo account':'Sign in'}/></h1></header>
  {screen==='login'&&<div className="entry-languages">{LANGUAGE_OPTIONS.map(l=><button key={l.id} aria-pressed={l.id===language} onClick={()=>useGameStore.setState(s=>({playerProfile:{...s.playerProfile,language:l.id}}))}>{l.label}</button>)}</div>}
