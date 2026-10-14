@@ -8,9 +8,9 @@ it('parses preferences and resolves System without changing explicit choices',()
  expect(parseAppearance('light')).toBe('light');expect(parseAppearance('invalid')).toBeNull();
  expect(effectiveAppearance('system',true)).toBe('dark');expect(effectiveAppearance('system',false)).toBe('light');expect(effectiveAppearance('dark',false)).toBe('dark');
 });
-it('new installations default to System; existing databases preserve Dark before UI mount',async()=>{
+it('new installations default to Light; existing databases preserve Dark before UI mount',async()=>{
  const local=storage();vi.stubGlobal('localStorage',local);vi.stubGlobal('sessionStorage',storage());vi.stubGlobal('indexedDB',{databases:async()=>[]});
- await initializeAppearance();expect(local.getItem(APPEARANCE_KEY)).toBe('system');
+ await initializeAppearance();expect(local.getItem(APPEARANCE_KEY)).toBe('light');
  const existing=storage();vi.stubGlobal('localStorage',existing);vi.stubGlobal('indexedDB',{databases:async()=>[{name:'alpyx-global-command'}]});
  await initializeAppearance();expect(existing.getItem(APPEARANCE_KEY)).toBe('dark');
  useAppearance.getState().setPreference('light');await initializeAppearance();expect(useAppearance.getState().preference).toBe('light');

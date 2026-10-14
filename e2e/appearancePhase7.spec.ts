@@ -1,9 +1,9 @@
 import {test,expect} from '@playwright/test';
 import {campaignFixture,resumeFixture} from './seedCampaign';
 
-test('System defaults before entry renders and follows live OS changes',async({page})=>{
+test('Light defaults before entry renders; explicit System follows live OS changes',async({page})=>{
  await page.emulateMedia({colorScheme:'light'});await page.goto('/');
- await expect(page.locator('.entry-shell')).toBeVisible();await expect(page.locator('html')).toHaveAttribute('data-appearance','system');await expect(page.locator('html')).toHaveAttribute('data-theme','light');
+ await expect(page.locator('.entry-shell')).toBeVisible();await expect(page.locator('html')).toHaveAttribute('data-appearance','light');await page.evaluate(()=>localStorage.setItem('trp-appearance-v1','system'));await page.reload();await expect(page.locator('html')).toHaveAttribute('data-appearance','system');await expect(page.locator('html')).toHaveAttribute('data-theme','light');
  await page.emulateMedia({colorScheme:'dark'});await expect(page.locator('html')).toHaveAttribute('data-theme','dark');
 });
 test('existing saved installation retains Dark; Settings persists and updates all portals',async({page})=>{

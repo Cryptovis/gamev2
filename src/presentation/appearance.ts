@@ -13,7 +13,7 @@ export function applyAppearance(preference:AppearancePreference,osDark=media()?.
  document.documentElement.style.colorScheme=effectiveAppearance(preference,osDark);
 }
 export const useAppearance=create<{preference:AppearancePreference;setPreference:(value:AppearancePreference,persist?:boolean)=>void}>(set=>({
- preference:read()??'system',
+ preference:read()??'light',
  setPreference:(value,persist=true)=>{if(persist){try{localStorage.setItem(APPEARANCE_KEY,value);}catch{/* preference remains usable without storage */}}set({preference:value});applyAppearance(value);},
 }));
 
@@ -36,7 +36,7 @@ let listening=false;
 /** Runs before React mounts, including entry/setup and portal content. No campaign save is opened or changed. */
 export async function initializeAppearance(){
  const saved=read();
- const preference=saved??(await existingInstallation()?'dark':'system');
+ const preference=saved??(await existingInstallation()?'dark':'light');
  useAppearance.getState().setPreference(preference);
  if(!listening){
   listening=true;
