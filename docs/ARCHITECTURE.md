@@ -45,3 +45,12 @@ Autosave checkpoint writes and owner-scoped stale pruning run in one Dexie readw
 Schema 18 requires the serializable `world.organizations` container. `domain/schema.ts` owns the version; migrations re-export it. `17: migrateOrganizations17To18` validates legacy data, adds versioned records and legacy sanction snapshots, and preserves the actual legacy ballots/rosters and all other world/country fields. It is deterministic and input-pure. Already-normalized save objects are reused on repeated migration.
 
 `validationOrganizations.ts` strictly validates all fourteen IDs, membership/body identity, separate Chair offices, P5 metadata, rule/payload unions, electorate totals, country references and supported effect/financing shapes. No new organization executor is active in Slice 8.1: existing world/council logic remains authoritative until an explicit reconciliation/authority handoff in the next slice. Observer-only finance/trade/private-forum rosters grant no voting or funding privileges. [Full model and compatibility notes](ORGANIZATIONS-099.md).
+
+
+## 0.99.1 voting and leverage boundary
+
+Organization commands are typed GameCommands and share `applyOrganizationCommand` / `validateOrganizationCommand` for human and explicit AI actors. Proposal fees, payload validation and fixed rule/electorate snapshots are engine-owned. Rule/payload/electorate schemas are shared domain contracts; no UI formula is duplicated. Quota votes require explicit charter vote units rather than silently treating GDP as quota.
+
+`processOrganizations` runs at the beginning of the next campaign day: close expired votes, record outcomes and standing, execute due decisions once, expire new sanction records, then cast seeded AI votes only on still-open ballots. AI draws thread the stored seed in stable ID order. Closing-day submissions/repeats/rejected commands/previews consume no RNG.
+
+UN membership transitions mirror affected legacy rosters; completed legacy ballots update new metadata without changing their historical rule. Scoped new sanction records coexist with the preserved legacy flags but do not yet enforce trade/credit channels. Optional outcome/quota/failure metadata and the new typed effect branch retain forward loading of existing Schema 18 saves; older v0.99.0 cannot read the new sanction branch. [Execution policy and limits](RELEASE-0991.md).

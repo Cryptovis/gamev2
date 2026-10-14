@@ -28,8 +28,8 @@ const payloads:ResolutionPayload[]=[
 ];
 
 describe('0.99 release and strict organization contracts',()=>{
-  it('publishes 0.99.0 on Schema 18 with all 14 organizations and P5 bodies',()=>{
-    const s=makeInitialState();expect(version).toBe('0.99.0');expect(CURRENT_SCHEMA_VERSION).toBe(18);expect(s.schemaVersion).toBe(18);
+  it('publishes 0.99.1 on Schema 18 with all 14 organizations and P5 bodies',()=>{
+    const s=makeInitialState();expect(version).toBe('0.99.1');expect(CURRENT_SCHEMA_VERSION).toBe(18);expect(s.schemaVersion).toBe(18);
     expect(Object.keys(s.world.organizations.byId).sort()).toEqual([...ORGANIZATION_IDS].sort());
     expect(s.world.organizations.byId.un.bodies.securityCouncil.permanentMemberIds.sort()).toEqual([...P5_COUNTRY_IDS].sort());
     expect(canLoadSave(snapshotGame(s))).toBe(true);

@@ -1,5 +1,10 @@
 # Rule of Nations roadmap (formerly AlpyX) after 0.31
 
+## 0.99.1 — Phase 8 Slice 8.2 Voting & Leverage
+
+Delivered on `dev/ron-phase7`: six voting evaluators, shared actor commands/costs, frozen electorate/rule snapshots, seeded AI initial votes, daily standing and admission/discipline/scoped-sanction records with legacy UN reconciliation. [Release](RELEASE-0991.md) · [Playtest](PLAYTEST-0991.md). Schema 18; 1073 tests, TypeScript and Vite passed. Sanction-channel enforcement, finance/disbursements, legal charter policies, autonomous proposal agendas, elected-seat replacement and new UI remain future work. Browser/native suites were not rerun. V3 remains the complete-playability milestone.
+
+
 ## 0.99.0 — Phase 8 Slice 8.1 Domain & Schema Migration
 
 Delivered on `dev/ron-phase7`: typed organization domain, 14-record initialization, pure/idempotent 17→18 adapter, UN/P5 metadata, legacy ballot/sanction preservation and strict organization validation. [Release](RELEASE-099.md) · [Playtest](PLAYTEST-099.md) · [Model notes](ORGANIZATIONS-099.md). Supported saves 12–18; 1026 tests, TypeScript and Vite passed. Slice 8.2 must activate commands/voting with legacy authority reconciliation; complete financial/trade/private-forum membership datasets and later mechanics remain pending. Browser/native suites were not rerun. V3 remains the complete-playability milestone.

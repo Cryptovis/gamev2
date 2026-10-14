@@ -26,6 +26,8 @@ export interface OrganizationBodyState {
   memberIds: string[];
   permanentMemberIds: string[];
   votingRule: VotingRule;
+  /** Integer quota vote units; absent until a charter supplies an approved snapshot. */
+  voteWeights?: Record<string,number>;
 }
 export interface OrganizationState {
   id: OrganizationId;
@@ -70,7 +72,8 @@ export interface Resolution {
   phase:'draft'|'debate'|'voting'|'adopted'|'rejected'|'implementing'|'expired'|'revoked'|'failed';
   openedDay:number;closesDay:number;effectiveDay:number;
   ruleSnapshot:VotingRule;electorate:ElectorateSnapshot;ballots:Record<string,'yes'|'no'|'abstain'>;
-  execution:{status:'pending'|'applied'|'failed';effectIds:string[]};
+  outcome?:VotingOutcome;
+  execution:{status:'pending'|'applied'|'failed';effectIds:string[];reason?:string};
 }
 /** Snapshot of legacy sanctions; the legacy engine remains authoritative in Slice 8.1. */
 export interface LegacySanctionEffect {
@@ -90,3 +93,16 @@ export interface OrganizationsState {
   nextSequence:number;
   lastProcessedDay:number;
 }
+
+export interface VotingOutcome {
+  passed:boolean;reason:string;yesCount:number;noCount:number;abstainCount:number;vetoedBy?:string[];
+}
+export interface OrganizationSanctionEffect {
+  id:string;kind:'organizationSanctions';organizationId:OrganizationId;bodyId:string;sourceResolutionId:string;targetId:string;
+  startsDay:number;endsDay:number;measures:SanctionMeasure[];exemptions:Exemption[];status:'active'|'expired';
+}
+export type FoundationalResolutionPayload=Extract<ResolutionPayload,{kind:'admission'|'membershipDiscipline'|'sanctions'}>;
+export type OrganizationCommand=(
+  | {type:'organization/proposeResolution';organizationId:OrganizationId;bodyId:string;payload:FoundationalResolutionPayload}
+  | {type:'organization/castBallot';resolutionId:string;choice:'yes'|'no'|'abstain'}
+) & {commandId?:string};

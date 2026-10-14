@@ -1,3 +1,4 @@
+import {processOrganizations} from './systems/organizations/tick';
 import {leaderModifiers,NEUTRAL_LEADER,type LeaderModifiers} from './systems/leaderPerks';
 import { processFlights } from './systems/flights';
 import { processTradeFlights, reportFlightArrivals } from './systems/flightHooks';
@@ -75,10 +76,10 @@ function processElection(state: GameState): GameState {
 
 export function tickGame(state: GameState): GameState {
   if (state.campaignStatus !== 'active' || state.activeEvent || state.activeAdvisor || state.world.living?.advice.active || state.world.living?.notice || pendingVictory(state)) return state;
-  const dated=processLeadership({...state,day:state.day+1});
+  const dated=processOrganizations(processLeadership({...state,day:state.day+1}));
   const boostActive=dated.day<dated.leadership.celebrationUntilDay;
   const inflow = contractedTradeInflow(state);
-  const countries = distributeMigration(Object.fromEntries(Object.entries(state.countries).map(([id, country]) => [id, country.annexedBy?country:tickCountry(country,(id===state.playerCountryId&&boostActive?1.12:1)*((occupationFor(dated,id)?.unrest??0)>=80?.7:1),true,inflow[id],leaderModifiers(state,id))])));
+  const countries = distributeMigration(Object.fromEntries(Object.entries(dated.countries).map(([id, country]) => [id, country.annexedBy?country:tickCountry(country,(id===state.playerCountryId&&boostActive?1.12:1)*((occupationFor(dated,id)?.unrest??0)>=80?.7:1),true,inflow[id],leaderModifiers(state,id))])));
   const nextDay = state.day + 1;
   const player = countries[state.playerCountryId];
   const notices: string[] = [];
@@ -89,12 +90,12 @@ export function tickGame(state: GameState): GameState {
     if (player.resources.oil <= 10) notices.push(`Day ${nextDay}: oil reserve warning — military readiness is at risk.`);
   }
 
-  const influenceByCountry = { ...state.council.influenceByCountry };
+  const influenceByCountry = { ...dated.council.influenceByCountry };
   for (const country of Object.values(countries)) {
     const current = influenceByCountry[country.id] ?? Math.max(8, country.diplomacy.reputation * 0.25);
     influenceByCountry[country.id] = Math.min(100, current + 0.025 + country.diplomacy.reputation * 0.00025);
   }
-  let next: GameState = { ...dated, day: nextDay, countries, council: { ...state.council, influenceByCountry }, sitrep: [...notices, ...dated.sitrep].slice(0, 12) };
+  let next: GameState = { ...dated, day: nextDay, countries, council: { ...dated.council, influenceByCountry }, sitrep: [...notices, ...dated.sitrep].slice(0, 12) };
   next = processWorldInstitutions(next);
   next = processPrograms(next);
   next = processGovernance(next);

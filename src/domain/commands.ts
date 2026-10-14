@@ -87,4 +87,4 @@ export type ReliableCommand =
  // 0.88 audit E4: keep playing after a campaign victory.
  | {type:'campaign/continue'};
 
-export type GameCommand = (LegacyCommand | ReliableCommand) & {commandId?:string};
+export type GameCommand = (LegacyCommand | ReliableCommand | import('./organizations').OrganizationCommand) & {commandId?:string};

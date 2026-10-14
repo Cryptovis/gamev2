@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.99.1 — Slice 8.2 Voting & Leverage Engine
+
+Development patch on `dev/ron-phase7`; Schema 18 retained. [Release record](docs/RELEASE-0991.md).
+
+- Evaluate quorum/majority, P5 veto, consensus, unanimity, double-majority and weighted rules with deterministic exact threshold comparisons.
+- Add typed organization proposal/ballot commands with shared player/AI validators, 5/8 influence fees, fixed electorate/rule snapshots, five-day voting, replay receipts and deadline checks.
+- Close and adopt/reject decisions in the daily tick, record bounded standing changes, execute admission/discipline and store timed scoped sanction effects once.
+- Reconcile UN membership with legacy rosters and completed ballots; preserve WHO/outreach and old voting behavior. AI casts seeded initial votes through the shared boundary.
+- Extend strict Schema 18 validation with optional quota weights/outcomes/reasons and source-linked sanction records. Add 47 regressions; new sanction-channel enforcement and UI remain later work.
+
 ## 0.99.0 — Organization Domain & Controlled Schema 18 Migration
 
 Slice 8.1 development release on `dev/ron-phase7`; valid Schema 12–17 saves migrate to Schema 18. [Release record](docs/RELEASE-099.md).

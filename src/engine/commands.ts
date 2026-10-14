@@ -1,3 +1,4 @@
+import {applyOrganizationCommand} from './systems/organizations/commands';
 import { assignTaskGroup, taskGroupPreview } from './systems/taskGroups';
 import {affairsPreview} from './affairsPreview';
 import {cancelIndustrialContract,dismissLivingNotice,markInboxRead,setTutorialStep,toggleFacility} from './systems/playerRecords';
@@ -123,6 +124,8 @@ function executeGameCommand(state: GameState, command: GameCommand): GameState {
     case 'politics/acceptElection': return acceptElectionOffer(state,command.id);
     case 'program/start': return startProgram(state,command.kind);
     case 'construction/cancel': {const n=cancelConstruction(state,command.id);return n!==state&&state.world.tutorial.practiceProjectId===command.id?{...n,world:{...n.world,tutorial:{...n.world.tutorial,practiceProjectId:undefined}}}:n;}
+    case 'organization/proposeResolution':
+    case 'organization/castBallot': return applyOrganizationCommand(state,command);
     case 'world/membership': return applyMembership(state,command.id);
     case 'world/attackProposal': return proposeAttack(state,command.id);
     case 'world/vote': return voteWorld(state,command.id,command.choice);
@@ -290,7 +293,7 @@ export function executeCommandResult(state:GameState,command:GameCommand):Comman
  const next=executeGameCommand(state,command);
  const changed=next.countries!==state.countries||next.tradeDeals!==state.tradeDeals||next.world!==state.world||next.wars!==state.wars||next.production!==state.production||next.industrialContracts!==state.industrialContracts||next.industrialEconomy!==state.industrialEconomy||next.infrastructure!==state.infrastructure||next.intelOperations!==state.intelOperations||next.council!==state.council||next.leadership!==state.leadership||next.day!==state.day||next.speed!==state.speed;
  let recorded=recordReports(state,next,command.type==='time/advanceDay'?'world':'command');
- if(command.commandId && changed)recorded={...recorded,world:{...recorded.world,commandIds:[...(recorded.world.commandIds??[]),command.commandId].slice(-512)}};
+ if(command.commandId && changed&&!recorded.world.commandIds?.includes(command.commandId))recorded={...recorded,world:{...recorded.world,commandIds:[...(recorded.world.commandIds??[]),command.commandId].slice(-512)}};
  return {state:recorded,status:changed?'applied':'unavailable',message:next.sitrep[0]!==state.sitrep[0]?next.sitrep[0]:changed?'Your command has been applied.':'Check budget, stock, prerequisites, access or an existing order.'};
 }
 export function applyGameCommand(state:GameState,command:GameCommand):GameState {return executeCommandResult(state,command).state;}

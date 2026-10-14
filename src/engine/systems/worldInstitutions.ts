@@ -1,3 +1,4 @@
+import {reconcileLegacyMembershipChanges} from './organizations/legacy';
 import {createOrganizations} from './organizations/initialization';
 import type {GameCommand} from '../../domain/commands';
 import {activeCountries} from '../../domain/sovereignty';
@@ -393,7 +394,7 @@ export function processWorldInstitutions(state: GameState): GameState {
     )
       next = condemnBallot(next, b);
   }
-  return next;
+  return reconcileLegacyMembershipChanges(state,next);
 }
 function condemnBallot(state: GameState, b: WorldBallot): GameState {
   let next = state;
