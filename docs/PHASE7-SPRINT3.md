@@ -34,4 +34,9 @@ The permanent bottom letterbox and development metadata are removed. New journal
 
 ## Verification
 
-Pending final integrated results. Record only observed checks here.
+- `npm run check`: 95 test files / 874 tests passed; TypeScript and Vite production build passed.
+- Full production-browser run: 239/239 scenarios passed before the final accessibility/calendar/visual refinements. A later fuel/tactical run passed 4/4. The final sprint rerun passed 10/11, including the five locale/mobile geometry and contrast checks; the news fixture timed out waiting for its load button before reaching assertions. No further browser run was started, per the owner's instruction.
+- Schema 17 remains unchanged. Pure planning helpers do not advance RNG; contract calendar values and gameplay thresholds remain unchanged. New copy covers en/tr/es/zh/ru.
+- Case-fold audit: 619 tracked paths, no collisions. The other 175 map features remain semantically unchanged after Cyprus consolidation.
+- appearancePhase7.css remains byte-for-byte identical to the fetched baseline. New HUD/map rules are isolated in sprint3Phase7.css.
+- Browser checks used Linux Chromium 153 with software rendering; native macOS QA was not performed here. Existing Vite large-chunk and mixed-import warnings remain.

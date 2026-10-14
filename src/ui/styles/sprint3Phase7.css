@@ -27,3 +27,7 @@
 .map-dock-body .map-mode-bar button{background:var(--surface-raised)!important;color:var(--ink)!important;opacity:1;border-color:var(--border)!important}
 .map-dock-body .map-mode-bar button.active{background:var(--accent-surface)!important;color:var(--accent-ink)!important;border-color:var(--focus)!important}
 .map-dock-body .map-mode-bar button:disabled{opacity:.55}
+.map-dock-body .map-mode-bar{width:100%!important;max-width:100%;box-sizing:border-box;grid-template-columns:minmax(0,1fr)}.map-dock-body .map-mode-buttons{min-width:0}.map-dock-body .map-command-sections>div{min-width:0}
+@media(max-width:760px){.map-dock-body .map-command-sections>div{display:flex;flex-direction:column;align-items:stretch;gap:8px}.map-dock-body .map-command-sections>div>span{width:100%}.map-dock-body .map-mode-buttons{grid-template-columns:minmax(0,1fr)!important}}
+
+.map-dock-body .map-mode-bar>*,.map-dock-body .map-camera-actions{min-width:0}.map-dock-body .map-camera-actions{display:flex;flex-wrap:wrap}
