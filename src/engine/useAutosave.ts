@@ -12,13 +12,13 @@ export function useAutosave(enabled=true) {
   const snapshot=useGameStore.getState();
   return startAutosave(coordinator,`${campaignId}:${day}`,autosaveWrite(snapshot,demoOwner()),ok=>useGameStore.getState().setSaveMessage(ok?`Autosaved Day ${day}`:'Autosave failed; retrying'));
  },[enabled,campaignStatus,day,campaignId,coordinator]);
- // Best-effort flush when the tab is hidden or closed; skipped when the current day is already saved.
+ // Best-effort flush includes commands made after this day's checkpoint (even while paused).
  useEffect(()=>{
   if(!enabled)return;
   const flush=()=>{
    const s=useGameStore.getState(),key=`${s.world.campaignId}:${s.day}`;
-   if(s.campaignStatus!=='active'||coordinator.isSaved(key))return;
-   void coordinator.save(key,autosaveWrite(s,demoOwner()));
+   if(s.campaignStatus!=='active')return;
+   void coordinator.saveLatest(key,autosaveWrite(s,demoOwner()));
   };
   const onVisibility=()=>{if(document.visibilityState==='hidden')flush();};
   window.addEventListener('pagehide',flush);document.addEventListener('visibilitychange',onVisibility);
