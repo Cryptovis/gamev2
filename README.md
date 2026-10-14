@@ -1,4 +1,4 @@
-# Rule of Nations (RON) — 0.91.0
+# Rule of Nations (RON) — 0.94.0
 
 Rule of Nations is a browser-based geopolitical grand-strategy prototype built with React, TypeScript, Zustand, D3 Geo and Dexie. Lead a country through its economy, resources, diplomacy, development and military conflicts. Chart.js provides economic charts; Vitest and Playwright verify gameplay and browser flows.
 
@@ -6,10 +6,10 @@ Rule of Nations is a browser-based geopolitical grand-strategy prototype built w
 
 | Item | Current state |
 |---|---|
-| Version | **0.91.0 — The Living World & Executive Release** |
-| Development branch | `dev/ron-release-091` (playtest.19 fast-forwarded into `dev/clear-command-090`; 0.91.0 not merged yet) |
-| Save schema | 17 (0.86–0.89 add optional fields; 0.90 preserves the schema); schemas 12–16 migrate automatically, older or newer saves are refused with a warning |
-| Validation | 826 unit tests / 91 files (813 earlier + 13 release tests; counted from the test sources, because the CI log was not readable here), TypeScript and production build passed; the 365-day long-run invariant passes. All 191 production-browser scenarios passed on GitHub-hosted Chromium (186 earlier + 5 release scenarios; CI 38429509251, browser step 16.1 min). Earlier runs on this branch failed and were fixed: the first release test used Node types the project does not have (now `import.meta.glob`), and 7 browser scenarios failed once: the five top-bar width checks (the island is up to 910 px wide with five cards, so the old 780 px limit became "under 960 px and ending before the clock island") and my two new Help scenarios (they now close the country panel first). The CI job timeout was raised from 20 to 25 minutes because the whole job takes about 19.8 minutes. Nothing ran locally: the npm registry is unreachable in this session, so GitHub Actions was the verifier. Screenshots and the visual judgement are still to do. |
+| Version | **0.94.0 — Audio, UI & Character Perks** |
+| Development branch | `dev/ron-phase7` (development release; not merged into main) |
+| Save schema | 17; optional leader archetype metadata, old records retain neutral gameplay; existing migrations unchanged |
+| Validation | 909/909 unit tests / 97 files; TypeScript and production build passed, zero build errors; 365-day invariant passed; 8/8 targeted production-browser scenarios passed. Full browser/native macOS suites were not rerun for 0.94. [Validation record](docs/RELEASE-094.md) |
 | V3 | Reserved for the complete-playability milestone; the current plan builds on the existing engine |
 
 These details describe this development branch. Another branch, including `main`, can contain an older release. Check `package.json` and your checked-out branch when comparing previews.
@@ -34,6 +34,8 @@ npm run test:e2e
 `check` runs tests, TypeScript checks and the production build. Browser tests run separately against the production preview. Optional `npm run measure:engine`, `npm run measure:browser` `npm run measure:renders` (React render attribution on a profiling build) and `npm run measure:war` (paired war-balance scenarios) write local performance reports; run browser measurements separately from other builds/tests. See [measurement method](docs/PERFORMANCE-0906.md).
 
 ## Recent changelog
+
+- **0.94.0:** owner soundtrack, MP3 priority, independent HUD surfaces, Light ivory globe viewport, bottom-left notifications, drawer/wizard polish and six deterministic leader perks. [Release record](docs/RELEASE-094.md). Schema 17, old saves remain compatible.
 
 - **0.91.0 (Claude):** The Living World & Executive Release — macOS case-collision fix, a calmer top bar with trends inside their own cards, War Planning and a four-tab Full Dossier inside the diplomatic hub, a three-tab Help (Briefing, Programs, Questions), a four-card feature tour, and the [Astra handoff](docs/HANDOFF-ASTRA.md). [Release record](docs/RELEASE-091.md). Schema 17, simulation unchanged.
 - **0.90.0-playtest.19 (Claude):** Phase 6.5 — live ▲/▼ counters for treasury, food and oil in the top bar, swords and megaphone event pins on the map, a red or gold mood glow on the commander portrait, and poster-style covert operations. [Phase 6.5 record](docs/LIVING-WORLD-0919.md). Schema 17, simulation unchanged.
@@ -212,6 +214,7 @@ Delivered milestones are retained here when new releases are added. This table s
 
 | Milestone | Delivered foundation | Record |
 |---|---|---|
+| 0.94 — Audio, UI & Character Perks | Phase 7 Sprint 4: audio integration, independent HUD, viewport/notification polish and six persistent campaign archetypes | [Playtest 0.94](docs/PLAYTEST-094.md) |
 | 0.90 — Clear Command | 0.91.0 release: war planning and dossier inside the hub, three-tab Help, feature tour, top-bar redesign, Astra handoff; Phase 6.5 living world polish; Phase 6.4 card UI and factory modal; Phase 6.3 tactile hillshade map; Phase 6.2 executive desk; Phase 6.1 target-country diplomatic hub; Phase 5 sound, battle effects and terrain; Phase 4 air/naval task groups and the cargo chain; Phase 3 multi-round tactical AI and war balance; Rule of Nations name; Phase 2 store subscriptions, window motion/return state and typography; Phase 1 managed victory/crisis focus and save/transaction regressions; compact ten-row World rankings, dense Supply and illustrated national workspaces; compact two-column Open Market, national intelligence alerts and opening news, source-linked contemporary diplomacy; repeatable long-campaign performance measurements, indexed map connections and deferred supplier disclosures; spacious workspaces with parent return navigation, framed HUD and world activity/list scrolling; illustrated Affairs and shared action gates; reliable command panels, separated investments/pilots, World rankings and rated/delayed sovereign credit with early repayment; market review/window hotfix, compact trading choices and execution receipts, Policies, national flag shortcut, current country names, readable events, quote rotation, keyboard map controls and verified simulation fixes | [Playtest 0.90](docs/PLAYTEST-090.md) |
 | 0.89 — Trade & Markets + onboarding polish | Icon market sections and bounded artwork recovery; shared window lifecycle and local panel recovery; illustrated research and clear action blockers; monthly supply contracts, shared war fuel readiness and 5× auto assault; unified entry/setup theme and compact final review; supplier ranking and country trade desk, commodity exchange with shocks and charts, diplomatic and cargo flights on the map | [Playtest 0.89](docs/PLAYTEST-089.md) |
 | 0.88 — Politics & Victory | AI wars and the defender path, allies joining, factions and contested elections, regime crises, data-driven events with chains, campaign victory | [Playtest 0.88](docs/PLAYTEST-088.md) |

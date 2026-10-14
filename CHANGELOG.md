@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.94.0 — Audio, UI & Character Perks
+
+Branch `dev/ron-phase7`; Schema 17 retained with optional leader metadata. [Release record](docs/RELEASE-094.md).
+
+- Owner soundtrack replaces command MP3; MP3-first browser playback with WebM codec fallback.
+- Independent HUD cards and Map/Help buttons, warm Light viewport/globe shadow, bottom-left toast clearance, hover/focus feedback and readable drawer badges.
+- Wizard menu/portrait alignment and five-language perk descriptions. Six archetypes activate shared engine modifiers at campaign start; old saves remain neutral and later portrait changes are cosmetic.
+- Commander intake/training and defense, Executive factory/tax output, Reformer recovery/opening approval, Diplomat opening relations/embassy fees, Chancellor opening treasury/debt interest, Governor food/consumer water use.
+- Existing audit fixes remain: same-day autosave refresh, fuel guidance, news routing, toast pause ownership and bounded tactical previews.
+
 ## 0.91.0 — The Living World & Executive Release
 Implementation: **Claude (Sonnet 5.5)**. Branch: `dev/ron-release-091`. Save schema 17, simulation and game numbers unchanged; no file under `src/engine`, `src/domain`, `src/persistence` or `src/map` changed; dependencies unchanged. [Release record](docs/RELEASE-091.md) · [Handoff to Astra](docs/HANDOFF-ASTRA.md).
 

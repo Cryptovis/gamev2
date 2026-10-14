@@ -1,5 +1,9 @@
 # Rule of Nations roadmap (formerly AlpyX) after 0.31
 
+## 0.94.0 — Phase 7 Sprint 4
+
+Delivered on `dev/ron-phase7`: audio integration, independent HUD, Light viewport, notification clearance, drawer/wizard polish and six deterministic character perks. [Release](RELEASE-094.md) · [Playtest](PLAYTEST-094.md). Schema 17, optional backward-compatible archetype metadata; V3 remains the complete-playability milestone. Initial-bundle profiling and hidden-workspace computation remain pending.
+
 ## Current playable spine
 World map → national economy/resources → diplomacy → bilateral commodity flows → development → military conflict → occupation → political consequences.
 
