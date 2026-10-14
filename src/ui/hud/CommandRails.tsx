@@ -3,7 +3,6 @@ import {ExecutiveWorkspaceShell} from '../windows/ExecutiveWorkspaceShell';
 import {MarketWindow} from '../panels/MarketWindow';
 import {WorldRankingsWindow} from '../panels/WorldRankingsWindow';
 import {useWorldView} from '../../store/useWorldView';
-import {activeCountries} from '../../domain/sovereignty';
 import {money} from '../formatMoney';
 import {GuideBriefing} from '../panels/GuideBriefing';
 import {CampaignVictoryProgress} from './CampaignVictoryProgress';
@@ -45,8 +44,6 @@ export function CommandRails(){
 
  const activeWars=Object.values(state.wars).filter(w=>w.status==='active');
  const activeTrades=Object.values(state.tradeDeals).filter(d=>d.active);
- const activeOps=Object.values(state.intelOperations).filter(o=>o.status==='active');
- const sanctions=activeCountries(state.countries).filter(c=>c.globalSanctions);
  const offers=state.diplomaticOffers.filter(o=>o.expiresDay>=state.day);
  const embassies=Object.values(state.embassies).filter(e=>e.countryA===player.id||e.countryB===player.id);
  const objectives=useMemo(()=>strategicObjectives(state),[state.tradeDeals,state.intelOperations,state.blocs,state.wars,state.day,player.id,player.technology.unlocked.length]);

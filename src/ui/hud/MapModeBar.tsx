@@ -5,14 +5,14 @@ import { tr } from '../../i18n/gameI18n';
 import { useGameStore } from '../../store/gameStore';
 import { useMapDesk } from '../../presentation/mapDeskSettings';
 
-const modes:Array<{mode:MapMode;key:string;glyph:string}>=[
- {mode:'political',key:'political',glyph:'◉'},
- {mode:'relations',key:'connections',glyph:'↔'},
- {mode:'diplomacy',key:'diplomacy',glyph:'◇'},
- {mode:'resources',key:'resources',glyph:'⬡'},
- {mode:'military',key:'military',glyph:'◆'},
- {mode:'religion',key:'religion',glyph:'✦'},
- {mode:'ideology',key:'ideology',glyph:'▣'},
+const modes:Array<{mode:MapMode;key:string}>=[
+ {mode:'political',key:'political'},
+ {mode:'relations',key:'connections'},
+ {mode:'diplomacy',key:'diplomacy'},
+ {mode:'resources',key:'resources'},
+ {mode:'military',key:'military'},
+ {mode:'religion',key:'religion'},
+ {mode:'ideology',key:'ideology'},
 ];
 
 export function MapModeBar(){
@@ -33,7 +33,7 @@ export function MapModeBar(){
  const deskTilt=useMapDesk(s=>s.tilt),deskRelief=useMapDesk(s=>s.relief),deskPins=useMapDesk(s=>s.pins),setDesk=useMapDesk(s=>s.set);
  return <section className="map-mode-bar" aria-label={translateLive("Map modes")}>
   <header className="map-mode-heading"><span><small><LocaleText value={"STRATEGIC VIEW"}/></small><strong><LocaleText value={"MAP COMMAND"}/></strong></span><em><LocaleText value={mapMode.toUpperCase()}/></em></header>
-  <div className="map-mode-buttons">{modes.map(({mode,key,glyph})=><button key={mode} className={mode===mapMode?'active':''} onClick={()=>setMapMode(mode)}><MapControlIcon kind={mode}/><LocaleText value={mode==='relations'?'RELATIONS':tr(lang,key)}/></button>)}</div>
+  <div className="map-mode-buttons">{modes.map(({mode,key})=><button key={mode} className={mode===mapMode?'active':''} onClick={()=>setMapMode(mode)}><MapControlIcon kind={mode}/><LocaleText value={mode==='relations'?'RELATIONS':tr(lang,key)}/></button>)}</div>
   {mapMode==='relations'&&<div className="relations-legend"><span><LocaleText value={"HOSTILE −100"}/></span><span><LocaleText value={"NEUTRAL 0"}/></span><span><LocaleText value={"FRIENDLY +100"}/></span></div>}
   <div className="map-command-sections">
    <div><small><LocaleText value={"BASE MAP"}/></small><span><button className={mapPresentation==='political'?'active':''} onClick={()=>setMapPresentation('political')}><LocaleText value={tr(lang,'political')}/></button><button className={mapPresentation==='geographic'?'active':''} onClick={()=>setMapPresentation('geographic')}><MapControlIcon kind="geographic"/><LocaleText value={tr(lang,'geographic')}/></button></span></div>

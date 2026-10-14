@@ -67,3 +67,27 @@ describe('audit follow-up: actual engine news prefixes and alert destinations',(
   expect(alertNewsChannel({category:'domestic',panel:'society'})).toBe('all');
  });
 });
+
+describe('audit follow-up: tactical availability short-circuit',()=>{
+ it('retains role, fuel and stale-round blockers while finding any valid sector',async()=>{
+  const {withWarFuel}=await import('./warFixture');
+  const {applyGameCommand}=await import('../engine/commands');
+  const {startTacticalBattle,playerSide}=await import('../engine/systems/tactical');
+  const {tacticalDraftPreview}=await import('../engine/systems/tacticalDraft');
+  let s=withWarFuel(makeInitialState());s.world.tutorial.active=false;
+  s=applyGameCommand(s,{type:'military/declareWar',targetCountryId:'GRC'});
+  const id=Object.keys(s.wars)[0];s=startTacticalBattle(s,id);
+  const b=s.wars[id].tactical!,side=playerSide(s,s.wars[id]);
+  const infantry=b.units.find(u=>u.side===side&&u.role==='infantry')!;
+  const candidate={unitId:infantry.id,kind:'defend' as const};
+  const preview=tacticalDraftPreview(s,id,[],candidate,b.round)!;
+  expect(preview.actions.defend.allowed).toBe(true);expect(preview.actions.recon.allowed).toBe(true);
+  expect(preview.actions.bombard.allowed).toBe(false);expect(preview.actions.bombard.reason).toContain('Artillery');
+  s.countries[s.playerCountryId].processedResources.fuel=0;
+  const dry=tacticalDraftPreview(s,id,[],candidate,b.round)!;
+  expect(dry.actions.defend.allowed).toBe(true);expect(dry.actions.move.allowed).toBe(false);
+  expect(dry.actions.move.reason).toContain('Not enough fuel');
+  const stale=tacticalDraftPreview(s,id,[],candidate,b.round-1)!;
+  for(const action of Object.values(stale.actions)){expect(action.allowed).toBe(false);expect(action.reason).toContain('earlier round');}
+ });
+});
