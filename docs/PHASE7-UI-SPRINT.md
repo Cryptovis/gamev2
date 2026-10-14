@@ -23,3 +23,15 @@ Engine-owned operationalVisibility applies the existing 35-point reconnaissance 
 Coverage labels are ledger categories, not probabilities. Last reconnaissance is successful operation metadata, not a stored historical force snapshot; absent metadata remains Unknown. Own figures are national inventory, not a claim that committed task groups are available. Declaration eligibility, fuel have/required/missing, structured WarBlock and active-war identity come from existing validators.
 
 Five focused regressions cover unseen enemy mutations, stable intra-band mutations, engine-owned own-supply values, range boundaries, determinism and fuel/control/active-war eligibility. The old exact-enemy-preview test was updated to assert the new visibility contract; formula thresholds remain tested.
+
+## A05 — hub and unified assessment
+
+The footer now offers War Planning, Country Info and Complete Panel & Trade directly. Country Info has Overview, Society, Economy and Military tabs with arrow/Home/End navigation. Its foreign military inventory/readiness uses the same visibility projection as the assessment. The third action selects the observed country's Trade tab in one click.
+
+OperationalAssessmentModal is the sole renderer for hub, full-panel and national World launchers. National readiness remains its existing player panel. The responsive board places own forces and opposing forces around the terrain/forecast/logistics centre on desktop, then two readable force wings above the theatre on phones. Own identity uses the chosen player portrait; the opponent uses a neutral emblem rather than an invented leader. Unknowns remain labeled Unknown, and outlook bars explicitly describe a forecast rather than a victory probability.
+
+Engine blockers disable declaration while a separate Review declaration action preserves access to the existing detailed strategic review and its disabled confirmation. Allowed declarations still require explicit confirmation and retain the original war-command handoff. Existing wars expose Open War Command rather than redeclaration. Hub diplomacy still uses existing receipts.
+
+CountryWorkspace retains source frames with explicit country/navigation ownership; suspended portal descendants release focus and Escape. Returning to Trade or national World preserves its selected tab/target and scroll memory rather than switching the source to the assessment country. UI context remains outside saves.
+
+Focused regressions cover unknown/banded Country Info and active defender terrain/supply. Browser coverage includes direct hub actions, four tabs, shared launchers, parent restoration, declaration handoff, active wars, keyboard/backdrop ownership and five-language layouts in both themes. Historical drawer/sub-view assertions have been updated to the intended centered/shared UI; command and review assertions are retained.

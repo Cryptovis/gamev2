@@ -81,10 +81,10 @@ describe('Phase 7 semantic workspace routes',()=>{
   const child=intentFrame({kind:'operational-assessment',targetCountryId:'FRA'},'TUR',2);
   expect(workspaceVisible(parent,child)).toBe(false);expect(workspaceVisible(parent,parent)).toBe(true);
  });
- it('explicit assessment requests use the common intent while legacy War routes stay compatible',()=>{
+ it('all foreign War routes share the assessment intent while national readiness stays a panel',()=>{
   const store=useGameStore.getState();store.navigate('operational-assessment','FRA');
   expect(useGameStore.getState().navigation?.intent?.kind).toBe('operational-assessment');
-  store.navigate('war','FRA');expect(useGameStore.getState().navigation?.panel).toBe('war');expect(useGameStore.getState().navigation?.intent).toBeUndefined();
+  store.navigate('war','FRA');expect(useGameStore.getState().navigation?.intent?.kind).toBe('operational-assessment');
   store.navigate('war','TUR');expect(useGameStore.getState().navigation?.panel).toBe('war');expect(useGameStore.getState().navigation?.intent).toBeUndefined();
  });
  it('root rail navigation discards all assessment return frames',()=>{

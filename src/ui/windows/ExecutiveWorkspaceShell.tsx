@@ -7,8 +7,8 @@ import {LocaleText,translateLive} from '../../i18n/localeText';
 import {GuideBriefing} from '../panels/GuideBriefing';
 
 /** A centered primary workspace: fixed heading/tabs, one scrolling body, suspended ownership while a child is active. */
-export function ExecutiveWorkspaceShell({id,title,kicker='EXECUTIVE OFFICE',tabs,children,onClose,scrollKey='body'}:{id:string;title:string;kicker?:string;tabs?:ReactNode;children:ReactNode;onClose:()=>void;scrollKey?:string}){
- const visible=useWorkspaceVisibility(),ref=useRef<HTMLElement>(null),body=useRef<HTMLDivElement>(null),positions=useRef(new Map<string,number>());
+export function ExecutiveWorkspaceShell({id,title,kicker='EXECUTIVE OFFICE',tabs,children,onClose,scrollKey='body',active}:{id:string;title:string;kicker?:string;tabs?:ReactNode;children:ReactNode;onClose:()=>void;scrollKey?:string;active?:boolean}){
+ const owned=useWorkspaceVisibility(),visible=active??owned,ref=useRef<HTMLElement>(null),body=useRef<HTMLDivElement>(null),positions=useRef(new Map<string,number>());
  useLayoutEffect(()=>{if(visible&&body.current)body.current.scrollTop=positions.current.get(scrollKey)??0;},[scrollKey,visible]);
  useWindowLifecycle(ref,{onClose,layer:WINDOW_LAYERS.workspace,enabled:visible});
  useScrollMemory(ref,visible);

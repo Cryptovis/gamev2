@@ -36,7 +36,7 @@ for(const viewport of [{width:1440,height:900},{width:390,height:844}]){
 test('economic observations draw a chart and accessible table after a campaign day',async({page})=>{
  await start(page);await page.locator('[data-guide="nation"]').first().click();await page.locator('[data-guide="tab-economy"]').click();
  await expect(page.locator('[data-testid="economic-trends"]')).toContainText('Sonraki verinin');const date=await page.locator('.campaign-clock strong').innerText();
- await page.locator('.speed-segment button').last().click();await expect(page.locator('.campaign-clock strong')).not.toHaveText(date);await page.locator('.speed-segment button').first().click();
+ await page.keyboard.press('Escape');await page.locator('.speed-segment button').last().click();await expect(page.locator('.campaign-clock strong')).not.toHaveText(date);await page.locator('.speed-segment button').first().click();await page.locator('[data-guide="tab-economy"]').click();
  await expect(page.locator('.economic-chart canvas')).toBeVisible();await page.getByRole('button',{name:'Veri tablosunu göster',exact:true}).click();expect(await page.locator('.economic-table-scroll tbody tr').count()).toBeGreaterThanOrEqual(2);
  await page.getByRole('button',{name:'Grafiği göster',exact:true}).click();await expect(page.locator('.economic-chart canvas')).toBeVisible();await page.screenshot({path:'test-results/economic-history-083.png',fullPage:true});
 });

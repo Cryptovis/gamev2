@@ -48,7 +48,7 @@ test('country panel returns from National power with its tab, scroll and focus',
  await page.setViewportSize({width:1440,height:760});
  await resumeFixture(page,campaignFixture('en'));
  await page.locator('[data-guide="nation"]').click();const panel=page.locator('.command-panel');await expect(panel).toBeVisible();
- await page.locator('[data-guide="tab-military"]').click();await expect(page.locator('[data-guide="tab-military"]')).toHaveAttribute('aria-pressed','true');
+ await page.locator('[data-guide="tab-trade"]').click();await expect(page.locator('[data-guide="tab-trade"]')).toHaveAttribute('aria-pressed','true');
  const scrolled=await panel.evaluate(el=>{el.scrollTop=Math.min(240,el.scrollHeight-el.clientHeight);return el.scrollTop;});
  const power=page.locator('[data-guide="tab-power"]');await power.focus({});await page.keyboard.press('Enter');
  await expect(page.locator('.command-window')).toBeVisible();await expect(panel).toBeHidden();
@@ -56,7 +56,7 @@ test('country panel returns from National power with its tab, scroll and focus',
  expect(await panel.evaluate(el=>{const r=el.getBoundingClientRect();const hit=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);return !!hit&&el.contains(hit);})).toBe(false);
  await page.keyboard.press('Escape');
  await expect(panel).toBeVisible();await expect(power).toBeFocused();
- await expect(page.locator('[data-guide="tab-military"]')).toHaveAttribute('aria-pressed','true');
+ await expect(page.locator('[data-guide="tab-trade"]')).toHaveAttribute('aria-pressed','true');
  expect(await panel.evaluate(el=>el.scrollTop)).toBe(scrolled);
  await expect.poll(()=>panel.evaluate(el=>getComputedStyle(el).opacity)).toBe('1');
 });

@@ -51,8 +51,8 @@ for(const [width,lang] of [[1440,'tr'],[390,'en']] as const)test(`${lang} ${widt
  await expect(page.locator('.policy-card[data-policy="tax"]')).toHaveClass(/status-available/);
  expect(await noOverflow(page)).toBe(true);
  await page.screenshot({path:`test-results/card-ui-0918-policies-${lang}-${width}.png`});
- // A foreign country's Full Dossier shows the cards without buttons.
- await page.locator('.country-select').selectOption('GRC');await page.locator('[data-guide="tab-policies"]').click();
+ // Return to the country selector before opening another country's centered Policies.
+ await page.keyboard.press('Escape');await page.locator('.country-select').selectOption('GRC');await page.locator('[data-guide="tab-policies"]').click();
  await expect(page.locator('.policy-card')).toHaveCount(6);
  await expect(page.locator('.policy-card-action')).toHaveCount(0);
  expect(errors).toEqual([]);

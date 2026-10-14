@@ -3,7 +3,6 @@ import { createPortal } from 'react-dom';
 import { LocaleText, translateLive } from '../../i18n/localeText';
 import { flagEmoji } from '../../data/countryThemes';
 import { compactMoney } from '../formatMoney';
-import { useGameStore } from '../../store/gameStore';
 import { useScrollMemory } from '../windows/useScrollMemory';
 import { useWorldView } from '../../store/useWorldView';
 import { useAudioSettings } from '../../audio/audioSettings';
@@ -15,8 +14,8 @@ import { StrategicDecisionModal } from './StrategicDecisionModal';
 import { AssetThumbnail } from '../icons/AssetThumbnail';
 import { CivicArt } from '../icons/CivicArt';
 import { CommandArt } from '../icons/CommandArt';
-import { WarPlanningBrief, DossierSubview } from './TargetSubviews';
-import { dossierView, warPlanningView } from './targetBriefing';
+import { DossierSubview } from './TargetSubviews';
+import { dossierView } from './targetBriefing';
 import { targetHubActions, targetHubSummary, type HubAction, type HubArt } from './targetCountryHub';
 
 function HubArtwork({ art }: { art: HubArt }) {
@@ -30,26 +29,21 @@ function HubArtwork({ art }: { art: HubArt }) {
  * Every button sends a typed GameCommand through the store (with the same strategic review as the Full Dossier);
  * the full 14-section country panel stays one click away.
  */
-export function TargetCountryModal({ countryId, onOpenDossier }: { countryId: string; onOpenDossier: () => void }) {
+export function TargetCountryModal({countryId,mode='hub',active=true}:{countryId:string;mode?:'hub'|'info';active?:boolean}) {
   const state = useWorldView();
   const lowEffects = useAudioSettings((a) => a.lowEffects);
   const [pending, setPending] = useState<{ spec: StrategicDecisionSpec; execute: () => void } | null>(null);
-  // 0.91.0: War Planning and the Full Dossier are sub-views of this modal; Escape and the back button return to the hub first.
-  const [view, setView] = useState<'hub' | 'war' | 'dossier'>('hub');
-  const navigation = useGameStore(s => s.navigation);
-  const routedView = navigation?.countryId === countryId && navigation.intent?.kind === 'operational-assessment' ? 'war'
-    : navigation?.countryId === countryId && navigation.intent?.kind === 'country-info' ? 'dossier' : null;
-  useEffect(() => { if (state.selectedCountryId === countryId) setView(routedView ?? 'hub'); }, [navigation, routedView, state.selectedCountryId, countryId]);
+  const view=mode==='info'?'dossier':'hub';
   const ref = useRef<HTMLElement>(null);
   const previousView = useRef(view);
   useEffect(() => {
     if (view === 'hub' && previousView.current !== 'hub' && state.selectedCountryId === countryId)
-      ref.current?.querySelector<HTMLButtonElement>(previousView.current === 'war' ? '.target-hub-warplan' : '.target-hub-dossier')?.focus({preventScroll:true});
+      ref.current?.querySelector<HTMLButtonElement>('.target-hub-dossier')?.focus({preventScroll:true});
     previousView.current = view;
   }, [view, state.selectedCountryId, countryId]);
   // While a child tool (e.g. the proposal tracker) is open the selection lives in the workspace trail: stay mounted, hidden.
-  const visible = state.selectedCountryId === countryId && (!navigation?.intent || ['country-hub', 'country-info', 'operational-assessment'].includes(navigation.intent.kind));
-  const back = routedView ? state.closeWorkspace : () => setView('hub');
+  const visible=active&&state.selectedCountryId===countryId;
+  const back=state.closeWorkspace;
   useScrollMemory(ref, visible);
   useWindowLifecycle(ref, { onClose: view === 'hub' ? state.closeWorkspace : back, layer: WINDOW_LAYERS.workspace, enabled: visible && !pending });
   const summary = useMemo(() => targetHubSummary(state, countryId), [state, countryId]);
@@ -66,18 +60,13 @@ export function TargetCountryModal({ countryId, onOpenDossier }: { countryId: st
     if (!spec) return;
     setPending({ spec, execute });
   };
-  const declare = () => {
-    const spec = strategicDecisionSpec(state, 'declare_war', target.id);
-    if (spec) setPending({ spec, execute: () => state.declareWar(target.id) });
-  };
-  const warView = view === 'war' ? warPlanningView(state, countryId) : null;
   const dossier = view === 'dossier' ? dossierView(state, countryId) : null;
   const press = (action: HubAction) => {
     if (action.trackProposal) { state.routeWorkspace({kind: 'diplomatic-inbox', tab: 'correspondence', countryId: target.id}); return; }
     send(action.command, action.decision);
   };
 
-  const node = <div className="target-hub-backdrop" hidden={!visible} onMouseDown={()=>{if(ownsWindowDismissal(ref.current))state.closeWorkspace();}}>
+  const node = <div className="target-hub-backdrop" hidden={!visible} onMouseDown={event=>{if(ownsWindowDismissal(ref.current)){event.preventDefault();state.closeWorkspace();}}}>
     <section ref={ref} tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby="target-hub-title" className={`target-hub stance-${summary.stance.toLowerCase().replaceAll(' ', '-')}${lowEffects ? ' low-effects' : ''}`} data-country={target.id} onMouseDown={(e) => e.stopPropagation()}>
       <header className="target-hub-header">
         <div className="target-hub-flags" aria-hidden="true">
@@ -86,16 +75,15 @@ export function TargetCountryModal({ countryId, onOpenDossier }: { countryId: st
           <span className="target-hub-flag target"><LocaleText value={flagEmoji(target.iso2)} /></span>
         </div>
         <div className="target-hub-title">
-          <small><LocaleText value={view === 'war' ? 'WAR PLANNING' : view === 'dossier' ? 'FULL DOSSIER' : 'DIPLOMATIC HUB'} /></small>
+          <small><LocaleText value={view === 'dossier' ? 'Country Info' : 'DIPLOMATIC HUB'} /></small>
           <h2 id="target-hub-title"><LocaleText value={target.name} />{summary.capital && <span className="target-hub-capital"><LocaleText value={' · '} /><LocaleText value={summary.capital} /></span>}</h2>
         </div>
         <button className="target-hub-close" data-guide="close-workspace" onClick={state.closeWorkspace} aria-label={translateLive('Close diplomatic hub')} title={translateLive('Return to map')}><LocaleText value={'×'} /></button>
       </header>
 
-      {view !== 'hub' && <button className="target-hub-back" data-guide="hub-back" onClick={back}><LocaleText value="← Diplomatic Hub" /></button>}
-      {view === 'war' && warView && <WarPlanningBrief view={warView} country={target} language={language} onDeclare={declare} />}
-      {view === 'dossier' && dossier && <DossierSubview view={dossier} country={target} language={language} onOpenFullPanel={onOpenDossier} />}
-      {view === 'hub' && <>
+      {view !== 'hub' && <button className="target-hub-back" data-guide="hub-back" onClick={back}><LocaleText value="Back" /></button>}
+            {view === 'dossier' && dossier && <DossierSubview view={dossier} country={target} language={language} onOpenFullPanel={()=>state.routeWorkspace({kind:'country-panel',countryId,tab:'trade',returnTo:{kind:'country-info',countryId}})} />}
+      {view === 'hub' && <><div className="target-hub-body">
       {war && <div className="target-hub-war" role="status"><strong><LocaleText value="At war" /></strong><button onClick={() => state.openWarWindow(war.id)}><LocaleText value="OPEN WAR COMMAND" /></button></div>}
 
       <dl className="target-hub-stats">
@@ -122,11 +110,12 @@ export function TargetCountryModal({ countryId, onOpenDossier }: { countryId: st
         </article>)}
       </div>
 
-      <footer className="target-hub-footer">
-        <p><LocaleText value="Costs, acceptance and cooldowns follow the same rules as the Full Dossier." /></p>
+      </div><footer className="target-hub-footer">
+        <p><LocaleText value="Costs, acceptance and cooldowns follow the same engine rules." /></p>
         <div className="target-hub-footer-actions">
-        <button className="target-hub-warplan" data-guide="open-war-planning" onClick={() => (war ? state.openWarWindow(war.id) : state.routeWorkspace({kind: 'operational-assessment', targetCountryId: countryId}))}><CommandArt kind="military" size={22} /><LocaleText value="War Planning" /></button>
-        <button className="target-hub-dossier" data-guide="open-full-dossier" onClick={() => setView('dossier')}><CommandArt kind="overview" size={22} /><LocaleText value="Full Dossier" /></button>
+        <button className="target-hub-warplan" data-guide="open-war-planning" onClick={() => state.routeWorkspace({kind:'operational-assessment',targetCountryId:countryId})}><CommandArt kind="military" size={22} /><LocaleText value="War Planning" /></button>
+        <button className="target-hub-dossier" data-guide="open-full-dossier" onClick={()=>state.routeWorkspace({kind:'country-info',countryId})}><CommandArt kind="overview" size={22} /><LocaleText value="Country Info" /></button>
+        <button className="target-hub-complete" data-guide="open-complete-panel" onClick={()=>state.routeWorkspace({kind:'country-panel',countryId,tab:'trade',returnTo:{kind:'country-hub',countryId}})}><CommandArt kind="economy" size={22}/><LocaleText value="Complete Panel & Trade"/></button>
         </div>
       </footer>
       </>}
@@ -136,6 +125,6 @@ export function TargetCountryModal({ countryId, onOpenDossier }: { countryId: st
 
   return <>
     {typeof document === 'undefined' ? node : createPortal(node, document.body)}
-    {pending && <StrategicDecisionModal spec={pending.spec} onCancel={() => setPending(null)} onConfirm={() => { pending.execute(); setPending(null); }} />}
+    {pending && visible && <StrategicDecisionModal spec={pending.spec} onCancel={() => setPending(null)} onConfirm={() => { pending.execute(); setPending(null); }} />}
   </>;
 }

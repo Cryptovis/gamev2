@@ -14,6 +14,7 @@ export function forceBand(value:number,key:ForceKey):EstimateBand{
  const i=Math.max(0,index);return {min:edges[i],max:edges[i+1]===undefined?null:edges[i+1]-1};
 }
 const representative=(band:EstimateBand)=>band.max===null?band.min*1.25:(band.min+band.max)/2;
+export const qualityBand=(value:number):EstimateBand=>value<40?{min:0,max:39}:value<70?{min:40,max:69}:{min:70,max:100};
 const quality=(value:number)=>value<40?20:value<70?55:85;
 export const supplyBand=(value:number):EstimateBand=>{const min=Math.min(80,Math.max(0,Math.floor(value/20)*20));return {min,max:min===80?100:min+19};};
 
@@ -32,5 +33,5 @@ export function operationalVisibility(state:GameState,targetId:string){
   const projected={...target,military:{...target.military,...values,readiness:quality(target.military.readiness),morale:quality(target.military.morale),logistics:quality(target.military.logistics),technology:quality(target.military.technology)}};
   comparison=warForceComparison(own,projected,actual.attackerSupply,representative(enemySupply));
  }
- return {terrain:actual.terrain,own:inventory(own),enemy,ownSupply:actual.attackerSupply,enemySupply,comparison,confidence:known?(coverage>=70?'established':'limited'):'unknown',lastReconDay} as const;
+ return {terrain:actual.terrain,own:inventory(own),enemy,ownSupply:actual.attackerSupply,enemySupply,enemyReadiness:known?qualityBand(target.military.readiness):null,comparison,confidence:known?(coverage>=70?'established':'limited'):'unknown',lastReconDay} as const;
 }

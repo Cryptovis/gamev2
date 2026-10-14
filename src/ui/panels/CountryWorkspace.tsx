@@ -1,31 +1,25 @@
-import { useState } from 'react';
-import { useGameStore } from '../../store/gameStore';
-import { countryPanelNavigation } from '../../store/workspaceNavigation';
-import { CountryPanel } from './CountryPanel';
-import { TargetCountryModal } from './TargetCountryModal';
-import { workspaceForSelection } from './targetCountryHub';
+import {useState} from 'react';
+import {useGameStore} from '../../store/gameStore';
+import {countryPanelNavigation,type WorkspaceFrame} from '../../store/workspaceNavigation';
+import {CountryPanel} from './CountryPanel';
+import {TargetCountryModal} from './TargetCountryModal';
+import {OperationalAssessmentModal} from './OperationalAssessmentModal';
+import {workspaceForSelection} from './targetCountryHub';
 
-/**
- * Phase 6.1: the player's own nation keeps the full country panel; another nation opens the diplomatic hub first.
- * "Full Dossier" (UI state only, never saved) switches that country to the full panel until the selection closes;
- * choosing another country from the full panel's own country list keeps the full panel. Map and ranking clicks open the hub.
- */
-export function CountryWorkspace({ selectedCountryId }: { selectedCountryId: string }) {
-  const playerCountryId = useGameStore((s) => s.playerCountryId);
-  const liveSelection = useGameStore((s) => s.selectedCountryId);
-  const navigation = useGameStore((s) => s.navigation);
-  // Returning to the map unmounts this component (App renders it only while a country is selected or kept in the
-  // workspace trail), so the dossier choice ends there and selecting the country again opens its hub.
-  const [dossierFor, setDossierFor] = useState<string | null>(null);
-  const view = workspaceForSelection({ playerCountryId, selectedCountryId: liveSelection, navigation }, selectedCountryId, dossierFor);
-  const assessmentParent = useGameStore(s => [...s.workspaceTrail].reverse().find(f => f.navigation?.intent?.kind === 'operational-assessment')?.selectedCountryId);
-  const hubId = view === 'hub' ? selectedCountryId : assessmentParent;
-  const panelParent = useGameStore(s => s.workspaceTrail.some(f => f.selectedCountryId === selectedCountryId && countryPanelNavigation(f.navigation)));
-  const retainPanel = navigation?.intent?.kind === 'operational-assessment' && (dossierFor === selectedCountryId || panelParent);
-  // Keep the assessment mounted when a player-owned factory replaces its country selection.
-  // Its lifecycle/scroll ownership is suspended until the exact parent frame returns.
-  return <>
-    {(view === 'panel' || retainPanel) && <CountryPanel onBrowse={setDossierFor} suspended={view !== 'panel'} />}
-    {hubId && <TargetCountryModal key={hubId} countryId={hubId} onOpenDossier={() => setDossierFor(hubId)} />}
-  </>;
+/** One active primary surface. Retained source frames keep their local tabs, scroll and portal ownership. */
+export function CountryWorkspace({selectedCountryId}:{selectedCountryId:string}){
+ const playerCountryId=useGameStore(s=>s.playerCountryId),liveSelection=useGameStore(s=>s.selectedCountryId),navigation=useGameStore(s=>s.navigation);
+ const trail=useGameStore(s=>s.workspaceTrail),activeTool=useGameStore(s=>s.activeTool),warWindowId=useGameStore(s=>s.warWindowId);
+ const [dossierFor,setDossierFor]=useState<string|null>(null);
+ const current:WorkspaceFrame={selectedCountryId:liveSelection,activeTool,warWindowId,navigation};
+ const frames=[...trail,current],assessment=[...frames].reverse().find(frame=>frame.navigation?.intent?.kind==='operational-assessment');
+ const activeAssessment=navigation?.intent?.kind==='operational-assessment'&&!!liveSelection&&!activeTool&&!warWindowId;
+ const isPanel=(frame:WorkspaceFrame)=>!!frame.selectedCountryId&&!frame.activeTool&&!frame.warWindowId&&!['country-hub','country-info','operational-assessment'].includes(frame.navigation?.intent?.kind??'')&&(frame.selectedCountryId===playerCountryId||countryPanelNavigation(frame.navigation)||dossierFor===frame.selectedCountryId);
+ const view=workspaceForSelection({playerCountryId,selectedCountryId:liveSelection,navigation},selectedCountryId,dossierFor);
+ const hub=[...frames].reverse().find(frame=>frame.selectedCountryId&&frame.selectedCountryId!==playerCountryId&&!frame.activeTool&&!frame.warWindowId&&!isPanel(frame)&&frame.navigation?.intent?.kind!=='operational-assessment');
+ return <>
+  {frames.map((frame,index)=>isPanel(frame)?<CountryPanel key={`panel-${index}`} countryId={frame.selectedCountryId!} navigationFrame={frame.navigation} suspended={index!==trail.length||view!=='panel'||activeAssessment} onBrowse={setDossierFor}/>:null)}
+  {hub?.selectedCountryId&&<TargetCountryModal key={hub.selectedCountryId} countryId={hub.selectedCountryId} mode={hub.navigation?.intent?.kind==='country-info'?'info':'hub'} active={hub===current&&!activeAssessment}/>}
+  {assessment?.selectedCountryId&&<OperationalAssessmentModal key={assessment.selectedCountryId} countryId={assessment.selectedCountryId} active={activeAssessment&&liveSelection===assessment.selectedCountryId}/>}
+ </>;
 }

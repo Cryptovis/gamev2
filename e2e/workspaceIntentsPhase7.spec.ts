@@ -34,12 +34,12 @@ test('assessment review owns Tab, Escape and backdrop; back restores launcher fo
  await resumeFixture(page,s);await page.locator('[data-guide="rail-world"]').click();
  await page.locator('#pulse-window .ranking-table tbody button').filter({hasText:'France'}).first().click();
  const hub=page.locator('.target-hub'),launcher=hub.locator('.target-hub-warplan');await launcher.click();
- const declare=hub.locator('.war-plan-declare');await expect(declare).toBeEnabled();await declare.click();
+ const assessment=page.locator('#operational-assessment-window'),declare=assessment.locator('.war-plan-declare');await expect(declare).toBeEnabled();await declare.click();
  const review=page.locator('.strategic-decision-modal');await expect(review).toBeVisible();
  // An event on the obscured parent's backdrop must not dismiss either managed layer.
  await page.locator('.target-hub-backdrop').dispatchEvent('mousedown');await expect(review).toBeVisible();
  const buttons=review.locator('button:not(:disabled)');await buttons.last().focus();await page.keyboard.press('Tab');await expect(buttons.first()).toBeFocused();
- await page.keyboard.press('Escape');await expect(review).toHaveCount(0);await expect(hub.locator('.war-plan')).toBeVisible();await expect(declare).toBeFocused();
+ await page.keyboard.press('Escape');await expect(review).toHaveCount(0);await expect(assessment.locator('.war-plan')).toBeVisible();await expect(declare).toBeFocused();
  await page.keyboard.press('Escape');await expect(hub.locator('.target-hub-grid')).toBeVisible();await expect(launcher).toBeFocused();
  await page.keyboard.press('Escape');await expect(hub).toHaveCount(0);await expect(page.locator('#pulse-window')).toBeVisible();
 });

@@ -1,6 +1,6 @@
 import {describe,it,expect} from 'vitest';
 import {makeInitialState} from '../data/initialState';
-import {warPlanningView} from '../ui/panels/targetBriefing';
+import {dossierView,warPlanningView} from '../ui/panels/targetBriefing';
 import {forceBand,operationalVisibility} from '../engine/systems/operationalVisibility';
 import {warDeclarationStatus,openWar} from '../engine/systems/warRules';
 import {getWarPreview} from '../engine/systems/warfare';
@@ -30,6 +30,17 @@ describe('player-visible operational assessment',()=>{
   expect(view.ownForces.personnel).toBe(state.countries.TUR.military.personnel);
   expect(view.ourSupply).toBe(getWarPreview(state.countries.TUR,state.countries.GRC,state.infrastructure.TUR,state.infrastructure.GRC).attackerSupply);
   expect(operationalVisibility(state,'TUR')).toBeNull();expect(operationalVisibility(state,'missing')).toBeNull();
+ });
+ it('Country Info shares the visibility boundary and never turns unknown readiness into an exact count',()=>{
+  const state=makeInitialState();state.intelligenceLedger.FRA=0;
+  const unknown=dossierView(state,'FRA')!;expect(unknown.readiness).toBeNull();expect(Object.values(unknown.militaryForces).every(value=>value===null)).toBe(true);
+  state.intelligenceLedger.FRA=70;state.countries.FRA.military.readiness=55;
+  expect(dossierView(state,'FRA')!.readiness).toEqual({min:40,max:69});expect(dossierView(state,'TUR')!.militaryForces.personnel).toBe(state.countries.TUR.military.personnel);
+ });
+ it('active assessment follows the player as defender and uses the actual theatre',()=>{
+  let state=withWarFuel(makeInitialState());state.countries.GRC.processedResources.fuel=100000;
+  const opened=openWar(state,'GRC','TUR');state=opened.state;const war=state.wars[opened.warId!];war.defenderSupply=42;war.attackerSupply=17;
+  const view=warPlanningView(state,'GRC')!;expect(view.terrain).toBe(war.terrain);expect(view.ourSupply).toBe(42);expect(view.activeWarId).toBe(war.id);
  });
  it('force bands include zero without publishing exact zero, and have bounded/open-ended ranges',()=>{
   expect(forceBand(0,'fighters')).toEqual({min:0,max:9});expect(forceBand(999,'personnel')).toEqual({min:0,max:999});expect(forceBand(1000,'personnel')).toEqual({min:1000,max:9999});expect(forceBand(8000,'tanks')).toEqual({min:5000,max:null});

@@ -9,7 +9,7 @@ for(const width of [1440,390])test(`${width}px core executive sections share a c
   const last=shell.locator('button:not(:disabled)').last();await last.focus();await page.keyboard.press('Tab');await expect(shell.locator('[data-guide="close-workspace"]')).toBeFocused();
   await page.keyboard.press('Escape');await expect(shell).toHaveCount(0);await expect(page.locator(`[data-guide="tab-${tab}"]`)).toBeFocused();
  }
- await page.locator('[data-guide="tab-policies"]').click();const tabs=page.locator('.executive-section-tabs [role="tab"]');await tabs.first().focus();await page.keyboard.press('ArrowRight');await expect(tabs.nth(1)).toHaveAttribute('aria-selected','true');
+ await page.locator('[data-guide="tab-policies"]').click();const tabs=page.locator('.executive-section-tabs [role="tab"]');const body=page.locator('#country-section-window .executive-body');await body.evaluate(el=>{el.scrollTop=Math.min(150,el.scrollHeight-el.clientHeight);});const offset=await body.evaluate(el=>el.scrollTop);expect(offset).toBeGreaterThan(0);await tabs.nth(1).click();await tabs.first().click();await expect.poll(()=>body.evaluate(el=>el.scrollTop)).toBe(offset);await tabs.first().focus();await page.keyboard.press('ArrowRight');await expect(tabs.nth(1)).toHaveAttribute('aria-selected','true');
  await page.screenshot({path:`test-results/phase7-executive-${width}.png`});
 });
 for(const language of ['en','tr','es','zh','ru'] as const)test(`${language} diplomacy rail stays single-line and Inbox is centered`,async({page})=>{

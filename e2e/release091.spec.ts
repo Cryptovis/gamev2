@@ -21,16 +21,16 @@ for(const width of [1440,390])test(`${width}px war planning sub-view: ratio bar,
  const hub=page.locator('.target-hub');
  await expect(hub.locator('.target-hub-warplan')).toBeVisible();
  await hub.locator('.target-hub-warplan').click();
- await expect(hub.locator('.target-hub-title small')).toHaveText('WAR PLANNING');
- await expect(hub.locator('.war-plan .war-ratio-bar')).toBeVisible();await expect(hub.locator('.war-air')).toBeVisible();await expect(hub.locator('.war-logistics .war-meter')).toHaveCount(3);
+ const assessment=page.locator('#operational-assessment-window');await expect(assessment).toBeVisible();
+ await expect(assessment.locator('.war-plan .war-ratio-bar')).toBeVisible();await expect(assessment.locator('.war-air')).toBeVisible();await expect(assessment.locator('.war-logistics .war-meter')).toHaveCount(3);
  // The confirm button is either armed (and then asks for strategic review) or the engine's own reason is shown.
- const declare=hub.locator('.war-plan-declare');await expect(declare).toContainText('FRANCE');
- if(await declare.isEnabled())await expect(hub.locator('.war-plan-block')).toHaveCount(0);else await expect(hub.locator('.war-plan-block')).toBeVisible();
- expect(await hub.evaluate(el=>el.scrollWidth<=el.clientWidth+1)).toBe(true);
+ const declare=assessment.locator('.war-plan-declare');await expect(declare).toContainText('FRANCE');
+ if(await declare.isEnabled())await expect(assessment.locator('.war-plan-block')).toHaveCount(0);else await expect(assessment.locator('.war-plan-block')).toBeVisible();
+ expect(await assessment.evaluate(el=>el.scrollWidth<=el.clientWidth+1)).toBe(true);
  await page.screenshot({path:`test-results/war-planning-0911-${width}.png`});
  // Escape steps back to the hub first; a second Escape closes it.
  await page.keyboard.press('Escape');await expect(hub).toBeVisible();await expect(hub.locator('.target-hub-grid')).toBeVisible();
- await hub.locator('.target-hub-warplan').click();await hub.locator('.target-hub-back').click();await expect(hub.locator('.target-hub-grid')).toBeVisible();
+ await hub.locator('.target-hub-warplan').click();await assessment.locator('[data-guide="close-workspace"]').click();await expect(hub.locator('.target-hub-grid')).toBeVisible();
  await page.keyboard.press('Escape');await expect(page.locator('.target-hub')).toHaveCount(0);
  expect(errors).toEqual([]);
 });

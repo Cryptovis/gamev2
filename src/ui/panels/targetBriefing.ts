@@ -4,7 +4,7 @@
  * nothing here owns a formula except the presentation bands that colour the bars.
  */
 import type {GameState} from '../../domain/game';
-import {operationalVisibility,type ForceInventory,type EstimatedInventory,type EstimateBand} from '../../engine/systems/operationalVisibility';
+import {operationalVisibility,FORCE_KEYS,type ForceInventory,type EstimatedInventory,type EstimateBand} from '../../engine/systems/operationalVisibility';
 import type {WarBlock} from '../../engine/systems/warRules';
 import {warDeclarationReason,warDeclarationStatus,warFuelReadiness} from '../../engine/systems/warRules';
 
@@ -35,9 +35,9 @@ export function warPlanningView(state:GameState,targetId:string):WarPlanningView
  const status=warDeclarationStatus(state,player.id,target.id),fuel=warFuelReadiness(state,player.id);
  const active=Object.values(state.wars).find(w=>w.status==='active'&&((w.attackerId===player.id&&w.defenderId===target.id)||(w.defenderId===player.id&&w.attackerId===target.id)));
  return {
-  targetId,terrain:visible.terrain,ourShare:ratioShare(ratio??1),outlook,
+  targetId,terrain:active?.terrain??visible.terrain,ourShare:ratioShare(ratio??1),outlook,
   ownForces:visible.own,enemyForces:visible.enemy,confidence:visible.confidence,lastReconDay:visible.lastReconDay,
-  ourSupply:visible.ownSupply,enemySupply:visible.enemySupply,air,
+  ourSupply:active?(active.attackerId===player.id?active.attackerSupply:active.defenderSupply):visible.ownSupply,enemySupply:visible.enemySupply,air,
   fuel:{have:player.processedResources.fuel,required:fuel.required,days:fuel.days,ready:fuel.allowed,missing:fuel.missing},
   allowed:status.allowed,block:status.block??null,reason:warDeclarationReason(status),activeWarId:active?.id??null,
  };
@@ -46,16 +46,17 @@ export function warPlanningView(state:GameState,targetId:string):WarPlanningView
 export interface DossierView{
  regime:string;gdpB:number;treasuryB:number;debtB:number;inflation:number;unemployment:number;taxRate:number;
  approval:number;stability:number;population:number;
- personnel:number;tanks:number;fighters:number;warships:number;readiness:number;
+ militaryForces:Record<import('../../engine/systems/operationalVisibility').ForceKey,number|EstimateBand|null>;readiness:number|EstimateBand|null;religion:string;ideology:string;region:string;
  reputation:number;
 }
 export function dossierView(state:GameState,targetId:string):DossierView|null{
  const c=state.countries[targetId];
  if(!c)return null;
+ const own=targetId===state.playerCountryId,visible=own?null:operationalVisibility(state,targetId);
  return {
   regime:c.politics.regime,gdpB:c.economy.gdp,treasuryB:c.economy.treasury,debtB:c.economy.debt,inflation:c.economy.inflation,unemployment:c.economy.unemployment,taxRate:c.economy.taxRate,
   approval:c.politics.approval,stability:c.politics.stability,population:c.demographics.population,
-  personnel:c.military.personnel,tanks:c.military.tanks,fighters:c.military.fighters,warships:c.military.warships,readiness:c.military.readiness,
+  militaryForces:own?Object.fromEntries(FORCE_KEYS.map(key=>[key,c.military[key]])) as ForceInventory:visible!.enemy,readiness:own?c.military.readiness:visible!.enemyReadiness,religion:c.society?.dominantReligion??'Unknown',ideology:c.society?.ideology??'Unknown',region:c.region??'Unknown',
   reputation:c.diplomacy.reputation,
  };
 }
