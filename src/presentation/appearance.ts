@@ -12,9 +12,9 @@ export function applyAppearance(preference:AppearancePreference,osDark=media()?.
  document.documentElement.dataset.appearance=preference;
  document.documentElement.style.colorScheme=effectiveAppearance(preference,osDark);
 }
-export const useAppearance=create<{preference:AppearancePreference;setPreference:(value:AppearancePreference)=>void}>(set=>({
+export const useAppearance=create<{preference:AppearancePreference;setPreference:(value:AppearancePreference,persist?:boolean)=>void}>(set=>({
  preference:read()??'system',
- setPreference:value=>{try{localStorage.setItem(APPEARANCE_KEY,value);}catch{/* preference remains usable without storage */}set({preference:value});applyAppearance(value);},
+ setPreference:(value,persist=true)=>{if(persist){try{localStorage.setItem(APPEARANCE_KEY,value);}catch{/* preference remains usable without storage */}}set({preference:value});applyAppearance(value);},
 }));
 
 export function hasLegacyPreferences(local:Pick<Storage,'getItem'>,session:Pick<Storage,'getItem'>){
@@ -41,6 +41,6 @@ export async function initializeAppearance(){
  if(!listening){
   listening=true;
   media()?.addEventListener('change',event=>{const value=useAppearance.getState().preference;if(value==='system')applyAppearance(value,event.matches);});
-  if(typeof window!=='undefined')window.addEventListener('storage',event=>{if(event.key===APPEARANCE_KEY){const value=parseAppearance(event.newValue)??'system';useAppearance.setState({preference:value});applyAppearance(value);}});
+  if(typeof window!=='undefined')window.addEventListener('storage',event=>{if(event.key===APPEARANCE_KEY){const value=parseAppearance(event.newValue)??'system';useAppearance.getState().setPreference(value,false);}});
  }
 }
