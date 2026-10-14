@@ -1,3 +1,4 @@
+import {MapControlIcon} from '../ui/icons/MapControlIcon';
 import {displayCountries} from '../presentation/countryIdentity';
 import {dominantResources} from './resourceBadges';
 import {ResourceMapBadge} from '../ui/icons/ResourceMapBadge';
@@ -510,12 +511,12 @@ function WorldMapView() {
       <g className="screen-microstate-layer"><LocaleText value={microstateMarkers}/></g>
     </svg>
     <div className="map-camera-hud" aria-label={translateLive("Map camera controls")}>
-      <button aria-label={translateLive("Zoom out")} disabled={mapZoom<=(projectionMode==='flat'?1:.72)} onClick={()=>zoomBy(1/1.18)}><LocaleText value={"−"}/></button>
+      <button aria-label={translateLive("Zoom out")} disabled={mapZoom<=(projectionMode==='flat'?1:.72)} onClick={()=>zoomBy(1/1.18)}><MapControlIcon kind="zoomOut"/></button>
       <output aria-label={translateLive("Map zoom level")}><LocaleText value={Math.round(mapZoom*100)}/><LocaleText value={"%"}/></output>
-      <button aria-label={translateLive("Zoom in")} disabled={mapZoom>=(projectionMode==='flat'?12:6)} onClick={()=>zoomBy(1.18)}><LocaleText value={"+"}/></button>
-      <button className="camera-home" aria-label={translateLive("Return to your nation")} title={translateLive("Return to your nation")} onClick={()=>focusCountry(countries[playerCountryId])}><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-7 7-12a7 7 0 1 0-14 0c0 5 7 12 7 12Z" fill="#f2d283"/><circle cx="12" cy="9" r="3" fill="#243e4a"/></svg></button>
+      <button aria-label={translateLive("Zoom in")} disabled={mapZoom>=(projectionMode==='flat'?12:6)} onClick={()=>zoomBy(1.18)}><MapControlIcon kind="zoomIn"/></button>
+      <button className="camera-home" aria-label={translateLive("Return to your nation")} title={translateLive("Return to your nation")} onClick={()=>focusCountry(countries[playerCountryId])}><MapControlIcon kind="home"/></button>
       <i/>
-      <button className="camera-reset" onClick={resetView} title={translateLive("Reset camera")}><LocaleText value={"RESET"}/></button>
+      <button className="camera-reset" onClick={resetView} title={translateLive("Reset camera")}><MapControlIcon kind="reset"/><LocaleText value={"RESET"}/></button>
       <FlightTransit/>
     </div>
   </div>;

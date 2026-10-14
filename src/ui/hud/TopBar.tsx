@@ -1,3 +1,4 @@
+import {LeaderCapsule,MetricsIsland} from './HudIslands';
 import {displayCountry} from '../../presentation/countryIdentity';
 import {BRAND_NAME} from '../BrandMark';
 import {arrears} from '../../engine/systems/sovereignCredit';
@@ -59,18 +60,18 @@ export function TopBar(){
  const flows=simulateResources(player).net,deltas=liveDeltas({dailyBalance:strategicDailyBalance,net:flows}),byId=Object.fromEntries(deltas.map(d=>[d.id,d])) as Record<LiveDelta['id'],LiveDelta>;
 
  return <header className="topbar">
-  <div className="command-overview-island"><div className="leader-brand">
+  <div className="command-overview-island"><LeaderCapsule>
    <button className="leader-avatar-button" data-mood={mood} onClick={()=>{useGameStore.getState().openTool(null,false);setOptionsOpen(true)}} title={translateLive("Open commander options")}><AvatarPortrait id={profile.avatarId} size={52}/><span><LocaleText value={"⋯"}/></span>{mood!=='calm'&&<b className="mood-note"><LocaleText value={mood==='alarm'?'Crisis alert':'Prosperity'}/></b>}</button>
    <div className="brand-block"><div className="eyebrow" translate="no">{BRAND_NAME}</div><div className="brand-line"><strong><LocaleText value={profile.commanderName}/></strong><span className="day-chip"><LocaleText value={tr(lang,'day')}/> <LocaleText value={day}/></span></div></div>
-  </div>
+  </LeaderCapsule>
 
-  <div className="metrics governance-metrics" data-guide="top-metrics" aria-label={translateLive("National command indicators")}>
+  <MetricsIsland label={translateLive("National command indicators")}>
    <Metric icon={<CommandArt kind="treasury" size={30}/>} label={arrears(useGameStore.getState(),player.id)>0?translateLive('Fiscal balance'):tr(lang,'treasury')} value={'$'+(player.economy.treasury-arrears(useGameStore.getState(),player.id)).toFixed(1)+'B'} delta={byId.treasury} id="treasury"/>
-   <Metric icon={<CommandArt kind="production" size={30}/>} label="Food" value={player.resources.food.toFixed(0)} delta={byId.food} id="food"/>
-   <Metric icon={<CommandArt kind="economy" size={30}/>} label="Oil" value={player.resources.oil.toFixed(0)} delta={byId.oil} id="oil"/>
+   <Metric icon={<CommandArt kind="production" size={30}/>} label="Food" value={player.resources.food.toFixed(0)+' '+translateLive('units')} delta={byId.food} id="food"/>
+   <Metric icon={<CommandArt kind="economy" size={30}/>} label="Crude oil" value={player.resources.oil.toFixed(0)+' '+translateLive('units')} delta={byId.oil} id="oil"/>
    <Metric icon={<CommandArt kind="approval" size={30}/>} label={tr(lang,'approval')} value={player.politics.approval.toFixed(0)+'%'} tone={player.politics.approval>=60?'good':player.politics.approval<40?'warning':'neutral'}/>
    <Metric icon={<CommandArt kind="stability" size={30}/>} label="STABILITY" value={player.politics.stability.toFixed(0)+'%'} tone={player.politics.stability>=65?'good':player.politics.stability<40?'warning':'neutral'}/>
-  </div>
+  </MetricsIsland>
 
   </div>
   <div className="top-actions clock-island">

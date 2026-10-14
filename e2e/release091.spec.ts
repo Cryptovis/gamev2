@@ -69,6 +69,6 @@ test('top bar: no cramped live-flow block, glass island, five cards and a one-li
  await expect(page.locator('.top-metric')).toHaveCount(5);
  for(const id of ['treasury','food','oil'])await expect(page.locator(`.top-metric[data-metric="${id}"] .live-delta`)).toBeVisible();
  const island=await page.locator('.command-overview-island').evaluate(el=>{const s=getComputedStyle(el);return {bg:s.backgroundImage,border:s.borderTopColor};});
- expect(island.bg).toContain('linear-gradient');
+ expect(island.bg).toBe('none');
  expect(await page.locator('[data-guide="rail-diplo"] small').evaluate(el=>getComputedStyle(el).whiteSpace)).toBe('nowrap');
 });
