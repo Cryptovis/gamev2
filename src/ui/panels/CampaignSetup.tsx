@@ -1,3 +1,4 @@
+import {AppearanceOptions} from './AppearanceOptions';
 import {BrandMark,BRAND_NAME} from '../BrandMark';
 import {version} from '../../../package.json';
 import {LocaleText,translateLive,translateText} from '../../i18n/localeText';
@@ -91,7 +92,7 @@ export function CampaignSetup(){
    <header className="wizard-header"><div><small><span translate="no">{BRAND_NAME}</span><span className="wizard-release">{version}</span></small><h1><LocaleText value={stepTitle}/></h1><p><LocaleText value="Create your leader and choose a country."/></p></div><div className="wizard-stepper">{[1,2,3,4].map(n=><span key={n} className={typeof step==='number'&&step>=n?'active':''}><b><LocaleText value={n}/></b><small><LocaleText value={n===1?'IDENTITY':n===2?'PORTRAIT':n===3?'NATION':'CONFIRM'}/></small></span>)}</div></header>
 
    <div className="wizard-body">
-    {step===1&&<div className="wizard-single-column">
+    {step===1&&<div className="wizard-single-column"><AppearanceOptions/>
       <div className="wizard-intro"><span className="wizard-kicker"><LocaleText value={"STEP 01 / LEADER IDENTITY"}/></span><h2><LocaleText value={"Every era begins with a leader."}/></h2><p><LocaleText value={"Choose the name that will appear in national briefings, diplomatic reports and your command profile."}/></p></div>
       <label className="wizard-name-field"><span><LocaleText value={tr(language,'commander')}/></span><input autoFocus value={name} maxLength={28} placeholder={translateLive("Commander")} onChange={e=>setName(e.target.value)}/></label>
       <div className="wizard-personal-fields"><label><span><LocaleText value={'CITIZENSHIP'}/></span><select aria-label={translateLive("Citizenship")} value={nationality} onChange={e=>setNationality(e.target.value)}>{Object.values(countries).sort((a,b)=>a.name.localeCompare(b.name)).map(c=><option key={c.id} value={c.id}><LocaleText value={c.name}/></option>)}</select><small><LocaleText value={'Your citizenship is independent of the country you choose to govern.'}/></small></label><label><span><LocaleText value={'DATE OF BIRTH'}/></span><input aria-label={translateLive("Date of birth")} type="date" min="1900-01-01" max={CAMPAIGN_START_DATE} value={birthDate} onChange={e=>setBirthDate(e.target.value)}/><small><LocaleText value={'Optional. Campaign calendar begins on 1 January 2026.'}/></small>{birthDate&&!validBirthDate(birthDate)&&<small className="negative"><LocaleText value={"Enter a valid date before the campaign starts."}/></small>}</label></div>

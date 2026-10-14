@@ -1,3 +1,4 @@
+import {initializeAppearance} from './presentation/appearance';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './styles.css';
@@ -6,13 +7,13 @@ import './ui/styles/decisionsWorld.css';
 import { App } from './app/App';
 import { ErrorBoundary } from './ui/ErrorBoundary';
 
-createRoot(document.getElementById('root')!).render(
+void initializeAppearance().then(()=>createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ErrorBoundary title="The game hit an unexpected error." actions={[{ label: 'Reload the game', onClick: () => location.reload() }]}>
       <App />
     </ErrorBoundary>
   </StrictMode>,
-);
+));
 
 import "./ui/styles/guidedCommand.css";
 import "./ui/styles/civicCommand.css";
@@ -51,3 +52,5 @@ import "./ui/styles/executiveDesk0916.css";
 import "./ui/styles/cardUi0918.css";
 import "./ui/styles/livingWorld0919.css";
 import "./ui/styles/mapDesk0917.css";
+
+import "./ui/styles/appearancePhase7.css";

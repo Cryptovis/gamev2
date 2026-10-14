@@ -1,0 +1,51 @@
+/* Phase 7 semantic Navy/Ivory palette. Theme changes presentation only, including portals. */
+:root,[data-theme="dark"]{
+ --surface:#0e2035;--surface-raised:#182e46;--surface-inset:#091728;--ink:#eef3f8;--ink-muted:#b5c7d8;
+ --border:#526c86;--focus:#89c6ff;--danger:#ffb4ad;--success:#8fe4b3;--accent-surface:#254a70;--accent-ink:#fff;
+ --overlay:rgba(3,11,23,.76);--panel:var(--surface);--panel-strong:var(--surface-raised);--line:var(--border);
+ --muted:var(--ink-muted);--text-secondary:var(--ink-muted);--text-tertiary:var(--ink-muted);
+ color:var(--ink);background:var(--surface-inset);
+}
+:root[data-theme="light"]{
+ --surface:#fffdf7;--surface-raised:#f3efe5;--surface-inset:#e9e7df;--ink:#142c46;--ink-muted:#465b70;
+ --border:#8192a1;--focus:#145ca5;--danger:#9a251d;--success:#17663d;--accent-surface:#183b60;--accent-ink:#fff;
+ --overlay:rgba(15,35,56,.46);
+}
+.game-shell{background:var(--surface-inset)}
+:is(.entry-shell,.campaign-wizard,.campaign-loading,.player-options-modal,.command-panel,.floating-command-window,.command-window,.review-dialog,.review-result,.strategic-decision-modal,.war-theatre,.event-modal,.advisor-modal,.economic-advice-modal,.avatar-picker,.victory-scroll,.target-hub,.executive-workspace){background:var(--surface);color:var(--ink);border-color:var(--border)}
+.appearance-options{margin:10px 0;padding:12px;border:1px solid var(--border);border-radius:12px;background:var(--surface-raised);color:var(--ink)}
+.appearance-options legend{padding:0 6px;font-size:12px;font-weight:700}
+.appearance-options>div{display:flex;flex-wrap:wrap;gap:8px}
+.appearance-options button{min-height:44px;padding:8px 16px;background:var(--surface);color:var(--ink);border:1px solid var(--border);border-radius:8px}
+.appearance-options button[aria-pressed="true"]{background:var(--accent-surface);color:var(--accent-ink);border-color:var(--focus)}
+.appearance-options small{display:block;margin-top:8px;color:var(--ink-muted);font-size:11px}
+:root :is(.target-hub-backdrop,.executive-desk){--hub-paper:var(--surface);--hub-card:var(--surface-raised);--hub-ink:var(--ink);--hub-ink-2:var(--ink-muted);--hub-line:var(--border);--hub-gold:var(--ink);--hub-good:var(--success);--hub-good-bg:var(--surface-raised);--hub-danger:var(--danger);--hub-danger-bg:var(--surface-inset);--hub-focus:var(--focus);--desk-paper:var(--surface);--desk-card:var(--surface-raised);--desk-ink:var(--ink);--desk-ink-2:var(--ink-muted);--desk-line:var(--border);--desk-gold:var(--ink);--desk-good:var(--success);--desk-danger:var(--danger);--desk-danger-bg:var(--surface-inset);--desk-focus:var(--focus)}
+:root .target-hub{background:var(--surface);color:var(--ink);border-color:var(--border)}
+/* Bridge dense legacy cards to semantic light tokens without altering maps, SVG artwork or photographs. */
+:root[data-theme="light"] :is(.entry-content,.campaign-wizard,.campaign-loading,.player-options-modal,.command-panel,.floating-command-window,.command-window,.review-dialog,.review-result,.strategic-decision-modal,.war-theatre,.event-modal,.avatar-picker,.victory-scroll,.executive-workspace) :is(h1,h2,h3,h4,h5,p,label,span,strong,b,small,em,dt,dd,legend,summary,li,td,th){color:var(--ink)}
+:root[data-theme="light"] :is(.entry-shell,.campaign-wizard,.player-options-modal,.command-panel,.floating-command-window,.command-window,.review-dialog,.review-result,.strategic-decision-modal,.war-theatre,.avatar-picker,.executive-workspace) :is(article,fieldset,details,table,.stat-grid>div,.flow-grid>div,.unit-stat,.quality-bars,.policy-card,.facility-card,.profile-tabs,.section-menu,.trade-row,.country-title-row,.national-panel-heading,.floating-command-header,.command-window-header,.research-card,.technology-card,.war-plan-glass,.war-plan-grid>div,.wizard-avatar-preview,.wizard-leadership-quote,.wizard-country-detail,.entry-game-menu>button){background:var(--surface-raised);border-color:var(--border);color:var(--ink)}
+:root[data-theme="light"] :is(.entry-shell,.campaign-wizard,.player-options-modal,.command-panel,.floating-command-window,.command-window,.review-dialog,.review-result,.strategic-decision-modal,.war-theatre,.avatar-picker,.executive-workspace) :is(button,input,select,textarea){background:var(--surface);color:var(--ink);border-color:var(--border)}
+:root[data-theme="light"] :is(button.active,button[aria-pressed="true"],button[aria-selected="true"],.section-menu button[aria-current="page"]){background:var(--accent-surface);color:var(--accent-ink)}
+:root[data-theme="light"] :is(button.active,button[aria-pressed="true"],button[aria-selected="true"]) :is(span,strong,small,b){color:var(--accent-ink)}
+:root[data-theme="light"] :is(.muted,.data-note,.entry-note,.trade-footnote){color:var(--ink-muted)!important}
+:root[data-theme="light"] :is(.positive,.healthy,.stock-ready){color:var(--success)!important}
+:root[data-theme="light"] :is(.negative,.unhealthy,.stock-critical,.exchange-error,.strategic-block-reason){color:var(--danger)!important}
+:root[data-theme="light"] :is(.top-metric,.leader-brand,.clock-island,.speed-segment,.command-rail,.map-help-cluster,.sitrep,.map-hover-readout){background:var(--surface);color:var(--ink);border-color:var(--border)}
+:root[data-theme="light"] :is(.top-metric,.leader-brand,.clock-island,.speed-segment,.command-rail,.sitrep) :is(small,span,strong,b,em,button){color:var(--ink)}
+:root[data-theme="light"] .rail-button{background:var(--surface-raised);color:var(--ink);border-color:var(--border)}
+:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+@media(prefers-reduced-motion:reduce){.appearance-options *{transition:none!important;animation:none!important}}
+:root :is(.entry-backdrop,.campaign-wizard-backdrop){--entry-surface:var(--surface);background:var(--surface-inset)!important}
+:root :is(.entry-shell,.campaign-wizard,.campaign-loading,.player-options-modal,.command-panel,.floating-command-window,.command-window,.review-dialog,.review-result,.strategic-decision-modal,.war-theatre,.event-modal,.avatar-picker,.victory-scroll,.executive-workspace){background:var(--surface)!important;border-color:var(--border)!important}
+:root[data-theme="light"] :is(.wizard-header,.wizard-intro,.wizard-leadership-quote,.entry-content,.player-options-main,.command-window-body,.review-dialog,.review-result,.strategic-decision-copy) :is(h1,h2,h3,h4,p,label,small,span,strong,b,blockquote,figcaption){color:var(--ink)!important}
+:root[data-theme="light"] :is(.wizard-header,.wizard-footer,.wizard-country-detail,.player-options-main,.campaign-status-grid>span,.review-dialog,.review-result,.strategic-decision-copy,.war-plan-glass){background:var(--surface-raised)!important;border-color:var(--border)!important}
+:root .war-plan-declare{background:#9a251d;color:#fff;border-color:#9a251d}
+:root .war-plan-declare:disabled{background:var(--surface-inset);color:var(--ink-muted);border-color:var(--border)}
+:root :is(.dossier-tabs,.desk-tabs) button[aria-selected="true"]{background:var(--accent-surface);color:var(--accent-ink);border-color:var(--focus)}
+:root .appearance-options button{background:var(--surface)!important;color:var(--ink)!important;border-color:var(--border)!important}
+:root .appearance-options button[aria-pressed="true"]{background:var(--accent-surface)!important;color:var(--accent-ink)!important;border-color:var(--focus)!important}
+:root[data-theme="light"] :is(.entry-shell,.campaign-wizard,.player-options-modal,.command-panel,.floating-command-window,.command-window,.review-dialog,.review-result,.strategic-decision-modal,.war-theatre,.avatar-picker,.executive-workspace) :is(button,input,select,textarea){background:var(--surface)!important;color:var(--ink)!important;border-color:var(--border)!important}
+:root[data-theme="light"] :is(.wizard-body,.wizard-footer,.appearance-options) :is(small,span,label,p){color:var(--ink-muted)!important}
+:root :is(.setup-cover,.entry-art) :is(span,strong,small,p){color:#fff4d5!important;text-shadow:0 2px 14px #000}
+:root[data-theme="light"] :is(button.active,button[aria-pressed="true"],button[aria-selected="true"],button.primary,.wizard-next:not(:disabled)){background:var(--accent-surface)!important;color:var(--accent-ink)!important}
+:root[data-theme="light"] :is(button.active,button[aria-pressed="true"],button[aria-selected="true"],button.primary) :is(span,strong,small,b){color:var(--accent-ink)!important}
