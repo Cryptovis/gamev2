@@ -49,3 +49,9 @@
 :root :is(.setup-cover,.entry-art) :is(span,strong,small,p){color:#fff4d5!important;text-shadow:0 2px 14px #000}
 :root[data-theme="light"] :is(button.active,button[aria-pressed="true"],button[aria-selected="true"],button.primary,.wizard-next:not(:disabled)){background:var(--accent-surface)!important;color:var(--accent-ink)!important}
 :root[data-theme="light"] :is(button.active,button[aria-pressed="true"],button[aria-selected="true"],button.primary) :is(span,strong,small,b){color:var(--accent-ink)!important}
+/* Semantic state indicators must survive the broad legacy surface/control bridges. */
+:root[data-theme] .letter-list article[data-status="accepted"]{border-left:4px solid var(--success)}
+:root[data-theme] .letter-list article[data-status="rejected"]{border-left:4px solid var(--danger)}
+:root[data-theme] .letter-list article:is([data-status="expired"],[data-status="closed"]){border-left:4px solid var(--ink-muted)}
+:root[data-theme="light"] :is(.entry-shell,.campaign-wizard,.player-options-modal,.command-panel,.floating-command-window,.command-window,.review-dialog,.review-result,.strategic-decision-modal,.war-theatre,.avatar-picker,.executive-workspace) :is(button.active,button[aria-pressed="true"],button[aria-selected="true"],.section-menu button[aria-current="page"]){background:var(--accent-surface)!important;color:var(--accent-ink)!important;border-color:var(--focus)!important}
+:root[data-theme="light"] :is(.entry-shell,.campaign-wizard,.player-options-modal,.command-panel,.floating-command-window,.command-window,.review-dialog,.review-result,.strategic-decision-modal,.war-theatre,.avatar-picker,.executive-workspace) :is(button.active,button[aria-pressed="true"],button[aria-selected="true"]) :is(span,strong,small,b){color:var(--accent-ink)!important}
