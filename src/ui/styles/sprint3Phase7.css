@@ -9,3 +9,4 @@
 @media(max-width:760px){.cultural-identity-cards{grid-template-columns:1fr}.fuel-guidance dl{grid-template-columns:1fr}.fuel-helper-actions button{flex:1 1 160px}.sitrep-toast{bottom:20px;align-items:flex-start;flex-wrap:wrap}.sitrep-toast p{flex-basis:100%}:root .topbar .command-overview-island{gap:6px}:root .leader-capsule{padding:4px}:root .metrics-island{gap:4px}}
 @media(prefers-reduced-motion:reduce){.sitrep-toast{animation:none}}
 .production-fuel-guidance{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;padding:12px;border:1px solid var(--border);border-radius:10px;background:var(--surface-raised);color:var(--ink)}.production-fuel-guidance button{min-height:44px}
+.unavailable-order-reasons summary{min-height:44px;padding:10px;cursor:pointer}.unavailable-order-reasons li{margin:8px 0;line-height:1.5}

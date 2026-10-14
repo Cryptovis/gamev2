@@ -28,4 +28,5 @@ export const UI_CATALOG_SPRINT3:Record<string,[string,string,string,string]>={
  'News channels':['Haber kanalları','Canales de noticias','新闻频道','Новостные каналы'],
  'View in News':['Haberlerde görüntüle','Ver en noticias','在新闻中查看','Открыть в новостях'],
  'Dismiss alert':['Uyarıyı kapat','Cerrar aviso','关闭提醒','Закрыть уведомление'],
+ 'Unavailable orders':['Kullanılamayan emirler','Órdenes no disponibles','不可用命令','Недоступные приказы'],
 };
