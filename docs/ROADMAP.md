@@ -1,5 +1,10 @@
 # Rule of Nations roadmap (formerly AlpyX) after 0.31
 
+## 0.99.0 — Phase 8 Slice 8.1 Domain & Schema Migration
+
+Delivered on `dev/ron-phase7`: typed organization domain, 14-record initialization, pure/idempotent 17→18 adapter, UN/P5 metadata, legacy ballot/sanction preservation and strict organization validation. [Release](RELEASE-099.md) · [Playtest](PLAYTEST-099.md) · [Model notes](ORGANIZATIONS-099.md). Supported saves 12–18; 1026 tests, TypeScript and Vite passed. Slice 8.2 must activate commands/voting with legacy authority reconciliation; complete financial/trade/private-forum membership datasets and later mechanics remain pending. Browser/native suites were not rerun. V3 remains the complete-playability milestone.
+
+
 ## 0.98.1 — Phase 8 Slice 8.0 Foundation
 
 Delivered on `dev/ron-phase7`: Astra H1–H4 fixes for institution save validation, AI/player proposal costs and daily benefits, shared outreach preview, and atomic autosave put/prune. [Release](RELEASE-0981.md) · [Playtest](PLAYTEST-0981.md). Schema 17 retained; 962 tests, TypeScript and production build passed. Targeted browser checks were blocked at Chrome launch. Schema 18 and Global Organizations remain planned; audit H5–H8 and full browser profiling remain open. V3 remains the complete-playability milestone.

@@ -26,7 +26,7 @@ import {translateText} from '../i18n/localeText';
 
 const ready=()=>{const s=makeInitialState(),p=s.countries[s.playerCountryId];p.economy.treasury=10000;p.resources.food=1000;p.resources.oil=1000;p.resources.iron=1000;p.processedResources={fuel:1000,steel:1000,electricity:1000};return s;};
 describe('0.94 release and leader state',()=>{
- it('retains schema 17 at official version 0.98.1',()=>{expect(version).toBe('0.98.1');expect(makeInitialState().schemaVersion).toBe(17);});
+ it('uses schema 18 at official version 0.99.0',()=>{expect(version).toBe('0.99.0');expect(makeInitialState().schemaVersion).toBe(18);});
  it.each([['avatar-01','executive'],['avatar-02','reformer'],['avatar-03','diplomat'],['avatar-04','governor'],['avatar-05','chancellor'],['avatar-06','commander']] as const)('%s initializes %s in the campaign engine',(avatar,role)=>{
   const seed=makeInitialState().simulationSeed;
   useGameStore.getState().startCampaign({commanderName:'Release test',countryId:'TUR',avatarId:avatar,language:'en'});
@@ -88,6 +88,6 @@ describe('0.94 deterministic active engine perks',()=>{
  });
  it.each(LEADER_ARCHETYPES)('%s evolves deterministically without changing its input or save schema',role=>{
   let initial=initializeLeaderArchetype(ready(),role);initial.world.tutorial.active=false;const before=structuredClone(initial);let a=initial,b=structuredClone(initial);
-  for(let i=0;i<10;i++){a=tickGame(a);b=tickGame(b);}expect(a).toEqual(b);expect(initial).toEqual(before);expect(a.schemaVersion).toBe(17);expect(canLoadSave(snapshotGame(a))).toBe(true);
+  for(let i=0;i<10;i++){a=tickGame(a);b=tickGame(b);}expect(a).toEqual(b);expect(initial).toEqual(before);expect(a.schemaVersion).toBe(18);expect(canLoadSave(snapshotGame(a))).toBe(true);
  });
 });

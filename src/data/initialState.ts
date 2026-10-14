@@ -1,3 +1,4 @@
+import {CURRENT_SCHEMA_VERSION} from '../domain/schema';
 import {recordEconomicHistory} from '../engine/systems/economicHistory';
 import {createWorld} from '../engine/systems/worldInstitutions';
 import { initialCountries } from './countries';
@@ -10,7 +11,7 @@ import { createInitialInfrastructureMap } from '../engine/systems/infrastructure
 export const makeInitialState = (): GameState => {
   const countries=structuredClone(initialCountries);
   const state:GameState=({
-  schemaVersion: 17,
+  schemaVersion: CURRENT_SCHEMA_VERSION,
   simulationSeed: 0xA17E5EED,
   day: 1,
   speed: 0,

@@ -42,7 +42,7 @@ describe('0.82 reliable commands and saves',()=>{
   const s=prepared();s.schemaVersion=14;s.countries.TUR.technology.unlocked=['energy-grid'];
   const old=applyGameCommand(s,{type:'energy/build',kind:'solar'});delete old.world.journal;delete old.world.commandIds;
   const n=migrateSave(snapshotGame(old))!;
-  expect(n.schemaVersion).toBe(17);expect(n.world.energy).toEqual(old.world.energy);expect(n.countries.TUR.technology.unlocked).toEqual(['energy-grid']);expect(n.world.journal![0].kind).toBe('legacy');
+  expect(n.schemaVersion).toBe(18);expect(n.world.energy).toEqual(old.world.energy);expect(n.countries.TUR.technology.unlocked).toEqual(['energy-grid']);expect(n.world.journal![0].kind).toBe('legacy');
  });
  it('rejects malformed shapes and non-finite values without throwing',()=>{
   const s=prepared();s.countries.TUR.economy.treasury=NaN;expect(migrateSave(s)).toBeNull();

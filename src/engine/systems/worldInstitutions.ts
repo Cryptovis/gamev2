@@ -1,3 +1,4 @@
+import {createOrganizations} from './organizations/initialization';
 import type {GameCommand} from '../../domain/commands';
 import {activeCountries} from '../../domain/sovereignty';
 import {createLiving} from './livingEconomy';
@@ -50,8 +51,7 @@ export function createWorld(
   playerId: string,
 ): WorldState {
   const ids = Object.keys(countries).filter((id) => id !== playerId);
-  return {governance:createGovernance(countries),living:createLiving(countries),
-    members: {
+  const members = {
       un: ids,
       who: ids.filter((id) => countries[id].politics.stability >= 40),
       security: ids
@@ -61,7 +61,8 @@ export function createWorld(
             countries[a].diplomacy.reputation,
         )
         .slice(0, 15),
-    },
+    };
+  return {governance:createGovernance(countries),living:createLiving(countries),members,organizations:createOrganizations(countries,members),
     ballots: [],
     missions: [],
     religiousShares: Object.fromEntries(

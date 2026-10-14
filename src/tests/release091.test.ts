@@ -31,9 +31,9 @@ describe('0.91.0 macOS case collision (Task 0)', () => {
 });
 
 describe('0.91.0 release', () => {
-  it('is version 0.98.1 on schema 17', () => {
-    expect(version).toBe('0.98.1');
-    expect(CURRENT_SCHEMA_VERSION).toBe(17);
+  it('is version 0.99.0 on schema 18', () => {
+    expect(version).toBe('0.99.0');
+    expect(CURRENT_SCHEMA_VERSION).toBe(18);
   });
 });
 

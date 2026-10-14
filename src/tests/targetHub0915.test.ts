@@ -67,7 +67,7 @@ describe('Phase 6.1 hub cards follow the engine rules', () => {
       expect(['applied', 'unavailable']).toContain(result.status);
       expect(result.state.schemaVersion).toBe(s.schemaVersion);
     }
-    expect(CURRENT_SCHEMA_VERSION).toBe(17);
+    expect(CURRENT_SCHEMA_VERSION).toBe(18);
   });
   it('economic aid changes treasury and relations only through the engine', () => {
     const s = richState(), aid = targetHubActions(s, TARGET).find((a) => a.id === 'aid')!;

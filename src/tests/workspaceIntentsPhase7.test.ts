@@ -104,7 +104,7 @@ describe('Phase 7 semantic workspace routes',()=>{
   const store=useGameStore.getState(),before=snapshotGame(store);
   store.routeWorkspace({kind:'operational-assessment',targetCountryId:'FRA'});store.routeWorkspace({kind:'factory',focusedFactory:'civil_factory'});
   const after=snapshotGame(useGameStore.getState());
-  expect(after).toEqual({...before,selectedCountryId:'TUR'});expect(after.schemaVersion).toBe(17);
+  expect(after).toEqual({...before,selectedCountryId:'TUR'});expect(after.schemaVersion).toBe(18);
   expect(after).not.toHaveProperty('navigation');expect(after).not.toHaveProperty('workspaceTrail');
  });
  it('country info remains a hub subview even after the full panel was chosen',()=>{

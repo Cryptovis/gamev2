@@ -77,6 +77,6 @@ describe('industrial exchange and secured supply',()=>{
  it('snapshots and migrates v12 without losing old production and infrastructure',()=>{
   const s=ready(),snapshot=snapshotGame(s);expect(snapshot.industrialEconomy).toEqual(s.industrialEconomy);expect(canLoadSave(snapshot)).toBe(true);
   const old={...snapshot,schemaVersion:12};delete (old as Partial<typeof old>).industrialEconomy;delete (old as Partial<typeof old>).industrialContracts;delete (old as Partial<typeof old>).leadership;
-  const migrated=migrateSave(old)!;expect(migrated.schemaVersion).toBe(17);expect(migrated.production).toEqual(s.production);expect(migrated.infrastructure).toEqual(s.infrastructure);expect(migrated.industrialEconomy.TUR).toBeDefined();expect(migrateSave({...s,schemaVersion:99})).toBeNull();
+  const migrated=migrateSave(old)!;expect(migrated.schemaVersion).toBe(18);expect(migrated.production).toEqual(s.production);expect(migrated.infrastructure).toEqual(s.infrastructure);expect(migrated.industrialEconomy.TUR).toBeDefined();expect(migrateSave({...s,schemaVersion:99})).toBeNull();
  });
 });

@@ -1,3 +1,7 @@
+import {CURRENT_SCHEMA_VERSION} from '../domain/schema';
+import {createOrganizations} from '../engine/systems/organizations/initialization';
+import {SANCTIONS_DURATION_DAYS} from '../engine/systems/council';
+import type {LegacySanctionEffect} from '../domain/organizations';
 import {recordEconomicHistory} from '../engine/systems/economicHistory';
 import {createLiving} from '../engine/systems/livingEconomy';
 import {createGovernance,governance} from '../engine/systems/governance';
@@ -7,7 +11,7 @@ import {createLeadership} from '../engine/systems/leadership';
 import {createWorld} from '../engine/systems/worldInstitutions';
 import {validSaveShape} from './validation';
 import {migrateTacticalBattle} from '../engine/systems/tactical';
-export const CURRENT_SCHEMA_VERSION=17;
+export {CURRENT_SCHEMA_VERSION} from '../domain/schema';
 /** Oldest schema that can still be migrated. Older saves are refused with a warning instead of silently. */
 export const OLDEST_SUPPORTED_SCHEMA=12;
 
@@ -23,7 +27,25 @@ const MIGRATIONS:Record<number,(state:GameState,original:GameState)=>GameState>=
  15:s=>recordEconomicHistory({...s,schemaVersion:16}),
  // 0.85 HD War v2: tactical battles gain a sized grid, objective list and action timeline. 6×6 boards are kept as they are.
  16:s=>({...s,schemaVersion:17,wars:Object.fromEntries(Object.entries(s.wars).map(([id,war])=>[id,war.tactical?{...war,tactical:migrateTacticalBattle(war.tactical as Parameters<typeof migrateTacticalBattle>[0])}:war]))}),
+ 17:migrateOrganizations17To18,
 };
+
+/** Adds dormant organization data while preserving all legacy simulation containers. */
+export function migrateOrganizations17To18(state:GameState):GameState {
+ if(state.schemaVersion!==17||!validSaveShape(state))return state;
+ const organizations=createOrganizations(state.countries,state.world.members,state.day);
+ for(const countryId of Object.keys(state.countries).sort()){
+  const country=state.countries[countryId];
+  if(!country.globalSanctions)continue;
+  const until=country.globalSanctionsUntil??state.day+SANCTIONS_DURATION_DAYS;
+  if(!Number.isInteger(until)||until<0)return state;
+  const id=`legacy-sanctions:${countryId}`;
+  const effect:LegacySanctionEffect={id,kind:'legacySanctions',issuer:'legacyCouncil',targetId:countryId,
+   startsDay:Math.min(state.day,until),endsDay:until,status:'active'};
+  organizations.effects[id]=effect;
+ }
+ return {...state,schemaVersion:CURRENT_SCHEMA_VERSION,world:{...state.world,organizations}};
+}
 
 /** Runs the migration steps in order until the save reaches the current schema or a step cannot apply. */
 export function migrateSchema(input:GameState):GameState {
@@ -39,13 +61,28 @@ export function migrateSchema(input:GameState):GameState {
 }
 
 /** Fills defaults added without a schema bump (new facilities, living world, academies, economic history). */
+function mergeDefaults<T extends object>(defaults:T|undefined,current:T):T {
+ return !defaults||current&&Object.keys(defaults).every(key=>Object.hasOwn(current,key))?current:{...defaults,...current};
+}
 function withCurrentDefaults(state:GameState):GameState {
  const renamed:Record<string,{old:string;name:string}>={TUR:{old:'Turkey',name:'Türkiye'},MKD:{old:'Macedonia',name:'North Macedonia'},SWZ:{old:'eSwatini',name:'Eswatini'}};
- state={...state,countries:Object.fromEntries(Object.entries(state.countries).map(([id,c])=>[id,renamed[id]?.old===c.name?{...c,name:renamed[id].name}:c]))};
- const defaults=createIndustrialMap(state.countries);
- const industrialEconomy=Object.fromEntries(Object.entries(state.industrialEconomy).map(([id,n])=>[id,{...n,stock:{...defaults[id]?.stock,...n.stock},facilities:{...defaults[id]?.facilities,...n.facilities},enabled:{...defaults[id]?.enabled,...n.enabled},potential:{...defaults[id]?.potential,...n.potential},deposits:{...defaults[id]?.deposits,...n.deposits}}]));
- const g=governance(state);
- return {...(state.world.economicHistory?state:recordEconomicHistory(state)),industrialEconomy,world:{...state.world,economicHistory:state.world.economicHistory??recordEconomicHistory(state).world.economicHistory,living:state.world.living??createLiving(state.countries),governance:{...g,academies:{...createGovernance(state.countries).academies,...g.academies}}}};
+ let countries=state.countries;
+ for(const [id,rename] of Object.entries(renamed))if(countries[id]?.name===rename.old)countries={...countries,[id]:{...countries[id],name:rename.name}};
+ const defaults=createIndustrialMap(countries);
+ let industrialEconomy=state.industrialEconomy;
+ for(const [id,n] of Object.entries(state.industrialEconomy)){
+  const stock=mergeDefaults(defaults[id]?.stock,n.stock),facilities=mergeDefaults(defaults[id]?.facilities,n.facilities);
+  const enabled=mergeDefaults(defaults[id]?.enabled,n.enabled),potential=mergeDefaults(defaults[id]?.potential,n.potential),deposits=mergeDefaults(defaults[id]?.deposits,n.deposits);
+  if(stock!==n.stock||facilities!==n.facilities||enabled!==n.enabled||potential!==n.potential||deposits!==n.deposits)
+   industrialEconomy={...industrialEconomy,[id]:{...n,stock,facilities,enabled,potential,deposits}};
+ }
+ const g=governance(state),academies=mergeDefaults(createGovernance(countries).academies,g.academies);
+ const normalizedGovernance=academies===g.academies?g:{...g,academies};
+ const living=state.world.living??createLiving(countries);
+ const base=countries===state.countries&&industrialEconomy===state.industrialEconomy?state:{...state,countries,industrialEconomy};
+ const history=base.world.economicHistory?base:recordEconomicHistory(base);
+ return living===history.world.living&&normalizedGovernance===history.world.governance?history:
+  {...history,world:{...history.world,living,governance:normalizedGovernance}};
 }
 
 export function migrateSave(input:GameState|null|undefined):GameState|null {

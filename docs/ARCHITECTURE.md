@@ -38,3 +38,10 @@ Save validation checks critical campaign/country/research fields and finite valu
 World membership and attack-proposal commands share `validateWorldProposal` / `executeWorldProposal` with the actor explicitly supplied by the AI path and defaulting to the player in the UI command path. Proposal costs and daily institutional benefits do not depend on which actor is human. `previewOutreach` owns eligibility, cost and probability for both execution and UI review.
 
 Autosave checkpoint writes and owner-scoped stale pruning run in one Dexie readwrite transaction. A prune failure aborts the checkpoint write as well. The per-instance autosave coordinator still orders snapshots, but atomic pruning does not establish a cross-tab single-writer policy for the same campaign.
+
+
+## 0.99.0 organization domain and save boundary
+
+Schema 18 requires the serializable `world.organizations` container. `domain/schema.ts` owns the version; migrations re-export it. `17: migrateOrganizations17To18` validates legacy data, adds versioned records and legacy sanction snapshots, and preserves the actual legacy ballots/rosters and all other world/country fields. It is deterministic and input-pure. Already-normalized save objects are reused on repeated migration.
+
+`validationOrganizations.ts` strictly validates all fourteen IDs, membership/body identity, separate Chair offices, P5 metadata, rule/payload unions, electorate totals, country references and supported effect/financing shapes. No new organization executor is active in Slice 8.1: existing world/council logic remains authoritative until an explicit reconciliation/authority handoff in the next slice. Observer-only finance/trade/private-forum rosters grant no voting or funding privileges. [Full model and compatibility notes](ORGANIZATIONS-099.md).

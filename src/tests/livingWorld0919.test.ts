@@ -135,7 +135,7 @@ describe('Phase 6.5 event pins', () => {
 });
 
 describe('Phase 6.5 stays out of the save format', () => {
-  it('keeps schema 17', () => { expect(CURRENT_SCHEMA_VERSION).toBe(17); });
+  it('keeps the current schema 18', () => { expect(CURRENT_SCHEMA_VERSION).toBe(18); });
 });
 
 describe('Phase 6.5 translations', () => {

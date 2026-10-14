@@ -28,6 +28,7 @@ export interface OutreachMission {
   effect: number;
 }
 export interface WorldState {
+ organizations:import('./organizations').OrganizationsState;
  economicHistory?:import('../engine/systems/economicHistory').EconomicHistory;
  campaignId?:string;
  commandIds?:string[];

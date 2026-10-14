@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.99.0 — Organization Domain & Controlled Schema 18 Migration
+
+Slice 8.1 development release on `dev/ron-phase7`; valid Schema 12–17 saves migrate to Schema 18. [Release record](docs/RELEASE-099.md).
+
+- Add serializable models for 14 organizations, separate Chair offices, UN/P5 bodies, six voting-rule families and eleven typed resolution payloads.
+- Initialize required organization records for fresh/reset campaigns and migrate legacy saves without changing RNG, finances, wars, ballots, WHO/outreach or other world state.
+- Preserve legacy UN/security membership, keep overflow legacy seats, and record active legacy sanctions with deterministic IDs and expiry defaults.
+- Strictly validate organization membership, bodies, resolutions, electorates, effects and financing. Refuse missing/unknown organization IDs, foreign references, malformed voters, invalid P5 metadata and non-finite values.
+- Make normalization idempotent while continuing to fill missing old industrial/governance defaults. Add 63 new tests and extend the existing roundtrip suite to Schema 18.
+- New organization data remains dormant: legacy voting/sanctions still execute through the existing engine; complete membership/quota datasets and authority handoff remain prerequisites for later slices.
+
 ## 0.98.1 — Phase 8 Foundation Sprint (Slice 8.0)
 
 Development patch on `dev/ron-phase7`, based on v0.98.0. Schema 17 retained; valid Schema 12–17 saves still migrate. [Release record](docs/RELEASE-0981.md).

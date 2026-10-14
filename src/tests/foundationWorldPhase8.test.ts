@@ -43,7 +43,7 @@ describe('Phase 8 foundation: institution save validation',()=>{
   s=startOutreach(s,'GRC','islam');
   s.council.history=[{id:'test',type:'sanctions',proposerId:'USA',targetCountryId:'GRC',supportPercent:55,passed:true,day:s.day,summary:'test'}];
   expect(canLoadSave(snapshotGame(s))).toBe(true);
-  const loaded=migrateSave(snapshotGame(s))!;expect(loaded.schemaVersion).toBe(17);
+  const loaded=migrateSave(snapshotGame(s))!;expect(loaded.schemaVersion).toBe(18);
   expect(loaded.world.ballots).toEqual(s.world.ballots);expect(loaded.world.missions).toEqual(s.world.missions);expect(loaded.council).toEqual(s.council);
  });
 });

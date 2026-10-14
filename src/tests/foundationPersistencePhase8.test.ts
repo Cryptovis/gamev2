@@ -7,9 +7,9 @@ import {makeInitialState} from '../data/initialState';
 
 const campaign=(id:string,day=5)=>{const s=makeInitialState();s.day=day;s.world.campaignId=id;return s;};
 async function seed(){
- for(let i=0;i<AUTOSAVE_LIMIT;i++)await db.saves.put({id:autosaveId(`old${i}`),owner:'guest',name:'old',updatedAt:i+1,schemaVersion:17,state:campaign(`old${i}`)});
- await db.saves.put({id:'manual',owner:'guest',name:'manual',updatedAt:0,schemaVersion:17,state:campaign('manual')});
- await db.saves.put({id:'bob:autosave:other',owner:'bob',name:'other',updatedAt:0,schemaVersion:17,state:campaign('other')});
+ for(let i=0;i<AUTOSAVE_LIMIT;i++)await db.saves.put({id:autosaveId(`old${i}`),owner:'guest',name:'old',updatedAt:i+1,schemaVersion:18,state:campaign(`old${i}`)});
+ await db.saves.put({id:'manual',owner:'guest',name:'manual',updatedAt:0,schemaVersion:18,state:campaign('manual')});
+ await db.saves.put({id:'bob:autosave:other',owner:'bob',name:'other',updatedAt:0,schemaVersion:18,state:campaign('other')});
 }
 describe('Phase 8 foundation: real Dexie checkpoint transactions',()=>{
  beforeEach(async()=>{await db.saves.clear();vi.spyOn(Date,'now').mockReturnValue(10000);});
@@ -21,7 +21,7 @@ describe('Phase 8 foundation: real Dexie checkpoint transactions',()=>{
   expect(await db.saves.toArray()).toEqual(before);
  });
  it('restores an overwritten checkpoint when the shared transaction aborts',async()=>{
-  await seed();await db.saves.put({id:autosaveId('extra'),owner:'guest',name:'extra',updatedAt:6,schemaVersion:17,state:campaign('extra')});
+  await seed();await db.saves.put({id:autosaveId('extra'),owner:'guest',name:'extra',updatedAt:6,schemaVersion:18,state:campaign('extra')});
   const before=await db.saves.toArray(),remove=db.saves.bulkDelete.bind(db.saves);
   vi.spyOn(db.saves,'bulkDelete').mockImplementation(ids=>remove(ids).then(()=>{throw new Error('Prune failed');}));
   await expect(saveGame(campaign('extra',10),autosaveId('extra'),'updated','guest')).rejects.toThrow('Prune failed');

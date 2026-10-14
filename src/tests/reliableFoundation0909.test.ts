@@ -26,9 +26,10 @@ function enriched(){
 }
 
 describe('Phase 1 save integrity',()=>{
- for(const version of [12,13,14,15,16,17])it(`schema ${version} keeps country fields and war state through load-save-load`,async()=>{
+ for(const version of [12,13,14,15,16,17,18])it(`schema ${version} keeps country fields and war state through load-save-load`,async()=>{
   const original=enriched(),old=snapshotGame(original);old.schemaVersion=version;
   // Remove containers that had not yet been introduced, rather than merely relabel a current save.
+  if(version<=17)delete (old.world as Partial<typeof old.world>).organizations;
   const partial=old as Partial<GameState>;
   if(version===12){delete partial.industrialEconomy;delete partial.industrialContracts;delete partial.leadership;}
   if(version<=13)delete partial.world;

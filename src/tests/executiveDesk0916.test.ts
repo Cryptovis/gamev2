@@ -139,7 +139,7 @@ describe('Phase 6.2 desk stays read-only and translated', () => {
     deskOffers(s); deskWars(s); deskOperations(s); deskCounts(s); for (const tab of ['diplomacy', 'war', 'intel'] as const) deskNews(s, tab);
     expect(JSON.stringify(s)).toBe(snapshot);
     expect(s.schemaVersion).toBe(CURRENT_SCHEMA_VERSION);
-    expect(CURRENT_SCHEMA_VERSION).toBe(17);
+    expect(CURRENT_SCHEMA_VERSION).toBe(18);
   });
   it('countdown never goes below zero', () => {
     expect(countdown(10, 14)).toEqual({ daysLeft: 0, urgent: true, lastDay: true });
