@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { version } from '../../package.json';
 import { makeInitialState } from '../data/initialState';
+import { operationalVisibility } from '../engine/systems/operationalVisibility';
 import { getWarPreview } from '../engine/systems/warfare';
 import { warDeclarationStatus } from '../engine/systems/warRules';
 import { ALERT_STATUS_TITLE, commandAlerts, sentenceCase, strategicObjectives } from '../store/commandIntelligence';
@@ -43,10 +44,13 @@ describe('0.91.0 war planning view', () => {
     const view = warPlanningView(state, target.id)!;
     const player = state.countries[state.playerCountryId];
     const preview = getWarPreview(player, target, state.infrastructure[player.id], state.infrastructure[target.id]);
-    expect(view.powerRatio).toBe(preview.powerRatio);
+    const visible=operationalVisibility(state,target.id)!;
+    expect(view).not.toHaveProperty('powerRatio');
+    expect(view.outlook).toBe('unknown');
     expect(view.ourSupply).toBe(preview.attackerSupply);
-    expect(view.enemySupply).toBe(preview.defenderSupply);
-    expect(view.airSuperiority).toBe(preview.airSuperiority);
+    expect(view.enemySupply).toEqual(visible.enemySupply);
+    expect(view.air).toBe('unknown');
+    expect(view).not.toHaveProperty('airSuperiority');
     expect(view.allowed).toBe(warDeclarationStatus(state, player.id, target.id).allowed);
     expect(view.allowed || typeof view.reason === 'string').toBe(true);
     expect(view.ourShare).toBeGreaterThanOrEqual(4);

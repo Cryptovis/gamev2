@@ -6,25 +6,27 @@ import {PolicyCardGrid} from './PolicyCardGrid';
 import type {CountryState} from '../../domain/game';
 import type {DossierView,WarPlanningView} from './targetBriefing';
 
-const OUTLOOK_LABEL={favourable:'Favourable odds',balanced:'Balanced odds',unfavourable:'Unfavourable odds'} as const;
-const AIR_LABEL={superiority:'Air superiority',contested:'Air contested',inferiority:'Air inferiority'} as const;
+const OUTLOOK_LABEL={favourable:'Favourable odds',balanced:'Balanced odds',unfavourable:'Unfavourable odds',unknown:'Unknown'} as const;
+const AIR_LABEL={superiority:'Air superiority',contested:'Air contested',inferiority:'Air inferiority',unknown:'Unknown'} as const;
 
 /** 0.91.0 War Planning briefing: power ratio bar, air badge, logistics readiness and one firm confirm button. Presentation only. */
 export function WarPlanningBrief({view,country,language,onDeclare}:{view:WarPlanningView;country:CountryState;language:string;onDeclare:()=>void}){
+ const ratioLabel=view.outlook==='unknown'?'Unknown':view.outlook==='favourable'?'At least 1.25×':view.outlook==='balanced'?'0.8–1.25×':'Below 0.8×';
+ const enemySupply=view.enemySupply?`${view.enemySupply.min}–${view.enemySupply.max}%`:'Unknown';
  const fuelFill=view.fuel.required>0?Math.min(100,view.fuel.have/view.fuel.required*100):100;
  return <div className="war-plan" data-outlook={view.outlook}>
   <div className="war-plan-glass">
    <header><small><LocaleText value="OPERATIONAL ASSESSMENT"/></small><strong><LocaleText value={country.name}/></strong><em><LocaleText value={view.terrain.replaceAll('_',' ')}/><LocaleText value=" theatre"/></em></header>
-   <div className="war-ratio" role="img" aria-label={`${formatText(language,'POWER RATIO',[])} ${view.powerRatio.toFixed(2)}×`}>
-    <div className="war-ratio-head"><span><LocaleText value="POWER RATIO"/></span><b>{view.powerRatio.toFixed(2)}×</b><i className={'war-outlook '+view.outlook}><LocaleText value={OUTLOOK_LABEL[view.outlook]}/></i></div>
+   <div className="war-ratio" role="img" aria-label={`${formatText(language,'POWER RATIO',[])} ${formatText(language,ratioLabel,[])}`}>
+    <div className="war-ratio-head"><span><LocaleText value="POWER RATIO"/></span><b><LocaleText value={ratioLabel}/></b><i className={'war-outlook '+view.outlook}><LocaleText value={OUTLOOK_LABEL[view.outlook]}/></i></div>
     <div className="war-ratio-bar"><span className="ours" style={{width:`${view.ourShare}%`}}/><span className="theirs"/></div>
     <div className="war-ratio-legend"><span><LocaleText value="Us"/></span><span><LocaleText value={country.name}/></span></div>
    </div>
    <div className="war-plan-grid">
-    <div className={'war-air '+view.air}><small><LocaleText value="AIR"/></small><strong><LocaleText value={AIR_LABEL[view.air]}/></strong><em>{view.airSuperiority>=0?'+':''}{view.airSuperiority.toFixed(0)}</em></div>
+    <div className={'war-air '+view.air}><small><LocaleText value="AIR"/></small><strong><LocaleText value={AIR_LABEL[view.air]}/></strong><em><LocaleText value="Estimated"/></em></div>
     <div className="war-logistics"><small><LocaleText value="LOGISTICS READINESS"/></small>
      <div className="war-meter"><span><LocaleText value="SUPPLY"/></span><i><b style={{width:`${Math.min(100,view.ourSupply)}%`}}/></i><em>{view.ourSupply.toFixed(0)}%</em></div>
-     <div className="war-meter enemy"><span><LocaleText value="ENEMY SUPPLY"/></span><i><b style={{width:`${Math.min(100,view.enemySupply)}%`}}/></i><em>{view.enemySupply.toFixed(0)}%</em></div>
+     <div className="war-meter enemy"><span><LocaleText value="ENEMY SUPPLY"/></span><i><b style={{width:`${view.enemySupply?.min??0}%`}}/></i><em><LocaleText value={enemySupply}/></em></div>
      <div className={'war-meter fuel '+(view.fuel.ready?'ready':'short')}><span><LocaleText value="FUEL"/></span><i><b style={{width:`${fuelFill}%`}}/></i><em>{view.fuel.have.toFixed(0)}/{view.fuel.required.toFixed(0)}</em></div>
     </div>
    </div>

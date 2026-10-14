@@ -57,7 +57,16 @@ export function warCombatView(state:GameState,w:WarState){
  const powerRatio=effects?(militaryPower(combatA)*(p.attackerSupply/100)*air)/(militaryPower(combatD)*(p.defenderSupply/100)):p.powerRatio;
  return {combatA,combatD,effects,p:{...p,powerRatio},air};
 }
-export function getWarPreview(a:CountryState,d:CountryState,aInfra?:NationalInfrastructureState,dInfra?:NationalInfrastructureState){const terrain=terrainForCountry(d),attackerSupply=supplyScore(a,d,true,terrain,aInfra),defenderSupply=supplyScore(d,a,false,terrain,dInfra),ap=airPower(a),dp=airPower(d),airSuperiority=clamp((ap-dp)/Math.max(1,ap+dp)*100,-100,100),powerRatio=(militaryPower(a)*(attackerSupply/100)*airFactor(airSuperiority))/(militaryPower(d)*(defenderSupply/100));return{terrain,attackerSupply,defenderSupply,airSuperiority,powerRatio};}
+/** Shared forecast composition; simulation and visibility-projected previews use identical formulas. */
+export function warForceComparison(a:CountryState,d:CountryState,attackerSupply:number,defenderSupply:number){
+ const ap=airPower(a),dp=airPower(d),airSuperiority=clamp((ap-dp)/Math.max(1,ap+dp)*100,-100,100);
+ const powerRatio=(militaryPower(a)*(attackerSupply/100)*airFactor(airSuperiority))/(militaryPower(d)*(defenderSupply/100));
+ return {airSuperiority,powerRatio};
+}
+export function getWarPreview(a:CountryState,d:CountryState,aInfra?:NationalInfrastructureState,dInfra?:NationalInfrastructureState){
+ const terrain=terrainForCountry(d),attackerSupply=supplyScore(a,d,true,terrain,aInfra),defenderSupply=supplyScore(d,a,false,terrain,dInfra);
+ return {terrain,attackerSupply,defenderSupply,...warForceComparison(a,d,attackerSupply,defenderSupply)};
+}
 function applyLosses(m:MilitaryState,l:CasualtySnapshot,supply:number):MilitaryState{const stress=supply<35;return{...m,personnel:Math.max(0,m.personnel-l.personnel),tanks:Math.max(0,m.tanks-l.tanks),artillery:Math.max(0,m.artillery-l.artillery),fighters:Math.max(0,m.fighters-l.fighters),bombers:Math.max(0,m.bombers-l.bombers),warships:Math.max(0,m.warships-l.warships),readiness:clamp(m.readiness-(stress?2.2:.35),0,100),morale:clamp(m.morale-Math.min(1.5,l.personnel/7500)-(stress?.55:0),0,100),logistics:clamp(m.logistics-(stress?1.4:.18),0,100)};}
 function addLosses(a:CasualtySnapshot,b:CasualtySnapshot):CasualtySnapshot{return{personnel:a.personnel+b.personnel,tanks:a.tanks+b.tanks,artillery:a.artillery+b.artillery,fighters:a.fighters+b.fighters,bombers:a.bombers+b.bombers,warships:a.warships+b.warships};}
 function makeLosses(c:CountryState,rate:number,r:number):CasualtySnapshot{const m=c.military,scale=rate*(.72+r*.56);return{personnel:Math.min(m.personnel,Math.max(20,Math.round(m.personnel*scale))),tanks:Math.min(m.tanks,Math.max(0,Math.round(m.tanks*scale*.85))),artillery:Math.min(m.artillery,Math.max(0,Math.round(m.artillery*scale*.75))),fighters:Math.min(m.fighters,Math.max(0,Math.round(m.fighters*scale*.45))),bombers:Math.min(m.bombers,Math.max(0,Math.round(m.bombers*scale*.32))),warships:Math.min(m.warships,Math.max(0,Math.round(m.warships*scale*.18)))};}
