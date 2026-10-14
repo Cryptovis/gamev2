@@ -22,3 +22,8 @@
 :root[data-theme="light"] .command-rail .rail-button.active small{color:var(--accent-ink)!important}
 .map-dock-body .map-mode-bar{min-width:0;width:100%}.map-mode-buttons{grid-template-columns:repeat(2,minmax(0,1fr))}.map-mode-buttons button{min-width:0;white-space:normal;overflow-wrap:anywhere}.map-mode-heading{flex-wrap:wrap;gap:8px}.map-command-sections>div>span{min-width:0;flex-wrap:wrap}.map-mode-bar .map-notice{overflow-wrap:anywhere}
 @media(max-width:760px){.map-mode-buttons{grid-template-columns:1fr}.map-mode-buttons button{justify-content:flex-start;min-height:44px;width:100%}.map-command-sections>div>span:not(.map-camera-actions){display:grid;grid-template-columns:1fr;width:100%}.map-command-sections>div>span button{min-width:0;white-space:normal;overflow-wrap:anywhere}.map-mode-heading>span{min-width:0}.map-mode-heading em{max-width:100%;overflow-wrap:anywhere}}
+.map-dock-body .map-mode-bar{background:var(--surface);color:var(--ink)}
+.map-dock-body .map-mode-bar :is(small,strong,label,output,.map-notice){color:var(--ink)}
+.map-dock-body .map-mode-bar button{background:var(--surface-raised)!important;color:var(--ink)!important;opacity:1;border-color:var(--border)!important}
+.map-dock-body .map-mode-bar button.active{background:var(--accent-surface)!important;color:var(--accent-ink)!important;border-color:var(--focus)!important}
+.map-dock-body .map-mode-bar button:disabled{opacity:.55}
