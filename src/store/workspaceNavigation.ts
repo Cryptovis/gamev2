@@ -10,7 +10,7 @@ export type WorkspaceDestination =
   | { kind: 'factory'; focusedFactory: FacilityKind }
   | { kind: 'market'; tab: 'open' | 'contracts'; focusedGood?: IndustrialGood }
   | { kind: 'diplomatic-inbox'; tab: 'offers' | 'correspondence'; countryId?: string }
-  | { kind: 'news'; filter: 'all' | 'wars' | 'diplomacy' | 'trade' };
+  | { kind: 'news'; filter: 'all' | 'wars' | 'diplomacy' | 'trade' | 'economy' };
 /** UI-only context. Never serialized into GameState or used to authorize an engine command. */
 export type WorkspaceIntent = WorkspaceDestination & { returnTo?: WorkspaceDestination };
 export interface WorkspaceNavigation {

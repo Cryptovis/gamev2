@@ -1,3 +1,5 @@
+import {useEffect} from 'react';
+import {matchesNews,type NewsChannel} from '../../presentation/newsChannels';
 import {useState} from 'react';
 import {useWorldView} from '../../store/useWorldView';
 import {ALERT_CATEGORIES,ALERT_STATUS_TITLE,commandAlerts,newsEntries,sentenceCase as sentenceCaseOf,type AlertCategory} from '../../store/commandIntelligence';
@@ -22,11 +24,13 @@ export function CommandAlerts(){
  {category==='resources'&&<div className="resource-alert-list">{MARKET_RESOURCES.map(resource=><div key={resource}><ResourceIcon resource={resource} size={22}/><span><strong><LocaleText value={resource}/></strong><small><LocaleText value={resourceStrategicStatus(p,resource)}/></small></span><em>{resourceReserveDays(p,resource)>365?'365+':Math.max(0,resourceReserveDays(p,resource)).toFixed(0)} <LocaleText value="Days"/></em></div>)}</div>}</div>;
 }
 export function CommandNews(){
- const s=useWorldView(),p=s.countries[s.playerCountryId],entries=newsEntries(s);
+ const s=useWorldView(),p=s.countries[s.playerCountryId],navigation=useGameStore(s=>s.navigation),[channel,setChannel]=useState<NewsChannel>('all');
+ useEffect(()=>{if(navigation?.intent?.kind==='news')setChannel(navigation.intent.filter);},[navigation]);
+ const entries=newsEntries(s).filter(e=>matchesNews(e.message,channel));
  const wars=Object.values(s.wars).filter(w=>w.status==='active').length,trades=Object.values(s.tradeDeals).filter(t=>t.active&&(t.buyerId===p.id||t.sellerId===p.id)).length+Object.values(s.industrialContracts).filter(t=>t.active&&(t.buyerId===p.id||t.sellerId===p.id)).length,allies=Object.values(p.diplomacy.relations).filter(r=>r.treaties.includes('alliance')).length;
  return <div className="command-news"><header><h3><LocaleText value="Daily command briefing"/></h3><p><LocaleText value={p.name}/> · {gameDate(s)}</p><small><LocaleText value="Current indicators; recorded events appear below."/></small></header>
  <div className="news-metrics">{[['Treasury',money(p.economy.treasury,s.playerProfile.language),'treasury'],['Active world wars',wars,'military'],['Active trade flows',trades,'economy'],['Alliance treaties',allies,'diplomacy']].map(([title,value,kind])=><article key={title}><CommandArt kind={String(kind)} size={28}/><small><LocaleText value={title}/></small><strong><LocaleText value={value}/></strong></article>)}</div>
- <div className="news-links"><button onClick={()=>s.openTool('pulse')}><CommandArt kind="world" size={22}/><LocaleText value="World activities"/></button><button onClick={()=>s.openTool('alerts')}><CommandArt kind="intel" size={22}/><LocaleText value="National Alerts"/></button></div>
+ <div className="news-channel-filters" role="group" aria-label={translateLive('News channels')}>{(['all','wars','economy','diplomacy','trade'] as NewsChannel[]).map(c=><button key={c} data-news-channel={c} aria-pressed={c===channel} onClick={()=>setChannel(c)}><LocaleText value={{all:'All',wars:'Wars',economy:'Economy',diplomacy:'Diplomacy',trade:'Trade'}[c]}/></button>)}</div>
  <h4><LocaleText value="Recorded events"/></h4><div className="command-news-archive">{entries.map(e=>{const flight=newsFlightKind(e.message);return <article key={e.id}><small>{flight?<AircraftGlyph kind={flight} size={16}/>:<CommandArt kind="intel" size={18}/>}<LocaleText value={e.day===null?'Campaign messages':'Day'}/>{e.day!==null&&` ${e.day}`}</small><p><LocaleText value={e.message}/></p></article>;})}</div>
  {!entries.length&&<p className="command-empty"><LocaleText value="No recorded events yet. Trade, diplomacy and world developments will appear here."/></p>}</div>;
 }
