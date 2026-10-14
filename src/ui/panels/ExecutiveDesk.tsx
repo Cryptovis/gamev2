@@ -4,7 +4,7 @@ import { flagEmoji } from '../../data/countryThemes';
 import { useGameStore } from '../../store/gameStore';
 import { useWorldView } from '../../store/useWorldView';
 import { money } from '../formatMoney';
-import { DraggableWindow } from '../windows/DraggableWindow';
+import { ExecutiveWorkspaceShell } from '../windows/ExecutiveWorkspaceShell';
 import { ReviewDialog } from './ReviewDialog';
 import { AssetThumbnail } from '../icons/AssetThumbnail';
 import { CivicArt } from '../icons/CivicArt';
@@ -46,14 +46,15 @@ export function ExecutiveDesk({ onClose }: { onClose: () => void }) {
   const name = (id: string) => state.countries[id]?.name ?? id;
   const flag = (id: string) => flagEmoji(state.countries[id]?.iso2 ?? '');
 
-  const tabEmpty = (tab === 'diplomacy' && !offers.length) || (tab === 'war' && !wars.length) || (tab === 'intel' && !operations.length);
-  return <DraggableWindow id="desk-window" kicker="EXECUTIVE OFFICE" title={translateLive('Executive Desk')} initialX={window.innerWidth - 690} initialY={130} width={630} expanded onClose={onClose}>
-    <div className="executive-desk">
-      <div className="desk-tabs" role="tablist" aria-label={translateLive('Executive Desk')}>
+  const tabs = <div className="desk-tabs" role="tablist" aria-label={translateLive('Executive Desk')}>
         {DESK_TABS.map((id) => <button key={id} role="tab" id={`desk-tab-${id}`} aria-selected={tab === id} aria-controls="desk-panel" data-desk-tab={id} onClick={() => setTab(id)}>
           <span aria-hidden="true">{TAB_META[id].icon}</span><LocaleText value={TAB_META[id].label} />{counts[id] > 0 && <b>{counts[id]}</b>}
         </button>)}
-      </div>
+      </div>;
+  const tabEmpty = (tab === 'diplomacy' && !offers.length) || (tab === 'war' && !wars.length) || (tab === 'intel' && !operations.length);
+  return <ExecutiveWorkspaceShell id="desk-window" kicker="EXECUTIVE OFFICE" title={translateLive('Executive Desk')} tabs={tabs} scrollKey={tab} onClose={onClose}>
+    <div className="executive-desk">
+
 
       <div id="desk-panel" role="tabpanel" aria-labelledby={`desk-tab-${tab}`} className="desk-panel">
         {tab === 'diplomacy' && offers.map((offer) => <article key={offer.id} className={`desk-card${offer.countdown.urgent ? ' urgent' : ''}`} data-letter-id={offer.id}>
@@ -100,5 +101,5 @@ export function ExecutiveDesk({ onClose }: { onClose: () => void }) {
       metrics={[['Your share', money(review.playerShareB, language)], ['Partner share', money(review.partnerShareB, language)], ['Treasury after', money((player?.economy.treasury ?? 0) - review.playerShareB, language)]]}
       allowed={review.affordable} onCancel={() => setReview(null)}
       onConfirm={(commandId) => { state.dispatchWithReceipt({ ...review.accept, commandId }); setReview(null); }} />}
-  </DraggableWindow>;
+  </ExecutiveWorkspaceShell>;
 }

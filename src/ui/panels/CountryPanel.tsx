@@ -61,8 +61,8 @@ export function CountryPanel({onBrowse,suspended=false}:{onBrowse?:(countryId:st
   const [supplyResource,setSupplyResource]=useState<TradeResource|null>(null);
   const [tab,setTab]=useState<PanelTab>('overview');
   const [expanded,setExpanded]=useState(false);
-  const wideSection=['technology','world','war','production'].includes(tab);
-  const chooseTab=(id:PanelTab)=>{setTab(id);setExpanded(['technology','world','war','production'].includes(id));};
+  const wideSection=['technology','world','war','production','policies','military','economy'].includes(tab);
+  const chooseTab=(id:PanelTab)=>{setTab(id);setExpanded(['technology','world','war','production','policies','military','economy'].includes(id));};
   const [militarySection,setMilitarySection]=useState('overview');
   const [commandWindow,setCommandWindow]=useState<'dossier'|'supply'|null>(null);
   const [pendingDecision,setPendingDecision]=useState<{spec:StrategicDecisionSpec;execute:()=>void}|null>(null);
@@ -107,7 +107,7 @@ export function CountryPanel({onBrowse,suspended=false}:{onBrowse?:(countryId:st
     <div className="panel-tabs country-navigation-group" data-menu-group="strategy">
       {(['technology','world','war'] as PanelTab[]).map(id=><button data-guide={'tab-'+id} key={id} data-tab={id} aria-pressed={tab===id} onClick={()=>chooseTab(id)}><PanelTabIcon id={id}/><span><LocaleText value={id==='technology'?'Technology':id==='world'?'World':activeWar?'War command':isPlayer?'War readiness':'War planning'}/></span></button>)}
     </div>
-    <CountrySectionFrame expanded={expanded} wideSection={wideSection} title={tab==='technology'?'Technology':tab==='world'?'World':tab==='production'?'Production':activeWar?'War command':isPlayer?'War readiness':'War planning'} onClose={()=>setExpanded(false)}>
+    <CountrySectionFrame scrollKey={tab} centered={['policies','military','economy'].includes(tab)} tabs={<div className="executive-section-tabs" role="tablist" aria-label={translateLive('National command sections')}>{(['policies','military','economy'] as const).map(id=><button key={id} role="tab" aria-selected={tab===id} onClick={()=>chooseTab(id)}><LocaleText value={{policies:'Policies',military:'Military',economy:'Economy'}[id]}/></button>)}</div>} expanded={expanded} wideSection={wideSection} title={tab==='policies'?'Policies':tab==='military'?'Military':tab==='economy'?'Economy':tab==='technology'?'Technology':tab==='world'?'World':tab==='production'?'Production':activeWar?'War command':isPlayer?'War readiness':'War planning'} onClose={()=>setExpanded(false)}>
 
     {tab==='overview'&&<>
       <div className="stat-grid"><div><span><LocaleText value={"GDP"}/></span><strong><LocaleText value={"$"}/><LocaleText value={selected.economy.gdp.toFixed(1)}/><LocaleText value={"B"}/></strong></div><div><span><LocaleText value={"Economic health"}/></span><strong><LocaleText value={calculateEconomicHealth(selected)}/><LocaleText value={"%"}/></strong></div><div><span><LocaleText value={"Population"}/></span><strong><LocaleText value={(selected.demographics.population/1_000_000).toFixed(1)}/><LocaleText value={"M"}/></strong></div><div><span><LocaleText value={"Military capability"}/></span><strong><LocaleText value={selected.military.assessment.capability.toFixed(1)}/><LocaleText value={"/100"}/></strong></div><div><span><LocaleText value={"Industry output"}/></span><strong><LocaleText value={calculateIndustrialOutput(selected)}/></strong></div><div><span><LocaleText value={"Resource pressure"}/></span><strong><LocaleText value={calculateResourcePressure(selected)}/><LocaleText value={"%"}/></strong></div></div>

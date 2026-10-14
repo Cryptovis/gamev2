@@ -54,3 +54,5 @@ import "./ui/styles/livingWorld0919.css";
 import "./ui/styles/mapDesk0917.css";
 
 import "./ui/styles/appearancePhase7.css";
+
+import "./ui/styles/executivePhase7.css";
