@@ -87,13 +87,18 @@ export function settleIndustrialTrade(state:GameState,sellerId:string,buyerId:st
  next={...next,countries:{...next.countries,[sellerId]:{...seller,economy:{...seller.economy,treasury:seller.economy.treasury+cost}},[buyerId]:{...buyer,economy:{...buyer.economy,treasury:buyer.economy.treasury-cost}}},industrialEconomy:{...next.industrialEconomy,[sellerId]:{...next.industrialEconomy[sellerId],lastTradeBalance:next.industrialEconomy[sellerId].lastTradeBalance+cost},[buyerId]:{...next.industrialEconomy[buyerId],lastTradeBalance:next.industrialEconomy[buyerId].lastTradeBalance-cost}}};
  return changeRelations(next,sellerId,buyerId,.03);
 }
+/** Shared calendar preview for the UI and contract creation; no clock advance or settlement. */
+export function industrialContractSchedule(day:number,years:0|1|3|5|10){
+ return {firstDeliveryDay:day+(years?30:0),expiresDay:day+365*years};
+}
 export function placeIndustrialOrder(state:GameState,partnerId:string,good:IndustrialGood,quantity:number,direction:'buy'|'sell',years:0|1|3|5|10=0):GameState {
  const sellerId=direction==='buy'?partnerId:state.playerCountryId,buyerId=direction==='buy'?state.playerCountryId:partnerId;
  if(industrialOrderError(state,partnerId,good,quantity,direction,years))return state;
  const quote=industrialQuote(state,sellerId,buyerId,good,quantity);
  if(years===0){const next=settleIndustrialTrade(state,sellerId,buyerId,good,quantity);return {...next,sitrep:[`MARKET // ${direction==='buy'?'Imported':'Exported'} ${quantity} ${GOODS[good].label}; $${quote.cost.toFixed(3)}B settled.`,...next.sitrep].slice(0,12)};}
  const id=`${sellerId}-${buyerId}-${good}-${state.day}-${Object.keys(state.industrialContracts).length}`;
- const contract:IndustrialContract={id,sellerId,buyerId,good,quantity,price:quote.price,nextDeliveryDay:state.day+30,expiresDay:state.day+365*years,active:true,missedDeliveries:0};
+ const schedule=industrialContractSchedule(state.day,years);
+ const contract:IndustrialContract={id,sellerId,buyerId,good,quantity,price:quote.price,nextDeliveryDay:schedule.firstDeliveryDay,expiresDay:schedule.expiresDay,active:true,missedDeliveries:0};
  return {...state,industrialContracts:{...state.industrialContracts,[id]:contract},sitrep:[`MARKET // ${years}-year ${GOODS[good].label} supply contract agreed; monthly delivery ${quantity} units.`,...state.sitrep].slice(0,12)};
 }
 export function processIndustrialContracts(state:GameState):GameState {
