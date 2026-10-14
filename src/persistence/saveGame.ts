@@ -15,8 +15,11 @@ export async function saveGame(state: GameState, id = 'manual', name = 'Manual S
   // Never replace a good save with one that could not be loaded back.
   if(!canLoadSave(snapshot))throw new Error(`Refusing to write invalid save "${id}" (schema ${state.schemaVersion})`);
   const record: SaveRecord = { id:scopedId(id,owner), owner, name, updatedAt: Date.now(), schemaVersion: state.schemaVersion, state: snapshot };
-  await db.saves.put(record);
-  if(isAutosave(record))await pruneAutosaves(owner);
+  if(isAutosave(record))await db.transaction('rw',db.saves,async()=>{
+    await db.saves.put(record);
+    await pruneAutosaves(owner);
+  });
+  else await db.saves.put(record);
   return record;
 }
 

@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.98.1 — Phase 8 Foundation Sprint (Slice 8.0)
+
+Development patch on `dev/ron-phase7`, based on v0.98.0. Schema 17 retained; valid Schema 12–17 saves still migrate. [Release record](docs/RELEASE-0981.md).
+
+- Reject malformed institution memberships, ballots, missions, religious shares and council payloads, including non-finite influence and unknown country references, before saves are written or loaded.
+- Route human and AI world proposals through one actor-aware validator/executor. AI attack proposals pay the same 8 influence fee; daily institution and public-diplomacy benefits apply to all active eligible countries.
+- Share outreach eligibility, cost, treasury preview and success chance between UI and execution through a pure engine preview.
+- Commit an autosave checkpoint and stale-record pruning in one Dexie readwrite transaction, so failed pruning rolls both operations back and competing connections cannot delete a refreshed checkpoint mid-operation.
+- Add 32 regressions, including real Dexie transactions over a test IndexedDB implementation. Production runtime dependencies unchanged; `fake-indexeddb` added only for tests.
+
 ## 0.98.0 — Readable Light Subpanels & Menu Cleanup
 
 Development release on `dev/ron-phase7`; Schema 17, RNG and engine formulas unchanged. [Release record](docs/RELEASE-098.md).

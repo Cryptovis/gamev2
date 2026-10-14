@@ -11,9 +11,9 @@ import {
   INSTITUTIONS,
   membershipRequirements,
   ballotCount,
+  previewOutreach,
 } from "../../engine/systems/worldInstitutions";
-import { relationFor } from "../../engine/systems/diplomacy";
-import { BASE_COST_B, formatCostB, scaledCostB } from "../../engine/systems/policyPressure";
+import { formatCostB } from "../../engine/systems/policyPressure";
 import { ReviewDialog, type ReviewContent } from "./ReviewDialog";
 import { AssetThumbnail } from "../icons/AssetThumbnail";
 const religions: ReligionType[] = [
@@ -46,24 +46,10 @@ export function WorldInstitutionsPanel() {
     .filter((c) => c.id !== player.id)
     .sort((a, b) => a.name.localeCompare(b.name));
   const chosen = foreign.find((c) => c.id === target) ?? foreign[0];
-  const missions = state.world.missions.filter((m) => m.targetId === chosen.id),
-    latest = missions[0];
-  const outreachCost = scaledCostB(player, BASE_COST_B.worldOutreach);
-  const outreachBlocked =
-    player.economy.treasury < outreachCost ||
-    relationFor(player, chosen.id).score < 0 ||
-    Boolean(
-      latest && (latest.status === "active" || state.day < latest.endsDay + 60),
-    );
-  const chance = Math.max(
-    0.15,
-    Math.min(
-      0.75,
-      0.25 +
-        relationFor(player, chosen.id).score * 0.003 +
-        (state.culturalInfluence[chosen.id] ?? 0) * 0.002,
-    ),
-  );
+  const missions = state.world.missions.filter((m) => m.targetId === chosen.id);
+  const outreach=previewOutreach(state,chosen.id);
+  const {cost:outreachCost,chance}=outreach;
+  const outreachBlocked=!outreach.allowed;
   const ballots = state.world.ballots;
   return (
     <section className="world-institutions">
@@ -296,7 +282,7 @@ export function WorldInstitutionsPanel() {
                 ["Cost", formatCostB(outreachCost)],
                 [
                   "Treasury after",
-                  `$${(player.economy.treasury - outreachCost).toFixed(3)}B`,
+                  `$${outreach.treasuryAfter.toFixed(3)}B`,
                 ],
                 ["Success estimate", `${(chance * 100).toFixed(0)}%`],
                 ["Possible change", "0.1–0.5 percentage points"],

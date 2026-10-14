@@ -10,7 +10,7 @@ vi.mock('../persistence/database',()=>{
   delete:async(id:string)=>{rows.delete(id);},bulkDelete:async(ids:string[])=>{for(const id of ids)rows.delete(id);},toArray:async()=>[...rows.values()],
   orderBy:(key:string)=>({...collection(()=>sorted(key)),reverse:()=>collection(()=>sorted(key).reverse())}),
  };
- return {db:{saves}};
+ return {db:{saves,transaction:async(_mode:string,_table:unknown,write:()=>Promise<unknown>)=>write()}};
 });
 import {makeInitialState} from '../data/initialState';
 import {db} from '../persistence/database';

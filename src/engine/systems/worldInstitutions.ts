@@ -1,3 +1,4 @@
+import type {GameCommand} from '../../domain/commands';
 import {activeCountries} from '../../domain/sovereignty';
 import {createLiving} from './livingEconomy';
 import {createGovernance} from './governance';
@@ -81,8 +82,8 @@ export function createWorld(
     lastAiProposalDay: 0,
   };
 }
-export function membershipRequirements(state: GameState, id: InstitutionId) {
-  const c = state.countries[state.playerCountryId],
+export function membershipRequirements(state: GameState, id: InstitutionId, actorId=state.playerCountryId) {
+  const c = state.countries[actorId],
     inf = state.council.influenceByCountry[c.id] ?? 0;
   const checks = [
     { label: "Stability ≥ 45", met: c.politics.stability >= 45 },
@@ -187,79 +188,41 @@ function addBallot(
     },
   };
 }
-export function applyMembership(
-  state: GameState,
-  id: InstitutionId,
-): GameState {
-  const player = state.playerCountryId;
-  if (
-    state.world.members[id].includes(player) ||
-    membershipRequirements(state, id).some((c) => !c.met) ||
-    state.world.ballots.some(
-      (b) =>
-        b.kind === "membership" &&
-        b.institution === id &&
-        b.proposerId === player &&
-        b.status === "open",
-    )
-  )
-    return state;
-  const last = state.world.ballots.find(
-    (b) =>
-      b.kind === "membership" &&
-      b.institution === id &&
-      b.proposerId === player,
-  );
-  if (last && state.day < last.closesDay + 30) return state;
-  const influence = state.council.influenceByCountry[player] ?? 0;
-  return addBallot(
-    {
-      ...state,
-      council: {
-        ...state.council,
-        influenceByCountry: {
-          ...state.council.influenceByCountry,
-          [player]: influence - INSTITUTIONS[id].cost,
-        },
-      },
-    },
-    "membership",
-    id,
-    player,
-  );
+type WorldProposalCommand = Extract<GameCommand,{type:'world/membership'|'world/attackProposal'}>;
+export const ATTACK_PROPOSAL_COST=8;
+
+/** The player dispatcher and AI use the same actor-aware proposal validator and executor. */
+export function validateWorldProposal(state:GameState,command:WorldProposalCommand,actorId=state.playerCountryId):boolean {
+  const actor=state.countries[actorId];
+  if(!actor||actor.annexedBy)return false;
+  const influence=state.council.influenceByCountry[actorId]??0;
+  if(!Number.isFinite(influence))return false;
+  if(command.type==='world/membership'){
+    if(!Object.hasOwn(INSTITUTIONS,command.id)||state.world.members[command.id].includes(actorId)
+      ||membershipRequirements(state,command.id,actorId).some(c=>!c.met)
+      ||state.world.ballots.some(b=>b.kind==='membership'&&b.institution===command.id&&b.proposerId===actorId&&b.status==='open'))return false;
+    const last=state.world.ballots.find(b=>b.kind==='membership'&&b.institution===command.id&&b.proposerId===actorId);
+    return !last||state.day>=last.closesDay+30;
+  }
+  const target=state.countries[command.id];
+  return !!target&&!target.annexedBy&&command.id!==actorId&&state.world.members.un.includes(actorId)
+    && influence>=ATTACK_PROPOSAL_COST
+    && !state.world.ballots.some(b=>b.kind==='attack'&&b.proposerId===actorId&&b.targetId===command.id&&b.status==='open');
 }
-export function proposeAttack(state: GameState, targetId: string): GameState {
-  if (
-    !state.countries[targetId] ||
-    targetId === state.playerCountryId ||
-    !state.world.members.un.includes(state.playerCountryId) ||
-    state.world.ballots.some(
-      (b) =>
-        b.kind === "attack" &&
-        b.proposerId === state.playerCountryId &&
-        b.targetId === targetId &&
-        b.status === "open",
-    )
-  )
-    return state;
-  const influence =
-    state.council.influenceByCountry[state.playerCountryId] ?? 0;
-  if (influence < 8) return state;
-  return addBallot(
-    {
-      ...state,
-      council: {
-        ...state.council,
-        influenceByCountry: {
-          ...state.council.influenceByCountry,
-          [state.playerCountryId]: influence - 8,
-        },
-      },
-    },
-    "attack",
-    "un",
-    targetId,
-  );
+export function executeWorldProposal(state:GameState,command:WorldProposalCommand,actorId=state.playerCountryId):GameState {
+  if(!validateWorldProposal(state,command,actorId))return state;
+  const membership=command.type==='world/membership';
+  const institution=membership?command.id:'un';
+  const cost=membership?INSTITUTIONS[command.id].cost:ATTACK_PROPOSAL_COST;
+  const influence=state.council.influenceByCountry[actorId]??0;
+  return addBallot({...state,council:{...state.council,influenceByCountry:{...state.council.influenceByCountry,[actorId]:influence-cost}}},
+    membership?'membership':'attack',institution,membership?actorId:command.id,actorId);
+}
+export function applyMembership(state:GameState,id:InstitutionId):GameState {
+  return executeWorldProposal(state,{type:'world/membership',id});
+}
+export function proposeAttack(state:GameState,targetId:string):GameState {
+  return executeWorldProposal(state,{type:'world/attackProposal',id:targetId});
 }
 export function voteWorld(
   state: GameState,
@@ -297,33 +260,20 @@ export function ballotCount(b: WorldBallot) {
     abstain: values.filter((v) => v === "abstain").length,
   };
 }
-export function startOutreach(
-  state: GameState,
-  targetId: string,
-  religion: ReligionType,
-): GameState {
-  const player = state.countries[state.playerCountryId],
-    target = state.countries[targetId],
-    cost = scaledCostB(player, BASE_COST_B.worldOutreach);
-  if (
-    !target ||
-    targetId === player.id ||
-    player.economy.treasury < cost ||
-    relationFor(player, targetId).score < 0 ||
-    state.world.missions.some(
-      (m) =>
-        m.targetId === targetId &&
-        (m.status === "active" || state.day < m.endsDay + 60),
-    )
-  )
-    return state;
-  const chance = clamp(
-    0.25 +
-      relationFor(player, targetId).score * 0.003 +
-      (state.culturalInfluence[targetId] ?? 0) * 0.002,
-    0.15,
-    0.75,
-  );
+/** Pure preview shared with command execution; inspecting an action never consumes RNG. */
+export function previewOutreach(state:GameState,targetId:string) {
+  const player=state.countries[state.playerCountryId],target=state.countries[targetId];
+  const cost=scaledCostB(player,BASE_COST_B.worldOutreach);
+  const coolingDown=state.world.missions.some(m=>m.targetId===targetId&&(m.status==='active'||state.day<m.endsDay+60));
+  const relation=target?relationFor(player,targetId).score:0;
+  const allowed=!!target&&!target.annexedBy&&targetId!==player.id&&player.economy.treasury>=cost&&relation>=0&&!coolingDown;
+  const chance=target?clamp(0.25+relation*0.003+(state.culturalInfluence[targetId]??0)*0.002,0.15,0.75):0;
+  return {allowed,cost,chance,treasuryAfter:player.economy.treasury-cost};
+}
+export function startOutreach(state:GameState,targetId:string,religion:ReligionType):GameState {
+  const {allowed,cost,chance}=previewOutreach(state,targetId);
+  if(!allowed)return state;
+  const player=state.countries[state.playerCountryId];
   return {
     ...state,
     countries: {
@@ -396,47 +346,21 @@ export function processWorldInstitutions(state: GameState): GameState {
     );
     return { ...m, status: success ? "success" : "failed", effect };
   });
-  const player = next.countries[next.playerCountryId],
-    member = world.members;
-  const bonus =
-    (member.un.includes(player.id) ? 0.03 : 0) +
-    (member.security.includes(player.id) ? 0.05 : 0) +
-    (player.technology.unlocked.includes("soc-public-diplomacy") ? 0.04 : 0);
-  next = {
-    ...next,
-    world,
-    council: {
-      ...next.council,
-      influenceByCountry: {
-        ...next.council.influenceByCountry,
-        [player.id]: Math.min(
-          100,
-          (next.council.influenceByCountry[player.id] ?? 0) + bonus,
-        ),
-      },
-    },
-    countries: {
-      ...next.countries,
-      [player.id]: {
-        ...player,
-        society: {
-          ...player.society,
-          cohesion: Math.min(
-            100,
-            player.society.cohesion +
-              (member.who.includes(player.id) ? 0.02 : 0),
-          ),
-        },
-      },
-    },
-    sitrep: [...notices, ...next.sitrep].slice(0, 12),
-  };
+  const influenceByCountry={...next.council.influenceByCountry},countries={...next.countries};
+  for(const country of activeCountries(next.countries)){
+    const bonus=(world.members.un.includes(country.id)?0.03:0)
+      +(world.members.security.includes(country.id)?0.05:0)
+      +(country.technology.unlocked.includes('soc-public-diplomacy')?0.04:0);
+    if(bonus)influenceByCountry[country.id]=Math.min(100,(influenceByCountry[country.id]??0)+bonus);
+    if(world.members.who.includes(country.id))countries[country.id]={...country,society:{...country.society,cohesion:Math.min(100,country.society.cohesion+0.02)}};
+  }
+  next={...next,world,countries,council:{...next.council,influenceByCountry},sitrep:[...notices,...next.sitrep].slice(0,12)};
   if (state.day % 30 === 0 && world.lastAiProposalDay !== state.day) {
     const conflict = Object.values(state.wars).find(
       (w) =>
         w.status === "active" &&
-        w.attackerId !== player.id &&
-        world.members.un.includes(w.attackerId) &&
+        w.attackerId !== state.playerCountryId &&
+        validateWorldProposal(next,{type:'world/attackProposal',id:w.defenderId},w.attackerId) &&
         !world.ballots.some(
           (b) =>
             b.kind === "attack" &&
@@ -444,14 +368,7 @@ export function processWorldInstitutions(state: GameState): GameState {
             b.targetId === w.defenderId,
         ),
     );
-    if (conflict)
-      next = addBallot(
-        next,
-        "attack",
-        "un",
-        conflict.defenderId,
-        conflict.attackerId,
-      );
+    if(conflict)next=executeWorldProposal(next,{type:'world/attackProposal',id:conflict.defenderId},conflict.attackerId);
     next = { ...next, world: { ...next.world, lastAiProposalDay: state.day } };
   }
   for (const b of next.world.ballots) {

@@ -1,4 +1,4 @@
-# Rule of Nations (RON) — 0.98.0
+# Rule of Nations (RON) — 0.98.1
 
 Rule of Nations is a browser-based geopolitical grand-strategy prototype built with React, TypeScript, Zustand, D3 Geo and Dexie. Lead a country through its economy, resources, diplomacy, development and military conflicts. Chart.js provides economic charts; Vitest and Playwright verify gameplay and browser flows.
 
@@ -6,10 +6,10 @@ Rule of Nations is a browser-based geopolitical grand-strategy prototype built w
 
 | Item | Current state |
 |---|---|
-| Version | **0.98.0 — Readable Light Subpanels & Menu Cleanup** |
+| Version | **0.98.1 — Phase 8 Foundation Sprint (Slice 8.0)** |
 | Development branch | `dev/ron-phase7` (development release; not merged into main) |
-| Save schema | 17; optional leader archetype metadata, old records retain neutral gameplay; existing migrations unchanged |
-| Validation | 930/930 unit tests / 100 files; TypeScript and Vite production build passed, zero build errors. 14/14 targeted production-browser checks passed (11 release scenarios plus 3 HUD/Dark-modal regressions). Full browser/native macOS suites were not rerun for 0.98. [Validation record](docs/RELEASE-098.md) |
+| Save schema | 17; valid Schema 12–17 saves migrate; malformed institution and council payloads are rejected |
+| Validation | 962/962 unit tests / 102 files; TypeScript and Vite production build passed with zero errors. Existing bundling warnings remain. Targeted browser checks were blocked by Chrome aborting at launch; full browser/native macOS suites were not run. [Validation record](docs/RELEASE-0981.md) |
 | V3 | Reserved for the complete-playability milestone; the current plan builds on the existing engine |
 
 These details describe this development branch. Another branch, including `main`, can contain an older release. Check `package.json` and your checked-out branch when comparing previews.
@@ -34,6 +34,8 @@ npm run test:e2e
 `check` runs tests, TypeScript checks and the production build. Browser tests run separately against the production preview. Optional `npm run measure:engine`, `npm run measure:browser` `npm run measure:renders` (React render attribution on a profiling build) and `npm run measure:war` (paired war-balance scenarios) write local performance reports; run browser measurements separately from other builds/tests. See [measurement method](docs/PERFORMANCE-0906.md).
 
 ## Recent changelog
+
+- **0.98.1:** institution save validation, shared AI/player proposal costs and member benefits, authoritative outreach previews, and atomic checkpoint put/prune. [Release record](docs/RELEASE-0981.md). Schema 17 retained.
 
 - **0.98.0:** readable wizard quotes, remaining specified Light credit/inbox/Help/energy/world cards, single foreign-influence navigation, uppercase Dossier tabs and centered, localized cultural identity cards. [Release record](docs/RELEASE-098.md). Schema 17 and simulation unchanged.
 
@@ -222,6 +224,7 @@ Delivered milestones are retained here when new releases are added. This table s
 
 | Milestone | Delivered foundation | Record |
 |---|---|---|
+| 0.98.1 — Phase 8 Foundation | Slice 8.0: institution save safety, actor parity, engine outreach preview and atomic checkpoint transactions | [Playtest 0.98.1](docs/PLAYTEST-0981.md) |
 | 0.98 — Readable Light Subpanels & Menu Cleanup | Phase 7 Sprint 8: quote sizing, remaining Light panels, duplicate navigation removal, institution and cultural identity clarity | [Playtest 0.98](docs/PLAYTEST-098.md) |
 | 0.97 — Semantic Light Panels & Policies | Phase 7 Sprint 7: portrait layout, day badge, viewport atmosphere, Light subpanels and policy action/relief card | [Playtest 0.97](docs/PLAYTEST-097.md) |
 | 0.96 — Master UI/UX & HUD Symmetry | Phase 7 Sprint 6: wizard layout, Light surfaces, supplier cards, assessment actions and 72 px rails | [Playtest 0.96](docs/PLAYTEST-096.md) |

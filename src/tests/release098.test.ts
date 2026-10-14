@@ -11,8 +11,8 @@ import {UI_CATALOG_098} from '../i18n/uiCatalog098';
 import {formatCulturalIdentity} from '../presentation/culturalIdentityLabel';
 
 describe('0.98 release contract',()=>{
- it('publishes 0.98.0 on frozen schema 17',()=>{
-  expect(version).toBe('0.98.0');expect(makeInitialState().schemaVersion).toBe(17);
+ it('publishes 0.98.1 on frozen schema 17',()=>{
+  expect(version).toBe('0.98.1');expect(makeInitialState().schemaVersion).toBe(17);
  });
  it('replays seeded operations and ticks identically through schema 17 save loading',()=>{
   let a=makeInitialState();a.eventCooldownUntil=10000;a.advisorCooldownUntil=10000;

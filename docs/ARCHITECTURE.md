@@ -30,4 +30,11 @@ Reviewed actions carry a UI confirmation ID into the typed command boundary. Onl
 
 Research costs are paid at project start; daily work and effects are engine-owned. Existing discoveries survive migration. Autosave success is recorded only after IndexedDB completes; failed writes remain retryable. Campaign IDs are UI persistence metadata, not simulation randomness.
 
-Save validation currently checks critical campaign/country/research fields and finite values, but not every nested legacy subsystem. The simulation worker, full event journal and deeper schema validation remain future work.
+Save validation checks critical campaign/country/research fields and finite values. Slice 8.0 also validates institution memberships, ballots, missions, religious shares and council state, including country references; not every nested legacy subsystem is covered. The simulation worker, full event journal and deeper schema validation remain future work.
+
+
+## 0.98.1 organization foundation boundaries
+
+World membership and attack-proposal commands share `validateWorldProposal` / `executeWorldProposal` with the actor explicitly supplied by the AI path and defaulting to the player in the UI command path. Proposal costs and daily institutional benefits do not depend on which actor is human. `previewOutreach` owns eligibility, cost and probability for both execution and UI review.
+
+Autosave checkpoint writes and owner-scoped stale pruning run in one Dexie readwrite transaction. A prune failure aborts the checkpoint write as well. The per-instance autosave coordinator still orders snapshots, but atomic pruning does not establish a cross-tab single-writer policy for the same campaign.

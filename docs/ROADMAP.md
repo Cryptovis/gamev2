@@ -1,5 +1,10 @@
 # Rule of Nations roadmap (formerly AlpyX) after 0.31
 
+## 0.98.1 — Phase 8 Slice 8.0 Foundation
+
+Delivered on `dev/ron-phase7`: Astra H1–H4 fixes for institution save validation, AI/player proposal costs and daily benefits, shared outreach preview, and atomic autosave put/prune. [Release](RELEASE-0981.md) · [Playtest](PLAYTEST-0981.md). Schema 17 retained; 962 tests, TypeScript and production build passed. Targeted browser checks were blocked at Chrome launch. Schema 18 and Global Organizations remain planned; audit H5–H8 and full browser profiling remain open. V3 remains the complete-playability milestone.
+
+
 ## 0.98.0 — Phase 7 Sprint 8
 
 Delivered on `dev/ron-phase7`: readable wizard quote, remaining specified Light subpanels, single foreign-influence navigation, uppercase Dossier tabs, separated institution icons/abbreviations and localized cultural titles. [Release](RELEASE-098.md) · [Playtest](PLAYTEST-098.md). Schema 17, deterministic RNG and engine formulas unchanged. V3 remains the complete-playability milestone; existing profiling/bundle work remains pending.
