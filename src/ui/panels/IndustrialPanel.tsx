@@ -21,7 +21,7 @@ export function IndustrialPanel({country}:{country:CountryState}){
   const intent=navigation?.intent;
   if(intent?.kind!=='factory'||country.id!==state.playerCountryId)return;
   const card=root.current?.querySelector<HTMLElement>(`[data-factory="${intent.focusedFactory}"]`);
-  card?.scrollIntoView({block:'nearest'});card?.focus({preventScroll:true});
+  card?.scrollIntoView({block:'nearest'});(card?.querySelector<HTMLButtonElement>('footer button:not(:disabled)')??card)?.focus({preventScroll:true});
  },[navigation,country.id,state.playerCountryId]);
  if(!n)return null;
  return <section ref={root} className="industrial-command">

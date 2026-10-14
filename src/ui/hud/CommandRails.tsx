@@ -1,3 +1,4 @@
+import {FuelHelper} from '../panels/FuelHelper';
 import {ExecutiveWorkspaceShell} from '../windows/ExecutiveWorkspaceShell';
 import {MarketWindow} from '../panels/MarketWindow';
 import {WorldRankingsWindow} from '../panels/WorldRankingsWindow';
@@ -37,7 +38,7 @@ function RailButton({active,badge,label,children,onClick}:{active:boolean;badge?
 }
 
 export function CommandRails(){
- const state=useWorldView();
+ const state=useWorldView(),navigation=useGameStore(s=>s.navigation);
  const open=new Set(state.activeTool?[state.activeTool]:[]);
  const mounted=new Set([...state.workspaceTrail.map(f=>f.activeTool).filter(Boolean),...open]);
  const player=state.countries[state.playerCountryId];
@@ -78,7 +79,7 @@ export function CommandRails(){
   {mounted.has('governance')&&<GovernanceWindow/>}
   </Suspense>
   {mounted.has('society')&&<DomesticWindow/>}
-  {(['market','exchange','credit'] as const).some(id=>mounted.has(id))&&<MarketWindow/>}{mounted.has('help')&&<HelpPanel/>}
+  {(['market','exchange','credit'] as const).some(id=>mounted.has(id))&&<MarketWindow/>}{mounted.has('help')&&![navigation,...state.workspaceTrail.map(f=>f.navigation)].some(n=>n?.intent?.kind==='fuel-help')&&<HelpPanel/>}{(()=>{const intent=[navigation,...[...state.workspaceTrail].reverse().map(f=>f.navigation)].find(n=>n?.intent?.kind==='fuel-help')?.intent;return intent?.kind==='fuel-help'?<FuelHelper targetCountryId={intent.targetCountryId} active={state.activeTool==='help'&&navigation?.intent?.kind==='fuel-help'}/>:null;})()}
   {open.has('map')&&<div className="left-command-dock map-command-dock"><header className="map-dock-header"><strong><LocaleText value="MAP COMMAND"/></strong><button className="map-close" data-guide="close-workspace" onClick={state.closeWorkspace} aria-label={translateLive("Close map command")}><LocaleText value={"×"}/></button></header><div className="map-dock-body"><GuideBriefing/><MapModeBar/></div></div>}
   {mounted.has('resources')&&<ResourceCommandWindow onClose={()=>close('resources')}/>}
 

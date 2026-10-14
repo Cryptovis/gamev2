@@ -58,3 +58,5 @@ import "./ui/styles/appearancePhase7.css";
 import "./ui/styles/executivePhase7.css";
 
 import "./ui/styles/assessmentPhase7.css";
+
+import "./ui/styles/sprint3Phase7.css";

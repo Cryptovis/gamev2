@@ -15,7 +15,7 @@ export function OperationalAssessmentModal({countryId,active}:{countryId:string;
  if(!view||!target||!player)return null;
  return <><ExecutiveWorkspaceShell id="operational-assessment-window" title="Operational Assessment" kicker="NATIONAL SECURITY COUNCIL" active={active} onClose={state.closeWorkspace}>
   <WarPlanningBrief view={view} country={target} player={player} avatarId={state.playerProfile.avatarId} day={state.day} language={state.playerProfile.language}
-   onOpenWar={()=>{if(view.activeWarId)state.openWarWindow(view.activeWarId);}}
+   onFuelHelp={()=>state.routeWorkspace({kind:'fuel-help',targetCountryId:countryId})} onOpenWar={()=>{if(view.activeWarId)state.openWarWindow(view.activeWarId);}}
    onDeclare={()=>{const spec=strategicDecisionSpec(useGameStore.getState(),'declare_war',countryId);if(spec)setPending(spec);}}/>
  </ExecutiveWorkspaceShell>
  {pending&&active&&<StrategicDecisionModal spec={pending} onCancel={()=>setPending(null)} onConfirm={()=>{useGameStore.getState().declareWar(countryId);setPending(null);}}/>}</>;

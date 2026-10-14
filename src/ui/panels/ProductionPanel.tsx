@@ -1,3 +1,4 @@
+import {fuelGuidance} from '../../engine/systems/fuelGuidance';
 import {useWorldView} from '../../store/useWorldView';
 import {EnergyPanel} from './EnergyPanel';
 import {LocaleText} from '../../i18n/localeText';
@@ -29,7 +30,9 @@ export function ProductionPanel({country}:{country:CountryState}){
  const reserveScore=strategicReserveScore(state,country.id);
  const bottleneck=production.bottleneck==='none'?'CLEAR':production.bottleneck.toUpperCase();
 
+ const fuel=isPlayer?fuelGuidance(state):null;
  return <div className="production-panel">
+  {fuel&&(fuel.low||fuel.declining||fuel.oilDeclining)&&<aside className="production-fuel-guidance"><strong><LocaleText value={fuel.low?'Refined fuel reserves low':fuel.declining?'Refined fuel consumption exceeds production':'Crude oil consumption exceeds production'}/></strong><button onClick={()=>state.routeWorkspace({kind:'fuel-help',targetCountryId:state.playerCountryId})}><LocaleText value="How to get Fuel?"/></button></aside>}
   <EnergyPanel country={country}/>
   <IndustrialPanel country={country}/>
   <section className="production-hero">

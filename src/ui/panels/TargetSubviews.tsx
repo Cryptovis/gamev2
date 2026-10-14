@@ -13,7 +13,7 @@ const AIR_LABEL={superiority:'Air superiority',contested:'Air contested',inferio
 const FORCE_LABEL:Record<ForceKey,string>={personnel:'Personnel',tanks:'Tanks',artillery:'Artillery',fighters:'Fighters',bombers:'Bombers',warships:'Warships'};
 type PublicCountry=Pick<CountryState,'id'|'name'|'iso2'>;
 
-export function WarPlanningBrief({view,country,player,avatarId,day,language,onDeclare,onOpenWar}:{view:WarPlanningView;country:PublicCountry;player:PublicCountry;avatarId:string;day:number;language:string;onDeclare:()=>void;onOpenWar:()=>void}){
+export function WarPlanningBrief({view,country,player,avatarId,day,language,onDeclare,onOpenWar,onFuelHelp}:{view:WarPlanningView;country:PublicCountry;player:PublicCountry;avatarId:string;day:number;language:string;onDeclare:()=>void;onOpenWar:()=>void;onFuelHelp:()=>void}){
  const ratioLabel=view.outlook==='unknown'?'Unknown':view.outlook==='favourable'?'At least 1.25×':view.outlook==='balanced'?'0.8–1.25×':'Below 0.8×';
  const wing=(own:boolean)=><section className={`force-wing ${own?'own-wing':'opposing-wing'}`} aria-label={formatText(language,own?'Own forces':'Opposing forces',[])}>
   <header><span className="force-flag" aria-hidden="true">{flagEmoji((own?player:country).iso2)}</span><div className="force-portrait">{own?<AvatarPortrait id={avatarId} size={72}/>:<CommandArt kind="military" size={72}/>}</div>
@@ -23,7 +23,7 @@ export function WarPlanningBrief({view,country,player,avatarId,day,language,onDe
   {!own&&<footer><strong><LocaleText value={view.confidence==='unknown'?'Unknown intelligence':view.confidence==='limited'?'Limited intelligence':'Established intelligence'}/></strong><small>{view.lastReconDay===null?<LocaleText value="Reconnaissance age unknown"/>:formatText(language,'Last reconnaissance: {0} days ago',[String(Math.max(0,day-view.lastReconDay))])}</small></footer>}
  </section>;
  return <div className="war-plan operational-assessment" data-country={country.id} data-outlook={view.outlook}>
-  <div className="versus-board">{wing(true)}<section className="assessment-theatre">
+  {view.block==='fuel'&&<button data-guide="fuel-help" onClick={onFuelHelp}><LocaleText value="How to get Fuel?"/></button>}<div className="versus-board">{wing(true)}<section className="assessment-theatre">
    <div className="assessment-terrain"><img src={`/assets/terrain/${view.terrain}.svg`} alt=""/><span><LocaleText value={view.terrain.replaceAll('_',' ')}/>{' · '}<LocaleText value="Theatre"/></span></div>
    <div className="war-ratio" role="img" aria-label={formatText(language,ratioLabel,[])}>
     <div className="war-ratio-head"><span><LocaleText value="Estimated power ratio"/></span><b><LocaleText value={ratioLabel}/></b></div>

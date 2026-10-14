@@ -209,7 +209,7 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
     const state=get();
     const valid=(destination:WorkspaceIntent)=>{const id=intentCountry(destination);return !id||!!state.countries[id]&&!state.countries[id].annexedBy;};
     if(!valid(intent)||(intent.returnTo&&!valid(intent.returnTo)))return false;
-    if((intent.kind==='operational-assessment'||intent.kind==='fuel-help')&&intent.targetCountryId===state.playerCountryId)return false;
+    if(intent.kind==='operational-assessment'&&intent.targetCountryId===state.playerCountryId)return false;
     set(s=>{
       const nonce=(s.navigation?.nonce??0)+1;
       const next=intentFrame(intent,s.playerCountryId,nonce);
