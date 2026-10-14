@@ -1,3 +1,4 @@
+import {CulturalIdentityCards} from './CulturalIdentityCards';
 import {useState} from 'react';
 import {LocaleText,formatText} from '../../i18n/localeText';
 import {compactMoney} from '../formatMoney';
@@ -47,7 +48,7 @@ export function WarPlanningBrief({view,country,player,avatarId,day,language,onDe
 
 type DossierTab='overview'|'society'|'economy'|'military';
 const DOSSIER_TABS:{id:DossierTab;label:string}[]=[{id:'overview',label:'Overview'},{id:'society',label:'Society'},{id:'economy',label:'Economy'},{id:'military',label:'Military'}];
-export function DossierSubview({view,language,onOpenFullPanel}:{view:DossierView;country:CountryState;language:string;onOpenFullPanel:()=>void}){
+export function DossierSubview({view,country,language,onOpenFullPanel}:{view:DossierView;country:CountryState;language:string;onOpenFullPanel:()=>void}){
  const [tab,setTab]=useState<DossierTab>('overview');
  const fmt=(n:number,d=0)=>new Intl.NumberFormat(language,{maximumFractionDigits:d,minimumFractionDigits:d}).format(n);
  const row=(label:string,value:string)=><div key={label}><dt><LocaleText value={label}/></dt><dd><LocaleText value={value}/></dd></div>;
@@ -60,7 +61,7 @@ export function DossierSubview({view,language,onOpenFullPanel}:{view:DossierView
    {DOSSIER_TABS.map(t=><button key={t.id} id={`country-info-${t.id}`} role="tab" aria-controls="country-info-body" aria-selected={tab===t.id} data-dossier-tab={t.id} onClick={()=>setTab(t.id)}><LocaleText value={t.label}/></button>)}
   </div>
   <div id="country-info-body" className="dossier-body" role="tabpanel" aria-labelledby={`country-info-${tab}`}>
-   {tab==='overview'&&<dl>{row('Government',view.regime.replaceAll('_',' '))}{row('Population',fmt(view.population))}{row('Approval',`${fmt(view.approval)}%`)}{row('Stability',`${fmt(view.stability)}%`)}{row('Reputation',fmt(view.reputation))}{row('Treasury',compactMoney(view.treasuryB,language))}</dl>}
+   {tab==='overview'&&<><CulturalIdentityCards country={country}/><dl>{row('Government',view.regime.replaceAll('_',' '))}{row('Population',fmt(view.population))}{row('Approval',`${fmt(view.approval)}%`)}{row('Stability',`${fmt(view.stability)}%`)}{row('Reputation',fmt(view.reputation))}{row('Treasury',compactMoney(view.treasuryB,language))}</dl></>}
    {tab==='society'&&<dl>{row('Population',fmt(view.population))}{row('RELIGION',view.religion.replaceAll('_',' '))}{row('IDEOLOGY',view.ideology.replaceAll('_',' '))}{row('REGION',view.region)}{row('Approval',`${fmt(view.approval)}%`)}{row('Stability',`${fmt(view.stability)}%`)}</dl>}
    {tab==='economy'&&<dl>{row('GDP',compactMoney(view.gdpB,language))}{row('Treasury',compactMoney(view.treasuryB,language))}{row('Debt',compactMoney(view.debtB,language))}{row('Inflation',`${fmt(view.inflation,1)}%`)}{row('Unemployment',`${fmt(view.unemployment,1)}%`)}{row('Tax rate',`${fmt(view.taxRate,1)}%`)}</dl>}
    {tab==='military'&&<dl>{FORCE_KEYS.map(key=>row(FORCE_LABEL[key],estimateText(view.militaryForces[key],language)))}{row('Readiness',estimateText(view.readiness,language)+(view.readiness!==null?'%':''))}</dl>}

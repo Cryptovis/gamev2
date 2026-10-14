@@ -1,3 +1,4 @@
+import {displayCountry} from '../../presentation/countryIdentity';
 import {BRAND_NAME} from '../BrandMark';
 import {arrears} from '../../engine/systems/sovereignCredit';
 import {CommandArt} from '../icons/CommandArt';
@@ -44,7 +45,7 @@ export function TopBar(){
  const setSpeed=useGameStore(s=>s.setSpeed);
  const selectedCountryId=useGameStore(s=>s.selectedCountryId);
  const playerCountryId=useGameStore(s=>s.playerCountryId);
- const player=useGameStore(s=>s.countries[s.playerCountryId]);
+ const player=displayCountry(useGameStore(s=>s.countries[s.playerCountryId]));
  const profile=useGameStore(s=>s.playerProfile);
  const production=useGameStore(s=>s.production[playerCountryId]);
  const industrial=useGameStore(s=>s.industrialEconomy[playerCountryId]);

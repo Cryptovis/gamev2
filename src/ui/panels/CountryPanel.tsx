@@ -1,3 +1,4 @@
+import {displayCountry} from '../../presentation/countryIdentity';
 import {WorkspaceActivityContext} from '../windows/workspaceActivity';
 import type {WorkspaceNavigation} from '../../store/workspaceNavigation';
 import {useScrollMemory} from '../windows/useScrollMemory';
@@ -72,11 +73,11 @@ export function CountryPanel({onBrowse,suspended=false,countryId,navigationFrame
   const seenNavigation=useRef(new WeakSet<object>());
   useEffect(()=>{if(suspended||!state.selectedCountryId||!navigation||seenNavigation.current.has(navigation))return;seenNavigation.current.add(navigation);if(['overview','economy','policies','trade','production','diplomacy','military','intel','cabinet','technology','world','war'].includes(navigation.panel))chooseTab(navigation.panel as PanelTab);},[navigation,suspended,state.selectedCountryId]);
   const language=state.playerProfile.language;
-  const selected=state.countries[countryId ?? state.selectedCountryId ?? [...state.workspaceTrail].reverse().find(f=>f.selectedCountryId)?.selectedCountryId ?? state.playerCountryId];
+  const selected=displayCountry(state.countries[countryId ?? state.selectedCountryId ?? [...state.workspaceTrail].reverse().find(f=>f.selectedCountryId)?.selectedCountryId ?? state.playerCountryId]);
   const player=state.countries[state.playerCountryId];
   const isPlayer=selected.id===state.playerCountryId;
   const resourceFlow=calculateDailyResourceFlow(selected); const economy=calculateEconomyForecast(selected); const relation=player.diplomacy.relations[selected.id];
-  const countryList=useMemo(()=>activeCountries(state.countries).sort((a,b)=>a.name.localeCompare(b.name)),[state.countries]);
+  const countryList=useMemo(()=>activeCountries(state.countries).map(displayCountry).sort((a,b)=>a.name.localeCompare(b.name)),[state.countries]);
   const activeWar=useMemo(()=>Object.values(state.wars).find((war)=>war.status==='active'&&(war.attackerId===selected.id||war.defenderId===selected.id)&&(war.attackerId===player.id||war.defenderId===player.id)),[player.id,selected.id,state.wars]);
   // The player may be the defender of an AI war: "our" and "enemy" figures follow the player's side.
   const front=activeWar?(()=>{const defending=activeWar.defenderId===player.id;return {defending,ourSupply:defending?activeWar.defenderSupply:activeWar.attackerSupply,enemySupply:defending?activeWar.attackerSupply:activeWar.defenderSupply,ourExhaustion:defending?activeWar.defenderExhaustion:activeWar.attackerExhaustion,enemyExhaustion:defending?activeWar.attackerExhaustion:activeWar.defenderExhaustion,ourLosses:defending?activeWar.defenderLosses:activeWar.attackerLosses,enemyLosses:defending?activeWar.attackerLosses:activeWar.defenderLosses};})():null;

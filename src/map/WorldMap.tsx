@@ -1,3 +1,4 @@
+import {displayCountries} from '../presentation/countryIdentity';
 import {dominantResources} from './resourceBadges';
 import {ResourceMapBadge} from '../ui/icons/ResourceMapBadge';
 import {sovereignId} from '../domain/sovereignty';
@@ -81,7 +82,7 @@ function WorldMapView() {
   const pendingMoveRef = useRef<{ dx: number; dy: number } | null>(null);
 
   const embassies=useGameStore(s=>s.embassies),tradeDeals=useGameStore(s=>s.tradeDeals),contracts=useGameStore(s=>s.industrialContracts);
-  const countries = useGameStore((s) => s.countries);
+  const countries = displayCountries(useGameStore((s) => s.countries));
   const wars = useGameStore((s) => s.wars);
   const openWarWindow = useGameStore((s) => s.openWarWindow);
   const industrialEconomy = useGameStore(s=>s.industrialEconomy);
