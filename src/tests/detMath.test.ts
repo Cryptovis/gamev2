@@ -1,7 +1,7 @@
 import {describe, expect, it} from 'vitest';
 import * as det from '../engine/detMath';
 import {detMathCorpusHash} from './crossEngineProbe';
-import {UNARY_NAMES, powInputs, ulpDistance, unaryInputs, type UnaryName} from './detMathCorpus';
+import {UNARY_NAMES, bitsOf, powInputs, ulpDistance, unaryInputs, type UnaryName} from './detMathCorpus';
 
 /**
  * detMath is its own reference. A pure-JavaScript fdlibm 5.3 port returns the same bits in every engine, so the contract
@@ -9,12 +9,20 @@ import {UNARY_NAMES, powInputs, ulpDistance, unaryInputs, type UnaryName} from '
  * e2e/crossEngineDeterminism.spec.ts). Native Math.* is only a sanity bound: a platform may round a native function
  * differently in the last bit, which is exactly why the engine no longer uses them.
  */
-const GOLDEN_CORPUS_HASH = 'e0c61d5eaa86c6aa937e997fb23f9466bf35698f9a5e5002723f11b9b59ecce1';
+const GOLDEN_CORPUS_HASH = '5ad32c4fb2f0950011f9e837bf8e8b2b6ccd3dec97de21d73fd02e282f934ce3';
 const same = (a: number, b: number) => Object.is(a, b) || (Number.isNaN(a) && Number.isNaN(b));
 
 describe('detMath golden pin', () => {
   it('returns exactly the committed bits over the seeded corpus (change only with the corpus or the algorithm)', async () => {
     expect(await detMathCorpusHash()).toBe(GOLDEN_CORPUS_HASH);
+  });
+});
+
+describe('bitsOf', () => {
+  it('maps every NaN to one pattern, so x86 and ARM64 hash alike', () => {
+    expect(bitsOf(Infinity - Infinity)).toBe(bitsOf(NaN));
+    expect(bitsOf(Math.asin(2))).toBe('7ff8000000000000');
+    expect(bitsOf(-0)).toBe('8000000000000000');
   });
 });
 

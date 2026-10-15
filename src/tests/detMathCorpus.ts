@@ -5,7 +5,8 @@ export const UNARY_NAMES = ['exp', 'log', 'log10', 'sin', 'cos', 'asin'] as cons
 export type UnaryName = (typeof UNARY_NAMES)[number];
 
 const view = new DataView(new ArrayBuffer(8));
-export const bitsOf = (x: number): string => { view.setFloat64(0, x); return view.getUint32(0).toString(16).padStart(8, '0') + view.getUint32(4).toString(16).padStart(8, '0'); };
+/** Hex bits of a double. Every NaN maps to one canonical pattern: x86 and ARM64 differ in the sign/payload bits arithmetic leaves on a NaN. */
+export const bitsOf = (x: number): string => { if (Number.isNaN(x)) return '7ff8000000000000'; view.setFloat64(0, x); return view.getUint32(0).toString(16).padStart(8, '0') + view.getUint32(4).toString(16).padStart(8, '0'); };
 /** Distance in units in the last place between two finite doubles; Infinity if either is not finite. */
 export function ulpDistance(a: number, b: number): number {
   if (Object.is(a, b)) return 0;
