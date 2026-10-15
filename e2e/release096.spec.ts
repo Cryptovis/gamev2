@@ -57,7 +57,7 @@ for(const width of [1440,390])test(`0.96 ${width}px national cards, supplier gri
  await resumeFixture(page,state);
  await expect(page.locator('.clock-speed-card')).toHaveCSS('background-color','rgba(0, 0, 0, 0)');
  for(const button of await page.locator('.command-rail .rail-button').all()){
-  expect((await button.boundingBox())!.width).toBe(72);
+  expect((await button.boundingBox())!.width).toBe(84);
   await expect(button.locator('small')).toHaveCSS('font-size','10px');
   expect(await button.locator('small').evaluate(el=>el.scrollWidth<=el.clientWidth)).toBe(true);
  }
