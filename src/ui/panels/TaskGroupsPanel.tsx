@@ -4,8 +4,6 @@ import { LocaleText, translateLive } from '../../i18n/localeText';
 import { useWorldView } from '../../store/useWorldView';
 import { taskGroupPreview, taskGroupSummary } from '../../engine/systems/taskGroups';
 import '../styles/taskGroups.css';
-import { TacticalHint } from '../hints/TacticalHint';
-import { WAR_TASK_GROUPS_HINT } from '../hints/registry';
 
 const MISSION_LABEL: Record<TaskMission, string> = {
   airSuperiority: 'Air superiority', closeAirSupport: 'Close air support', interdiction: 'Interdiction',
@@ -39,7 +37,6 @@ export function TaskGroupsPanel({ warId }: { warId: string }) {
     <section className="task-groups" aria-label={translateLive('Task groups')}>
       <header>
         <h3><LocaleText value="Task groups" /></h3>
-        <TacticalHint spec={WAR_TASK_GROUPS_HINT} />
       </header>
       <dl className="task-groups-effects">
         <div><dt><LocaleText value="Air superiority" /></dt><dd>{summary.airSuperiority >= 0 ? '+' : ''}{summary.airSuperiority.toFixed(0)}</dd></div>

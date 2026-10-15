@@ -9,8 +9,8 @@
 }
 .tactical-hint-beacon.tactical-hint-beacon>span{
   display:grid;place-items:center;width:16px;height:16px;border-radius:50%;
-  border:1.5px solid currentColor;background:var(--accent-surface,#254a70);
-  font-size:11px;font-weight:700;line-height:1;pointer-events:none;
+  border:1.5px solid #f3cd7e;background:#1c3a5a;color:#fff!important;box-shadow:0 0 0 1px rgba(243,205,126,.35);
+  font-size:11px;font-weight:800;line-height:1;pointer-events:none;
 }
 .tactical-hint-beacon.tactical-hint-beacon:focus-visible{outline:2px solid var(--focus,#89c6ff);outline-offset:1px}
 
@@ -68,6 +68,3 @@
 .tactical-hint-options .tactical-hint-toggle input{width:16px;height:16px;margin:0}
 .tactical-hint-options .change-portrait-button{justify-self:start}
 .tactical-hint-options .tactical-hint-confirmation{min-height:1.4em}
-
-/* Inline anchor for panels with no window header of their own (diplomacy section). */
-.hint-anchor-row{display:flex;justify-content:flex-end}

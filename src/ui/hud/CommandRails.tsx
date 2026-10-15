@@ -30,8 +30,10 @@ import { BlocIcon, CouncilIcon, DiplomacyIcon, EmbassyIcon, IntelligenceIcon, Re
 import { DraggableWindow } from '../windows/DraggableWindow';
 import { MapModeBar } from './MapModeBar';
 import {ResourceCommandWindow} from '../panels/ResourceCommandWindow';
+import {AllianceCrestIcon} from '../icons/PlaytestIcons';
+import {InternationalAffairsWorkspace} from '../panels/InternationalAffairsWorkspace';
 
-type ToolId='objectives'|'market'|'pulse'|'map'|'resources'|'sitrep'|'alerts'|'diplomacy'|'desk';
+type ToolId='objectives'|'market'|'pulse'|'map'|'resources'|'sitrep'|'alerts'|'diplomacy'|'desk'|'alliances';
 
 function RailButton({active,badge,label,children,onClick}:{active:boolean;badge?:number|string;label:string;children:ReactNode;onClick:()=>void}){
  return <button data-guide={'rail-'+(label==='DIPLOMACY'?'diplo':label.toLowerCase())} className={active?'rail-button active':'rail-button'} onClick={onClick} aria-pressed={active} title={translateLive(`${label} · ${active?'Open — click to close':'Closed — click to open'}`)}><span><LocaleText value={children}/></span>{badge!==undefined&&badge!==0&&<b><LocaleText value={badge}/></b>}<small><LocaleText value={label}/></small></button>;
@@ -56,7 +58,7 @@ export function CommandRails(){
  return <Suspense fallback={<div className="loading-popup"><LocaleText value="Loading command…"/></div>}>
   <nav className="command-rail command-rail-left" aria-label={translateLive("World command tools")}>
    <RailButton active={['market','exchange','credit'].some(id=>open.has(id))} badge={activeTrades.length} label="MARKET" onClick={()=>toggle('market')}><NavigationArt kind="market"/></RailButton>
-   <button className={navigation?.panel==='world'?'rail-button active':'rail-button'} data-guide="rail-international-affairs" aria-label={translateLive('International Affairs')} title={translateLive('International Affairs')} aria-pressed={navigation?.panel==='world'} onClick={()=>navigation?.panel==='world'?state.closeWorkspace():state.navigate('world',player.id)}><span><NavigationArt kind="world"/></span><small><LocaleText value="International Affairs"/></small></button>
+   <RailButton active={open.has('alliances')} label="ALLIANCES" onClick={()=>toggle('alliances')}><AllianceCrestIcon/></RailButton>
    <RailButton active={open.has('pulse')} badge={activeWars.length} label="WORLD" onClick={()=>toggle('pulse')}><NavigationArt kind="world"/></RailButton>
    <RailButton active={open.has('resources')} badge={critical.length} label="SUPPLY" onClick={()=>toggle('resources')}><NavigationArt kind="alerts"/></RailButton>
   </nav>
@@ -88,6 +90,7 @@ export function CommandRails(){
    <CampaignVictoryProgress/>
   </DraggableWindow>}
 
+  {mounted.has('alliances')&&<ExecutiveWorkspaceShell id="alliances-window" kicker="WORLD COMMAND" title={translateLive("Alliances")} onClose={()=>close('alliances')}><InternationalAffairsWorkspace/></ExecutiveWorkspaceShell>}
   {mounted.has('pulse')&&<WorldRankingsWindow/>}
   {mounted.has('desk')&&<ExecutiveDesk onClose={()=>close('desk')}/>}
 

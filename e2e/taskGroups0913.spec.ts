@@ -16,7 +16,7 @@ for(const [language,width] of [['tr',1440],['en',390]] as const)test(`${language
  const panel=page.locator('.task-groups');
  await expect(panel).toHaveCount(1);
  await expect(panel.locator('h3')).toHaveText(language==='tr'?'Görev grupları':'Task groups');
- await panel.locator('.tactical-hint-beacon').click();
+ await page.locator('.war-theatre header .tactical-hint-beacon').click();
  await expect(page.locator('.tactical-hint-popover')).toContainText(language==='tr'?'Düşman atamaları görünmez':'Enemy assignments are not visible');
  await page.keyboard.press('Escape');
  const cas=panel.locator('.task-groups-rows > li').nth(1);

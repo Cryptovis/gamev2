@@ -1,0 +1,52 @@
+/* Playtest 1.1 polish. Loaded last; :root-prefixed so it wins over the older layered sheets. */
+
+/* Rails: no backdrop stripes, so the map runs edge to edge. */
+:root .command-rail:not(.map-help-cluster){background:transparent!important;border:0!important;box-shadow:none!important;backdrop-filter:none!important;padding:0!important}
+:root .command-rail::before,:root .command-rail::after{content:none!important;display:none!important}
+.command-rail .rail-button[data-guide="rail-alliances"] .alliance-crest-icon{display:block;margin:0 auto;color:#f3cd7e}
+.command-rail .rail-button[data-guide="rail-alliances"]>span{display:grid;place-items:center}
+
+/* Map HUD: zoom cluster 16px from the bottom (centered in the free map area), MAP/HELP 16px from the bottom-right corner. */
+@media(min-width:761px){
+  :root .map-camera-hud{bottom:16px!important}
+  :root .command-rail.map-help-cluster{right:16px!important;bottom:16px!important}
+}
+
+/* Light theme: cream surfaces with gold accents, matching the top HUD. */
+:root[data-theme="light"] .map-camera-hud{background:var(--surface-raised)!important;border:1px solid #d4af37!important;box-shadow:0 3px 12px #142c4626!important;backdrop-filter:none!important}
+:root[data-theme="light"] .map-camera-hud button{background:var(--surface)!important;color:var(--ink)!important;border:1px solid var(--border)!important}
+:root[data-theme="light"] .map-camera-hud button:hover:not(:disabled){background:#f6e9c3!important;border-color:#d4af37!important}
+:root[data-theme="light"] .map-help-cluster .rail-button{background:var(--surface-raised)!important;color:var(--ink)!important;border:1px solid #d4af37!important}
+:root[data-theme="light"] .map-help-cluster .rail-button small{color:var(--ink)!important}
+:root[data-theme="light"] .map-help-cluster .rail-button.active{background:#f6e9c3!important;box-shadow:inset 0 -2px 0 #d4af37!important}
+:root[data-theme="light"] .command-rail .rail-button[data-guide="rail-alliances"] .alliance-crest-icon{color:#8a6a1c}
+
+/* Country panel bottom buttons: no stuck outline after mouse use; keyboard focus keeps its ring. */
+.command-panel .panel-tabs button:focus:not(:focus-visible){outline:none}
+.command-panel .panel-tabs button:not([aria-pressed="true"]){box-shadow:none}
+
+/* Light theme contrast */
+:root[data-theme="light"] .world-activity{background:var(--surface-raised)!important;border:1px solid var(--border)!important;color:var(--ink)!important}
+:root[data-theme="light"] .world-activity h3,:root[data-theme="light"] .world-activity-stats>span,:root[data-theme="light"] .world-activity-stats b{color:var(--ink)!important}
+:root[data-theme="light"] .processed-strip>span{background:var(--surface-raised)!important;border:1px solid var(--border)!important;color:var(--ink)!important}
+:root[data-theme="light"] .processed-strip :is(small,strong,b,span,svg){color:var(--ink)!important}
+:root[data-theme="light"] :is(.event-options button,.event-option,.restart-button){background:var(--surface-raised)!important;color:var(--ink)!important;border:1px solid var(--border)!important}
+:root[data-theme="light"] :is(.event-options button,.event-option):hover{border-color:#d4af37!important;background:#f6e9c3!important}
+:root[data-theme="light"] :is(.event-options button,.event-option) :is(strong,span,em,small,b){color:var(--ink)!important}
+:root[data-theme="light"] #market-window :is(button,[role="tab"],[role="button"]):is([aria-pressed="true"],[aria-selected="true"],.active,.selected){background:#fbf1d6!important;color:var(--ink)!important;border:2px solid #d4af37!important;font-weight:700;box-shadow:none!important}
+:root[data-theme="light"] #market-window :is(button,[role="tab"],[role="button"]):is([aria-pressed="true"],[aria-selected="true"],.active,.selected) :is(span,strong,small,b,em){color:var(--ink)!important;font-weight:700}
+:root[data-theme="light"] .development-section .investment-summary{background:var(--surface-raised)!important;border:1px solid #d4af37;color:var(--ink)}
+:root[data-theme="light"] .development-section .investment-summary :is(span,b){color:var(--ink)!important}
+:root[data-theme="light"] .campus-grid article{background:var(--surface-raised)!important;border:1px solid var(--border)!important;color:var(--ink)!important}
+:root[data-theme="light"] .campus-grid article :is(h3,p,small){color:var(--ink)!important}
+.campus-grid article>.campus-icon{align-self:flex-start;padding:8px;border:1px solid #d4af37;border-radius:10px;color:#f3cd7e;background:rgba(212,175,55,.1)}
+:root[data-theme="light"] .campus-grid article>.campus-icon{color:#8a6a1c;background:#fbf1d6}
+
+/* Sticky headers: long scrolling content never hides the title and the close button. */
+:root :is(.executive-header,.command-window-header,.command-panel>.national-panel-heading){position:sticky;top:0;z-index:10;backdrop-filter:blur(8px)}
+:root .command-panel>.national-panel-heading{background:var(--command-surface,rgba(21,43,54,.94))}
+:root[data-theme="light"] .command-panel>.national-panel-heading{background:var(--surface-raised)}
+
+/* News toast category badge */
+.sitrep-toast>.news-badge{display:grid;place-items:center;flex:0 0 auto;width:34px;height:34px;border-radius:50%;border:1.5px solid #d4af37;background:rgba(212,175,55,.14);color:#f3cd7e}
+:root[data-theme="light"] .sitrep-toast>.news-badge{color:#8a6a1c;background:#fbf1d6}

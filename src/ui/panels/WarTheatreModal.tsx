@@ -13,6 +13,9 @@ import { AssetThumbnail } from "../icons/AssetThumbnail";
 import {tacticalStartStatus} from '../../engine/systems/tactical';
 import {ErrorBoundary} from '../ErrorBoundary';
 import {TacticalBattlefield} from './TacticalBattlefield';
+import {TacticalHint} from '../hints/TacticalHint';
+import {WAR_TACTICAL_HINT,WAR_TASK_GROUPS_HINT} from '../hints/registry';
+import {taskGroupSummary} from '../../engine/systems/taskGroups';
 // Always mounted: watches the war list to open new player wars, and mounts the
 // full-state command body only while a war window is open.
 export function WarTheatreModal() {
@@ -70,6 +73,7 @@ function WarCommand() {
               <LocaleText value={d.name} />
             </h2>
           </span>
+          {(()=>{const hint=tacticalView&&w.tactical?WAR_TACTICAL_HINT:mine&&taskGroupSummary(s,w.id,s.playerCountryId)?WAR_TASK_GROUPS_HINT:null;return hint&&<TacticalHint spec={hint}/>;})()}
           <button
             autoFocus
             aria-label={translateLive("Close war command")}

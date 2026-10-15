@@ -63,9 +63,11 @@ describe('Grand launch workspace and accessible navigation',()=>{
   await act(async()=>document.activeElement!.dispatchEvent(new KeyboardEvent('keydown',{key:'End',bubbles:true})));expect(document.activeElement).toBe(button('Sanctions & enforcement',host));
   await act(async()=>document.activeElement!.dispatchEvent(new KeyboardEvent('keydown',{key:'Home',bubbles:true})));expect(document.activeElement).toBe(first);
  });
- it('opens the same CountryPanel world workspace from the command rail',async()=>{
-  await mount(ready(),CommandRails);const rail=host.querySelector<HTMLButtonElement>('[data-guide="rail-international-affairs"]')!;expect(rail.getAttribute('aria-label')).toBe('International Affairs');await click(rail);
-  expect(useGameStore.getState().navigation?.panel).toBe('world');expect(useGameStore.getState().selectedCountryId).toBe('USA');
+ it('the Alliances rail button toggles the hub as its own workspace',async()=>{
+  await mount(ready(),CommandRails);const rail=()=>host.querySelector<HTMLButtonElement>('[data-guide="rail-alliances"]')!;expect(rail().textContent).toContain('ALLIANCES');expect(rail().getAttribute('aria-pressed')).toBe('false');await click(rail());
+  expect(useGameStore.getState().activeTool).toBe('alliances');expect(useGameStore.getState().navigation).toBeNull();expect(useGameStore.getState().selectedCountryId).toBeNull();expect(rail().getAttribute('aria-pressed')).toBe('true');
+  expect(document.querySelector('#alliances-window .international-affairs')).not.toBeNull();
+  await click(rail());expect(useGameStore.getState().activeTool).toBeNull();expect(rail().getAttribute('aria-pressed')).toBe('false');
  });
  it('keeps Chair offices separate from membership tier',async()=>{
   const s=ready();s.world.organizations.byId.un.memberships.USA.offices=[{role:'Chair',bodyId:'securityCouncil',untilDay:30}];await mount(s);const un=host.querySelector('[data-organization="un"]')!;

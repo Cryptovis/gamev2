@@ -2,7 +2,8 @@ import {useEffect,useLayoutEffect,useRef,useState} from 'react';
 import {useGameStore} from '../../store/gameStore';
 import {useWorldView} from '../../store/useWorldView';
 import {commandAlerts} from '../../store/commandIntelligence';
-import {alertNewsChannel,enqueueToasts,newJournalToasts,type ToastEvent} from '../../presentation/newsChannels';
+import {NewsBadgeIcon} from '../icons/PlaytestIcons';
+import {alertNewsChannel,enqueueToasts,newJournalToasts,newsBadgeKind,type ToastEvent} from '../../presentation/newsChannels';
 import {LocaleText,translateLive} from '../../i18n/localeText';
 export function SitrepToasts(){
  const card=useRef<HTMLElement>(null);
@@ -33,6 +34,7 @@ export function SitrepToasts(){
  },[toast?.id]);
  if(!toast)return null;
  return <aside ref={card} className="sitrep-toast" role="status" aria-live="polite" data-toast-id={toast.id} onMouseEnter={()=>setHovered(true)} onMouseLeave={()=>setHovered(false)} onFocusCapture={()=>setFocused(true)} onBlurCapture={e=>{if(!e.currentTarget.contains(e.relatedTarget as Node))setFocused(false);}}>
+  {(()=>{const kind=newsBadgeKind(toast.message);return kind&&<span className="news-badge" aria-hidden="true"><NewsBadgeIcon kind={kind}/></span>;})()}
   <p><LocaleText value={toast.message}/>{toast.count>1&&<small> · +{toast.count-1}</small>}</p>
   <button onClick={()=>useGameStore.getState().routeWorkspace({kind:'news',filter:toast.channel==='economy'?'economy':toast.channel})}><LocaleText value="View in News"/></button>
   <button aria-label={translateLive('Dismiss alert')} onClick={()=>setQueue(q=>q.slice(1))}>×</button>

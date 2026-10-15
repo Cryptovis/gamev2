@@ -14,8 +14,6 @@ import { StrategicDecisionModal } from './StrategicDecisionModal';
 import { flagEmoji } from '../../data/countryThemes';
 import {useWorldView} from '../../store/useWorldView';
 import { BlocIcon, DiplomacyIcon, EmbassyIcon, ResourceIcon, WarIcon } from '../icons/GameIcons';
-import {TacticalHint} from '../hints/TacticalHint';
-import {DIPLOMACY_RULES_HINT} from '../hints/registry';
 
 const resources:TradeResource[]=['food','oil','iron','uranium'];
 const humanize=(value:string)=>value.replaceAll('_',' ').replace(/\b\w/g,(m)=>m.toUpperCase());
@@ -55,7 +53,6 @@ export function DiplomacyPanel({selectedId}:{selectedId:string}){
  };
 
  return <div className="diplomacy-v2">
-  <div className="hint-anchor-row"><TacticalHint spec={DIPLOMACY_RULES_HINT}/></div>
   <div className={`relation-hero stance-${relationLabel.toLowerCase().replaceAll(' ','-')}`}>
    <div className="relation-flags"><span><LocaleText value={flagEmoji(player.iso2)}/></span><i><LocaleText value={"↔"}/></i><span><LocaleText value={flagEmoji(selected.iso2)}/></span></div>
    <div className="relation-copy"><small><LocaleText value={"BILATERAL RELATIONSHIP INDEX"}/></small><strong><LocaleText value={relationScore}/><em><LocaleText value={"/100"}/></em></strong><span><LocaleText value={relationLabel}/></span></div>

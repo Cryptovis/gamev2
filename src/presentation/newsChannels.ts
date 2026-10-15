@@ -9,6 +9,13 @@ export function newsChannel(message:string):Exclude<NewsChannel,'all'>|null{
  if(['ECONOMY','ENERGY','INDUSTRY','CREDIT','TREASURY','PRODUCTION','DEVELOPMENT','INFRASTRUCTURE','INVESTMENT'].includes(prefix))return 'economy';
  return null;
 }
+/** Thematic badge for a toast: elections get their own, other events follow their news channel. */
+export function newsBadgeKind(message:string):'election'|'war'|'diplomacy'|'economy'|null{
+ const prefix=message.split(' // ')[0];
+ if(prefix==='ELECTION')return 'election';
+ const channel=newsChannel(message);
+ return channel==='wars'?'war':channel==='diplomacy'?'diplomacy':channel==='economy'||channel==='trade'?'economy':null;
+}
 /** Security alerts can be military or diplomatic; domestic alerts stay in the unfiltered archive. */
 export function alertNewsChannel(alert:{category:string;panel:string}):NewsChannel{
  if(alert.category==='diplomacy'||alert.panel==='diplomacy'||alert.panel==='diplomacy-inbox')return 'diplomacy';

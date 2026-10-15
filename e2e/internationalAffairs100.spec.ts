@@ -7,7 +7,7 @@ for(const width of [1440,390])for(const theme of ['light','dark'])test(`1.0 inte
  // createWorld leaves the player outside the UN so they can apply to join; proposing needs an active seat in the plenary (validateOrganizationCommand: 'proposalAccess').
  const un=state.world.organizations.byId.un;un.memberships.TUR={countryId:'TUR',tier:'Member',offices:[],status:'active',joinedDay:0,duesArrearsB:0};un.bodies.plenary.memberIds.push('TUR');
  const proposed=proposeResolution(state,'un','plenary',{kind:'sanctions',targetId:'GRC',measures:[{scope:'arms',intensity:1,enforcement:1}],exemptions:[{scope:'humanitarian',countryIds:[]}],durationDays:30});
- await resumeFixture(page,proposed);await page.locator('[data-guide="rail-international-affairs"]').click();
+ await resumeFixture(page,proposed);await page.locator('[data-guide="rail-alliances"]').click();
  const hub=page.locator('.international-affairs');await expect(hub.locator('.ia-organization-grid>.ia-card')).toHaveCount(14);
  const fits=async()=>expect(await hub.evaluate(el=>el.scrollWidth<=el.clientWidth+1)).toBe(true);await fits();
  for(const label of ['Resolutions & voting','Financial facilities','Commodities & swaps','Sanctions & enforcement','Overview & roster']){
@@ -23,13 +23,13 @@ for(const width of [1440,390])for(const theme of ['light','dark'])test(`1.0 inte
 // Regression (9.2b): the unseen hint beacon's pulse ring (scale 1.55) used to extend past the hub's right edge. Frozen at its largest keyframe so the check is deterministic.
 for(const width of [1440,390])test(`1.0 hint beacon pulse stays inside the hub ${width}px`,async({page})=>{
  await page.setViewportSize({width,height:900});
- await resumeFixture(page,campaignFixture('en'));await page.locator('[data-guide="rail-international-affairs"]').click();
+ await resumeFixture(page,campaignFixture('en'));await page.locator('[data-guide="rail-alliances"]').click();
  const hub=page.locator('.international-affairs'),beacon=hub.locator('.tactical-hint-beacon');
  await expect(beacon).toHaveAttribute('data-state','unseen');await expect(beacon).toHaveAttribute('data-motion','full');
  await page.addStyleTag({content:'.tactical-hint-beacon,.tactical-hint-beacon::after{animation:none !important}.tactical-hint-beacon[data-state="unseen"]::after{transform:scale(1.55) !important}'});
  expect(await hub.evaluate(el=>el.scrollWidth<=el.clientWidth+1)).toBe(true);
 });
 for(const [language,tab] of [['tr','Kararlar ve oylama'],['es','Resoluciones y votación'],['zh','决议与投票'],['ru','Резолюции и голосование']] as const)test(`1.0 ${language} localized hub`,async({page})=>{
- await resumeFixture(page,campaignFixture(language));await page.locator('[data-guide="rail-international-affairs"]').click();const hub=page.locator('.international-affairs');
+ await resumeFixture(page,campaignFixture(language));await page.locator('[data-guide="rail-alliances"]').click();const hub=page.locator('.international-affairs');
  await expect(hub.getByRole('tab')).toHaveCount(5);await hub.getByRole('tab',{name:tab,exact:true}).click();await expect(hub.locator('.ia-composer')).toBeVisible();
 });

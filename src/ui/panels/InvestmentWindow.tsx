@@ -10,6 +10,7 @@ import {
   campusPreview,pilotTrainingPreview,academySummary,
 } from "../../engine/systems/governance";
 import type { CampusKind } from "../../domain/governance";
+import { CampusIcon } from "../icons/PlaytestIcons";
 export function InvestmentWindow({embedded=false,section='investments'}:{embedded?:boolean;section?:'investments'|'pilots'}={}) {
   const s = useWorldView(),
     c = s.countries[s.playerCountryId],
@@ -47,6 +48,7 @@ export function InvestmentWindow({embedded=false,section='investments'}:{embedde
           const d=CAMPUSES[kind],view=campusPreview(s,kind),techReady=view.techReady;
           return (
             <article key={kind}>
+              <CampusIcon kind={kind} />
               <h3>
                 <LocaleText value={d.title} /> ×{a.buildings[kind]}
               </h3>

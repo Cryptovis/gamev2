@@ -8,8 +8,6 @@ import { EQUIPMENT_CATALOG, EQUIPMENT_TYPES } from '../../data/equipmentCatalog'
 import { militaryFactoryCapacity, strategicReserveScore } from '../../engine/systems/production';
 import { useGameStore } from '../../store/gameStore';
 import { ArtilleryIcon, FuelIcon, IndustryIcon, JetIcon, PersonnelIcon, ShipIcon, SteelIcon, TankIcon } from '../icons/GameIcons';
-import {TacticalHint} from '../hints/TacticalHint';
-import {PRODUCTION_DOCTRINE_HINT} from '../hints/registry';
 
 function EquipmentGlyph({type}:{type:EquipmentType}){
  if(type==='infantry_equipment')return <PersonnelIcon size={22}/>;
@@ -38,7 +36,7 @@ export function ProductionPanel({country}:{country:CountryState}){
   <EnergyPanel country={country}/>
   <IndustrialPanel country={country}/>
   <section className="production-hero">
-   <div className="production-hero-title"><IndustryIcon size={28}/><span><small><LocaleText value={"NATIONAL INDUSTRIAL COMMAND"}/></small><strong><LocaleText value={"Production & Equipment"}/></strong><em><LocaleText value={isPlayer?'Allocate military industry and reinforce active forces.':'Observed production estimate based on known industrial capacity.'}/></em></span><TacticalHint spec={PRODUCTION_DOCTRINE_HINT}/></div>
+   <div className="production-hero-title"><IndustryIcon size={28}/><span><small><LocaleText value={"NATIONAL INDUSTRIAL COMMAND"}/></small><strong><LocaleText value={"Production & Equipment"}/></strong><em><LocaleText value={isPlayer?'Allocate military industry and reinforce active forces.':'Observed production estimate based on known industrial capacity.'}/></em></span></div>
    <div className="production-kpis">
     <span><small><LocaleText value={"MIL. FACTORIES"}/></small><strong><LocaleText value={assigned}/><LocaleText value={"/"}/><LocaleText value={capacity}/></strong></span>
     <span><small><LocaleText value={"THROUGHPUT"}/></small><strong className={production.throughput<70?'negative':'positive'}><LocaleText value={production.throughput.toFixed(0)}/><LocaleText value={"%"}/></strong></span>

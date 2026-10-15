@@ -52,7 +52,7 @@
 .international-affairs details>summary { cursor:pointer; min-height:44px; padding:10px 0; }
 .international-affairs ul { margin:0; padding-inline-start:20px; }
 #country-section-window:has(.international-affairs) .executive-body { padding:20px; }
-.command-rail [data-guide="rail-international-affairs"] small { max-width:74px; white-space:normal; line-height:1.15; text-align:center; }
+#alliances-window:has(.international-affairs) .executive-body { padding:20px; }
 @media(min-width:1250px) { .ia-organization-grid { grid-template-columns:repeat(3,minmax(0,1fr)); } }
 @media(max-width:700px) {
  .ia-tabs { grid-template-columns:repeat(2,minmax(0,1fr)); }
