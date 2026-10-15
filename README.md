@@ -1,4 +1,4 @@
-# Rule of Nations (RON) — 0.99.1
+# Rule of Nations (RON) — 0.99.2
 
 Rule of Nations is a browser-based geopolitical grand-strategy prototype built with React, TypeScript, Zustand, D3 Geo and Dexie. Lead a country through its economy, resources, diplomacy, development and military conflicts. Chart.js provides economic charts; Vitest and Playwright verify gameplay and browser flows.
 
@@ -6,10 +6,10 @@ Rule of Nations is a browser-based geopolitical grand-strategy prototype built w
 
 | Item | Current state |
 |---|---|
-| Version | **0.99.1 — Voting & Leverage Engine (Slice 8.2)** |
+| Version | **0.99.2 — Global Finance & Monetary Programs (Slice 8.3)** |
 | Development branch | `dev/ron-phase7` (development release; not merged into main) |
 | Save schema | 18; valid Schema 12–17 saves migrate; organization records and legacy state are validated |
-| Validation | 1073/1073 tests / 105 files; TypeScript and Vite production build passed with zero errors. Existing bundling warnings remain. Browser/native suites were not rerun for this engine slice. [Validation record](docs/RELEASE-0991.md) |
+| Validation | 1131/1131 tests / 106 files; TypeScript and Vite production build passed with zero errors. Existing bundling warnings remain. Browser/native suites were not rerun for this engine slice. [Validation record](docs/RELEASE-0992.md) |
 | V3 | Reserved for the complete-playability milestone; the current plan builds on the existing engine |
 
 These details describe this development branch. Another branch, including `main`, can contain an older release. Check `package.json` and your checked-out branch when comparing previews.
@@ -34,6 +34,8 @@ npm run test:e2e
 `check` runs tests, TypeScript checks and the production build. Browser tests run separately against the production preview. Optional `npm run measure:engine`, `npm run measure:browser` `npm run measure:renders` (React render attribution on a profiling build) and `npm run measure:war` (paired war-balance scenarios) write local performance reports; run browser measurements separately from other builds/tests. See [measurement method](docs/PERFORMANCE-0906.md).
 
 ## Recent changelog
+
+- **0.99.2:** funded financial boards, conditional loans/grants, tranche reviews, principal/interest service, IMF fiscal adjustment, conserved capital and default enforcement. [Release record](docs/RELEASE-0992.md). Schema 18 retained; new program UI remains later work.
 
 - **0.99.1:** six voting evaluators, shared player/AI proposal and ballot commands, frozen electorates, daily adoption/standing, membership decisions and scoped sanction records. [Release record](docs/RELEASE-0991.md). Schema 18; sanction-channel enforcement and new UI remain later work.
 
@@ -228,6 +230,7 @@ Delivered milestones are retained here when new releases are added. This table s
 
 | Milestone | Delivered foundation | Record |
 |---|---|---|
+| 0.99.2 — Global Finance | Slice 8.3: capital reservoirs, conditional financing, repayment/interest, austerity and default accounting | [Playtest 0.99.2](docs/PLAYTEST-0992.md) |
 | 0.99.1 — Voting & Leverage | Slice 8.2: rule evaluation, shared commands, fixed electorates, seeded AI votes and daily foundation execution | [Playtest 0.99.1](docs/PLAYTEST-0991.md) |
 | 0.99 — Organization Domain & Schema 18 | Slice 8.1: persisted domain contracts, controlled legacy migration, P5 metadata and strict validation | [Playtest 0.99](docs/PLAYTEST-099.md) |
 | 0.98.1 — Phase 8 Foundation | Slice 8.0: institution save safety, actor parity, engine outreach preview and atomic checkpoint transactions | [Playtest 0.98.1](docs/PLAYTEST-0981.md) |

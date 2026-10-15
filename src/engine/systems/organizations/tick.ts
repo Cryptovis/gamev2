@@ -1,3 +1,4 @@
+import {adoptOrganizationFinancing,processOrganizationFinancing} from './financing';
 import type {GameState} from '../../../domain/game';
 import type {Resolution,OrganizationState,OrganizationSanctionEffect} from '../../../domain/organizations';
 import {evaluateVotingOutcome} from './voting';
@@ -12,6 +13,7 @@ function updateResolution(state:GameState,resolution:Resolution):GameState {
 }
 function executeResolution(state:GameState,r:Resolution):GameState {
   const fail=(reason:string)=>updateResolution(state,{...r,phase:'failed',execution:{status:'failed',effectIds:[],reason}});
+  if(r.payload.kind==='finance')return adoptOrganizationFinancing(state,{...r,payload:r.payload});
   if(!isFoundationalPayload(r.payload))return fail('unsupportedPayload');
   const targetId=payloadTarget(r.payload),country=state.countries[targetId];
   if(!country||country.annexedBy)return fail('invalidTarget');
@@ -47,10 +49,11 @@ function executeResolution(state:GameState,r:Resolution):GameState {
   return updateResolution(next,{...r,execution:{status:'applied',effectIds:[]}});
 }
 /** Close first, then activate due decisions; retries and save/resume cannot replay effects. */
-export function processOrganizations(state:GameState):GameState {
+export function processOrganizations(state:GameState,phase:'all'|'decisions'|'finance'='all'):GameState {
+  if(phase==='finance')return processOrganizationFinancing(state);
   if(state.day<=state.world.organizations.lastProcessedDay)return state;
   let next=state;
-  const ids=Object.values(state.world.organizations.resolutions).sort((a,b)=>a.closesDay-b.closesDay||(a.id<b.id?-1:a.id>b.id?1:0)).map(r=>r.id);
+  const ids=Object.values(state.world.organizations.resolutions).sort((a,b)=>a.effectiveDay-b.effectiveDay||(a.id<b.id?-1:a.id>b.id?1:0)).map(r=>r.id);
   for(const id of ids){
     let r=next.world.organizations.resolutions[id];
     if(r.phase==='voting'&&state.day>=r.closesDay){
@@ -62,6 +65,7 @@ export function processOrganizations(state:GameState):GameState {
     }
     if(r.phase==='adopted'&&r.execution.status==='pending'&&state.day>=r.effectiveDay)next=executeResolution(next,r);
   }
+  if(phase==='all')next=processOrganizationFinancing(next);
   const organizations=next.world.organizations;
   let effects=organizations.effects;
   for(const [id,value] of Object.entries(effects))if(value&&typeof value==='object'&&'kind' in value&&value.kind==='organizationSanctions'){

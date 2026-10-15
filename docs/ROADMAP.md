@@ -1,5 +1,9 @@
 # Rule of Nations roadmap (formerly AlpyX) after 0.31
 
+## 0.99.2 — Phase 8 Slice 8.3 Global Finance
+
+Delivered on `dev/ron-phase7`: four funded financial boards, borrower-approved conditional loans/grants, conserved reservation and drawdown, tranche reviews, percent-APR accounting and principal/interest repayment, IMF fiscal adjustment and domestic costs, default detection and cross-institution application blocks. Optional Schema 18 finance initialization preserves earlier saves and spent capital. [Release](RELEASE-0992.md) · [Playtest](PLAYTEST-0992.md). Verified 1131 tests / 106 files, TypeScript and Vite; baseline 365-day world invariant and 1095-day financing conservation regression pass. Browser/native suites were not rerun. Slice 8.4 trade/regional mechanics and Slice 8.5 International Affairs UI, legal datasets, dedicated subsidy/SDR mechanics and full-world finance calibration remain. V3 remains the complete-playability milestone.
+
 ## 0.99.1 — Phase 8 Slice 8.2 Voting & Leverage
 
 Delivered on `dev/ron-phase7`: six voting evaluators, shared actor commands/costs, frozen electorate/rule snapshots, seeded AI initial votes, daily standing and admission/discipline/scoped-sanction records with legacy UN reconciliation. [Release](RELEASE-0991.md) · [Playtest](PLAYTEST-0991.md). Schema 18; 1073 tests, TypeScript and Vite passed. Sanction-channel enforcement, finance/disbursements, legal charter policies, autonomous proposal agendas, elected-seat replacement and new UI remain future work. Browser/native suites were not rerun. V3 remains the complete-playability milestone.

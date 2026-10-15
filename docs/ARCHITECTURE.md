@@ -54,3 +54,10 @@ Organization commands are typed GameCommands and share `applyOrganizationCommand
 `processOrganizations` runs at the beginning of the next campaign day: close expired votes, record outcomes and standing, execute due decisions once, expire new sanction records, then cast seeded AI votes only on still-open ballots. AI draws thread the stored seed in stable ID order. Closing-day submissions/repeats/rejected commands/previews consume no RNG.
 
 UN membership transitions mirror affected legacy rosters; completed legacy ballots update new metadata without changing their historical rule. Scoped new sanction records coexist with the preserved legacy flags but do not yet enforce trade/credit channels. Optional outcome/quota/failure metadata and the new typed effect branch retain forward loading of existing Schema 18 saves; older v0.99.0 cannot read the new sanction branch. [Execution policy and limits](RELEASE-0991.md).
+
+
+## 0.99.2 finance accounting boundary
+
+Organization finance uses borrower-originated typed commands and a separate financial board, preserving fixed electorate/quota snapshots and shared actor costs. `financing.ts` owns reservation, grants/loans, conditional tranches, interest, cash service, arrears and released commitments. `fiscalAccounts` is the shared source for fiscal-balance reviews and country simulation; organization principal plus accrued interest is excluded from generic debt service. Contract APR is percent, not a fractional rate.
+
+The organization decision stage activates at day start; its finance stage runs after economy and existing sovereign-credit settlement so new arrears block further draws that same day. Per-contract day markers and source-linked execution records prevent interest/cash replay. Optional `financeVersion` and contract `lifecycle` keep existing Schema 18 shapes loadable, initialize untouched pools once and preserve pre-8.3 placeholder accounting without inventing history. Strict financing validation checks sources, dates, immutable terms, commitments and tranche/principal identities. [Detailed accounting, scenario assumptions and limits](RELEASE-0992.md).

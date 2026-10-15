@@ -1,3 +1,4 @@
+import {initializeFinanceCapital} from '../engine/systems/organizations/financeCapital';
 import {CURRENT_SCHEMA_VERSION} from '../domain/schema';
 import {createOrganizations} from '../engine/systems/organizations/initialization';
 import {SANCTIONS_DURATION_DAYS} from '../engine/systems/council';
@@ -80,7 +81,9 @@ function withCurrentDefaults(state:GameState):GameState {
  const normalizedGovernance=academies===g.academies?g:{...g,academies};
  const living=state.world.living??createLiving(countries);
  const base=countries===state.countries&&industrialEconomy===state.industrialEconomy?state:{...state,countries,industrialEconomy};
- const history=base.world.economicHistory?base:recordEconomicHistory(base);
+ const capital=initializeFinanceCapital(base.world.organizations,countries);
+ const funded=capital===base.world.organizations?base:{...base,world:{...base.world,organizations:capital}};
+ const history=funded.world.economicHistory?funded:recordEconomicHistory(funded);
  return living===history.world.living&&normalizedGovernance===history.world.governance?history:
   {...history,world:{...history.world,living,governance:normalizedGovernance}};
 }

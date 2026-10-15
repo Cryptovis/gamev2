@@ -1,5 +1,7 @@
+import {payOrganizationFinancing,cancelOrganizationFinancing} from './financing';
+import type {OrganizationFinancingRecord} from '../../../domain/organizations';
 import type {GameState} from '../../../domain/game';
-import type {OrganizationCommand,OrganizationId,FoundationalResolutionPayload,Resolution} from '../../../domain/organizations';
+import type {OrganizationCommand,OrganizationId,ExecutableResolutionPayload,Resolution} from '../../../domain/organizations';
 import {validateOrganizationCommand,ORGANIZATION_VOTING_DAYS} from './validation';
 
 /** One command boundary for the player dispatcher and explicit AI actors. */
@@ -8,7 +10,11 @@ export function applyOrganizationCommand(state:GameState,command:OrganizationCom
   if(!status.allowed)return state;
   const organizations=state.world.organizations;
   let next:GameState;
-  if(command.type==='organization/proposeResolution'){
+  if(command.type==='organization/repayOrganizationFinancing'){
+    next=payOrganizationFinancing(state,organizations.financing[command.financingId] as OrganizationFinancingRecord,command.principalB,command.interestB);
+  }else if(command.type==='organization/cancelOrganizationFinancing'){
+    next=cancelOrganizationFinancing(state,command.financingId);
+  }else if(command.type==='organization/proposeResolution'){
     const id=`ORG-${organizations.nextSequence}`;
     const r:Resolution={id,organizationId:command.organizationId,bodyId:command.bodyId,proposerId:actorId,payload:structuredClone(command.payload),phase:'voting',
       openedDay:state.day,closesDay:state.day+ORGANIZATION_VOTING_DAYS,effectiveDay:state.day+ORGANIZATION_VOTING_DAYS,
@@ -21,9 +27,13 @@ export function applyOrganizationCommand(state:GameState,command:OrganizationCom
   }
   return command.commandId?{...next,world:{...next.world,commandIds:[...(next.world.commandIds??[]),command.commandId].slice(-512)}}:next;
 }
-export function proposeResolution(state:GameState,organizationId:OrganizationId,bodyId:string,payload:FoundationalResolutionPayload,actorId=state.playerCountryId):GameState {
+export function proposeResolution(state:GameState,organizationId:OrganizationId,bodyId:string,payload:ExecutableResolutionPayload,actorId=state.playerCountryId):GameState {
   return applyOrganizationCommand(state,{type:'organization/proposeResolution',organizationId,bodyId,payload},actorId);
 }
 export function castBallot(state:GameState,resolutionId:string,choice:'yes'|'no'|'abstain',actorId=state.playerCountryId):GameState {
   return applyOrganizationCommand(state,{type:'organization/castBallot',resolutionId,choice},actorId);
+}
+
+export function repayOrganizationFinancing(state:GameState,financingId:string,principalB:number,interestB:number,actorId=state.playerCountryId):GameState {
+  return applyOrganizationCommand(state,{type:'organization/repayOrganizationFinancing',financingId,principalB,interestB},actorId);
 }

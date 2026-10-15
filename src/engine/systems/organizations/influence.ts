@@ -1,5 +1,5 @@
-import type {FoundationalResolutionPayload,OrganizationState} from '../../../domain/organizations';
-export function proposalInfluenceCost(payload:FoundationalResolutionPayload):number {
+import type {ExecutableResolutionPayload,OrganizationState} from '../../../domain/organizations';
+export function proposalInfluenceCost(payload:ExecutableResolutionPayload):number {
   return payload.kind==='sanctions'?8:5;
 }
 /** Standing changes are applied only when a vote closes, never on previews/retries. */

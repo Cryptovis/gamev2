@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.99.2 — Global Finance & Monetary Programs (Slice 8.3)
+
+- Funded IMF ($250B), World Bank ($120B), BRICS+/NDB ($50B) and OIC/IDB ($30B) scenario pools and distinct financial boards; borrower consent, member access and equal player/AI influence fees.
+- Conserved capital reservation, initial/conditional tranches, pause/resume, grants, voluntary principal/interest repayment, monthly service, maturity and unused commitment release. Percent APR is booked once; generic economy service excludes organization liabilities.
+- IMF fiscal adjustment and domestic costs, liquidity/solvency relief, default/arrears detection and cross-institution loan/grant blocks. Same-day sovereign-credit defaults are detected before further tranches.
+- Optional Schema 18 defaults initialize pre-8.3 finance data once; strict source-linked lifecycle validation, old fixtures and deterministic save/resume remain supported.
+- Verified 1131 tests / 106 files, TypeScript and Vite. Browser/native suites were not rerun; existing warnings remain. Scenario quotas, SDR label/$B accounting, social-budget subsidy proxy and missing future UI are documented in [release notes](docs/RELEASE-0992.md).
+
 ## 0.99.1 — Slice 8.2 Voting & Leverage Engine
 
 Development patch on `dev/ron-phase7`; Schema 18 retained. [Release record](docs/RELEASE-0991.md).

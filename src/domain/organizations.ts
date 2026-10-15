@@ -59,7 +59,7 @@ export type ResolutionPayload =
   | {kind:'admission';applicantId:string;tier:'Observer'|'Member'}
   | {kind:'membershipDiscipline';targetId:string;action:'suspend'|'expel';grounds:string}
   | {kind:'sanctions';targetId:string;measures:SanctionMeasure[];durationDays:number;exemptions:Exemption[]}
-  | {kind:'finance';borrowerId:string;programId:string;principalB:number;terms:FinancingTerms;conditions:ReformCondition[]}
+  | {kind:'finance';borrowerId:string;programId:string;principalB:number;terms:FinancingTerms;conditions:ReformCondition[];initialTrancheB?:number;fiscalAdjustmentB?:number;fundingKind?:'loan'|'grant'}
   | {kind:'oilQuota';quotas:Record<string,number>;durationDays:number}
   | {kind:'defenseResponse';incidentId:string;commitments:DefenseCommitment[]}
   | {kind:'peacekeeping';conflictId:string;mandate:PeacekeepingMandate}
@@ -82,9 +82,22 @@ export interface LegacySanctionEffect {
 }
 export interface OrganizationFinancingRecord {
   id:string;organizationId:OrganizationId;borrowerId:string;principalB:number;
-  outstandingB:number;committedB:number;terms:FinancingTerms;status:'active'|'paused'|'closed';
+  outstandingB:number;committedB:number;terms:FinancingTerms;status:'active'|'paused'|'closed'|'defaulted'|'cancelled'|'expired';
+  /** Optional so pre-8.3 Schema 18 records retain their original accounting. */
+  lifecycle?: FinancingLifecycle;
 }
+export interface FinancingLifecycle {
+  sourceResolutionId:string;startedDay:number;maturityDay:number;lastProcessedDay:number;
+  nextServiceDay:number;accruedInterestB:number;interestPaidB:number;repaidPrincipalB:number;
+  disbursedB:number;arrearsB:number;defaultRecorded:boolean;
+  fundingKind:'loan'|'grant';fiscalAdjustmentB:number;conditions:ReformCondition[];
+  tranches:Array<{reviewDay:number;amountB:number;status:'pending'|'paid'|'cancelled'}>;
+}
+export type FinancePayload=Extract<ResolutionPayload,{kind:'finance'}>;
+export type ExecutableResolutionPayload=FoundationalResolutionPayload|FinancePayload;
 export interface OrganizationsState {
+  /** One-time finance capital/board initialization; absent in pre-8.3 saves. */
+  financeVersion?:1;
   catalogVersion:number;
   byId:Record<OrganizationId,OrganizationState>;
   resolutions:Record<string,Resolution>;
@@ -103,6 +116,8 @@ export interface OrganizationSanctionEffect {
 }
 export type FoundationalResolutionPayload=Extract<ResolutionPayload,{kind:'admission'|'membershipDiscipline'|'sanctions'}>;
 export type OrganizationCommand=(
-  | {type:'organization/proposeResolution';organizationId:OrganizationId;bodyId:string;payload:FoundationalResolutionPayload}
+  | {type:'organization/proposeResolution';organizationId:OrganizationId;bodyId:string;payload:ExecutableResolutionPayload}
+  | {type:'organization/repayOrganizationFinancing';financingId:string;principalB:number;interestB:number}
+  | {type:'organization/cancelOrganizationFinancing';financingId:string}
   | {type:'organization/castBallot';resolutionId:string;choice:'yes'|'no'|'abstain'}
 ) & {commandId?:string};

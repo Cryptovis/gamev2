@@ -1,4 +1,5 @@
-import {votingRule,resolutionPayload,electorate,terms,sanctionMeasure,sanctionExemption} from '../domain/organizationSchemas';
+import {organizationFinancingSchema} from '../domain/organizationFinancingSchemas';
+import {votingRule,resolutionPayload,electorate,sanctionMeasure,sanctionExemption} from '../domain/organizationSchemas';
 import {z} from 'zod';
 import {ORGANIZATION_IDS,P5_COUNTRY_IDS,type ResolutionPayload,type VotingRule} from '../domain/organizations';
 
@@ -21,8 +22,8 @@ const resolution=z.strictObject({id,organizationId,bodyId:id,proposerId:id,paylo
 const legacyEffect=z.strictObject({id,kind:z.literal('legacySanctions'),issuer:z.literal('legacyCouncil'),targetId:id,startsDay:day,endsDay:day,status:z.literal('active')}).refine(e=>e.endsDay>=e.startsDay);
 const sanctionEffect=z.strictObject({id,kind:z.literal('organizationSanctions'),organizationId,bodyId:id,sourceResolutionId:id,targetId:id,
   startsDay:day,endsDay:day,measures:z.array(sanctionMeasure).min(1),exemptions:z.array(sanctionExemption),status:z.enum(['active','expired'])}).refine(e=>e.endsDay>e.startsDay);
-const financing=z.strictObject({id,organizationId,borrowerId:id,principalB:money,outstandingB:money,committedB:money,terms,status:z.enum(['active','paused','closed'])}).refine(f=>f.outstandingB+f.committedB<=f.principalB);
-const organizations=z.strictObject({catalogVersion:day.positive(),byId:z.record(organizationId,organization),resolutions:z.record(id,resolution),
+const financing=organizationFinancingSchema;
+const organizations=z.strictObject({catalogVersion:day.positive(),financeVersion:z.literal(1).optional(),byId:z.record(organizationId,organization),resolutions:z.record(id,resolution),
   effects:z.record(id,z.union([legacyEffect,sanctionEffect])),financing:z.record(id,financing),nextSequence:day.positive(),lastProcessedDay:day});
 
 function payloadCountries(p:ResolutionPayload):string[] {
@@ -51,6 +52,7 @@ export function validOrganizations(value:unknown,countries:Record<string,unknown
   for(const organizationId of ORGANIZATION_IDS){
     const o=s.byId[organizationId];
     if(o.id!==organizationId||!Object.hasOwn(o.bodies,'plenary'))return false;
+    if(s.financeVersion===1&&['imf','worldBank','bricsPlus','oic'].includes(organizationId)&&o.bodies.financeBoard?.kind!=='board')return false;
     if(organizationId==='un'){
       const council=o.bodies.securityCouncil,rule=council?.votingRule;
       const permanent=P5_COUNTRY_IDS.filter(known);
@@ -80,7 +82,29 @@ export function validOrganizations(value:unknown,countries:Record<string,unknown
         ||!source.execution.effectIds.includes(effectId)||source.execution.status!=='applied'||e.exemptions.some(x=>!x.countryIds.every(known)))return false;
     }
   }
-  for(const [financingId,f] of Object.entries(s.financing))if(f.id!==financingId||!known(f.borrowerId))return false;
+  for(const [financingId,f] of Object.entries(s.financing)){
+    if(f.id!==financingId||!known(f.borrowerId))return false;
+    const l=f.lifecycle;
+    if(l){
+      const source=s.resolutions[l.sourceResolutionId];
+      if(!source||source.payload.kind!=='finance'||source.organizationId!==f.organizationId||source.payload.borrowerId!==f.borrowerId||
+        source.payload.principalB!==f.principalB||source.execution.status!=='applied'||!source.execution.effectIds.includes(f.id)||
+        l.startedDay>currentDay||l.lastProcessedDay>currentDay||l.lastProcessedDay<l.startedDay)return false;
+      const p=source.payload,initial=p.initialTrancheB??(p.conditions.length?p.principalB/2:p.principalB);
+      if(source.bodyId!=='financeBoard'||f.id!==`financing:${source.id}`||!['imf','worldBank','bricsPlus','oic'].includes(f.organizationId)||
+        l.startedDay<source.effectiveDay||l.maturityDay!==l.startedDay+f.terms.termDays||
+        f.terms.apr!==p.terms.apr||f.terms.termDays!==p.terms.termDays||f.terms.graceDays!==p.terms.graceDays||f.terms.denomination!==p.terms.denomination||
+        l.fiscalAdjustmentB!==(p.fiscalAdjustmentB??0)||l.fundingKind!==(p.fundingKind??'loan')||
+        l.conditions.length!==p.conditions.length||l.conditions.some((c,i)=>c.kind!==p.conditions[i].kind||c.threshold!==p.conditions[i].threshold||c.reviewDay!==p.conditions[i].reviewDay)||
+        Math.abs(l.disbursedB-initial-l.tranches.filter(t=>t.status==='paid').reduce((n,t)=>n+t.amountB,0))>1e-7||
+        Math.abs(l.tranches.reduce((n,t)=>n+t.amountB,0)+initial-f.principalB)>1e-7||
+        l.tranches.some(t=>!p.conditions.some(c=>c.reviewDay===t.reviewDay)))return false;
+    }
+  }
+  for(const id of ORGANIZATION_IDS){
+    const tracked=Object.values(s.financing).filter(f=>f.organizationId===id&&f.lifecycle).reduce((n,f)=>n+f.committedB,0);
+    if(tracked>s.byId[id].committedFundsB+1e-7)return false;
+  }
   for(const [resolutionId,r] of Object.entries(s.resolutions)){
     const e=r.electorate,eligible=new Set(e.eligibleCountryIds);
     if(r.id!==resolutionId||!Object.hasOwn(s.byId[r.organizationId].bodies,r.bodyId)||!known(r.proposerId)||r.openedDay>currentDay
@@ -90,7 +114,7 @@ export function validOrganizations(value:unknown,countries:Record<string,unknown
       ||Object.keys(e.populationByCountry).some(countryId=>!eligible.has(countryId))
       ||e.eligibleCountryIds.some(countryId=>!Object.hasOwn(e.weights,countryId)||!Object.hasOwn(e.populationByCountry,countryId)))return false;
     if(Object.values(e.weights).reduce((a,b)=>a+b,0)!==e.totalWeight||Object.values(e.populationByCountry).reduce((a,b)=>a+b,0)!==e.totalPopulation)return false;
-    if(r.execution.effectIds.some(effectId=>!Object.hasOwn(s.effects,effectId)))return false;
+    if(r.execution.effectIds.some(effectId=>!Object.hasOwn(s.effects,effectId)&&!Object.hasOwn(s.financing,effectId)))return false;
     if(r.phase==='voting'&&r.execution.status!=='pending')return false;
     if(r.outcome&&(r.outcome.yesCount+r.outcome.noCount+r.outcome.abstainCount>e.eligibleCountryIds.length||r.outcome.vetoedBy?.some(id=>!P5_COUNTRY_IDS.some(p=>p===id)||!e.eligibleCountryIds.includes(id))))return false;
   }

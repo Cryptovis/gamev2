@@ -1,3 +1,4 @@
+import {initializeFinanceCapital} from './financeCapital';
 import type {CountryState} from '../../../domain/game';
 import type {WorldState} from '../../../domain/world';
 import {ORGANIZATION_IDS,P5_COUNTRY_IDS,type OrganizationsState,type OrganizationState,type VotingRule,type Membership} from '../../../domain/organizations';
@@ -33,5 +34,5 @@ export function createOrganizations(countries:Record<string,CountryState>,legacy
     }
     byId[id]=organization;
   }
-  return {catalogVersion:ORGANIZATION_CATALOG_VERSION,byId,resolutions:{},effects:{},financing:{},nextSequence:1,lastProcessedDay:day};
+  return initializeFinanceCapital({catalogVersion:ORGANIZATION_CATALOG_VERSION,byId,resolutions:{},effects:{},financing:{},nextSequence:1,lastProcessedDay:day},countries);
 }

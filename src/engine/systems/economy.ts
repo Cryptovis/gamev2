@@ -13,17 +13,12 @@ export interface EconomyFlow {
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 
-export function simulateEconomy(country: CountryState, resources: ResourceFlow,perks:Readonly<LeaderModifiers>=NEUTRAL_LEADER): EconomyFlow {
+export function simulateEconomy(country: CountryState, resources: ResourceFlow,perks:Readonly<LeaderModifiers>=NEUTRAL_LEADER,organizationDebtB=0,fiscalAdjustmentB=0): EconomyFlow {
   const economy = country.economy;
   const utilization = country.industry.utilization / 100;
   const productivity = economy.productivity / 100;
 
-  const taxRevenue = (economy.gdp * (economy.taxRate / 100)) / 365 * perks.tax;
-  const publicSpending = economy.gdp * 0.00035 + country.military.personnel*.00000006;
-  // Debt service (audit C4): interest rises with leverage, so a heavily indebted state pays more of its revenue back.
-  const debtRate = 0.03 + 0.05 * clamp(economy.debt / Math.max(1, economy.gdp), 0, 2);
-  const debtService = (economy.debt * debtRate) / 365 * perks.debtInterest;
-  const dailyBalance = taxRevenue - publicSpending - debtService;
+  const {taxRevenue,publicSpending,debtService,dailyBalance}=fiscalAccounts(country,perks,organizationDebtB,fiscalAdjustmentB);
 
   // High tax rates dampen private investment (audit C4): no effect up to 25%, then -1% of growth per point, floored at 70%.
   const taxFriction = clamp(1 - Math.max(0, economy.taxRate - 25) * 0.01, 0.7, 1);
@@ -49,4 +44,14 @@ export function simulateEconomy(country: CountryState, resources: ResourceFlow,p
   };
 
   return { taxRevenue, publicSpending, debtService, dailyBalance, dailyGrowthRate, next };
+}
+
+/** Annual fiscal adjustment is in $B; organization liabilities have their own contractual APR. */
+export function fiscalAccounts(country:CountryState,perks:Readonly<LeaderModifiers>=NEUTRAL_LEADER,organizationDebtB=0,fiscalAdjustmentB=0) {
+  const economy=country.economy;
+  const taxRevenue=(economy.gdp*(economy.taxRate/100))/365*perks.tax;
+  const publicSpending=Math.max(0,economy.gdp*.00035+country.military.personnel*.00000006-fiscalAdjustmentB/365);
+  const debtRate=.03+.05*clamp(economy.debt/Math.max(1,economy.gdp),0,2);
+  const debtService=Math.max(0,economy.debt-organizationDebtB)*debtRate/365*perks.debtInterest;
+  return {taxRevenue,publicSpending,debtService,dailyBalance:taxRevenue-publicSpending-debtService};
 }

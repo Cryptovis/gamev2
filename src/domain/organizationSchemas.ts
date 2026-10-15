@@ -16,7 +16,7 @@ export const votingRule:z.ZodType<VotingRule>=z.discriminatedUnion('kind',[
 export const sanctionMeasure=z.strictObject({scope:z.enum(['arms','trade','finance']),intensity:share,enforcement:share});
 export const sanctionExemption=z.strictObject({scope:z.enum(['food','medicine','humanitarian']),countryIds:ids});
 export const terms=z.strictObject({apr:z.number().finite().min(0).max(100),termDays:positiveDays,graceDays:day,denomination:z.enum(['USD','SDR'])}).refine(t=>t.graceDays<=t.termDays);
-const condition=z.strictObject({kind:z.enum(['fiscalBalance','taxRate','subsidyShare']),threshold:z.number().finite(),reviewDay:day});
+export const reformCondition=z.strictObject({kind:z.enum(['fiscalBalance','taxRate','subsidyShare']),threshold:z.number().finite(),reviewDay:day});
 const defense=z.strictObject({countryId:id,personnel:day,equipmentB:money,fundingB:money,readyDay:day});
 const investment=z.strictObject({countryId:id,amountB:money,readyDay:day});
 export const resolutionPayload:z.ZodType<ResolutionPayload>=z.discriminatedUnion('kind',[
@@ -24,7 +24,7 @@ export const resolutionPayload:z.ZodType<ResolutionPayload>=z.discriminatedUnion
   z.strictObject({kind:z.literal('membershipDiscipline'),targetId:id,action:z.enum(['suspend','expel']),grounds:id}),
   z.strictObject({kind:z.literal('sanctions'),targetId:id,measures:z.array(sanctionMeasure).min(1),durationDays:positiveDays,
     exemptions:z.array(sanctionExemption)}),
-  z.strictObject({kind:z.literal('finance'),borrowerId:id,programId:id,principalB:money.positive(),terms,conditions:z.array(condition)}),
+  z.strictObject({kind:z.literal('finance'),borrowerId:id,programId:id,principalB:money.positive(),terms,conditions:z.array(reformCondition).max(32),initialTrancheB:money.optional(),fiscalAdjustmentB:money.optional(),fundingKind:z.enum(['loan','grant']).optional()}),
   z.strictObject({kind:z.literal('oilQuota'),quotas:z.record(id,money),durationDays:positiveDays}),
   z.strictObject({kind:z.literal('defenseResponse'),incidentId:id,commitments:z.array(defense)}),
   z.strictObject({kind:z.literal('peacekeeping'),conflictId:id,mandate:z.strictObject({countryIds:ids,personnel:day,fundingB:money,durationDays:positiveDays,consentRequired:z.boolean()})}),
