@@ -18,6 +18,15 @@ for(const width of [1440,390])for(const theme of ['light','dark'])test(`1.0 inte
  await page.screenshot({path:`test-results/international100-review-${theme}-${width}.png`});await review.getByRole('button',{name:'CONFIRM',exact:true}).click();
  await expect(hub.getByRole('status')).toHaveText('Command applied.');await expect(resolution.getByRole('button',{name:'Yes',exact:true})).toBeDisabled();
 });
+// Regression (9.2b): the unseen hint beacon's pulse ring (scale 1.55) used to extend past the hub's right edge. Frozen at its largest keyframe so the check is deterministic.
+for(const width of [1440,390])test(`1.0 hint beacon pulse stays inside the hub ${width}px`,async({page})=>{
+ await page.setViewportSize({width,height:900});
+ await resumeFixture(page,campaignFixture('en'));await page.locator('[data-guide="rail-international-affairs"]').click();
+ const hub=page.locator('.international-affairs'),beacon=hub.locator('.tactical-hint-beacon');
+ await expect(beacon).toHaveAttribute('data-state','unseen');await expect(beacon).toHaveAttribute('data-motion','full');
+ await page.addStyleTag({content:'.tactical-hint-beacon,.tactical-hint-beacon::after{animation:none !important}.tactical-hint-beacon[data-state="unseen"]::after{transform:scale(1.55) !important}'});
+ expect(await hub.evaluate(el=>el.scrollWidth<=el.clientWidth+1)).toBe(true);
+});
 for(const [language,tab] of [['tr','Kararlar ve oylama'],['es','Resoluciones y votación'],['zh','决议与投票'],['ru','Резолюции и голосование']] as const)test(`1.0 ${language} localized hub`,async({page})=>{
  await resumeFixture(page,campaignFixture(language));await page.locator('[data-guide="rail-international-affairs"]').click();const hub=page.locator('.international-affairs');
  await expect(hub.getByRole('tab')).toHaveCount(5);await hub.getByRole('tab',{name:tab,exact:true}).click();await expect(hub.locator('.ia-composer')).toBeVisible();

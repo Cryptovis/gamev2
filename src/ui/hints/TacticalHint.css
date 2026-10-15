@@ -35,9 +35,11 @@
   .tactical-hint-beacon[data-state='unseen']::after{animation:none;transform:none;opacity:.7}
 }
 
-/* The International Affairs hub header places the beacon in its top-right corner. */
+/* The International Affairs hub header places the beacon in its top-right corner.
+   Inset 6px: the unseen pulse ring scales to 1.55x (about 5px past the 24px beacon) and bounces 5px up; transforms count
+   toward scrollable overflow, so at 0 the ring pushed .international-affairs wider than its box. */
 .ia-header.ia-header-hinted{position:relative;padding-right:36px}
-.ia-header>.tactical-hint-beacon.tactical-hint-beacon{position:absolute;top:0;right:0;margin:0}
+.ia-header>.tactical-hint-beacon.tactical-hint-beacon{position:absolute;top:6px;right:6px;margin:0}
 
 /* Dark-glass popover (always dark, independent of the light theme). */
 .tactical-hint-popover{

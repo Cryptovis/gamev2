@@ -137,7 +137,10 @@ test('failed atlas requests retain decorative fallback',async({page})=>{
 
 for(const viewport of [{width:1440,height:900},{width:390,height:844}]){
  test(`${viewport.width}px localized nation search and warm setup palette`,async({page})=>{
-  await page.setViewportSize(viewport);await page.goto('/');await page.getByRole('button',{name:'Türkçe',exact:true}).click();await page.locator('[data-entry="demo"]').click();await page.locator('[data-entry="new-game"]').click();await page.locator('.wizard-name-field input').fill('Palette test');
+  await page.setViewportSize(viewport);
+  // The warm palette values asserted below are the dark-theme tokens; the app now defaults to light, so pin dark explicitly.
+  await page.addInitScript(()=>localStorage.setItem('trp-appearance-v1','dark'));
+  await page.goto('/');await page.getByRole('button',{name:'Türkçe',exact:true}).click();await page.locator('[data-entry="demo"]').click();await page.locator('[data-entry="new-game"]').click();await page.locator('.wizard-name-field input').fill('Palette test');
   await page.locator('.wizard-next').click();await page.locator('.wizard-next').click();
   const search=page.locator('.country-search');
   for(const query of ['Türkiye','Turkiye','TUR']){
