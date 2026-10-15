@@ -1,4 +1,4 @@
-import { log } from '../detMath';
+import { log, pow } from '../detMath';
 import {leaderModifiers} from './leaderPerks';
 import {settleWarOutcome,closeDependentWars} from './warOutcome';
 import type { BattlefieldTerrain, CasualtySnapshot, CountryState, GameState, MilitaryState, NationalInfrastructureState, WarState } from '../../domain/game';
@@ -32,7 +32,7 @@ const atk:Record<BattlefieldTerrain,number>={plains:1,urban:.76,mountain:.68,for
 const def:Record<BattlefieldTerrain,number>={plains:1,urban:1.18,mountain:1.28,forest:1.16,desert:1.05,coastal:1.1};
 /** Phase 3: full air superiority is worth exactly the defensive edge of mountain terrain, counted once (as a power factor). */
 export const AIR_FULL_FACTOR=def.mountain/atk.mountain;
-export const airFactor=(airSuperiority:number)=>Math.pow(AIR_FULL_FACTOR,clamp(airSuperiority,-100,100)/100);
+export const airFactor=(airSuperiority:number)=>pow(AIR_FULL_FACTOR,clamp(airSuperiority,-100,100)/100);
 /** Front momentum of a supplied offensive; a fuel-starved attacker has none (its power penalty and supply already apply). */
 export const OFFENSIVE_INITIATIVE=1.2;
 /** Front change per unit of log power ratio: doubling and halving the ratio move the front by the same amount (Phase 3; was linear in the ratio). */

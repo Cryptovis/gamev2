@@ -1,3 +1,4 @@
+import { pow } from '../detMath';
 import type { CountryState, GameState } from '../../domain/game';
 import { embassyRelationBonus, relationFor } from './diplomacy';
 import { scheduleFlight } from './flights';
@@ -63,7 +64,7 @@ function ruleFor(action: string): { pool: string; halfLifeDays: number; cooldown
   return ACTION_RULES[action as DomesticAction] ?? { pool: action, halfLifeDays: 30, cooldownDays: 0 };
 }
 const recordKey = (countryId: string, action: string) => `${countryId}|${action}`;
-const decayed = (record: FatigueRecord, day: number, halfLifeDays: number) => record.value * 0.5 ** (Math.max(0, day - record.day) / halfLifeDays);
+const decayed = (record: FatigueRecord, day: number, halfLifeDays: number) => record.value * pow(0.5, Math.max(0, day - record.day) / halfLifeDays);
 
 /** Accumulated fatigue for this country's next use of `action` (0 = fresh). */
 export function actionFatigue(state: GameState, countryId: string, action: PressureAction): number {

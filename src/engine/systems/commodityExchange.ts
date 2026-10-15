@@ -1,4 +1,4 @@
-import { cos, exp, log } from '../detMath';
+import { cos, exp, log, pow } from '../detMath';
 import {constrainedOilOutput} from './organizations/quotas';
 import {organizationSanctionsBlock,anonymousMarketBlocked} from './organizations/sanctions';
 import {integrationBenefits} from './organizations/marketIntegration';
@@ -131,15 +131,15 @@ export function worldSupply(s: GameState): WorldSupply {
 
 export function fundamentalPrice(ex: Pick<CommodityExchangeState, 'baseline'>, supply: WorldSupply, g: Commodity): number {
   const base = ex.baseline[g];
-  const stockFactor = clamp(Math.pow(Math.max(1e-6, supply.stock[g]) / Math.max(1e-6, base.stock), -STOCK_ELASTICITY[g]), 0.8, 1.35);
-  const flowFactor = clamp(Math.pow(supply.ratio[g] / Math.max(1e-6, base.ratio), FLOW_ELASTICITY), 0.75, 1.5);
+  const stockFactor = clamp(pow(Math.max(1e-6, supply.stock[g]) / Math.max(1e-6, base.stock), -STOCK_ELASTICITY[g]), 0.8, 1.35);
+  const flowFactor = clamp(pow(supply.ratio[g] / Math.max(1e-6, base.ratio), FLOW_ELASTICITY), 0.75, 1.5);
   return REFERENCE_PRICES[g] * clamp(stockFactor * flowFactor, FUNDAMENTAL_MIN, FUNDAMENTAL_MAX);
 }
 
 /** Current log premium of all active shocks on a commodity. */
 export function shockPremium(ex: Pick<CommodityExchangeState, 'shocks'>, g: Commodity, day: number): number {
   let premium = 0;
-  for (const x of ex.shocks) if (x.good === g && day >= x.day) premium += x.size * Math.pow(0.5, (day - x.day) / x.halfLife);
+  for (const x of ex.shocks) if (x.good === g && day >= x.day) premium += x.size * pow(0.5, (day - x.day) / x.halfLife);
   return premium;
 }
 
@@ -641,5 +641,5 @@ export function maxOrderQuantity(s: GameState, countryId: string, g: Commodity, 
 export interface CommodityNews { shock: CommodityShock; ageDays: number; /** Log premium left today. */ remaining: number }
 /** Recent shocks, newest first, with what is left of each. */
 export function commodityNews(s: GameState, limit = 8): CommodityNews[] {
-  return commodityExchange(s).shocks.slice(0, limit).map((shock) => ({ shock, ageDays: s.day - shock.day, remaining: shock.size * Math.pow(0.5, Math.max(0, s.day - shock.day) / shock.halfLife) }));
+  return commodityExchange(s).shocks.slice(0, limit).map((shock) => ({ shock, ageDays: s.day - shock.day, remaining: shock.size * pow(0.5, Math.max(0, s.day - shock.day) / shock.halfLife) }));
 }

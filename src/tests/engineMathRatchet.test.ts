@@ -2,22 +2,12 @@ import {describe, expect, it} from 'vitest';
 import {countRiskyMath} from './engineMathCounts';
 
 /**
- * Ratchet: the engine may only ever use fewer cross-engine-risky math calls, never more.
- * Stage 1b.1 measured 29 Math.* calls and 6 `**` operators. Stage 1b.2 moved every exp/log/log10/sin/cos/asin site to
- * src/engine/detMath.ts and turned `x ** 2` into `x * x`. What remains is pow, which is held back until it can be replaced
- * without shifting V8 trajectories; as each file reaches zero, delete its line here.
- * Paths are relative to src/engine/.
+ * Ratchet: the engine may not call cross-engine-risky math. Stage 1b.1 measured 29 Math.* calls and 6 `**` operators;
+ * Stage 1b.2 and 1b.2b moved every one to src/engine/detMath.ts (and `x ** 2` to `x * x`), so both baselines are empty.
+ * Paths are relative to src/engine/. Never add an entry: use detMath instead.
  */
-const MATH_BASELINE: Record<string, number> = {
-  // Math.pow sites held back in Stage 1b.2: Node's pow is not bit-identical to fdlibm 5.3 (see detMath.test.ts).
-  'systems/commodityExchange.ts': 4,
-  'systems/warfare.ts': 1,
-  'systems/tacticalPlanner.ts': 1,
-};
-const POWER_BASELINE: Record<string, number> = {
-  'systems/factions.ts': 1,
-  'systems/policyPressure.ts': 1,
-};
+const MATH_BASELINE: Record<string, number> = {};
+const POWER_BASELINE: Record<string, number> = {};
 const total = (baseline: Record<string, number>) => Object.values(baseline).reduce((sum, n) => sum + n, 0);
 
 const sources = import.meta.glob<string>('../engine/**/*.ts', {query: '?raw', import: 'default', eager: true});
@@ -29,9 +19,11 @@ describe('engine math ratchet (cross-engine determinism)', () => {
     expect(counts.map(c => c.file)).toContain('tick.ts');
   });
 
-  it('records the baseline: only the 6 pow-dependent Math.* calls and 2 ** operators remain', () => {
-    expect(total(MATH_BASELINE)).toBe(6);
-    expect(total(POWER_BASELINE)).toBe(2);
+  it('has empty baselines: the engine uses no risky Math.* call and no ** operator', () => {
+    expect(MATH_BASELINE).toEqual({});
+    expect(POWER_BASELINE).toEqual({});
+    expect(total(MATH_BASELINE)).toBe(0);
+    expect(total(POWER_BASELINE)).toBe(0);
   });
 
   it('detMath.ts itself uses no risky native function', () => {

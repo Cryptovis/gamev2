@@ -1,3 +1,4 @@
+import { pow } from '../detMath';
 import type { GameState } from '../../domain/game';
 import type { KnownEnemy, TacticalBattle, TacticalOrder, TacticalPlan, TacticalPlanKind, TacticalSide, TacticalUnit } from '../../domain/tactical';
 import { allCells, cellColumn, cellDistance, cellRow, chooseSingleRoundOrders, visibleCells, type TacticalIntent } from './tactical';
@@ -143,7 +144,7 @@ function projectPlan(b: TacticalBattle, side: TacticalSide, kind: TacticalPlanKi
     const occupied = new Set([...units.map(u => u.cell), ...enemyCells]);
     units = units.map(u => { occupied.delete(u.cell); const cell = stepToward(b, u, goals.get(u.id)!, occupied, budget); occupied.add(cell); return { ...u, cell }; });
     if (budget.exceeded) return -Infinity;
-    const weight = Math.pow(DISCOUNT, round - 1);
+    const weight = pow(DISCOUNT, round - 1);
     const held = b.objectives.filter(o => units.some(u => u.cell === o) && !k.enemies.some(e => cellDistance(b, e.cell, o) <= 1)).length;
     const distance = units.reduce((n, u) => n + cellDistance(b, u.cell, goals.get(u.id)!), 0);
     const progress = (startDistance - distance) / Math.max(1, units.length);

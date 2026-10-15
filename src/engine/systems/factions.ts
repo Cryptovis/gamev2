@@ -7,7 +7,7 @@
 // run through the same functions, costs and thresholds; only the player sees warnings and chooses responses.
 // Everything is a pure function of GameState and the seeded RNG; nothing here reads the clock.
 
-import { log10 } from '../detMath';
+import { log10, pow } from '../detMath';
 import type { CountryState, GameState, RegimeType } from '../../domain/game';
 import { FACTION_KEYS, type CrisisOption, type FactionKey, type FactionState, type RegimeCrisis } from '../../domain/politics';
 import { nextRandom } from '../rng';
@@ -250,7 +250,7 @@ export function applyConcession(c: CountryState, day: number, faction: FactionKe
 /** Effect multiplier of a crisis response: each further response within a year achieves less. */
 export function crisisResponseMultiplier(f: FactionState, day: number): number {
   const streak = f.lastResponseDay !== undefined && day - f.lastResponseDay < 365 ? f.responseStreak ?? 0 : 0;
-  return 0.6 ** streak;
+  return pow(0.6, streak);
 }
 
 export interface CrisisOptionPreview extends ActionStatus { option: CrisisOption; pressureRelief: number }

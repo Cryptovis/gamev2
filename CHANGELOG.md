@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Simulation math is now engine-independent; existing saves continue with slightly different (deterministic) market and war rounding.
+
 ## 1.0.0 — Grand Launch International Affairs Hub (Slice 8.5)
 
 - Replace the legacy institution panel with a five-tab workspace, available from the command rail and CountryPanel: organization rosters/standing/offices; resolutions/voting; financial facilities; commodities/trade/swaps; sanctions/enforcement.
