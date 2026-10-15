@@ -3,7 +3,7 @@ import type {OrganizationCommand,OrganizationId,ExecutableResolutionPayload,Reso
 import {validateOrganizationCommand,ORGANIZATION_VOTING_DAYS} from './validation';
 import {evaluateVotingOutcome} from './voting';
 import {activeOilQuota,constrainedOilOutput} from './quotas';
-import {financingRecords} from './financing';
+import {financingRecords,financingRisk,imfConditionalityFloor,projectedDebtToGdp,DEBT_SUSTAINABILITY_CEILING} from './financing';
 
 export const ORGANIZATION_LABELS:Record<OrganizationId,string>={un:'United Nations (UN)',nato:'NATO',csto:'CSTO',sco:'SCO',imf:'International Monetary Fund (IMF)',worldBank:'World Bank',wto:'World Trade Organization (WTO)',opecPlus:'OPEC+',g20:'G20',wef:'World Economic Forum (WEF)',eu:'European Union (EU)',asean:'ASEAN',oic:'OIC · Islamic Development Bank (IDB)',bricsPlus:'BRICS+ · New Development Bank (NDB)'};
 export const BODY_LABELS:Record<string,string>={plenary:'Plenary assembly',securityCouncil:'Security Council',financeBoard:'Financial board',legacyAssembly:'Legacy assembly',legacySecurity:'Legacy security body'};
@@ -44,6 +44,7 @@ const REASONS:Record<string,string>={
  quotaDeviation:'An active quota is required; deviation cannot exceed ten percent of capacity.',hardwareTransfer:'A trade pact, alliance, available stock and unblocked access are required.',
  financingAccess:'Only the borrower can manage this outstanding facility.',invalidRepayment:'Payment must fit treasury, outstanding principal and accrued interest.',votingClosed:'Voting has closed.',ineligibleVoter:'Your country is not in the frozen electorate.',duplicateBallot:'This is already your recorded ballot.',unsupportedPayload:'This action is not available under the current charter.',
  invalidDeadline:'Choose a valid deadline.',proposalAccess:'Active voting membership and access to this body are required.',financeConsentOrBoard:'The borrower must request financing from the financial board.',
+ borrowerAggressor:'This lender will not finance a country that is attacking in an active war.',imfConditionalityFloor:'The IMF board requires a fiscal adjustment, a fiscal or tax condition and a smaller first tranche for a loan this size.',debtUnsustainable:'Projected debt would exceed the sustainability ceiling of 150% of GDP.',
  borrowerMembership:'The borrower must be an active member.',financingDefault:'Settle outstanding arrears before requesting new finance.',financialRestriction:'Financial sanctions block this facility.',insufficientCapital:'The institution has insufficient available capital.',
  invalidFinanceTerms:'Check tranche, reform dates, term and funding conditions.',duplicateProgram:'Choose a new financing program identifier.',financingCapacity:'The financing archive is full.',
  economicAuthority:'This organization or body cannot authorize that action.',invalidParticipants:'Choose valid independent participants.',participantMembership:'Every participant must be an active member.',invalidQuota:'Enter a finite nonnegative daily quota.',invalidRemedy:'Choose a valid target, commodity and countermeasure cap.',activeDispute:'An active countermeasure already covers this dispute or commodity.',participantConsent:'Participating countries must consent.',invalidSwap:'Choose two members and a limit within five percent of the smaller GDP.',activeSwap:'An active swap already covers this pair.',
@@ -67,10 +68,16 @@ export function resolutionPayloadMetrics(state:GameState,payload:Resolution['pay
    if(payload.kind==='sanctions')metrics.push(['Duration (days)',String(payload.durationDays)],['Humanitarian exemptions',payload.exemptions.length?'Humanitarian':'No exemptions']);
    if(payload.kind==='oilQuota')metrics.push(['Duration (days)',String(payload.durationDays)]);
    if(payload.kind==='finance'){
+    metrics.push(['Projected debt / GDP',projectedDebtToGdp(state,payload).toFixed(2)],['Board risk assessment',financingRisk(state,payload).toFixed(2)]);
     metrics.push(['Funding type',payload.fundingKind==='grant'?'Grant':'Loan'],['Grace period (days)',String(payload.terms.graceDays)],['Annual fiscal adjustment ($B)',String(payload.fiscalAdjustmentB??0)]);
     for(const c of payload.conditions)metrics.push(['Reform condition',c.kind==='taxRate'?'Minimum tax rate (%)':c.kind==='fiscalBalance'?'Minimum fiscal balance ($B/day)':'Maximum social budget share (0–1)'],['Condition threshold',String(c.threshold)],['Review day',String(c.reviewDay)]);
    }
  return metrics;
+}
+/** What the lending gate will test for this request, computed by the same functions the validator uses. */
+export function financeGateView(state:GameState,organizationId:OrganizationId,payload:Extract<ExecutableResolutionPayload,{kind:'finance'}>){
+ const floor=organizationId==='imf'?imfConditionalityFloor(state,payload.borrowerId,payload.principalB):{minFiscalAdjustmentB:0,requiresFiscalCondition:false,maxInitialTrancheShare:1};
+ return {floor,projectedDebtToGdp:projectedDebtToGdp(state,payload),debtCeiling:DEBT_SUSTAINABILITY_CEILING,risk:financingRisk(state,payload)};
 }
 export function previewOrganizationCommand(state:GameState,command:OrganizationCommand){
  const status=validateOrganizationCommand(state,command),actor=state.countries[state.playerCountryId];

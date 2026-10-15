@@ -1,13 +1,14 @@
 import type {GameState} from '../../../domain/game';
 import {ORGANIZATION_IDS,type OrganizationId} from '../../../domain/organizations';
 import {LocaleText,translateLive} from '../../../i18n/localeText';
-import {ORGANIZATION_LABELS,PAYLOAD_LABELS,bodyLabel,organizationProposalCommand,proposalKinds,type OrganizationProposalDraft} from '../../../engine/systems/organizations/previews';
+import {ORGANIZATION_LABELS,PAYLOAD_LABELS,bodyLabel,financeGateView,organizationProposalCommand,proposalKinds,type OrganizationProposalDraft} from '../../../engine/systems/organizations/previews';
 import {TRADE_COMMODITIES} from '../../../engine/systems/organizations/economic';
-import {Field,NumberField,ReviewedAction,type ReviewAction} from './shared';
+import {Field,Metrics,NumberField,ReviewedAction,type ReviewAction} from './shared';
 export function ProposalComposer({state,draft,setDraft,onReview}:{state:GameState;draft:OrganizationProposalDraft;setDraft:(d:OrganizationProposalDraft)=>void;onReview:ReviewAction}){
  const set=<K extends keyof OrganizationProposalDraft>(key:K,value:OrganizationProposalDraft[K])=>setDraft({...draft,[key]:value});
  const countries=Object.values(state.countries).filter(c=>!c.annexedBy).sort((a,b)=>a.name.localeCompare(b.name));
  const organization=state.world.organizations.byId[draft.organizationId],command=organizationProposalCommand(state,draft);
+ const gate=command.type==='organization/proposeResolution'&&command.payload.kind==='finance'?financeGateView(state,draft.organizationId,command.payload):null;
  const selectCountry=(label:string,key:'targetId'|'partnerId')=><Field label={label}><select aria-label={translateLive(label)} value={draft[key]} onChange={e=>set(key,e.target.value)}>{countries.map(c=><option key={c.id} value={c.id}><LocaleText value={c.name}/></option>)}</select></Field>;
  return <section className="ia-card ia-composer" aria-label={translateLive('Create resolution')}><h3><LocaleText value="Create resolution"/></h3>
   <div className="ia-form-grid">
@@ -26,6 +27,7 @@ export function ProposalComposer({state,draft,setDraft,onReview}:{state:GameStat
     <Field label="Reform condition"><select value={draft.condition} onChange={e=>set('condition',e.target.value as OrganizationProposalDraft['condition'])}><option value="none"><LocaleText value="No reform condition"/></option><option value="taxRate"><LocaleText value="Minimum tax rate (%)"/></option><option value="fiscalBalance"><LocaleText value="Minimum fiscal balance ($B/day)"/></option><option value="subsidyShare"><LocaleText value="Maximum social budget share (0–1)"/></option></select></Field>
     {draft.condition!=='none'&&<><NumberField label="Condition threshold" min={draft.condition==='fiscalBalance'?-100000:0} value={draft.threshold} onChange={n=>set('threshold',n)}/><NumberField label="Review after adoption (days)" value={draft.reviewInDays} onChange={n=>set('reviewInDays',n)} min={1} step={1}/></>}
     {draft.organizationId==='imf'&&<NumberField label="Annual fiscal adjustment ($B)" value={draft.fiscalAdjustmentB} onChange={n=>set('fiscalAdjustmentB',n)}/>}
+    {gate&&<Metrics rows={[...(gate.floor.requiresFiscalCondition?[['Minimum annual fiscal adjustment ($B)',gate.floor.minFiscalAdjustmentB.toFixed(2)],['Maximum initial tranche share',`${(gate.floor.maxInitialTrancheShare*100).toFixed(0)}%`],['Required condition','Minimum tax rate or fiscal balance']]:[]),['Projected debt / GDP',`${gate.projectedDebtToGdp.toFixed(2)} / ${gate.debtCeiling.toFixed(2)}`],['Board risk assessment',gate.risk.toFixed(2)]]}/>}
     <p className="ia-muted"><LocaleText value="Only your country can request its financing. APR is a percentage; drawn principal creates debt."/></p>
    </>}
    {draft.kind==='oilQuota'&&<NumberField label="Daily oil quota" value={draft.quota} onChange={n=>set('quota',n)}/>}

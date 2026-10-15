@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Simulation math is now engine-independent; existing saves continue with slightly different (deterministic) market and war rounding.
+- Anti-war lending gate: IMF and World Bank will not lend to a country attacking in an active war (running programs withhold tranches while it does); IMF loans above 1% of GDP need a fiscal adjustment, a tax or fiscal-balance condition and a first tranche of at most half; loans that would push debt past 150% of GDP are refused by every lender; IMF austerity now lasts to the original maturity even after early repayment (existing closed programs resume their adjustment until maturity); AI board votes lower their support for risky requests, and the proposal form shows the floor, projected debt/GDP and board risk.
 
 ## 1.0.0 — Grand Launch International Affairs Hub (Slice 8.5)
 

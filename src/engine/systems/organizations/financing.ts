@@ -8,6 +8,19 @@ import {leaderModifiers} from '../leaderPerks';
 
 const EPS=1e-8;
 export const FINANCIAL_ORGANIZATIONS:readonly OrganizationId[]=['imf','worldBank','bricsPlus','oic'];
+/** Stage 1b.3 lending gate. Every threshold is a share of the borrower's GDP so it binds the USA and a microstate alike. */
+export const AGGRESSOR_GATED_LENDERS:readonly OrganizationId[]=['imf','worldBank'];
+export const DEBT_SUSTAINABILITY_CEILING=1.5;
+export const IMF_FLOOR_PRINCIPAL_GDP_SHARE=.01,IMF_FLOOR_ADJUSTMENT_GDP_SHARE=.2,IMF_FLOOR_ADJUSTMENT_PRINCIPAL_SHARE=.25,IMF_FLOOR_MAX_INITIAL_SHARE=.5;
+/** Board risk: debt stress starts at 60% debt/GDP; the four weights sum to 1; AI inclination loses risk x AI_RISK_PENALTY. */
+export const RISK_DEBT_STRESS_FLOOR=.6,RISK_WEIGHTS={debt:.4,aggressor:.3,default:.2,lax:.1} as const,AI_RISK_PENALTY=.4;
+/** True when the country is the attacker in any active war. Defenders and their allies never are. */
+export function isAggressor(state:GameState,countryId:string):boolean {
+  return Object.values(state.wars).some(w=>w.status==='active'&&w.attackerId===countryId);
+}
+const lenderBlocksAggressor=(state:GameState,organizationId:OrganizationId,borrowerId:string)=>AGGRESSOR_GATED_LENDERS.includes(organizationId)&&isAggressor(state,borrowerId);
+/** Austerity binds IMF programs that are running, and a repaid program until its original maturity. */
+const imfAusterityCounts=(state:GameState,f:OrganizationFinancingRecord)=>f.organizationId==='imf'&&(['active','paused'].includes(f.status)||f.status==='closed'&&!!f.lifecycle&&state.day<f.lifecycle.maturityDay);
 export function financingRecords(state:GameState):OrganizationFinancingRecord[] {
   return Object.values(state.world.organizations.financing).filter(isOrganizationFinancing).sort((a,b)=>a.id<b.id?-1:a.id>b.id?1:0);
 }
@@ -18,7 +31,7 @@ export function organizationCountryAccounts(state:GameState):Record<string,{debt
     if(!f.lifecycle)continue;
     const row=result[f.borrowerId]??={debtB:0,fiscalAdjustmentB:0};
     row.debtB+=f.outstandingB+f.lifecycle.accruedInterestB;
-    if(f.organizationId==='imf'&&['active','paused'].includes(f.status))row.fiscalAdjustmentB+=f.lifecycle.fiscalAdjustmentB;
+    if(imfAusterityCounts(state,f))row.fiscalAdjustmentB+=f.lifecycle.fiscalAdjustmentB;
   }
   for(const [id,row] of Object.entries(result))row.fiscalAdjustmentB=Math.min(row.fiscalAdjustmentB,state.countries[id].economy.gdp*.2);
   return result;
@@ -27,7 +40,7 @@ export function organizationDebtB(state:GameState,countryId:string):number {
   return financingRecords(state).filter(f=>f.borrowerId===countryId&&f.lifecycle).reduce((n,f)=>n+f.outstandingB+f.lifecycle!.accruedInterestB,0);
 }
 export function organizationFiscalAdjustmentB(state:GameState,countryId:string):number {
-  return Math.min(state.countries[countryId].economy.gdp*.2,financingRecords(state).filter(f=>f.borrowerId===countryId&&f.organizationId==='imf'&&['active','paused'].includes(f.status)).reduce((n,f)=>n+(f.lifecycle?.fiscalAdjustmentB??0),0));
+  return Math.min(state.countries[countryId].economy.gdp*.2,financingRecords(state).filter(f=>f.borrowerId===countryId&&imfAusterityCounts(state,f)).reduce((n,f)=>n+(f.lifecycle?.fiscalAdjustmentB??0),0));
 }
 export function hasFinancingDefault(state:GameState,countryId:string):boolean {
   return arrears(state,countryId)>EPS||financingRecords(state).some(f=>f.borrowerId===countryId&&(f.status==='defaulted'||(f.lifecycle?.arrearsB??0)>EPS));
@@ -35,7 +48,7 @@ export function hasFinancingDefault(state:GameState,countryId:string):boolean {
 /** Review fiscalBalance is $B/day, taxRate is percent, subsidyShare is the social-ministry budget fraction. */
 export function financingConditionsMet(state:GameState,f:OrganizationFinancingRecord,reviewDay=state.day):boolean {
   const c=state.countries[f.borrowerId];
-  if(!c||c.annexedBy)return false;
+  if(!c||c.annexedBy||lenderBlocksAggressor(state,f.organizationId,f.borrowerId))return false;
   const fiscal=fiscalAccounts(c,leaderModifiers(state,c.id),organizationDebtB(state,c.id),organizationFiscalAdjustmentB(state,c.id)).dailyBalance;
   const total=Object.values(c.ministries.allocations).reduce((a,b)=>a+b,0);
   const subsidyShare=total>0?c.ministries.allocations.society/total:0;
@@ -66,10 +79,31 @@ function disburse(state:GameState,f:OrganizationFinancingRecord,amountB:number):
   return put(next,{...f,committedB:Math.max(0,f.committedB-amountB),outstandingB:f.outstandingB+debt,lifecycle:{...l,disbursedB:l.disbursedB+amountB}});
 
 }
+/** IMF board floor for a loan; the proposal form and the validator both read it from here. */
+export function imfConditionalityFloor(state:GameState,borrowerId:string,principalB:number):{minFiscalAdjustmentB:number;requiresFiscalCondition:boolean;maxInitialTrancheShare:number} {
+  const gdp=state.countries[borrowerId]?.economy.gdp??0;
+  if(!(gdp>0&&principalB>IMF_FLOOR_PRINCIPAL_GDP_SHARE*gdp))return {minFiscalAdjustmentB:0,requiresFiscalCondition:false,maxInitialTrancheShare:1};
+  return {minFiscalAdjustmentB:Math.min(IMF_FLOOR_ADJUSTMENT_GDP_SHARE*gdp,IMF_FLOOR_ADJUSTMENT_PRINCIPAL_SHARE*principalB),requiresFiscalCondition:true,maxInitialTrancheShare:IMF_FLOOR_MAX_INITIAL_SHARE};
+}
+/** Debt/GDP after this loan: current debt, the undisbursed commitments of the borrower's other active loans, and the new principal. Grants add none. */
+export function projectedDebtToGdp(state:GameState,p:FinancePayload):number {
+  const c=state.countries[p.borrowerId];
+  if(!c)return 0;
+  const committed=financingRecords(state).filter(f=>f.borrowerId===p.borrowerId&&f.status==='active'&&f.lifecycle?.fundingKind==='loan').reduce((n,f)=>n+f.committedB,0);
+  return (c.economy.debt+committed+(p.fundingKind==='grant'?0:p.principalB))/Math.max(1,c.economy.gdp);
+}
+/** Board risk in [0,1] used by AI votes and shown in the proposal preview. */
+export function financingRisk(state:GameState,p:FinancePayload):number {
+  const stress=Math.max(0,Math.min(1,(projectedDebtToGdp(state,p)-RISK_DEBT_STRESS_FLOOR)/(DEBT_SUSTAINABILITY_CEILING-RISK_DEBT_STRESS_FLOOR)));
+  const defaulted=hasFinancingDefault(state,p.borrowerId)||financingRecords(state).some(f=>f.borrowerId===p.borrowerId&&f.lifecycle?.defaultRecorded);
+  const lax=p.fundingKind!=='grant'&&p.conditions.length===0;
+  return Math.max(0,Math.min(1,RISK_WEIGHTS.debt*stress+RISK_WEIGHTS.aggressor*(isAggressor(state,p.borrowerId)?1:0)+RISK_WEIGHTS.default*(defaulted?1:0)+RISK_WEIGHTS.lax*(lax?1:0)));
+}
 /** Rechecked at adoption: competing approvals cannot overdraw a capital reservoir. */
 export function financeAdoptionReason(state:GameState,organizationId:OrganizationId,p:FinancePayload):string|null {
   const o=state.world.organizations.byId[organizationId],c=state.countries[p.borrowerId],m=o.memberships[p.borrowerId];
   if(!FINANCIAL_ORGANIZATIONS.includes(organizationId)||!c||c.annexedBy||m?.status!=='active'||m.tier==='Observer')return 'borrowerMembership';
+  if(lenderBlocksAggressor(state,organizationId,c.id))return 'borrowerAggressor';
   if(hasFinancialRestriction(state,c.id))return 'financialRestriction';
   if(hasFinancingDefault(state,c.id))return 'financingDefault';
   if(p.principalB>o.availableFundsB)return 'insufficientCapital';
@@ -79,6 +113,11 @@ export function financeAdoptionReason(state:GameState,organizationId:Organizatio
     !Number.isFinite(c.economy.treasury+p.principalB)||!Number.isFinite(c.economy.debt+p.principalB)||
     p.conditions.some(x=>x.reviewDay<=state.day||x.reviewDay>=state.day+p.terms.termDays||x.kind==='taxRate'&&(x.threshold<0||x.threshold>60)||x.kind==='subsidyShare'&&(x.threshold<0||x.threshold>1))||
     initial<p.principalB&&!p.conditions.length||p.fundingKind==='grant'&&(organizationId==='imf'||p.terms.apr!==0))return 'invalidFinanceTerms';
+  if(organizationId==='imf'){
+    const floor=imfConditionalityFloor(state,c.id,p.principalB);
+    if((p.fiscalAdjustmentB??0)<floor.minFiscalAdjustmentB-EPS||floor.requiresFiscalCondition&&!p.conditions.some(x=>x.kind==='fiscalBalance'||x.kind==='taxRate')||initial>p.principalB*floor.maxInitialTrancheShare+EPS)return 'imfConditionalityFloor';
+  }
+  if(p.fundingKind!=='grant'&&projectedDebtToGdp(state,p)>DEBT_SUSTAINABILITY_CEILING)return 'debtUnsustainable';
   if(financingRecords(state).some(f=>f.lifecycle&&f.organizationId===organizationId&&f.borrowerId===p.borrowerId&&
     state.world.organizations.resolutions[f.lifecycle.sourceResolutionId]?.payload.kind==='finance'&&
     (state.world.organizations.resolutions[f.lifecycle.sourceResolutionId].payload as FinancePayload).programId===p.programId))return 'duplicateProgram';

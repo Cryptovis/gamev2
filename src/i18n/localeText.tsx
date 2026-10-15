@@ -1,5 +1,6 @@
 import {UI_CATALOG_100} from './uiCatalog100';
 import {UI_CATALOG_HINTS} from './uiCatalogHints';
+import {UI_CATALOG_1B3} from './uiCatalog1b3';
 import {UI_CATALOG_098} from './uiCatalog098';
 import {UI_CATALOG_097} from './uiCatalog097';
 import {UI_CATALOG_096} from './uiCatalog096';
@@ -92,7 +93,7 @@ for (const language of languages) {
   for(const [key,values] of Object.entries(UI_CATALOG_089_K))entries.set(catalogKey(key),values[index]);
   for(const [key,values] of Object.entries(UI_CATALOG_089_L))entries.set(catalogKey(key),values[index]);
   for(const [key,values] of Object.entries(UI_CATALOG_089_M))entries.set(catalogKey(key),values[index]);
-  for(const [key,values] of Object.entries({...UI_CATALOG_090,...UI_CATALOG_0903,...UI_CATALOG_0904,...UI_CATALOG_0905,...UI_CATALOG_0907,...UI_CATALOG_0908,...UI_CATALOG_0910,...UI_CATALOG_0912,...UI_CATALOG_0913,...UI_CATALOG_0914,...UI_CATALOG_0915,...UI_CATALOG_0916,...UI_CATALOG_0917,...UI_CATALOG_0918,...UI_CATALOG_0919,...UI_CATALOG_0920,...UI_CATALOG_PHASE7,...UI_CATALOG_SPRINT3,...UI_CATALOG_094,...UI_CATALOG_096,...UI_CATALOG_097,...UI_CATALOG_098,...UI_CATALOG_100,...UI_CATALOG_HINTS}))entries.set(catalogKey(key),values[index]);
+  for(const [key,values] of Object.entries({...UI_CATALOG_090,...UI_CATALOG_0903,...UI_CATALOG_0904,...UI_CATALOG_0905,...UI_CATALOG_0907,...UI_CATALOG_0908,...UI_CATALOG_0910,...UI_CATALOG_0912,...UI_CATALOG_0913,...UI_CATALOG_0914,...UI_CATALOG_0915,...UI_CATALOG_0916,...UI_CATALOG_0917,...UI_CATALOG_0918,...UI_CATALOG_0919,...UI_CATALOG_0920,...UI_CATALOG_PHASE7,...UI_CATALOG_SPRINT3,...UI_CATALOG_094,...UI_CATALOG_096,...UI_CATALOG_097,...UI_CATALOG_098,...UI_CATALOG_100,...UI_CATALOG_HINTS,...UI_CATALOG_1B3}))entries.set(catalogKey(key),values[index]);
   const countries = new Intl.DisplayNames([language], { type: "region" });
   for (const c of WORLD_COUNTRY_SEEDS)
     entries.set(c.name.toLowerCase(), countries.of(c.iso2) ?? c.name);
