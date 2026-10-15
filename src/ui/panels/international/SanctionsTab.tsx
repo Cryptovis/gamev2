@@ -7,7 +7,7 @@ import {Badge,Metrics,Field,NumberField,ReviewedAction,type ReviewAction} from '
 export function SanctionsTab({state,onReview}:{state:GameState;onReview:ReviewAction}){
  const [recipient,setRecipient]=useState(Object.keys(state.countries).find(id=>id!==state.playerCountryId)??state.playerCountryId),[equipment,setEquipment]=useState<'armor'|'fighters'>('armor'),[quantity,setQuantity]=useState(1);
  const effects=sanctionEffects(state).filter(e=>effectActive(state,e));
- return <><p className="ia-muted"><LocaleText value="Sanctions restrict their declared channels. Humanitarian exemptions do not permit weapons transfers."/></p>
+ return <>
   {!effects.length&&<p className="ia-empty"><LocaleText value="No active multilateral sanctions."/></p>}
   {effects.map(e=><article className="ia-card" key={e.id}><h3><LocaleText value={state.countries[e.targetId].name}/></h3><p><LocaleText value={ORGANIZATION_LABELS[e.organizationId]}/> · <LocaleText value={bodyLabel(e.bodyId)}/></p>
    <Metrics rows={[["Starts on day",String(e.startsDay)],["Ends on day",String(e.endsDay)]]}/><div className="ia-tags">{e.measures.map((m,i)=><span key={m.scope+i}><Badge value={m.scope}/></span>)}</div>

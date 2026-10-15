@@ -4,6 +4,8 @@ import {useGameStore} from '../../store/gameStore';
 import {useWindowLifecycle,WINDOW_LAYERS} from './useWindowLifecycle';
 import {useScrollMemory} from './useScrollMemory';
 import {GuideBriefing} from '../panels/GuideBriefing';
+import {TacticalHint} from '../hints/TacticalHint';
+import type {TacticalHintSpec} from '../hints/types';
 import {LocaleText,translateLive} from '../../i18n/localeText';
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 
@@ -26,8 +28,8 @@ function bounds(width:number,preferredX:number,expanded=false) {
  return workspaceBounds(window.innerWidth,left,edge,width,right,preferredX);
 }
 export function DraggableWindow({
- id,title,kicker,children,onClose,initialX=120,initialY=130,width=430,expanded=false
-}:{id:string;title:string;kicker:string;children:ReactNode;onClose:()=>void;initialX?:number;initialY?:number;width?:number;expanded?:boolean}){
+ id,title,kicker,children,onClose,initialX=120,initialY=130,width=430,expanded=false,hint
+}:{id:string;title:string;kicker:string;children:ReactNode;onClose:()=>void;initialX?:number;initialY?:number;width?:number;expanded?:boolean;hint?:TacticalHintSpec}){
  const visible=useWorkspaceVisibility();
  const activeTool=useGameStore(s=>s.activeTool);
  const country=useGameStore(s=>s.selectedCountryId);
@@ -57,7 +59,7 @@ export function DraggableWindow({
  const stop=()=>{drag.current=null;};
  const node=<section ref={ref} tabIndex={-1} role="dialog" aria-modal="false" aria-label={translateLive(title)} onPointerDownCapture={raise} id={id} className={`floating-command-window ${expanded?'expanded-command-window':''}`} hidden={!visible} style={{left:position.x,top:position.y,width:position.width,'--workspace-y':`${position.y}px`,'--workspace-x':`${position.x}px`,'--workspace-width':`${position.width}px`} as React.CSSProperties} onPointerMove={onPointerMove} onPointerUp={stop} onPointerCancel={stop}>
    <header className="floating-command-header" onPointerDown={onPointerDown}>
-    <span><small><LocaleText value={kicker}/></small><strong><LocaleText value={title}/></strong></span><div><em><LocaleText value={"DRAG"}/></em><button data-guide="close-workspace" onClick={onClose} aria-label={translateLive(`Close ${title}`)}><LocaleText value={"×"}/></button></div>
+    <span><small><LocaleText value={kicker}/></small><strong><LocaleText value={title}/></strong></span><div><em><LocaleText value={"DRAG"}/></em>{hint&&<TacticalHint spec={hint}/>}<button data-guide="close-workspace" onClick={onClose} aria-label={translateLive(`Close ${title}`)}><LocaleText value={"×"}/></button></div>
    </header>
    <div className="floating-command-body"><GuideBriefing/><LocaleText value={children}/></div>
   </section>;

@@ -1,0 +1,46 @@
+/** Tactical hint copy (Phase 9, Slice 9.1): tr, es, zh, ru. English keys remain canonical. */
+export const UI_CATALOG_HINTS:Record<string,[string,string,string,string]>={
+  'Tactical hints':['Taktik ipuçları','Pistas tácticas','战术提示','Тактические подсказки'],
+  'Show tactical hints':['Taktik ipuçlarını göster','Mostrar pistas tácticas','显示战术提示','Показывать тактические подсказки'],
+  'Reset dismissed hints':['Gizlenen ipuçlarını sıfırla','Restablecer pistas descartadas','重置已隐藏的提示','Сбросить скрытые подсказки'],
+  'Dismissed hints restored.':['Gizlenen ipuçları geri yüklendi.','Pistas descartadas restauradas.','已恢复隐藏的提示。','Скрытые подсказки восстановлены.'],
+  'Short explanations appear behind a ? beacon in window headers.':['Kısa açıklamalar pencere başlıklarındaki ? simgesinin arkasında yer alır.','Las explicaciones breves aparecen tras un indicador ? en los encabezados de ventana.','简短说明显示在窗口标题栏的 ? 提示按钮中。','Краткие пояснения скрыты за значком ? в заголовках окон.'],
+  'Do not show this hint again':['Bu ipucunu bir daha gösterme','No volver a mostrar esta pista','不再显示此提示','Больше не показывать эту подсказку'],
+  'Help: {0}':['Yardım: {0}','Ayuda: {0}','帮助：{0}','Справка: {0}'],
+  'Hub overview':['Merkez genel bakışı','Resumen del centro','中心概览','Обзор центра'],
+  'Fourteen organizations share one command hub, and every action follows the same engine rules. NDB and IDB are financial facilities under BRICS+ and OIC. Starting rosters and charters are game scenarios.':[
+    'On dört kuruluş tek bir komuta merkezini paylaşır ve her eylem aynı motor kurallarına tabidir. NDB ve İKB, BRICS+ ve İİT bünyesindeki finansman programlarıdır. Başlangıç üyeleri ve kurallar oyun senaryosudur.',
+    'Catorce organizaciones comparten un centro de mando y todas las acciones siguen las mismas reglas del motor. El NDB y el BID son programas financieros de BRICS+ y la OCI. Los miembros y estatutos iniciales son escenarios del juego.',
+    '十四个组织共用一个指挥中心，所有行动遵循相同的引擎规则。新开发银行和伊斯兰开发银行分别属于金砖国家和伊合组织的融资项目。初始成员和章程为游戏设定。',
+    'Четырнадцать организаций работают через единый центр управления, и все действия подчиняются общим правилам движка. НБР и ИБР — финансовые программы БРИКС+ и ОИС. Начальные составы и уставы заданы игровым сценарием.',
+  ],
+  'How voting works':['Oylama nasıl işler','Cómo funciona la votación','投票规则说明','Как проходит голосование'],
+  'Proposals follow simulated charters, and approval is a vote, not an automatic effect. Rules differ by body: Security Council permanent members can veto, NATO needs consensus, and the EU needs a double majority. The electorate is fixed when a proposal opens.':[
+    'Öneriler oyun senaryosundaki kurallara tabidir; kabul için oylama gerekir, etki otomatik değildir. Kurallar kuruluşa göre değişir: Güvenlik Konseyi daimi üyeleri veto edebilir, NATO uzlaşı ister, AB çifte çoğunluk ister. Oy kullanacaklar, öneri açıldığında sabitlenir.',
+    'Las propuestas siguen estatutos simulados y la aprobación requiere una votación, no un efecto automático. Las reglas varían según el órgano: los miembros permanentes del Consejo de Seguridad pueden vetar, la OTAN exige consenso y la UE exige doble mayoría. El electorado queda fijado al abrirse la propuesta.',
+    '提案遵循模拟章程，须经表决，不会自动生效。各机构规则不同：安理会常任理事国拥有否决权，北约须协商一致，欧盟须达到双重多数。提案开启时即确定有表决权的成员。',
+    'Предложения подчиняются игровым уставам; для принятия требуется голосование, эффект не возникает автоматически. Правила зависят от органа: постоянные члены Совета Безопасности могут наложить вето, НАТО требует консенсуса, ЕС — двойного большинства. Состав голосующих фиксируется при открытии предложения.',
+  ],
+  'Financing terms':['Finansman koşulları','Condiciones de financiación','融资条款','Условия финансирования'],
+  'Loans and grants pay out in tranches and accrue APR interest on drawn principal, which becomes debt. Repayments move real treasury. Cancelling releases undrawn funds but does not forgive drawn debt.':[
+    'Krediler ve hibeler dilimler halinde ödenir; kullanılan anaparaya yıllık faiz işler ve bu tutar borç olur. Geri ödemeler gerçek hazine aktarımıdır. İptal, kullanılmayan fonu serbest bırakır; kullanılan borcu silmez.',
+    'Los préstamos y donaciones se desembolsan por tramos y generan interés anual sobre el principal desembolsado, que se convierte en deuda. Los pagos transfieren tesorería real. La cancelación libera fondos sin desembolsar, pero no perdona la deuda utilizada.',
+    '贷款和赠款分期拨付，已拨本金按年利率计息并形成债务。还款实际划转国库资金。取消项目只释放未拨资金，不免除已拨债务。',
+    'Кредиты и гранты выплачиваются траншами; на полученный основной капитал начисляются проценты по годовой ставке, и он становится долгом. Погашение переводит реальные средства. Отмена освобождает невыбранные средства, но не списывает полученный долг.',
+  ],
+  'Only your country can request its own financing.':['Yalnız kendi ülkeniz adına finansman isteyebilirsiniz.','Solo su país puede solicitar su propia financiación.','只能为本国申请融资。','Финансирование можно запрашивать только для своей страны.'],
+  'Quotas, tariffs and swaps':['Kotalar, tarifeler ve takaslar','Cuotas, aranceles y permutas','配额、关税与互换','Квоты, пошлины и свопы'],
+  'OPEC+ quotas limit daily oil output in game units, and deviating from your quota costs standing each day. WTO countermeasures apply targeted tariffs. Swaps authorize settlement but do not create treasury.':[
+    'OPEC+ kotaları günlük petrol üretimini oyun birimiyle sınırlar; kotadan sapmak her gün itibar cezası getirir. DTÖ karşı önlemleri hedefli tarifeler uygular. Takaslar ödeme yetkisi verir, hazine yaratmaz.',
+    'Las cuotas de la OPEP+ limitan la producción diaria de petróleo en unidades de juego, y desviarse de la cuota cuesta prestigio cada día. Las contramedidas de la OMC aplican aranceles selectivos. Las permutas autorizan pagos y no crean tesorería.',
+    'OPEC+ 配额以游戏单位限制每日石油产量，偏离配额每天都会损失声望。世贸组织反制措施会征收针对性关税。互换只授权结算，不创造国库资金。',
+    'Квоты ОПЕК+ ограничивают суточную добычу нефти в игровых единицах, а отклонение от квоты ежедневно снижает репутацию. Контрмеры ВТО вводят адресные пошлины. Свопы разрешают расчёты, но не создают средства.',
+  ],
+  'Sanctions and exemptions':['Yaptırımlar ve istisnalar','Sanciones y exenciones','制裁与豁免','Санкции и исключения'],
+  'Sanctions restrict only their declared channels. Humanitarian exemptions never permit weapons transfers. Hardware transfers move existing reserve equipment, and alliance, trade access and embargo checks apply.':[
+    'Yaptırımlar yalnızca belirtilen alanları kısıtlar. İnsani istisnalar silah aktarımına asla izin vermez. Donanım aktarımları mevcut yedek ekipmanı taşır; ittifak, ticaret erişimi ve ambargo kontrolleri uygulanır.',
+    'Las sanciones restringen solo los ámbitos declarados. Las exenciones humanitarias nunca permiten transferir armas. Las transferencias de material mueven el equipo de reserva existente, con controles de alianza, acceso comercial y embargo.',
+    '制裁只限制其指定领域。人道主义豁免绝不允许武器转让。装备转让调用现有储备装备，并受盟约、贸易准入和禁运检查约束。',
+    'Санкции ограничивают только указанные направления. Гуманитарные исключения никогда не разрешают передачу оружия. Передача техники использует имеющиеся резервы, а проверки союзов, торгового доступа и эмбарго продолжают действовать.',
+  ],
+};

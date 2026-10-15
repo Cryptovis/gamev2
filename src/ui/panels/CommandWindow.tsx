@@ -3,18 +3,20 @@ import {useRef} from 'react';
 import {useWindowLifecycle,ownsWindowDismissal} from '../windows/useWindowLifecycle';
 import {useScrollMemory} from '../windows/useScrollMemory';
 import {GuideBriefing} from './GuideBriefing';
+import {TacticalHint} from '../hints/TacticalHint';
+import type {TacticalHintSpec} from '../hints/types';
 import {LocaleText,translateLive} from '../../i18n/localeText';
 import type { ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 
-export function CommandWindow({kicker,title,subtitle,onClose,children,wide=false,className=""}:{kicker:string;title:string;subtitle?:string;onClose:()=>void;children:ReactNode;wide?:boolean;className?:string}){
+export function CommandWindow({kicker,title,subtitle,onClose,children,wide=false,className="",hint}:{kicker:string;title:string;subtitle?:string;onClose:()=>void;children:ReactNode;wide?:boolean;className?:string;hint?:TacticalHintSpec}){
   const visible=useWorkspaceVisibility();
   const ref=useRef<HTMLElement>(null);
   useWindowLifecycle(ref,{onClose,enabled:visible});
   useScrollMemory(ref,visible);
   const node=<div className="command-window-backdrop" hidden={!visible} onMouseDown={()=>{if(ownsWindowDismissal(ref.current))onClose();}}>
     <section ref={ref} tabIndex={-1} role="dialog" aria-modal="true" aria-label={translateLive(title)} className={`command-window ${wide?'wide':''} ${className}`} onMouseDown={(e)=>e.stopPropagation()}>
-      <header className="command-window-header"><div><small><LocaleText value={kicker}/></small><h2><LocaleText value={title}/></h2>{subtitle&&<p><LocaleText value={subtitle}/></p>}</div><button data-guide="close-workspace" onClick={onClose} aria-label={translateLive("Close command window")}><LocaleText value={"×"}/></button></header>
+      <header className="command-window-header"><div><small><LocaleText value={kicker}/></small><h2><LocaleText value={title}/></h2>{subtitle&&<p><LocaleText value={subtitle}/></p>}</div>{hint&&<TacticalHint spec={hint}/>}<button data-guide="close-workspace" onClick={onClose} aria-label={translateLive("Close command window")}><LocaleText value={"×"}/></button></header>
       <div className="command-window-body"><GuideBriefing/><LocaleText value={children}/></div>
     </section>
   </div>;

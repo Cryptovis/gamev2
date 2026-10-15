@@ -42,12 +42,6 @@ export const UI_CATALOG_100:Record<string,[string,string,string,string]>={
     "十四个组织，一个指挥中心。所有行动遵循相同的引擎规则。",
     "Четырнадцать организаций, единый центр управления. Для всех действий действуют общие правила."
   ],
-  "NDB and IDB are financial facilities under BRICS+ and OIC. Starting rosters and charters are game scenarios.": [
-    "NDB ve İKB, BRICS+ ve İİT bünyesindeki finansman programlarıdır. Başlangıç üyeleri ve kurallar oyun senaryosudur.",
-    "El NDB y el BID son programas financieros de BRICS+ y la OCI. Los miembros y estatutos iniciales son escenarios del juego.",
-    "新开发银行和伊斯兰开发银行分别属于金砖国家和伊合组织的融资项目。初始成员和章程为游戏设定。",
-    "НБР и ИБР — финансовые программы БРИКС+ и ОИС. Начальные составы и уставы заданы игровым сценарием."
-  ],
   "United Nations (UN)": [
     "Birleşmiş Milletler (BM)",
     "Naciones Unidas (ONU)",
@@ -576,12 +570,6 @@ export const UI_CATALOG_100:Record<string,[string,string,string,string]>={
     "双方都必须投赞成票。本币结算仍需可用国库资金。",
     "Оба партнёра должны проголосовать за. Для расчётов в национальной валюте всё равно нужны доступные средства."
   ],
-  "Proposals follow simulated charters. Approval is a vote, not an automatic effect.": [
-    "Öneriler oyun senaryosundaki kurallara tabidir. Kabul için oylama gerekir; etki otomatik değildir.",
-    "Las propuestas siguen estatutos simulados. La aprobación requiere una votación, no un efecto automático.",
-    "提案遵循模拟章程。提案须经表决，不会自动生效。",
-    "Предложения подчиняются игровым уставам. Для принятия требуется голосование, эффект не возникает автоматически."
-  ],
   "Include completed resolutions": [
     "Tamamlanan kararları göster",
     "Incluir resoluciones finalizadas",
@@ -942,12 +930,6 @@ export const UI_CATALOG_100:Record<string,[string,string,string,string]>={
     "旧项目：无历史偿付计划。",
     "Прежняя программа: исторический график недоступен."
   ],
-  "Repayments transfer real treasury. Cancellation releases undrawn funds and does not forgive drawn debt.": [
-    "Geri ödeme gerçek hazine aktarımıdır. İptal, kullanılmayan fonu serbest bırakır; kullanılan borcu silmez.",
-    "Los pagos transfieren tesorería real. La cancelación libera fondos sin desembolsar y no perdona la deuda utilizada.",
-    "还款实际划转国库资金。取消项目只释放未拨资金，不免除已拨债务。",
-    "Погашение переводит реальные средства. Отмена освобождает невыбранные средства, но не списывает полученный долг."
-  ],
   "Include completed facilities": [
     "Tamamlanan programları göster",
     "Incluir programas finalizados",
@@ -959,12 +941,6 @@ export const UI_CATALOG_100:Record<string,[string,string,string,string]>={
     "No hay programas financieros en esta vista. Solicite un préstamo o subvención a un consejo elegible.",
     "此视图暂无融资项目。可向符合条件的金融理事会申请贷款或赠款。",
     "В этом списке нет финансовых программ. Запросите заём или грант у подходящего совета."
-  ],
-  "Oil is measured in game units per day. Swaps authorize settlement and do not create treasury.": [
-    "Petrol, günlük oyun birimiyle ölçülür. Takaslar ödeme yetkisi verir, hazine yaratmaz.",
-    "El petróleo se mide en unidades de juego diarias. Las permutas autorizan pagos y no crean tesorería.",
-    "石油以每日游戏单位计量。互换只授权结算，不创造国库资金。",
-    "Нефть измеряется в игровых единицах за сутки. Свопы разрешают расчёты, но не создают средства."
   ],
   "Your OPEC+ quota control": [
     "OPEC+ kota kontrolünüz",
@@ -1067,12 +1043,6 @@ export const UI_CATALOG_100:Record<string,[string,string,string,string]>={
     "Saldo de compensación local (miles de M$)",
     "本币清算余额（十亿美元）",
     "Сальдо местного клиринга (млрд $)"
-  ],
-  "Sanctions restrict their declared channels. Humanitarian exemptions do not permit weapons transfers.": [
-    "Yaptırımlar belirtilen alanları kısıtlar. İnsani istisnalar silah aktarımına izin vermez.",
-    "Las sanciones restringen los ámbitos declarados. Las exenciones humanitarias no permiten transferir armas.",
-    "制裁限制其指定领域。人道主义豁免不允许武器转让。",
-    "Санкции ограничивают указанные направления. Гуманитарные исключения не разрешают передачу оружия."
   ],
   "No active multilateral sanctions.": [
     "Aktif çok taraflı yaptırım yok.",

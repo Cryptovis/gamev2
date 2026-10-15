@@ -19,7 +19,7 @@ function Facility({state,facility:f,onReview}:{state:GameState;facility:Organiza
 }
 export function FinanceTab({state,onReview}:{state:GameState;onReview:ReviewAction}){
  const [history,setHistory]=useState(false),[limit,setLimit]=useState(30),facilities=financingRecords(state).filter(f=>history||f.outstandingB>0||(f.lifecycle?.accruedInterestB??0)>0||!['closed','expired','cancelled'].includes(f.status));
- return <><p className="ia-muted"><LocaleText value="Repayments transfer real treasury. Cancellation releases undrawn funds and does not forgive drawn debt."/></p><label className="ia-check"><input type="checkbox" checked={history} onChange={e=>setHistory(e.target.checked)}/><LocaleText value="Include completed facilities"/></label>
+ return <><label className="ia-check"><input type="checkbox" checked={history} onChange={e=>setHistory(e.target.checked)}/><LocaleText value="Include completed facilities"/></label>
   {!facilities.length&&<p className="ia-empty"><LocaleText value="No financial facilities in this view. Request a loan or grant from an eligible financial board."/></p>}
   {facilities.slice(0,limit).map(f=><Facility key={f.id} state={state} facility={f} onReview={onReview}/>)}{facilities.length>limit&&<button type="button" onClick={()=>setLimit(n=>n+30)}><LocaleText value="Show more"/></button>}
  </>;

@@ -17,7 +17,7 @@ function QuotaControl({state,effect,onReview}:{state:GameState;effect:OilQuotaEf
 }
 export function MarketsTab({state,onReview}:{state:GameState;onReview:ReviewAction}){
  const effects=economicEffects(state).filter(e=>effectActive(state,e)),quota=activeOilQuota(state,state.playerCountryId);
- return <><p className="ia-muted"><LocaleText value="Oil is measured in game units per day. Swaps authorize settlement and do not create treasury."/></p>
+ return <>
   {quota&&<section className="ia-card"><h3><LocaleText value="Your OPEC+ quota control"/></h3><QuotaControl state={state} effect={quota} onReview={onReview}/></section>}
   {!effects.length&&<p className="ia-empty"><LocaleText value="No active quota, trade remedy, integration or currency swap."/></p>}
   {effects.map(e=><article className="ia-card" key={e.id}><header className="ia-card-header"><div><small><LocaleText value={ORGANIZATION_LABELS[e.organizationId]}/></small><h3><LocaleText value={e.kind==='organizationOilQuota'?'Oil output quota':e.kind==='organizationTradeRemedy'?'Trade countermeasure':e.kind==='organizationMarketIntegration'?'Regional market agreement':'Local-currency swap'}/> <code>{e.id}</code></h3></div><Badge value={e.status}/></header>
