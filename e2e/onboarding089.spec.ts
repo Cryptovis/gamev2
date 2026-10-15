@@ -18,7 +18,9 @@ for(const viewport of [{width:1440,height:900},{width:1280,height:720},{width:39
    await page.locator('.wizard-name-field input').fill('Alper Yıldırım');
    for(let i=0;i<3;i++){await page.locator('.wizard-next').click();await expect(page.locator('.wizard-next')).toBeInViewport();}
    await expect(page.locator('.confirm-summary-grid').getByText(language,{exact:true})).toBeVisible();
-   expect(await page.locator('.wizard-body').evaluate(el=>el.scrollHeight<=el.clientHeight+1)).toBe(true);
+   // Measurements ride along in the failure message so a CI-only overflow reports by how many px and which block is tall.
+   const fit=await page.locator('.wizard-body').evaluate(el=>({scroll:el.scrollHeight,client:el.clientHeight,wizard:Math.round(document.querySelector('.campaign-wizard')!.getBoundingClientRect().height),viewport:innerHeight,blocks:Array.from(el.querySelectorAll('.wizard-confirm-stage,.confirm-leader-card,.confirm-brief,.confirm-summary-grid,.confirm-message')).map(block=>`${block.className}:${Math.round(block.getBoundingClientRect().height)}`)}));
+   expect(fit.scroll<=fit.client+1,JSON.stringify(fit)).toBe(true);
    await expect(page.locator('.confirm-message')).toBeInViewport();
    await expect(page.locator('.wizard-next.confirm')).toBeInViewport();
    if(language==='English')await expect(page.locator('.confirm-summary-grid')).toContainText('$1.3T');
