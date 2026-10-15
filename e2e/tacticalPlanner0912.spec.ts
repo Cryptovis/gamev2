@@ -27,7 +27,9 @@ for(const language of ['tr','en'] as const)test(`${language} tactical board show
  const plan=page.locator('[data-testid="standing-plan"]');
  await expect(plan).toHaveCount(1);
  await expect(plan).toContainText(language==='tr'?'Kalıcı plan':'Standing plan');
- await expect(page.locator('[data-testid="tactical-battlefield"]')).toContainText(language==='tr'?'idame payı':'sustainment share');
+ await page.locator('[data-testid="tactical-battlefield"] .tactical-hint-beacon').click();
+ await expect(page.locator('.tactical-hint-popover')).toContainText(language==='tr'?'idame payı':'sustainment share');
+ await page.keyboard.press('Escape');
  await page.screenshot({path:`test-results/tactical-plan-0912-${language}.png`,fullPage:true});
  expect(errors).toEqual([]);
 });
