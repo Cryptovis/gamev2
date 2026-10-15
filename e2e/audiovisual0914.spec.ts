@@ -45,7 +45,7 @@ test('replay draws recorded effects; low effects shows one round summary instead
  await expect(page.locator('.tactical-round-result p').first()).toHaveText(result);
  await page.locator('.tactical-round-result button').first().click(); // back to live orders
  await page.evaluate(()=>{localStorage.setItem('trp-audio-v1',JSON.stringify({muted:true,master:.8,channels:{ui:.6,war:.8,ambient:.35},lowEffects:true}));});
- await page.locator('.war-theatre > header > button').click();await page.keyboard.press('Escape');await page.locator('.leader-avatar-button').click();await page.locator('.profile-tabs button').last().click();await page.locator('.campaign-option-actions button').first().click();
+ await page.locator('.war-theatre > header > button:not(.tactical-hint-beacon)').click();await page.keyboard.press('Escape');await page.locator('.leader-avatar-button').click();await page.locator('.profile-tabs button').last().click();await page.locator('.campaign-option-actions button').first().click();
  // The status line also shows the older 'Loaded Day N' message, so wait for the save's own message before reloading (playtest.18: this was a race).
  await expect(page.locator('.campaign-save-status')).toContainText('Saved Day');
  await page.reload();await page.locator('.load-previous').click();
