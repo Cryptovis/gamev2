@@ -55,22 +55,36 @@ describe('replay determinism (120 headless days, default campaign)', () => {
   });
 
   /**
-   * KNOWN FAILURE (Stage 1b.1 stop rule): the simulation is not key-order invariant.
-   * Measured at abc862c, reversing every map's key order at day 0 and stepping both runs side by side:
-   *   - tick 1  diverges: world.commodities.baseline.* (float sums over countries; worldSupply() walks
-   *             activeCountries(), which iterates Object.values(countries)).
-   *   - after sorting activeCountries(), tick 6 diverges: world.living.listings[*].unitPrice
-   *             (industrialMarket.industrialPrice sums Object.keys(countries).reduce(...)).
-   * Each fix moves the first divergence only a few days later. A static survey finds ~106 candidate
-   * sites in ~46 engine files, far past the 15-site stop rule, and the starting country order is not sorted
-   * (AFG, ALB, DZA, AGO, ...), so canonicalising on sorted ids would change every trajectory. That is a
-   * design decision for Stage 1b follow-ups, not a local fix. When the engine becomes order-invariant this
-   * test starts passing, vitest reports "expected to fail", and `.fails` must be removed.
+   * KNOWN FAILURE, by design (Option B): insertion order is canonical simulation state.
+   * The simulation is not key-order invariant: reversing every map's key order at day 0 and stepping both runs side by
+   * side diverges at tick 1 (world.commodities.baseline.*, float sums over activeCountries()) and, once that is sorted,
+   * at tick 6 (industrialMarket prices); ~106 candidate sites in ~46 engine files. The starting country order is not
+   * sorted (AFG, ALB, DZA, AGO, ...), and maps such as tradeDeals (0 to 65 keys by day 120) and embassies (0 to 19) gain keys
+   * during play in unsorted insertion order, so "sort at create/load" (Option C) would break test 2. Instead the order a
+   * save stores is part of the state, and every transport must keep it (docs/ARCHITECTURE.md, "Determinism contract").
+   * Tests 1-3 and 5 prove that contract holds for save/load and JSON export/import. This test stays `.fails` as the
+   * record of what the engine does not promise; if the engine ever becomes order-invariant it starts passing, vitest
+   * reports "expected to fail", and `.fails` must be removed.
    */
   it.fails('4. KNOWN FAILURE: reversing every map\'s key order at day 60 changes nothing', () => {
     const reversed = {...atHalf, ...reverseKeyOrder(snapshotGame(atHalf))};
     same(runDays(reversed, DAYS - HALF), continuous);
   }, 60_000);
+
+  it('4b. no state map has an integer-like key (JavaScript would reorder those ahead of the rest)', () => {
+    const integerLike = /^(0|[1-9]\d*)$/;
+    const found: string[] = [];
+    const walk = (value: unknown, path: string) => {
+      if (Array.isArray(value)) return value.forEach((item, i) => walk(item, `${path}[${i}]`));
+      if (!value || typeof value !== 'object' || Object.getPrototypeOf(value) !== Object.prototype) return;
+      for (const [key, child] of Object.entries(value)) {
+        if (integerLike.test(key)) found.push(`${path}.${key}`);
+        walk(child, `${path}.${key}`);
+      }
+    };
+    walk(snapshotGame(continuous), 'state');
+    expect(found.slice(0, 10)).toEqual([]);
+  });
 
   it('5. a Schema 12 save migrated twice and run 30 days ends in exactly the same state', () => {
     // Same recipe as organizationMigration099.test.ts: a fresh snapshot downgraded to the Schema 12 shape.

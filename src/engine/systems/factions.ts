@@ -7,6 +7,7 @@
 // run through the same functions, costs and thresholds; only the player sees warnings and chooses responses.
 // Everything is a pure function of GameState and the seeded RNG; nothing here reads the clock.
 
+import { log10 } from '../detMath';
 import type { CountryState, GameState, RegimeType } from '../../domain/game';
 import { FACTION_KEYS, type CrisisOption, type FactionKey, type FactionState, type RegimeCrisis } from '../../domain/politics';
 import { nextRandom } from '../rng';
@@ -68,7 +69,7 @@ const zeroRecord = (): Record<FactionKey, number> => ({ business: 0, labour: 0, 
 /** Structural faction weights (sum 100) from wealth, ideology, religion, regime and military size. */
 export function structuralStrength(c: CountryState): Record<FactionKey, number> {
   const income = (c.economy.gdp * 1e9) / Math.max(1, c.demographics.population);
-  const rich = clamp((Math.log10(Math.max(1, income)) - 3) / 2, 0, 1);
+  const rich = clamp((log10(Math.max(1, income)) - 3) / 2, 0, 1);
   const ideology = c.society.ideology, regime = c.politics.regime;
   const raw: Record<FactionKey, number> = {
     business: 18 + rich * 10 + (ideology === 'pluralist' ? 4 : ideology === 'state_socialist' ? -6 : 0),
@@ -189,7 +190,7 @@ export function winProbability(expectedShare: number, swing = ELECTION_SWING): n
   const m = expectedShare - 50;
   if (m >= swing) return 1;
   if (m <= -swing) return 0;
-  return m >= 0 ? 1 - (swing - m) ** 2 / (2 * swing * swing) : (swing + m) ** 2 / (2 * swing * swing);
+  return m >= 0 ? 1 - (swing - m) * (swing - m) / (2 * swing * swing) : (swing + m) * (swing + m) / (2 * swing * swing);
 }
 
 export interface ElectionForecast { daysRemaining: number; governmentShare: number; oppositionShare: number; winChance: number }

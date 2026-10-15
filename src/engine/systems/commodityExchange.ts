@@ -1,3 +1,4 @@
+import { cos, exp, log } from '../detMath';
 import {constrainedOilOutput} from './organizations/quotas';
 import {organizationSanctionsBlock,anonymousMarketBlocked} from './organizations/sanctions';
 import {integrationBenefits} from './organizations/marketIntegration';
@@ -103,7 +104,7 @@ const round6 = (v: number) => Number(v.toPrecision(6));
 
 function gaussian(seed: number): { seed: number; value: number } {
   const a = nextRandom(seed), b = nextRandom(a.seed);
-  const z = Math.sqrt(-2 * Math.log(Math.max(1e-12, a.value))) * Math.cos(2 * Math.PI * b.value);
+  const z = Math.sqrt(-2 * log(Math.max(1e-12, a.value))) * cos(2 * Math.PI * b.value);
   return { seed: b.seed, value: clamp(z, -4, 4) };
 }
 
@@ -149,13 +150,13 @@ export function createCommodityExchange(s: GameState): CommodityExchangeState {
   let seed = ((s.simulationSeed ^ 0x5bd1e995) >>> 0) || 1;
   const markets = {} as Record<Commodity, CommodityMarket>;
   for (const g of COMMODITIES) {
-    const spec = COMMODITY_SPECS[g], target = Math.log(REFERENCE_PRICES[g]);
+    const spec = COMMODITY_SPECS[g], target = log(REFERENCE_PRICES[g]);
     let x = target;
     const history: number[] = [];
     for (let i = 0; i < PREROLL_DAYS; i++) {
       const e = gaussian(seed); seed = e.seed;
       x += spec.reversion * (target - x) + spec.volatility * e.value;
-      history.push(round6(Math.exp(x)));
+      history.push(round6(exp(x)));
     }
     markets[g] = { price: history[history.length - 1], fundamental: REFERENCE_PRICES[g], history };
   }
@@ -304,7 +305,7 @@ export function commodityOrderPreview(s: GameState, countryId: string, good: Com
   const spread = currentSpread(ex, g, s.day);
   const impactLog = MARKET_IMPACT * Math.max(0, q) / dailyVolumeUnits(g);
   const sign = side === 'buy' ? 1 : -1;
-  const fillPrice = mid * (1 + sign * spread / 2) * Math.exp(sign * impactLog / 2);
+  const fillPrice = mid * (1 + sign * spread / 2) * exp(sign * impactLog / 2);
   const notional = Math.max(0, q) * fillPrice, fee = notional * EXCHANGE_FEE;
   const p = commodityPosition(ex, countryId, g);
   const dailyUsed = tradedToday(p, s.day), limit = dailyOrderLimit(g);
@@ -343,7 +344,7 @@ export function commodityOrderPreview(s: GameState, countryId: string, good: Com
     realized = fromPosition * (fillPrice * (1 - EXCHANGE_FEE) - p.avgCost);
   }
   return {
-    allowed: reasons.length === 0, reasons, good: g, side, quantity: q, mid, spread, impact: sign * (Math.exp(impactLog) - 1),
+    allowed: reasons.length === 0, reasons, good: g, side, quantity: q, mid, spread, impact: sign * (exp(impactLog) - 1),
     fillPrice, spreadCost: Math.max(0, q) * mid * spread / 2, notional, fee, freight,tariffB, total, counterpartyId, arrivalDays, settlementDay: side === 'buy' ? s.day : s.day + 1,
     dailyLimit: limit, dailyUsed, positionLimit: posLimit, positionValue: posValue, storageCapacity: capacity, storageUsed: used,
     dailyStorageCost: Math.max(0, q) * mid * spec.storageRate / 365, sellable, fromPosition, realized,
@@ -390,7 +391,7 @@ export function placeCommodityOrder(s: GameState, countryId: string, g: Commodit
   const sign = side === 'buy' ? 1 : -1;
   ex = {
     ...ex,
-    markets: { ...ex.markets, [g]: { ...market, price: market.price * Math.exp(sign * MARKET_IMPACT * q.quantity / dailyVolumeUnits(g)), impact: clamp((market.impact ?? 0) + sign * MARKET_IMPACT * q.quantity / dailyVolumeUnits(g), -1, 1) } },
+    markets: { ...ex.markets, [g]: { ...market, price: market.price * exp(sign * MARKET_IMPACT * q.quantity / dailyVolumeUnits(g)), impact: clamp((market.impact ?? 0) + sign * MARKET_IMPACT * q.quantity / dailyVolumeUnits(g), -1, 1) } },
     trades: [{ day: s.day, countryId, good: g, side, quantity: q.quantity, price: q.fillPrice, ...(q.counterpartyId ? { counterpartyId: q.counterpartyId } : {}) } as CommodityTrade, ...ex.trades].slice(0, MAX_TRADES),
   };
   return withExchange(n, ex);
@@ -455,7 +456,7 @@ function addShock(ex: CommodityExchangeState, shock: Omit<CommodityShock, 'id'>)
   return {
     ...ex,
     shocks: [{ ...shock, size: round6(shock.size), id }, ...ex.shocks].slice(0, MAX_SHOCKS),
-    markets: { ...ex.markets, [shock.good]: { ...market, price: market.price * Math.exp(shock.size * SHOCK_JUMP_SHARE) } },
+    markets: { ...ex.markets, [shock.good]: { ...market, price: market.price * exp(shock.size * SHOCK_JUMP_SHARE) } },
   };
 }
 
@@ -549,11 +550,11 @@ function stepPrices(s: GameState, ex0: CommodityExchangeState, supply: WorldSupp
   for (const g of COMMODITIES) {
     const spec = COMMODITY_SPECS[g], m = markets[g];
     const fundamental = fundamentalPrice(ex0, supply, g);
-    const target = Math.log(fundamental) + shockPremium(ex0, g, s.day);
+    const target = log(fundamental) + shockPremium(ex0, g, s.day);
     const e = gaussian(seed); seed = e.seed;
     // Mean reversion acts on the price without the temporary order impact, which fades separately.
-    const impact = m.impact ?? 0, x = Math.log(m.price) - impact, nextImpact = Math.abs(impact * IMPACT_DECAY) < 1e-6 ? 0 : round6(impact * IMPACT_DECAY);
-    const price = clamp(Math.exp(x + spec.reversion * (target - x) + spec.volatility * e.value + nextImpact), REFERENCE_PRICES[g] * 0.2, REFERENCE_PRICES[g] * 6);
+    const impact = m.impact ?? 0, x = log(m.price) - impact, nextImpact = Math.abs(impact * IMPACT_DECAY) < 1e-6 ? 0 : round6(impact * IMPACT_DECAY);
+    const price = clamp(exp(x + spec.reversion * (target - x) + spec.volatility * e.value + nextImpact), REFERENCE_PRICES[g] * 0.2, REFERENCE_PRICES[g] * 6);
     markets[g] = { price: round6(price), fundamental: round6(fundamental), history: [...m.history, round6(price)].slice(-HISTORY_DAYS), ...(nextImpact ? { impact: nextImpact } : {}) };
   }
   // Drop shocks that have fully decayed (older than five half-lives), keeping recent news for the panel.
@@ -570,7 +571,7 @@ function aiTrading(s: GameState): GameState {
   const physical = COMMODITIES.filter((g) => COMMODITY_SPECS[g].physical);
   const g = physical[s.day % physical.length];
   const ex = commodityExchange(s), m = ex.markets[g];
-  const deviation = Math.log(m.price / m.fundamental);
+  const deviation = log(m.price / m.fundamental);
   const limit = dailyOrderLimit(g) * AI_ORDER_SHARE;
   let n = s, done = 0;
   const others = activeCountries(s.countries).filter((c) => c.id !== s.playerCountryId && !c.globalSanctions);

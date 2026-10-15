@@ -3,23 +3,19 @@ import {countRiskyMath} from './engineMathCounts';
 
 /**
  * Ratchet: the engine may only ever use fewer cross-engine-risky math calls, never more.
- * Baseline measured at abc862c (Phase 9, Stage 1b.1); it includes Math.asin in flights.ts, which the first
- * survey missed, and counts every operator (factions.ts has two `**` on one line). Stage 1b.2 replaces these with deterministic
- * implementations built from + - * / only; as each file reaches zero, delete its line here.
+ * Stage 1b.1 measured 29 Math.* calls and 6 `**` operators. Stage 1b.2 moved every exp/log/log10/sin/cos/asin site to
+ * src/engine/detMath.ts and turned `x ** 2` into `x * x`. What remains is pow, which is held back until it can be replaced
+ * without shifting V8 trajectories; as each file reaches zero, delete its line here.
  * Paths are relative to src/engine/.
  */
 const MATH_BASELINE: Record<string, number> = {
-  'systems/commodityExchange.ts': 16,
-  'systems/flights.ts': 5,
-  'systems/energy.ts': 3,
-  'systems/warfare.ts': 2,
+  // Math.pow sites held back in Stage 1b.2: Node's pow is not bit-identical to fdlibm 5.3 (see detMath.test.ts).
+  'systems/commodityExchange.ts': 4,
+  'systems/warfare.ts': 1,
   'systems/tacticalPlanner.ts': 1,
-  'systems/factions.ts': 1,
-  'systems/aiTaskGroups.ts': 1,
 };
 const POWER_BASELINE: Record<string, number> = {
-  'systems/flights.ts': 2,
-  'systems/factions.ts': 3,
+  'systems/factions.ts': 1,
   'systems/policyPressure.ts': 1,
 };
 const total = (baseline: Record<string, number>) => Object.values(baseline).reduce((sum, n) => sum + n, 0);
@@ -33,9 +29,13 @@ describe('engine math ratchet (cross-engine determinism)', () => {
     expect(counts.map(c => c.file)).toContain('tick.ts');
   });
 
-  it('records the baseline: 29 Math.* calls and 6 ** operators', () => {
-    expect(total(MATH_BASELINE)).toBe(29);
-    expect(total(POWER_BASELINE)).toBe(6);
+  it('records the baseline: only the 6 pow-dependent Math.* calls and 2 ** operators remain', () => {
+    expect(total(MATH_BASELINE)).toBe(6);
+    expect(total(POWER_BASELINE)).toBe(2);
+  });
+
+  it('detMath.ts itself uses no risky native function', () => {
+    expect(counts.find(c => c.file === 'detMath.ts')).toMatchObject({math: 0, power: 0});
   });
 
   it('no engine file uses more risky Math.* calls than its baseline, and no new file uses any', () => {

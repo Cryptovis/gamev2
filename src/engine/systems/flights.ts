@@ -1,3 +1,4 @@
+import { asin, cos, sin } from '../detMath';
 import type { GameState } from '../../domain/game';
 import type { Flight, FlightKind, FlightPayload } from '../../domain/flights';
 import { COUNTRY_POSITIONS } from '../../data/countryPositions';
@@ -39,8 +40,8 @@ export function distanceKm(fromId: string, toId: string): number {
 export function pointDistanceKm(a: [number, number] | null, b: [number, number] | null): number {
   if (!a || !b) return FALLBACK_DISTANCE_KM;
   const rad = Math.PI / 180, dLat = (b[1] - a[1]) * rad, dLon = (b[0] - a[0]) * rad;
-  const h = Math.sin(dLat / 2) ** 2 + Math.cos(a[1] * rad) * Math.cos(b[1] * rad) * Math.sin(dLon / 2) ** 2;
-  return 2 * EARTH_RADIUS_KM * Math.asin(Math.min(1, Math.sqrt(h)));
+  const h = sin(dLat / 2) * sin(dLat / 2) + cos(a[1] * rad) * cos(b[1] * rad) * sin(dLon / 2) * sin(dLon / 2);
+  return 2 * EARTH_RADIUS_KM * asin(Math.min(1, Math.sqrt(h)));
 }
 
 /**

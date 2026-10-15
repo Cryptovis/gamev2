@@ -1,3 +1,4 @@
+import { cos, sin } from '../detMath';
 import { canUnlockTechnology, unlockTechnology } from "./technology";
 import type { GameState, CountryState } from "../../domain/game";
 import type { NationalEnergy, PlantKind } from "../../domain/energy";
@@ -62,13 +63,13 @@ export function plantYield(s: GameState, id: string, kind: PlantKind) {
     cycle = (s.day % 30) / 30;
   const factor =
     kind === "solar"
-      ? 0.8 + 0.2 * Math.sin(cycle * Math.PI * 2)
+      ? 0.8 + 0.2 * sin(cycle * Math.PI * 2)
       : kind === "wind"
-        ? 0.7 + 0.3 * Math.cos(cycle * Math.PI * 2)
+        ? 0.7 + 0.3 * cos(cycle * Math.PI * 2)
         : kind === "hydro"
           ? clamp(
               (s.industrialEconomy[id]?.potential.water ?? 1) *
-                (0.85 + 0.15 * Math.cos(cycle * Math.PI * 2)),
+                (0.85 + 0.15 * cos(cycle * Math.PI * 2)),
               0.1,
               1.6,
             )

@@ -1,3 +1,4 @@
+import { log as detLog } from '../detMath';
 import type { GameState, WarState } from '../../domain/game';
 import type { TaskAsset, TaskGroup, TaskMission, TaskSide } from '../../domain/taskGroups';
 import { TASK_ASSETS, TASK_MISSIONS } from '../../domain/taskGroups';
@@ -58,7 +59,7 @@ function planGroups(state: GameState, w: WarState, side: TaskSide, plan: Plan): 
 function score(state: GameState, w: WarState, side: TaskSide, own: TaskGroup[], enemy: TaskGroup[]): number {
   const war = { ...w, taskGroups: [...own, ...enemy] };
   const ratio = warCombatView({ ...state, wars: { ...state.wars, [w.id]: war } }, war).p.powerRatio;
-  const log = Math.log(Math.max(1e-6, ratio));
+  const log = detLog(Math.max(1e-6, ratio));
   return side === 'attacker' ? log : -log;
 }
 
