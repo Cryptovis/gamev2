@@ -12,6 +12,8 @@ import { BattleFxLayer, RoundSummaryStrip } from './BattleFxLayer';
 import { effectAt, shouldSummarize, summarizeRound } from '../../presentation/battleEffects';
 import { useAudioSettings } from '../../audio/audioSettings';
 import { audio } from '../../audio/audioService';
+import {TacticalHint} from '../hints/TacticalHint';
+import {WAR_TACTICAL_HINT} from '../hints/registry';
 
 const names:Record<TacticalOrderKind,string>={move:'Advance',defend:'Defend',flank:'Flank',recon:'Recon',reserve:'Hold reserves',bombard:'Bombard'};
 const descriptions:Record<TacticalOrderKind,string>={move:'Move into a visible empty sector. Infantry and artillery move one sector; armor moves two.',defend:'Reduce losses. Forest, mountain and urban cover improve defensive power.',flank:'Move up to two sectors with an attack bonus, but expose the unit to greater losses.',recon:'Reveal sectors near the target for the next planning round.',reserve:'Reduce losses this round and prepare an offensive bonus for the next round.',bombard:'Artillery targets a visible enemy within three sectors, increasing enemy losses.'};
@@ -88,7 +90,7 @@ export function TacticalBattlefield({warId,onReturn}:{warId:string;onReturn:()=>
     else setReview(null);
   };
   return <div className="tactical-experience" data-testid="tactical-battlefield">
-    <div className="tactical-heading"><div><small><LocaleText value="TACTICAL COMMAND"/></small><h3><LocaleText value="Secure the supply depots"/></h3><p><LocaleText value="Each token is an allocated force group. Terrain, supply and national strength still matter."/></p></div><button onClick={onReturn}><LocaleText value="Return to war command"/></button></div>
+    <div className="tactical-heading"><div><small><LocaleText value="TACTICAL COMMAND"/></small><h3><LocaleText value="Secure the supply depots"/></h3><p><LocaleText value="Each token is an allocated force group. Terrain, supply and national strength still matter."/></p></div><TacticalHint spec={WAR_TACTICAL_HINT}/><button onClick={onReturn}><LocaleText value="Return to war command"/></button></div>
     <button className="tactical-guide-replay" onClick={()=>setGuide(0)}><LocaleText value="Replay tactical guide"/></button>
     {guide>=0&&<aside className="tactical-onboarding" aria-label={translateLive('Tactical guide')} data-step={guide}><strong>{guide+1}/3</strong><p><LocaleText value={['Select your force group. Enemy positions outside vision remain hidden.','Choose an available action, then select its sector. Arrow keys move across the grid.','Queue drafts, review the complete CP and fuel cost, then confirm one simultaneous round.'][guide]}/></p><button onClick={finishGuide}><LocaleText value="Skip"/></button><button onClick={()=>guide===2?finishGuide():setGuide(guide+1)}><LocaleText value={guide===2?'Finish':'Next'}/></button></aside>}
     <div className="tactical-flow-banner" role="status"><div><strong><LocaleText value={w.lastCombatDay===s.day?'Round complete':'Your planning turn'}/></strong><p><LocaleText value={w.lastCombatDay===s.day?'See the results, then start your next turn or withdraw.':'Choose a group, choose an order and queue it. Finish your plan to let the opponent respond.'}/></p></div>{w.lastCombatDay===s.day?<button className="tactical-flow-results" onClick={()=>setReview('result')}><LocaleText value="View round results"/></button>:<button disabled={commitReasons.length>0||replay} onClick={()=>{setReceiptRound(b.round);setReview('orders');}}><LocaleText value="Finish plan"/></button>}</div>
@@ -106,9 +108,6 @@ export function TacticalBattlefield({warId,onReturn}:{warId:string;onReturn:()=>
         </div>
         {summarized&&summary&&<RoundSummaryStrip summary={summary} side={side}/>}
         <div className="tactical-legend"><span><i className="friendly"/><LocaleText value="Your forces"/></span><span><i className="enemy"/><LocaleText value="Visible enemy"/></span><span>◆ <LocaleText value="Supply depot"/></span></div>
-        <p className="tactical-note"><LocaleText value="Objectives are held only while no enemy is adjacent."/></p>
-        <p className="tactical-note"><LocaleText value="Capturing the depot improves combat power. Hidden enemy positions require recon. Both sides execute orders simultaneously."/></p>
-        <p className="tactical-note"><LocaleText value="Offensive orders burn operational fuel. Holding positions burns a smaller sustainment share, for both sides, and never prevents defending."/></p>
       </div>
       <div className="tactical-orders">
         <h4><LocaleText value="Select a force group"/></h4><div className="tactical-unit-list">{b.units.filter(u=>u.side===side).map(u=><button key={u.id} aria-pressed={u.id===selected} disabled={!active||u.remaining<=0||replay} onClick={()=>{setSelected(u.id);setTarget(undefined);}} data-unit={u.id}><AssetThumbnail asset={asset(u.role)} size={28}/><span>{unitLabel(u)}<small>{u.remaining.toLocaleString(s.playerProfile.language)} / {u.allocated.toLocaleString(s.playerProfile.language)}{u.prepared?' · '+translateLive('Prepared'):''}</small></span></button>)}</div>

@@ -36,6 +36,38 @@ jobs:
       - name: Test and build
         run: npm run check
 
+  bundle-size:
+    needs: check
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      BASELINE_SHA: 54ea1b6
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Build and measure (head and baseline)
+        run: |
+          measure() { # $1 dir, $2 label: gzip sizes of dist JS and CSS, as workflow notices
+            js=0; css=0
+            for f in $(find "$1/dist" -name '*.js'); do js=$((js + $(gzip -9 -c "$f" | wc -c))); done
+            for f in $(find "$1/dist" -name '*.css'); do css=$((css + $(gzip -9 -c "$f" | wc -c))); done
+            echo "::notice title=bundle-$2::js_gzip=$js css_gzip=$css total_gzip=$((js + css))"
+            echo "$((js + css))" > "/tmp/size-$2"
+          }
+          npm ci && npm run build && measure . head
+          git worktree add ../baseline "$BASELINE_SHA"
+          (cd ../baseline && npm ci && npm run build) && measure ../baseline base
+          echo "::notice title=bundle-delta::delta_gzip_bytes=$(( $(cat /tmp/size-head) - $(cat /tmp/size-base) ))"
+
   e2e:
     needs: check
     runs-on: ubuntu-24.04

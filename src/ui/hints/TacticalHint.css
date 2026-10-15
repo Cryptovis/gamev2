@@ -68,3 +68,6 @@
 .tactical-hint-options .tactical-hint-toggle input{width:16px;height:16px;margin:0}
 .tactical-hint-options .change-portrait-button{justify-self:start}
 .tactical-hint-options .tactical-hint-confirmation{min-height:1.4em}
+
+/* Inline anchor for panels with no window header of their own (diplomacy section). */
+.hint-anchor-row{display:flex;justify-content:flex-end}

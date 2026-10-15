@@ -10,6 +10,7 @@ import { AssetThumbnail } from '../icons/AssetThumbnail';
 import { CivicArt } from '../icons/CivicArt';
 import { CommandArt } from '../icons/CommandArt';
 import { deskCounts, deskNews, deskOffers, deskOperations, deskWars, DESK_TABS, type DeskCountdown, type DeskOffer, type DeskTab } from './executiveDeskModel';
+import { DESK_PROPOSALS_HINT } from '../hints/registry';
 
 const TAB_META: Record<DeskTab, { icon: string; label: string; empty: string }> = {
   diplomacy: { icon: '✉️', label: 'Diplomacy', empty: 'No proposals are waiting for your answer.' },
@@ -52,7 +53,7 @@ export function ExecutiveDesk({ onClose }: { onClose: () => void }) {
         </button>)}
       </div>;
   const tabEmpty = (tab === 'diplomacy' && !offers.length) || (tab === 'war' && !wars.length) || (tab === 'intel' && !operations.length);
-  return <ExecutiveWorkspaceShell id="desk-window" kicker="EXECUTIVE OFFICE" title={translateLive('Executive Desk')} tabs={tabs} scrollKey={tab} onClose={onClose}>
+  return <ExecutiveWorkspaceShell id="desk-window" kicker="EXECUTIVE OFFICE" title={translateLive('Executive Desk')} tabs={tabs} scrollKey={tab} onClose={onClose} hint={player?DESK_PROPOSALS_HINT:undefined}>
     <div className="executive-desk">
 
 
@@ -95,7 +96,6 @@ export function ExecutiveDesk({ onClose }: { onClose: () => void }) {
             : <p className="desk-empty"><LocaleText value="No reports in this section yet." /></p>}
         </section>
       </div>
-      {player && <p className="desk-footnote"><LocaleText value="Proposals expire on their last day. Declining is free; accepting shares the setup fee with the sender." /></p>}
     </div>
     {review && <ReviewDialog title="Accept shared proposal" summary="Both countries pay half of the diplomatic setup fee. This opens the agreement; goods still require separate priced shipments."
       metrics={[['Your share', money(review.playerShareB, language)], ['Partner share', money(review.partnerShareB, language)], ['Treasury after', money((player?.economy.treasury ?? 0) - review.playerShareB, language)]]}

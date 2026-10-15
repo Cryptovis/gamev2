@@ -14,6 +14,8 @@ import { StrategicDecisionModal } from './StrategicDecisionModal';
 import { flagEmoji } from '../../data/countryThemes';
 import {useWorldView} from '../../store/useWorldView';
 import { BlocIcon, DiplomacyIcon, EmbassyIcon, ResourceIcon, WarIcon } from '../icons/GameIcons';
+import {TacticalHint} from '../hints/TacticalHint';
+import {DIPLOMACY_RULES_HINT} from '../hints/registry';
 
 const resources:TradeResource[]=['food','oil','iron','uranium'];
 const humanize=(value:string)=>value.replaceAll('_',' ').replace(/\b\w/g,(m)=>m.toUpperCase());
@@ -53,6 +55,7 @@ export function DiplomacyPanel({selectedId}:{selectedId:string}){
  };
 
  return <div className="diplomacy-v2">
+  <div className="hint-anchor-row"><TacticalHint spec={DIPLOMACY_RULES_HINT}/></div>
   <div className={`relation-hero stance-${relationLabel.toLowerCase().replaceAll(' ','-')}`}>
    <div className="relation-flags"><span><LocaleText value={flagEmoji(player.iso2)}/></span><i><LocaleText value={"↔"}/></i><span><LocaleText value={flagEmoji(selected.iso2)}/></span></div>
    <div className="relation-copy"><small><LocaleText value={"BILATERAL RELATIONSHIP INDEX"}/></small><strong><LocaleText value={relationScore}/><em><LocaleText value={"/100"}/></em></strong><span><LocaleText value={relationLabel}/></span></div>
@@ -84,7 +87,6 @@ export function DiplomacyPanel({selectedId}:{selectedId:string}){
    <div className="goodwill-card"><CivicArt kind="food_relief" size={56}/><small><LocaleText value={"RESOURCE AID"}/></small><strong><LocaleText value={"Support strategic shortages"}/></strong><p><LocaleText value={"Resource shipments improve relations and are more effective when the recipient is genuinely short."}/></p><div>{resources.map(resource=><button key={resource} disabled={player.resources[resource]<=0||relation.status==='war'} onClick={()=>requestDecision('resource_aid',()=>state.giftResource(selected.id,resource),{resource})}><ResourceIcon resource={resource} size={14}/><LocaleText value={resource.toUpperCase()}/></button>)}</div></div>
   </div>
 
-  <p className="diplomacy-rule-note"><LocaleText value={"Trade and aid improve bilateral trust over time. Embassies accelerate diplomatic access and commercial trust. Cooperation with a state's hostile rival can reduce your standing with that rival. Below 10/100, relations are openly hostile."}/></p>
 
   <div className="subhead"><LocaleText value={"Active trade flows"}/></div>
   {tradeDeals.length>0?<div className="deal-list">{tradeDeals.map(d=><div key={d.id}><span><LocaleText value={d.resource.toUpperCase()}/> <LocaleText value={d.quantityPerDay.toFixed(2)}/><LocaleText value={"/day @ $"}/><LocaleText value={d.pricePerUnit.toFixed(3)}/> <LocaleText value={d.contractType==='long_term'?(`· ${d.contractYears}Y`):''}/></span><button onClick={()=>state.cancelTrade(d.id)}><LocaleText value={"Cancel"}/></button></div>)}</div>:<p className="muted tiny"><LocaleText value={"No active bilateral commodity flow."}/></p>}

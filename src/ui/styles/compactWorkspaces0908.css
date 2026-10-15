@@ -103,7 +103,6 @@
 .national-supply-window .infrastructure-grid p{min-height:0;font-size:12px;line-height:1.5;color:#c5d7de}
 .national-supply-window .infrastructure-grid button{min-height:36px;font-size:11px}
 .national-supply-window .infrastructure-grid button small{font-size:10px;color:#e3cca2}
-.national-supply-window .supply-investment-note{font-size:12px;line-height:1.5;color:#c4d7de}
 @media(max-width:760px){
  #pulse-window .world-activity-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
  #pulse-window .section-menu{grid-template-columns:1fr}

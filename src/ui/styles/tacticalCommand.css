@@ -2,7 +2,7 @@
 .tactical-heading {display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin:8px 0 18px}
 .tactical-heading small {color:#e1bc70;letter-spacing:.12em;font-size:10px}
 .tactical-heading h3 {font-size:26px;margin:7px 0}
-.tactical-heading p,.tactical-note,.economic-trends>p {color:#becdcf;font-size:12px;line-height:1.6;margin:8px 0}
+.tactical-heading p,.economic-trends>p {color:#becdcf;font-size:12px;line-height:1.6;margin:8px 0}
 .tactical-experience button,.economic-chart-controls :is(button,select) {border:1px solid #637778;border-radius:7px;background:#23363b;color:#edf1ee;padding:9px 12px;cursor:pointer;font:inherit;font-size:12px}
 .tactical-experience button:disabled {opacity:.45;cursor:default}
 .tactical-experience button:focus-visible {outline:3px solid #f2cc76;outline-offset:2px}

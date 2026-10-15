@@ -12,6 +12,7 @@ import { useGameStore } from '../../store/gameStore';
 import { useStoreView } from '../../store/useStoreView';
 import { FuelIcon, FoodIcon, PowerIcon, SteelIcon } from '../icons/GameIcons';
 import { CommandWindow } from './CommandWindow';
+import {SUPPLY_INVESTMENT_HINT} from '../hints/registry';
 
 type SupplyTab='network'|'infrastructure'|'reserves'|'front';
 const pct=(n:number)=>Math.max(0,Math.min(100,n));
@@ -34,7 +35,7 @@ export function SupplyCommandWindow({country,war,onClose}:{country:CountryState;
  const frontSupply=war?(war.attackerId===country.id?war.attackerSupply:war.defenderSupply):supply.supplyScore;
  const exhaustion=war?(war.attackerId===country.id?war.attackerExhaustion:war.defenderExhaustion):0;
 
- return <CommandWindow kicker="LOGISTICS / SUPPLY COMMAND" title={`${translateLive(country.name)} · ${translateLive('Supply Network')}`} subtitle={war?terrain.toUpperCase()+' theatre · active front logistics':'National strategic logistics picture'} onClose={onClose} wide className="national-supply-window">
+ return <CommandWindow kicker="LOGISTICS / SUPPLY COMMAND" title={`${translateLive(country.name)} · ${translateLive('Supply Network')}`} subtitle={war?terrain.toUpperCase()+' theatre · active front logistics':'National strategic logistics picture'} onClose={onClose} wide className="national-supply-window" hint={SUPPLY_INVESTMENT_HINT}>
   <div className="command-subtabs">{(['network','infrastructure','reserves','front'] as SupplyTab[]).map((id)=><button key={id} className={tab===id?'active':''} onClick={()=>setTab(id)}><LocaleText value={id[0].toUpperCase()+id.slice(1)}/></button>)}</div>
 
   <div className="supply-summary">
@@ -74,7 +75,6 @@ export function SupplyCommandWindow({country,war,onClose}:{country:CountryState;
      {isPlayer&&<button disabled={disabled} onClick={()=>setInvestment(asset)}><LocaleText value={"INVEST +"}/><LocaleText value={rule.gain}/> <small><LocaleText value={'-'+formatCostB(cost)}/></small></button>}
     </article>;
    })}</div>
-   <p className="supply-investment-note"><LocaleText value={"Infrastructure consumes daily maintenance. Underfunded networks degrade slowly; AI states also invest in weak transport links during monthly strategic reviews."}/></p>
   </div>}
 
   {tab==='reserves'&&<div className="reserve-command-grid">

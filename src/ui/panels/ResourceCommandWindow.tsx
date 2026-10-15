@@ -5,6 +5,7 @@ import {LocaleText,translateLive} from '../../i18n/localeText';
 import type {TradeResource} from '../../domain/game';
 import { useState } from 'react';
 import { MARKET_RESOURCES, resourceReserveDays, resourceSelfSufficiency, resourceStrategicStatus } from '../../store/marketSelectors';
+import {RESOURCES_SHORTAGE_HINT} from '../hints/registry';
 import {NavigationArt} from '../icons/NavigationArt';
 import { ResourceIcon } from '../icons/GameIcons';
 import { DraggableWindow } from '../windows/DraggableWindow';
@@ -14,7 +15,7 @@ export function ResourceCommandWindow({onClose,resource:initialResource}:{onClos
  const state=useWorldView();
  const [selectedResource,setSelectedResource]=useState<TradeResource|null>(initialResource??null);
  const player=state.countries[state.playerCountryId];
- return <DraggableWindow expanded id="resource-command-window" kicker="NATIONAL ECONOMY" title={translateLive("Strategic Resources")} initialX={92} initialY={150} width={1100} onClose={onClose}>
+ return <DraggableWindow expanded id="resource-command-window" kicker="NATIONAL ECONOMY" title={translateLive("Strategic Resources")} initialX={92} initialY={150} width={1100} onClose={onClose} hint={RESOURCES_SHORTAGE_HINT}>
   <div className="resource-command-summary">
    <span><small><LocaleText value={"FUEL"}/></small><strong><LocaleText value={player.processedResources.fuel.toFixed(1)}/></strong></span>
    <span><small><LocaleText value={"STEEL"}/></small><strong><LocaleText value={player.processedResources.steel.toFixed(1)}/></strong></span>
@@ -34,6 +35,5 @@ export function ResourceCommandWindow({onClose,resource:initialResource}:{onClos
     </article>;
    })}
   </div>
-  <p className="resource-command-note"><LocaleText value={"Shortage management is connected directly to diplomacy and trade. Trade pacts unlock imports; embassies can reduce bilateral friction."}/></p>
  </DraggableWindow>;
 }

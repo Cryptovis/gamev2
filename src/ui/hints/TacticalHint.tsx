@@ -106,6 +106,7 @@ export function TacticalHint({spec}:{spec:TacticalHintSpec}){
         onBlur={event=>{const next=event.relatedTarget as Node|null;if(next&&!event.currentTarget.contains(next)&&next!==beacon.current)close(false);}}>
         <h3 id={titleId}><LocaleText value={spec.titleKey}/></h3>
         <p className="tactical-hint-body"><LocaleText value={spec.bodyKey}/></p>
+        {spec.extraKeys?.map(key=><p key={key} className="tactical-hint-body"><LocaleText value={key}/></p>)}
         {spec.learnMoreKey&&<p className="tactical-hint-more"><LocaleText value={spec.learnMoreKey}/></p>}
         <label className="tactical-hint-dismiss"><input type="checkbox" checked={false} onChange={event=>{if(event.target.checked)dismiss(spec.id);}}/><span><LocaleText value="Do not show this hint again"/></span></label>
       </div>,document.body)}

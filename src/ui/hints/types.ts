@@ -9,5 +9,7 @@ export interface TacticalHintSpec {
   id: HintId;
   titleKey: string;
   bodyKey: string;
+  /** Further existing strings, rendered as consecutive paragraphs after `bodyKey`. */
+  extraKeys?: readonly string[];
   learnMoreKey?: string;
 }

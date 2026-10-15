@@ -27,7 +27,7 @@
 
 :root[data-theme="light"] :is(.floating-command-window, .command-window, .executive-workspace, .command-panel, #country-section-window) :is(
   .credit-status, .credit-overview > article, .credit-board > article, .credit-compose, .credit-applications > article, .credit-loan,
-  .proposal-assessment, .proposal-status, .diplomatic-summary > span, .diplomacy-home-empty, .relation-hero, .relation-context > span, .goodwill-card, .deal-list > div, .diplomacy-rule-note,
+  .proposal-assessment, .proposal-status, .diplomatic-summary > span, .diplomacy-home-empty, .relation-hero, .relation-context > span, .goodwill-card, .deal-list > div,
   .help-situation, .help-situation dl > div, .help-goals > li, .help-risks > li,
   .energy-summary > span, .power-plant-grid > article, .energy-warning,
   .map-notice, .affairs-blockers, .society-composition, .world-card, .institution-card, .ballot-card, .outreach-card

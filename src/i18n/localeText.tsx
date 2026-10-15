@@ -54,6 +54,8 @@ import { WORLD_COUNTRY_SEEDS } from "../data/worldCountryCatalog";
 import { useGameStore } from "../store/gameStore";
 
 const languages = ["tr", "es", "zh", "ru"];
+/** The catalogs merged (later wins) in one pass by buildCatalog; exported so a test can detect shadowed keys. */
+export const MERGED_CATALOG_GROUP:readonly Record<string,readonly string[]>[]=[UI_CATALOG_090,UI_CATALOG_0903,UI_CATALOG_0904,UI_CATALOG_0905,UI_CATALOG_0907,UI_CATALOG_0908,UI_CATALOG_0910,UI_CATALOG_0912,UI_CATALOG_0913,UI_CATALOG_0914,UI_CATALOG_0915,UI_CATALOG_0916,UI_CATALOG_0917,UI_CATALOG_0918,UI_CATALOG_0919,UI_CATALOG_0920,UI_CATALOG_PHASE7,UI_CATALOG_SPRINT3,UI_CATALOG_094,UI_CATALOG_096,UI_CATALOG_097,UI_CATALOG_098,UI_CATALOG_100,UI_CATALOG_HINTS,UI_CATALOG_1B3,UI_CATALOG_1B4];
 const catalogKey=(text:string)=>text.trim().replace(/\s+/g," ").toLowerCase().replaceAll("_"," ");
 const templates = new Map<string, {pattern:RegExp;value:string;slots:number[]}[]>();
 const catalogs = new Map<string, Map<string, string>>();
@@ -93,7 +95,7 @@ for (const language of languages) {
   for(const [key,values] of Object.entries(UI_CATALOG_089_K))entries.set(catalogKey(key),values[index]);
   for(const [key,values] of Object.entries(UI_CATALOG_089_L))entries.set(catalogKey(key),values[index]);
   for(const [key,values] of Object.entries(UI_CATALOG_089_M))entries.set(catalogKey(key),values[index]);
-  for(const [key,values] of Object.entries({...UI_CATALOG_090,...UI_CATALOG_0903,...UI_CATALOG_0904,...UI_CATALOG_0905,...UI_CATALOG_0907,...UI_CATALOG_0908,...UI_CATALOG_0910,...UI_CATALOG_0912,...UI_CATALOG_0913,...UI_CATALOG_0914,...UI_CATALOG_0915,...UI_CATALOG_0916,...UI_CATALOG_0917,...UI_CATALOG_0918,...UI_CATALOG_0919,...UI_CATALOG_0920,...UI_CATALOG_PHASE7,...UI_CATALOG_SPRINT3,...UI_CATALOG_094,...UI_CATALOG_096,...UI_CATALOG_097,...UI_CATALOG_098,...UI_CATALOG_100,...UI_CATALOG_HINTS,...UI_CATALOG_1B3,...UI_CATALOG_1B4}))entries.set(catalogKey(key),values[index]);
+  for(const [key,values] of Object.entries(Object.assign({},...MERGED_CATALOG_GROUP)))entries.set(catalogKey(key),values[index]);
   const countries = new Intl.DisplayNames([language], { type: "region" });
   for (const c of WORLD_COUNTRY_SEEDS)
     entries.set(c.name.toLowerCase(), countries.of(c.iso2) ?? c.name);
