@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.0.0 — Grand Launch International Affairs Hub (Slice 8.5)
+
+- Replace the legacy institution panel with a five-tab workspace, available from the command rail and CountryPanel: organization rosters/standing/offices; resolutions/voting; financial facilities; commodities/trade/swaps; sanctions/enforcement.
+- Keep fourteen canonical organizations, including ASEAN and WEF. NDB and IDB are financial facilities under BRICS+ and OIC rather than extra organization IDs.
+- Typed forms cover all eight executable proposal payloads. Proposals, ballots, repayments, facility cancellation, quota deviations and reserve hardware transfers use shared engine validation and ReviewDialog with fresh submission checks and command receipts. Resolution cards and ballot reviews show target and terms.
+- Pure engine previews provide voting rules/weights, financing burden, quota output/penalties and command costs. Semantic Light/Dark layouts, keyboard tabs, sticky review actions and complete English/Turkish/Spanish/Chinese/Russian copy support 390px and 1440px layouts.
+- Schema 18 and existing simulation accounting stay intact. Legacy saved world/WHO/outreach/council data remain supported; the old direct-action interface is retired. Add happy-dom as a development-only mounted React test environment.
+- Verified 1221 tests / 108 files, TypeScript and Vite, including 30 mounted UI regressions and a full year with IndexedDB save/resume. In-app browser QA covered Light/Dark, desktop/mobile, navigation and reviewed commands. Eight new Playwright scenarios are committed but blocked locally by Chromium SIGTRAP before test execution. Existing warnings remain. [Release details](docs/RELEASE-100.md).
+
 ## 0.99.3 — Trade, Commodity & Regional Blocs (Slice 8.4)
 
 - Shared five-influence economic proposals and charter-specific execution for OPEC+, WTO, EU/ASEAN and BRICS+, with participant validation, deterministic duplicate topics and source-linked temporary effects.

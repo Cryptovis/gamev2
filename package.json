@@ -1,7 +1,7 @@
 {
   "name": "rule-of-nations",
   "private": true,
-  "version": "0.99.3",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -34,6 +34,7 @@
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "6.1.1",
     "fake-indexeddb": "6.2.5",
+    "happy-dom": "21.0.1",
     "typescript": "5.9.3",
     "vite": "8.3.2",
     "vitest": "5.0.3"

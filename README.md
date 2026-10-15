@@ -1,4 +1,4 @@
-# Rule of Nations (RON) — 0.99.3
+# Rule of Nations (RON) — 1.0.0
 
 Rule of Nations is a browser-based geopolitical grand-strategy prototype built with React, TypeScript, Zustand, D3 Geo and Dexie. Lead a country through its economy, resources, diplomacy, development and military conflicts. Chart.js provides economic charts; Vitest and Playwright verify gameplay and browser flows.
 
@@ -6,10 +6,10 @@ Rule of Nations is a browser-based geopolitical grand-strategy prototype built w
 
 | Item | Current state |
 |---|---|
-| Version | **0.99.3 — Trade, Commodity & Regional Blocs (Slice 8.4)** |
+| Version | **1.0.0 — Grand Launch International Affairs Hub (Slice 8.5)** |
 | Development branch | `dev/ron-phase7` (development release; not merged into main) |
 | Save schema | 18; valid Schema 12–17 saves migrate; organization records and legacy state are validated |
-| Validation | 1191/1191 tests / 107 files; TypeScript and Vite production build passed with zero errors. Existing bundling warnings remain. Browser/native suites were not rerun for this engine slice. [Validation record](docs/RELEASE-0993.md) |
+| Validation | 1221/1221 tests / 108 files; TypeScript and Vite production build passed with zero errors. In-app desktop/mobile QA passed; standalone Chromium launch is blocked locally. Existing bundling warnings remain. [Validation record](docs/RELEASE-100.md) |
 | V3 | Reserved for the complete-playability milestone; the current plan builds on the existing engine |
 
 These details describe this development branch. Another branch, including `main`, can contain an older release. Check `package.json` and your checked-out branch when comparing previews.
@@ -34,6 +34,8 @@ npm run test:e2e
 `check` runs tests, TypeScript checks and the production build. Browser tests run separately against the production preview. Optional `npm run measure:engine`, `npm run measure:browser` `npm run measure:renders` (React render attribution on a profiling build) and `npm run measure:war` (paired war-balance scenarios) write local performance reports; run browser measurements separately from other builds/tests. See [measurement method](docs/PERFORMANCE-0906.md).
 
 ## Recent changelog
+
+- **1.0.0:** five-tab International Affairs hub, fourteen organization rosters, typed proposals/ballots, financing management, quotas/trade/swaps and reviewed hardware transfers. Engine-owned previews, five-language copy, semantic themes and mounted world-year save/resume tests. [Release record](docs/RELEASE-100.md). Schema 18 retained.
 
 - **0.99.3:** physical OPEC+ quotas, WTO tariff countermeasures, EU/ASEAN market integration, bounded BRICS+ local clearing, and arms/trade/finance sanctions wired into actual orders and credit. [Release record](docs/RELEASE-0993.md). Schema 18 retained; International Affairs UI follows in Slice 8.5.
 
@@ -232,6 +234,7 @@ Delivered milestones are retained here when new releases are added. This table s
 
 | Milestone | Delivered foundation | Record |
 |---|---|---|
+| 1.0.0 — Grand Launch International Affairs | Slice 8.5: unified five-tab hub, reviewed organization commands, localized responsive controls and mounted save/resume regressions | [Playtest 1.0.0](docs/PLAYTEST-100.md) |
 | 0.99.3 — Trade & Regional Blocs | Slice 8.4: quotas/fundamentals, customs, integration, swaps and sanctions enforcement | [Playtest 0.99.3](docs/PLAYTEST-0993.md) |
 | 0.99.2 — Global Finance | Slice 8.3: capital reservoirs, conditional financing, repayment/interest, austerity and default accounting | [Playtest 0.99.2](docs/PLAYTEST-0992.md) |
 | 0.99.1 — Voting & Leverage | Slice 8.2: rule evaluation, shared commands, fixed electorates, seeded AI votes and daily foundation execution | [Playtest 0.99.1](docs/PLAYTEST-0991.md) |

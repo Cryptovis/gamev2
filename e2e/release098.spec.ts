@@ -40,10 +40,7 @@ for(const width of [1440,390])test(`0.98 ${width}px energy, bilateral, instituti
  for(const card of await page.locator('.energy-summary>span,.power-plant-grid>article').all())await surface(card);
  await page.screenshot({path:`test-results/release098-energy-${width}.png`});await page.keyboard.press('Escape');
  await page.locator('.command-panel [data-guide="tab-world"]').click();const world=page.locator('.world-panel');
- await expect(world.locator('.world-card')).toHaveCount(3);for(const card of await world.locator('.world-card,.institution-card').all())await surface(card);
- for(const mark of await world.locator('.institution-mark').all()){
-  expect(await mark.evaluate(el=>{const icon=el.querySelector('.navigation-art')!.getBoundingClientRect(),text=el.querySelector('b')!.getBoundingClientRect(),box=el.getBoundingClientRect();return icon.bottom<=text.top&&text.bottom<=box.bottom&&text.left>=box.left&&text.right<=box.right;})).toBe(true);
- }
+ await expect(world.locator('.ia-organization-grid>.ia-card')).toHaveCount(14);for(const card of await world.locator('.ia-organization-grid>.ia-card').all())await surface(card);
  await page.screenshot({path:`test-results/release098-institutions-${width}.png`});await page.keyboard.press('Escape');
  await page.locator('.command-panel [data-guide="tab-power"]').click();const dossier=page.locator('.country-dossier-window');
  await expect(dossier.locator('.command-subtabs button')).toHaveText(['Power','Economy','Trade','Society']);for(const tab of await dossier.locator('.command-subtabs button').all())await expect(tab).toHaveCSS('text-transform','uppercase');

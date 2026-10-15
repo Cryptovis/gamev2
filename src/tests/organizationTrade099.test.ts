@@ -59,7 +59,7 @@ function economicCommand(org:OrganizationId,p:EconomicResolutionPayload){return 
 
 describe('0.99.3 economic proposal authority and shared costs',()=>{
  it('retains Schema 18, activates the scenario WTO once, and preserves save compatibility',()=>{
-  const s=ready();expect(version).toBe('0.99.3');expect(CURRENT_SCHEMA_VERSION).toBe(18);expect(s.world.organizations.byId.wto.memberships.USA.tier).toBe('Member');
+  const s=ready();expect(version).toBe('1.0.0');expect(CURRENT_SCHEMA_VERSION).toBe(18);expect(s.world.organizations.byId.wto.memberships.USA.tier).toBe('Member');
   expect(initializeOrganizationTrade(s.world.organizations)).toBe(s.world.organizations);expect(canLoadSave(s)).toBe(true);
   const old=structuredClone(s);delete old.world.organizations.tradeVersion;const wto=old.world.organizations.byId.wto;
   for(const m of Object.values(wto.memberships))m.tier='Observer';wto.bodies.plenary.memberIds=[];

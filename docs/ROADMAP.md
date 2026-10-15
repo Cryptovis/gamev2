@@ -1,5 +1,10 @@
 # Rule of Nations roadmap (formerly AlpyX) after 0.31
 
+## 1.0.0 — Phase 8 Slice 8.5 Grand Launch UI Hub
+
+Delivered on `dev/ron-phase7`: five-tab International Affairs workspace, fourteen canonical organization rosters and chair offices, typed proposal/voting/program/quota/hardware controls, engine-owned previews and reviewed confirmation. Five-language semantic Light/Dark UI supports mobile and desktop. Schema 18 and existing organization accounting remain intact. [Release](RELEASE-100.md) · [Playtest](PLAYTEST-100.md). Verified 1221 tests / 108 files, TypeScript and Vite, including a mounted full-year save/resume regression. In-app browser QA passed; standalone Playwright Chromium launch is blocked locally and must run in CI. Phase 8's requested foundation-to-hub slices are delivered; legal datasets, full autonomous proposal agendas, remaining future payload executors, FX/SDR valuation, migration policy, evasion/balance and bundle profiling remain future work. V3 remains the complete-playability milestone.
+
+
 ## 0.99.3 — Phase 8 Slice 8.4 Trade & Regional Blocs
 
 Delivered on `dev/ron-phase7`: charter-bound economic proposals, physical OPEC+ extraction/price fundamentals, capped WTO customs, real EU/ASEAN trade integration, bilateral BRICS+ local settlement and sanctions access enforcement across arms/trade/finance. Optional Schema 18 fields and strict source-linked effects retain old save migration paths. [Release](RELEASE-0993.md) · [Playtest](PLAYTEST-0993.md). Verified 1191 tests / 107 files, TypeScript and Vite; baseline and economic-effects world-year regressions pass. Browser/native suites were not rerun. Slice 8.5 International Affairs UX, browser QA, legal charter data, migration policy, FX revaluation and deeper evasion/balance work remain. V3 remains the complete-playability milestone.

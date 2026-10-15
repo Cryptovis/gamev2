@@ -66,3 +66,5 @@ import "./ui/styles/release095.css";
 import "./ui/styles/release096.css";
 import "./ui/styles/release097.css";
 import "./ui/styles/release098.css";
+
+import "./ui/styles/internationalAffairs100.css";

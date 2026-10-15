@@ -62,8 +62,8 @@ export function ReviewDialog({
         <h2><LocaleText value={title}/></h2>
         <p><LocaleText value={summary}/></p>
         <div className="review-metrics">
-          {metrics.map(([label, value]) => (
-            <div key={label} data-metric={label} data-tone={metricTones[label]??'neutral'}>
+          {metrics.map(([label, value], index) => (
+            <div key={label+index} data-metric={label} data-tone={metricTones[label]??'neutral'}>
               <small><LocaleText value={label}/></small>
               <strong><LocaleText value={value}/></strong>
             </div>

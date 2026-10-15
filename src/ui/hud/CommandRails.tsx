@@ -56,6 +56,7 @@ export function CommandRails(){
  return <Suspense fallback={<div className="loading-popup"><LocaleText value="Loading command…"/></div>}>
   <nav className="command-rail command-rail-left" aria-label={translateLive("World command tools")}>
    <RailButton active={['market','exchange','credit'].some(id=>open.has(id))} badge={activeTrades.length} label="MARKET" onClick={()=>toggle('market')}><NavigationArt kind="market"/></RailButton>
+   <button className={navigation?.panel==='world'?'rail-button active':'rail-button'} data-guide="rail-international-affairs" aria-label={translateLive('International Affairs')} title={translateLive('International Affairs')} aria-pressed={navigation?.panel==='world'} onClick={()=>navigation?.panel==='world'?state.closeWorkspace():state.navigate('world',player.id)}><span><NavigationArt kind="world"/></span><small><LocaleText value="International Affairs"/></small></button>
    <RailButton active={open.has('pulse')} badge={activeWars.length} label="WORLD" onClick={()=>toggle('pulse')}><NavigationArt kind="world"/></RailButton>
    <RailButton active={open.has('resources')} badge={critical.length} label="SUPPLY" onClick={()=>toggle('resources')}><NavigationArt kind="alerts"/></RailButton>
   </nav>

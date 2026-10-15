@@ -1,0 +1,80 @@
+/* One semantic palette for Light/Dark; all measurements can contract inside a 390px viewport. */
+.international-affairs { color:var(--ink); background:var(--surface); width:100%; min-width:0; display:grid; gap:16px; font-size:14px; line-height:1.5; }
+.international-affairs * { box-sizing:border-box; }
+.international-affairs :is(h2,h3,h4,p) { margin:0; overflow-wrap:anywhere; color:inherit; }
+.international-affairs :is(h2,h3) { font-weight:750; letter-spacing:0; }
+.international-affairs h2 { font-size:clamp(22px,2.2vw,30px); }
+.international-affairs h3 { font-size:17px; }
+.international-affairs h4 { font-size:14px; }
+.ia-header { display:flex; align-items:start; justify-content:space-between; gap:20px; border-bottom:1px solid var(--border); padding-bottom:16px; }
+.ia-header small { font-size:11px; letter-spacing:.08em; }
+.ia-header p { max-width:60ch; color:var(--ink-muted); }
+.ia-influence { flex:0 0 auto; display:grid; text-align:right; gap:2px; }
+.ia-influence strong { font-size:30px; color:var(--ink); font-variant-numeric:tabular-nums; }
+.ia-influence span { font-size:12px; color:var(--ink-muted); }
+.ia-tabs { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:6px; padding:5px; background:var(--surface-inset); border:1px solid var(--border); border-radius:12px; }
+.international-affairs :is(button,input,select) { font:inherit; color:var(--ink); background:var(--surface-raised); border:1px solid var(--border); border-radius:8px; min-width:0; }
+.international-affairs button { min-height:44px; padding:9px 12px; white-space:normal; overflow-wrap:anywhere; cursor:pointer; }
+.international-affairs button:hover:not(:disabled) { border-color:var(--focus); }
+.international-affairs :is(button,input,select,[tabindex]):focus-visible { outline:3px solid var(--focus); outline-offset:3px; }
+.international-affairs button:disabled { cursor:not-allowed; opacity:.6; }
+.international-affairs .ia-tabs button[aria-selected="true"] { color:var(--accent-ink); background:var(--accent-surface); border-color:var(--focus); font-weight:750; }
+.ia-tab-panel { min-width:0; display:grid; gap:16px; }
+.ia-organization-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+.ia-card { min-width:0; border:1px solid var(--border); border-radius:12px; background:var(--surface-raised); padding:18px; display:grid; gap:14px; align-content:start; }
+.ia-card-header { display:flex; justify-content:space-between; align-items:start; gap:12px; }
+.ia-card-header small,.ia-muted { color:var(--ink-muted); }
+.ia-metrics { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px 16px; margin:0; }
+.ia-metrics>div { display:grid; gap:2px; border-bottom:1px solid var(--border); padding-bottom:8px; min-width:0; }
+.ia-metrics dt { color:var(--ink-muted); font-size:12px; overflow-wrap:anywhere; }
+.ia-metrics dd { margin:0; font-size:15px; font-weight:700; font-variant-numeric:tabular-nums; overflow-wrap:anywhere; }
+.ia-badge { display:inline-flex; width:fit-content; padding:3px 9px; border-radius:6px; border:1px solid var(--border); font-size:12px; font-weight:650; color:var(--ink); background:var(--surface); }
+.ia-tags,.ia-buttons { display:flex; flex-wrap:wrap; gap:8px; align-items:start; }
+.ia-tags>span { display:flex; flex-wrap:wrap; gap:6px; align-items:center; }
+.ia-form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+.ia-field { display:grid; gap:6px; min-width:0; color:var(--ink); }
+.ia-field>span { font-size:13px; font-weight:650; }
+.ia-field :is(input,select) { min-height:44px; width:100%; padding:8px 10px; }
+.ia-field input[type="checkbox"] { width:24px; height:24px; min-height:24px; accent-color:var(--focus); }
+.ia-field input[type="range"] { padding:0; accent-color:var(--focus); }
+.ia-participants { grid-column:1/-1; min-width:0; max-height:220px; overflow:auto; border:1px solid var(--border); border-radius:8px; display:flex; flex-wrap:wrap; gap:12px; }
+.ia-participants label,.ia-check { display:flex; gap:8px; align-items:center; min-height:44px; }
+.ia-participants input,.ia-check input { width:20px; height:20px; accent-color:var(--focus); }
+.ia-action { min-width:0; display:grid; gap:5px; max-width:100%; }
+.ia-blocked { color:var(--ink-muted); max-width:46ch; overflow-wrap:anywhere; }
+.ia-roster,.ia-electorate,.ia-tranches { display:grid; gap:8px; }
+.ia-roster>article,.ia-electorate>div,.ia-tranches>div { min-width:0; padding:10px; display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:8px; border:1px solid var(--border); border-radius:8px; background:var(--surface); }
+.ia-roster .ia-metrics { width:100%; }
+.ia-electorate { max-height:340px; overflow:auto; margin-top:12px; }
+.ia-empty { padding:20px; background:var(--surface-inset); border:1px dashed var(--border); border-radius:10px; color:var(--ink-muted); }
+.ia-notice { min-height:1.5em; color:var(--ink); }
+.international-affairs code { font-size:11px; font-weight:500; overflow-wrap:anywhere; }
+.international-affairs details>summary { cursor:pointer; min-height:44px; padding:10px 0; }
+.international-affairs ul { margin:0; padding-inline-start:20px; }
+#country-section-window:has(.international-affairs) .executive-body { padding:20px; }
+.command-rail [data-guide="rail-international-affairs"] small { max-width:74px; white-space:normal; line-height:1.15; text-align:center; }
+@media(min-width:1250px) { .ia-organization-grid { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+@media(max-width:700px) {
+ .ia-tabs { grid-template-columns:repeat(2,minmax(0,1fr)); }
+ .ia-tabs button:last-child { grid-column:1/-1; }
+ .ia-organization-grid,.ia-form-grid { grid-template-columns:minmax(0,1fr); }
+ .ia-card { padding:14px; }
+ .ia-header { flex-direction:column; gap:12px; }
+ .ia-influence { grid-template-columns:1fr auto; align-items:center; text-align:left; width:100%; }
+ .ia-influence small { grid-column:1/-1; }
+ #country-section-window:has(.international-affairs) .executive-body { padding:12px; }
+}
+@media(max-width:420px) { .ia-metrics { gap:8px; } .ia-buttons { flex-direction:column; align-items:stretch; } .ia-card-header { flex-direction:column; } }
+
+/* ReviewDialog retains its shared focus/clock lifecycle; long international terms scroll behind reachable actions. */
+.review-dialog.ia-review { background:var(--surface-raised); color:var(--ink); border-color:var(--border); max-height:calc(100dvh - 40px); padding:18px; }
+.ia-review :is(h2,p,small,strong) { color:var(--ink); }
+.ia-review>header,.ia-review>footer { position:sticky; z-index:2; background:var(--surface-raised); padding-block:12px; }
+.ia-review>header { top:-18px; margin-top:-18px; border-bottom:1px solid var(--border); }
+.ia-review>footer { bottom:-18px; margin-bottom:-18px; border-top:1px solid var(--border); }
+.ia-review .review-metrics { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.ia-review .review-metrics>div { background:var(--surface); border:1px solid var(--border); min-width:0; }
+.ia-review .review-notes { border-color:var(--focus); }
+.ia-review button { min-height:44px; color:var(--ink); background:var(--surface); border-color:var(--border); }
+.ia-review button.primary { background:var(--accent-surface); color:var(--accent-ink); }
+.ia-review button:focus-visible { outline:3px solid var(--focus); outline-offset:3px; }

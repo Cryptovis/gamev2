@@ -70,3 +70,12 @@ Economic commands validate charter authority/participants and use canonical prop
 `tradePaymentPreview` / `settleTradePayment` / `recordTradeSettlement` share customs and FX/local accounting across bilateral, industrial, listing and physical exchange routes. Gross customs are debited then credited to the importing government's consolidated treasury; a revenue counter is metadata, not a second asset. Optional USD reserves and net-zero local balances do not replace spendable treasury. Swaps cannot waive sanctions or recycle their gross limit. `listingPurchasePreview` is the sole listing-card/review/execution formula.
 
 Sanction access is checked in shared validators and at delivery, including hardware stock transfers, industrial orders, commodity counterparties, credit facilities and gifts. Existing repayment remains possible. Economic effects are strictly source-validated and expire by absolute dates, with optional initialization and reserve fields preserving earlier Schema 18 loading. [Full accounting rules and limits](RELEASE-0993.md).
+
+
+## 1.0.0 International Affairs presentation boundary
+
+`InternationalAffairsWorkspace` replaces the old `WorldInstitutionsPanel` through a compatibility re-export. CountryPanel and the command rail route to this same workspace. It subscribes through `useWorldView`, mounts only the selected tab and pages long rosters/resolution/facility lists. Canonical organization IDs remain fourteen; BRICS+/NDB and OIC/IDB share their financial-board containers.
+
+`organizations/previews.ts` owns rule/weight displays, financing and quota previews, validator reason copy, proposal draft-to-command conversion and visible resolution terms. UI components only hold form inputs and dispatch typed organization commands. Every actionable draft is cloned into ReviewDialog; the review recomputes eligibility from live state and validates again immediately before submitting a receipt-bearing command. The shared review lifecycle owns focus, Escape, pause and cleanup; international review actions remain sticky when terms scroll.
+
+No persistent fields or simulation numbers change. Schema 18 fixtures and legacy world state remain supported. Legacy institution/council/outreach controls are retired from this panel without deleting their saved data or engine compatibility paths. New copy is registered in `uiCatalog100` for all five languages. `happy-dom` is development-only; mounted UI tests use the actual command/store/persistence boundary, including a 365-day world and IndexedDB roundtrip.
