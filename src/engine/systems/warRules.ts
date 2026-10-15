@@ -1,5 +1,6 @@
 import {leaderModifiers} from './leaderPerks';
 import type { GameState, WarState } from '../../domain/game';
+import type { OrganizationId } from '../../domain/organizations';
 import { activeCountries } from '../../domain/sovereignty';
 import { nextRandom } from '../rng';
 import { calculateSupplyNetwork } from './supplyNetwork';
@@ -82,8 +83,26 @@ export function combatPreview(state: GameState, attackerId: string, defenderId: 
 // ---------------------------------------------------------------------------------------------
 
 /** Chance that an eligible ally honours its obligation: a formal alliance, or only a collective-security bloc. */
-export const JOIN_CHANCE = { alliance: 0.8, bloc: 0.6 } as const;
-export interface CoalitionCandidate { countryId: string; basis: keyof typeof JOIN_CHANCE }
+export const JOIN_CHANCE = { alliance: 0.8, charter: 0.7, bloc: 0.6 } as const;
+export interface CoalitionCandidate { countryId: string; basis: keyof typeof JOIN_CHANCE; /** Set when basis is 'charter'. */ charterOrganizationId?: OrganizationId }
+export const COALITION_BASIS_LABELS: Record<keyof typeof JOIN_CHANCE, string> = { alliance: 'Alliance treaty', charter: 'Charter obligation (NATO/CSTO)', bloc: 'Collective-security bloc' };
+
+/** Organizations whose charter obliges members to defend one another. Membership is read live; no treaty is created or removed. */
+export const COLLECTIVE_DEFENSE_ORGANIZATIONS: readonly OrganizationId[] = ['nato', 'csto'];
+const holdsCharterSeat = (state: GameState, organizationId: OrganizationId, countryId: string) => {
+  const membership = state.world.organizations.byId[organizationId]?.memberships[countryId];
+  return membership?.status === 'active' && membership.tier !== 'Observer';
+};
+/** The collective-defense organization that binds `countryId` to the defender against this attacker, if any. A war inside one organization binds nobody. */
+function sharedCharter(state: GameState, attackerId: string, defenderId: string, countryId: string): OrganizationId | null {
+  for (const organizationId of COLLECTIVE_DEFENSE_ORGANIZATIONS)
+    if (holdsCharterSeat(state, organizationId, defenderId) && holdsCharterSeat(state, organizationId, countryId) && !holdsCharterSeat(state, organizationId, attackerId)) return organizationId;
+  return null;
+}
+/** Countries bound to the defender by an active collective-defense charter the attacker does not belong to. */
+export function charterAllies(state: GameState, attackerId: string, defenderId: string): string[] {
+  return activeCountries(state.countries).filter(c => c.id !== defenderId && c.id !== attackerId && sharedCharter(state, attackerId, defenderId, c.id)).map(c => c.id);
+}
 
 function collectiveBloc(state: GameState, countryId: string) {
   const bloc = blocForCountry(state, countryId);
@@ -91,25 +110,30 @@ function collectiveBloc(state: GameState, countryId: string) {
 }
 
 /**
- * Countries that may join the defender: an 'alliance' treaty with the defender, or membership of the defender's
- * collective-security bloc. They stay out if they are bound to the attacker (alliance, non-aggression pact or the
+ * Countries that may join the defender: an 'alliance' treaty with the defender, a shared NATO/CSTO charter the attacker
+ * is outside (basis 'charter'), or membership of the defender's collective-security bloc. Basis precedence: alliance, charter, bloc.
+ * Treaty/bloc candidates keep their order and roll first; charter-only candidates follow, so existing seeded rolls do not shift.
+ * They stay out if they are bound to the attacker (alliance, non-aggression pact or the
  * same bloc), already fight a war, or are not independent. The player is never committed automatically.
  */
 export function coalitionCandidates(state: GameState, attackerId: string, defenderId: string): CoalitionCandidate[] {
   const defenderBloc = collectiveBloc(state, defenderId), attackerBloc = blocForCountry(state, attackerId);
-  const result: CoalitionCandidate[] = [];
+  const result: CoalitionCandidate[] = [], charterOnly: CoalitionCandidate[] = [];
   for (const c of activeCountries(state.countries)) {
     if ([attackerId, defenderId, state.playerCountryId].includes(c.id) || c.controllerCountryId) continue;
     const alliance = relationFor(c, defenderId).treaties.includes('alliance');
     const bloc = !!defenderBloc?.memberIds.includes(c.id);
-    if (!alliance && !bloc) continue;
+    const charterOrganizationId = sharedCharter(state, attackerId, defenderId, c.id);
+    if (!alliance && !bloc && !charterOrganizationId) continue;
     const toAttacker = relationFor(c, attackerId);
     if (toAttacker.status === 'war' || toAttacker.treaties.includes('alliance') || toAttacker.treaties.includes('nonAggression')) continue;
     if (attackerBloc && attackerBloc.memberIds.includes(c.id)) continue;
     if (inActiveWar(state, c.id)) continue;
-    result.push({ countryId: c.id, basis: alliance ? 'alliance' : 'bloc' });
+    if (alliance) result.push({ countryId: c.id, basis: 'alliance' });
+    else if (charterOrganizationId) (bloc ? result : charterOnly).push({ countryId: c.id, basis: 'charter', charterOrganizationId });
+    else result.push({ countryId: c.id, basis: 'bloc' });
   }
-  return result;
+  return [...result, ...charterOnly];
 }
 
 /** Support the defender could expect if every candidate joined (what an attacker must plan for). */
@@ -129,7 +153,9 @@ export function callAllies(state: GameState, warId: string): GameState {
     if (roll.value >= JOIN_CHANCE[candidate.basis]) continue;
     joined.push(candidate.countryId);
     next = setWarRelation(cancelPairTrades(next, candidate.countryId, war.attackerId), candidate.countryId, war.attackerId);
-    next = note(next, `ALLIANCE // ${next.countries[candidate.countryId].name} joined the war on ${defender.name}'s side against ${attacker.name}.`);
+    next = note(next, candidate.charterOrganizationId
+      ? `ALLIANCE // ${next.countries[candidate.countryId].name} joined the war on ${defender.name}'s side against ${attacker.name} under the ${candidate.charterOrganizationId === 'nato' ? 'NATO' : 'CSTO'} charter.`
+      : `ALLIANCE // ${next.countries[candidate.countryId].name} joined the war on ${defender.name}'s side against ${attacker.name}.`);
   }
   // The player is told, never committed: joining is the player's own declaration.
   const player = state.countries[state.playerCountryId];

@@ -55,3 +55,21 @@ export const UI_CATALOG_1B3:Record<string,[string,string,string,string]>={
     "Минимальная налоговая ставка или бюджетный баланс"
   ]
 };
+
+/** Stage 1b.4 charter-defense copy (same shape as above, merged with it). */
+export const UI_CATALOG_1B4:Record<string,[string,string,string,string]>={
+  "ALLIANCE // {0} joined the war on {1}'s side against {2} under the {3} charter.": [
+    "İTTİFAK // {0}, {3} antlaşması gereği {2} karşısında {1} tarafında savaşa katıldı.",
+    "ALIANZA // {0} entró en la guerra del lado de {1} contra {2} en virtud de la carta de la {3}.",
+    "同盟 // {0}依据{3}宪章站在{1}一方参战，对抗{2}。",
+    "СОЮЗ // {0} вступила в войну на стороне {1} против {2} в соответствии с уставом {3}."
+  ],
+  "Alliance treaty": ["İttifak antlaşması","Tratado de alianza","同盟条约","Союзный договор"],
+  "Charter obligation (NATO/CSTO)": [
+    "Antlaşma yükümlülüğü (NATO/CSTO)",
+    "Obligación de la carta (OTAN/OTSC)",
+    "宪章义务（北约/集安组织）",
+    "Обязательство по уставу (НАТО/ОДКБ)"
+  ],
+  "Collective-security bloc": ["Kolektif güvenlik bloku","Bloque de seguridad colectiva","集体安全集团","Блок коллективной безопасности"]
+};
