@@ -115,9 +115,10 @@
 :root .operational-assessment .assessment-actions > :is(.assessment-fuel-help, .assessment-review-blocked) { border: 1px solid var(--border); border-radius: 8px; background: var(--surface-raised); color: var(--ink); cursor: pointer; }
 
 /* Equal floating footprints; complete localized words wrap, never split. */
-:root :is(.command-rail-left, .command-rail-right) { width: 72px !important; }
+/* 84px: 72px clipped long Russian/Turkish words (ДИПЛОМАТИЯ is 83px at 10px bold, "Uluslararası" 68px). */
+:root :is(.command-rail-left, .command-rail-right) { width: 84px !important; }
 :root :is(.command-rail-left, .command-rail-right, .map-help-cluster) .rail-button {
-  width: 72px !important; min-height: 64px; padding: 6px 2px !important;
+  width: 84px !important; min-height: 64px; padding: 6px 2px !important;
   border-radius: 12px; box-shadow: 0 3px 12px #142c4626 !important;
 }
 :root :is(.command-rail-left, .command-rail-right, .map-help-cluster) .rail-button small {

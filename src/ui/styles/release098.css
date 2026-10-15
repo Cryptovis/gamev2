@@ -1,7 +1,8 @@
 /* Readable quotes, including the compact wizard override from 0.96. */
 :root .campaign-wizard-backdrop .campaign-wizard[data-step="1"] .wizard-leadership-quote blockquote { font-size: 15px; line-height: 1.3; }
 @media (max-width: 760px) {
-  :root .campaign-wizard-backdrop .campaign-wizard[data-step="1"] .wizard-leadership-quote blockquote { font-size: 14px; }
+  /* 1.25 (not 1.3): Turkish quotes overflowed the 650px-tall wizard body by 2px once Noto Serif metrics applied; font-size stays 14px. */
+  :root .campaign-wizard-backdrop .campaign-wizard[data-step="1"] .wizard-leadership-quote blockquote { font-size: 14px; line-height: 1.25; }
 }
 
 :root[data-theme="light"] :is(.floating-command-window, .command-window, .executive-workspace, .command-panel, #country-section-window) :is(
