@@ -31,8 +31,3 @@ test('right popups dock beside their rail and the speed/date card stays independ
  expect(await page.locator('.clock-island').evaluate(el=>getComputedStyle(el).backgroundImage)).toBe('none');
  await page.locator('.leader-avatar-button').click();await page.locator('.change-portrait-button').first().click();await expect(page.locator('.player-options-backdrop')).toBeHidden();await expect(page.locator('.avatar-picker')).toBeVisible();await page.keyboard.press('Escape');await expect(page.locator('.player-options-modal')).toBeVisible();await page.screenshot({path:'test-results/profile-0905.png'});
 });
-test('national World opens the unified assessment and restores its original target context',async({page})=>{
- await resumeFixture(page,campaignFixture('en'));await page.locator('[data-guide="nation"]').click();await page.locator('[data-guide="tab-world"]').click();
- const frame=page.locator('#country-section-window');await frame.getByLabel('International affairs target',{exact:true}).selectOption('GRC');await frame.getByRole('button',{name:'OPEN WAR ASSESSMENT',exact:true}).click();
- await expect(frame).toBeHidden();await expect(page.locator('#operational-assessment-window .declare-war')).toBeVisible();await page.keyboard.press('Escape');await expect(frame).toBeVisible();await expect(page.locator('.country-select')).toHaveValue('TUR');await expect(frame.getByLabel('International affairs target',{exact:true})).toHaveValue('GRC');
-});

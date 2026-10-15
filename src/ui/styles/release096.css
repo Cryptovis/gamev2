@@ -82,7 +82,8 @@
   background: var(--surface-raised) !important; border: 1px solid var(--border) !important; color: var(--ink) !important;
 }
 :root[data-theme="light"] #resource-command-window .resource-command-summary :is(small, strong) { color: var(--ink) !important; }
-:root #resource-command-window .resource-command-grid { grid-template-columns: minmax(0, 1fr); max-width: none; }
+/* Column count belongs to the compactWorkspaces0908 container queries (2 / 3 at >=980px / 1 at <=540px); only lift the width cap here. */
+:root #resource-command-window .resource-command-grid { max-width: none; }
 :root #resource-command-window .resource-command-grid:has(> article:only-child) { max-width: none; }
 :root[data-theme="light"] #resource-command-window .resource-command-card > header em { background: var(--surface-inset); color: var(--ink); border: 1px solid var(--border); }
 :root[data-theme="light"] #resource-command-window .resource-command-card .subhead { color: var(--ink-muted); }
@@ -123,6 +124,8 @@
   font-size: 10px !important; line-height: 1.15; letter-spacing: 0 !important;
   white-space: normal; overflow-wrap: normal; word-break: normal;
 }
+/* DIPLOMACY stays on one line (livingWorld0919 / executivePhase7). The rule above has specificity 0,3,1 and beat their 0,2,1 nowrap, so match it with 0,4,1. */
+:root .command-rail-right .rail-button[data-guide="rail-diplo"] > small { white-space: nowrap; }
 @media (max-width: 760px) {
   :root .campaign-wizard-backdrop .campaign-wizard { grid-template-rows: auto minmax(0, 1fr) auto !important; max-height: calc(100dvh - 24px) !important; }
   :root .campaign-wizard-backdrop .setup-cover { display: none; }
