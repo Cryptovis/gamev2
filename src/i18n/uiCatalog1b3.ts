@@ -64,7 +64,6 @@ export const UI_CATALOG_1B4:Record<string,[string,string,string,string]>={
     "同盟 // {0}依据{3}宪章站在{1}一方参战，对抗{2}。",
     "СОЮЗ // {0} вступила в войну на стороне {1} против {2} в соответствии с уставом {3}."
   ],
-  "Alliance treaty": ["İttifak antlaşması","Tratado de alianza","同盟条约","Союзный договор"],
   "Charter obligation (NATO/CSTO)": [
     "Antlaşma yükümlülüğü (NATO/CSTO)",
     "Obligación de la carta (OTAN/OTSC)",
