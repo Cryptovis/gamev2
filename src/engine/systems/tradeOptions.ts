@@ -1,3 +1,5 @@
+import {constrainedOilOutput} from './organizations/quotas';
+import {organizationSanctionsBlock} from './organizations/sanctions';
 import {leaderModifiers} from './leaderPerks';
 import { activeCountries } from '../../domain/sovereignty';
 import type { GameState, TradeResource } from '../../domain/game';
@@ -130,7 +132,7 @@ function diplomaticAccess(state: GameState, sellerId: string, buyerId: string, g
   const seller = state.countries[sellerId], buyer = state.countries[buyerId];
   const relation = relationFor(buyer, sellerId), index = relationshipIndex(relation);
   if (relation.status === 'war') return { block: 'war', nextStep: 'none', reason: TRADE_REASONS.war, tier: 3 };
-  if (relation.sanctions || seller.globalSanctions || buyer.globalSanctions) return { block: 'sanctions', nextStep: 'none', reason: TRADE_REASONS.sanctions, tier: 3 };
+  if (organizationSanctionsBlock(state,sellerId,buyerId,'trade',good)||good==='tanks'&&organizationSanctionsBlock(state,sellerId,buyerId,'arms')||relation.sanctions || seller.globalSanctions || buyer.globalSanctions) return { block: 'sanctions', nextStep: 'none', reason: TRADE_REASONS.sanctions, tier: 3 };
   if (open) return { nextStep: 'buy', reason: TRADE_REASONS.open, tier: 0 };
   const hasPact = relation.treaties.includes('trade');
   if (!hasPact) {
@@ -229,7 +231,7 @@ export function rankSuppliers(state: GameState, buyerId: string, good: ExchangeG
 export function monthlyDemand(state: GameState, buyerId: string, good: ExchangeGood): number {
   const buyer = state.countries[buyerId];
   if (!buyer) return 0;
-  if (isRaw(good)) return Math.max(0, -simulateResources(buyer,1,undefined,leaderModifiers(state,buyer.id).consumer).net[good]) * 30;
+  if (isRaw(good)) return Math.max(0, -simulateResources(buyer,1,undefined,leaderModifiers(state,buyer.id).consumer,constrainedOilOutput(state,buyer.id)).net[good]) * 30;
   return industrialBuyerDemand(state, buyerId, good as IndustrialGood).shortfall;
 }
 

@@ -1,3 +1,6 @@
+import {organizationSanctionsBlock} from './organizations/sanctions';
+import {integrationBenefits} from './organizations/marketIntegration';
+import {tradePaymentPreview,settleTradePayment} from './organizations/tradeSettlement';
 import {leaderModifiers} from './leaderPerks';
 import {activeCountries} from '../../domain/sovereignty';
 import type { CountryState, GameState, TradeResource } from "../../domain/game";
@@ -120,7 +123,7 @@ export function exchangeAccess(
 ) {
   const a = s.countries[seller],
     b = s.countries[buyer];
-  if (!a || !b || seller === buyer) return false;
+  if (!a || !b || seller === buyer || organizationSanctionsBlock(s,seller,buyer,'trade',g)) return false;
   if (!raw(g)) return canTradeIndustrial(s, seller, buyer, g);
   const rel = relationFor(b, seller);
   return (
@@ -194,43 +197,21 @@ export function cancelListing(
     ),
   });
 }
-export function buyListing(
-  s: GameState,
-  id: string,
-  quantity: number,
-  buyer = s.playerCountryId,
-): GameState {
-  const l = living(s),
-    x = l.listings.find((x) => x.id === id);
-  if (
-    !x ||
-    x.status !== "open" ||
-    x.expiresDay < s.day ||
-    !Number.isFinite(quantity) ||
-    quantity <= 0 ||
-    quantity > x.remaining + 1e-8 ||
-    !exchangeAccess(s, x.sellerId, buyer, x.good)
-  )
-    return s;
-  const cost = quantity * x.unitPrice,
-    b = s.countries[buyer],
-    a = s.countries[x.sellerId];
-  if (!Number.isFinite(cost) || b.economy.treasury < cost) return s;
+/** Authoritative quote for the listing card, review and execution, including live customs/FX rules. */
+export function listingPurchasePreview(s:GameState,id:string,quantity:number,buyer=s.playerCountryId){
+  const listing=living(s).listings.find(x=>x.id===id);
+  const baseB=listing?quantity*listing.unitPrice*integrationBenefits(s,listing.sellerId,buyer).frictionMultiplier:0;
+  const payment=listing?tradePaymentPreview(s,listing.sellerId,buyer,listing.good,baseB):undefined;
+  const allowed=!!listing&&listing.status==='open'&&listing.expiresDay>=s.day&&Number.isFinite(quantity)&&quantity>0&&quantity<=listing.remaining+1e-8&&
+    exchangeAccess(s,listing.sellerId,buyer,listing.good)&&!!payment?.allowed;
+  return {listing,allowed,baseB,cost:payment?.grossB??0,tariffB:payment?.tariffB??0,unitPrice:quantity>0?(payment?.grossB??0)/quantity:0,
+    treasuryAfter:(s.countries[buyer]?.economy.treasury??0)-baseB};
+}
+export function buyListing(s:GameState,id:string,quantity:number,buyer=s.playerCountryId):GameState {
+  const quote=listingPurchasePreview(s,id,quantity,buyer);if(!quote.allowed||!quote.listing)return s;
+  const x=quote.listing,l=living(s),cost=quote.baseB,a=s.countries[x.sellerId];
   let n = changeExchangeStock(s, buyer, x.good, quantity);
-  n = {
-    ...n,
-    countries: {
-      ...n.countries,
-      [buyer]: {
-        ...n.countries[buyer],
-        economy: { ...b.economy, treasury: b.economy.treasury - cost },
-      },
-      [a.id]: {
-        ...n.countries[a.id],
-        economy: { ...a.economy, treasury: a.economy.treasury + cost },
-      },
-    },
-  };
+  n=settleTradePayment(n,a.id,buyer,x.good,cost);
   const remaining = Math.max(0, x.remaining - quantity);
   return withLiving(n, {
     ...l,

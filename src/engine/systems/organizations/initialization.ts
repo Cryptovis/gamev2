@@ -1,3 +1,4 @@
+import {initializeOrganizationTrade} from './tradeInitialization';
 import {initializeFinanceCapital} from './financeCapital';
 import type {CountryState} from '../../../domain/game';
 import type {WorldState} from '../../../domain/world';
@@ -34,5 +35,5 @@ export function createOrganizations(countries:Record<string,CountryState>,legacy
     }
     byId[id]=organization;
   }
-  return initializeFinanceCapital({catalogVersion:ORGANIZATION_CATALOG_VERSION,byId,resolutions:{},effects:{},financing:{},nextSequence:1,lastProcessedDay:day},countries);
+  return initializeOrganizationTrade(initializeFinanceCapital({catalogVersion:ORGANIZATION_CATALOG_VERSION,byId,resolutions:{},effects:{},financing:{},nextSequence:1,lastProcessedDay:day},countries));
 }

@@ -1,3 +1,4 @@
+import {activeOilQuota} from './quotas';
 import {payOrganizationFinancing,cancelOrganizationFinancing} from './financing';
 import type {OrganizationFinancingRecord} from '../../../domain/organizations';
 import type {GameState} from '../../../domain/game';
@@ -10,7 +11,15 @@ export function applyOrganizationCommand(state:GameState,command:OrganizationCom
   if(!status.allowed)return state;
   const organizations=state.world.organizations;
   let next:GameState;
-  if(command.type==='organization/repayOrganizationFinancing'){
+  if(command.type==='organization/setOilQuotaDeviation'){
+    const effect=activeOilQuota(state,actorId)!;
+    if((effect.allowedDeviationByCountry[actorId]??0)===command.deviation)return state;
+    next={...state,world:{...state.world,organizations:{...organizations,effects:{...organizations.effects,[effect.id]:{...effect,allowedDeviationByCountry:{...effect.allowedDeviationByCountry,[actorId]:command.deviation}}}}}};
+  }else if(command.type==='organization/transferMilitaryHardware'){
+    const from=state.production[actorId],to=state.production[command.recipientId],key=command.equipment;
+    next={...state,production:{...state.production,[actorId]:{...from,stockpile:{...from.stockpile,[key]:from.stockpile[key]-command.quantity}},
+      [command.recipientId]:{...to,stockpile:{...to.stockpile,[key]:to.stockpile[key]+command.quantity}}}};
+  }else if(command.type==='organization/repayOrganizationFinancing'){
     next=payOrganizationFinancing(state,organizations.financing[command.financingId] as OrganizationFinancingRecord,command.principalB,command.interestB);
   }else if(command.type==='organization/cancelOrganizationFinancing'){
     next=cancelOrganizationFinancing(state,command.financingId);

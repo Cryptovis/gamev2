@@ -32,7 +32,11 @@ export interface DemographicsState { population: number; workforce: number; grow
 export interface ResourceStockpile { food: number; oil: number; iron: number; uranium: number; }
 export interface ResourceProduction { food: number; oil: number; iron: number; uranium: number; }
 export interface ProcessedResources { fuel: number; steel: number; electricity: number; }
-export interface EconomyState { gdp: number; treasury: number; debt: number; taxRate: number; inflation: number; unemployment: number; productivity: number; }
+export interface EconomyState {
+  /** Optional cross-border cash subledger; absence preserves pre-8.4 treasury-based settlement. */
+  foreignReservesB?:number;
+  /** Cumulative importer customs revenue, already included in treasury (never an extra asset). */
+  tariffRevenueB?:number; gdp: number; treasury: number; debt: number; taxRate: number; inflation: number; unemployment: number; productivity: number; }
 export interface IndustryState { factories: number; refineries: number; mines: number; powerCapacity: number; utilization: number; }
 export interface PoliticsState { approval: number; stability: number; regime: RegimeType; electionDaysRemaining: number;
   /** 0.88 factions, contested elections and regime pressure (audit E2). Absent in older saves; created on the first tick. */

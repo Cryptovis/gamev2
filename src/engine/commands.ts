@@ -125,6 +125,8 @@ function executeGameCommand(state: GameState, command: GameCommand): GameState {
     case 'program/start': return startProgram(state,command.kind);
     case 'construction/cancel': {const n=cancelConstruction(state,command.id);return n!==state&&state.world.tutorial.practiceProjectId===command.id?{...n,world:{...n.world,tutorial:{...n.world.tutorial,practiceProjectId:undefined}}}:n;}
     case 'organization/proposeResolution':
+    case 'organization/setOilQuotaDeviation':
+    case 'organization/transferMilitaryHardware':
     case 'organization/repayOrganizationFinancing':
     case 'organization/cancelOrganizationFinancing':
     case 'organization/castBallot': return applyOrganizationCommand(state,command);

@@ -1,3 +1,4 @@
+import {economicEffectSchema} from '../domain/organizationTradeSchemas';
 import {organizationFinancingSchema} from '../domain/organizationFinancingSchemas';
 import {votingRule,resolutionPayload,electorate,sanctionMeasure,sanctionExemption} from '../domain/organizationSchemas';
 import {z} from 'zod';
@@ -23,8 +24,8 @@ const legacyEffect=z.strictObject({id,kind:z.literal('legacySanctions'),issuer:z
 const sanctionEffect=z.strictObject({id,kind:z.literal('organizationSanctions'),organizationId,bodyId:id,sourceResolutionId:id,targetId:id,
   startsDay:day,endsDay:day,measures:z.array(sanctionMeasure).min(1),exemptions:z.array(sanctionExemption),status:z.enum(['active','expired'])}).refine(e=>e.endsDay>e.startsDay);
 const financing=organizationFinancingSchema;
-const organizations=z.strictObject({catalogVersion:day.positive(),financeVersion:z.literal(1).optional(),byId:z.record(organizationId,organization),resolutions:z.record(id,resolution),
-  effects:z.record(id,z.union([legacyEffect,sanctionEffect])),financing:z.record(id,financing),nextSequence:day.positive(),lastProcessedDay:day});
+const organizations=z.strictObject({catalogVersion:day.positive(),financeVersion:z.literal(1).optional(),tradeVersion:z.literal(1).optional(),byId:z.record(organizationId,organization),resolutions:z.record(id,resolution),
+  effects:z.record(id,z.union([legacyEffect,sanctionEffect,economicEffectSchema])),financing:z.record(id,financing),nextSequence:day.positive(),lastProcessedDay:day});
 
 function payloadCountries(p:ResolutionPayload):string[] {
   switch(p.kind){
@@ -75,11 +76,36 @@ export function validOrganizations(value:unknown,countries:Record<string,unknown
     }
   }
   for(const [effectId,e] of Object.entries(s.effects)){
-    if(e.id!==effectId||!known(e.targetId)||e.startsDay>currentDay)return false;
+    if(e.id!==effectId||e.startsDay>currentDay)return false;
+    if((e.kind==='legacySanctions'||e.kind==='organizationSanctions')&&!known(e.targetId))return false;
     if(e.kind==='organizationSanctions'){
       const source=s.resolutions[e.sourceResolutionId];
       if(!source||source.organizationId!==e.organizationId||source.bodyId!==e.bodyId||source.payload.kind!=='sanctions'||source.payload.targetId!==e.targetId
         ||!source.execution.effectIds.includes(effectId)||source.execution.status!=='applied'||e.exemptions.some(x=>!x.countryIds.every(known)))return false;
+    }
+  }
+  for(const e of Object.values(s.effects))if(e.kind!=='legacySanctions'&&e.kind!=='organizationSanctions'){
+    const source=s.resolutions[e.sourceResolutionId];
+    if(!source||source.bodyId!=='plenary'||source.execution.status!=='applied'||!source.execution.effectIds.includes(e.id)||source.organizationId!==e.organizationId||source.bodyId!==e.bodyId||source.effectiveDay!==e.startsDay)return false;
+    const p=source.payload;
+    if(e.kind==='organizationOilQuota'){
+      if(p.kind!=='oilQuota'||e.organizationId!=='opecPlus'||e.endsDay!==e.startsDay+p.durationDays||e.lastStandingDay>currentDay||
+        !Object.keys(e.quotas).length||Object.keys(e.quotas).length!==Object.keys(p.quotas).length||Object.entries(e.quotas).some(([id,n])=>!known(id)||p.quotas[id]!==n)||
+        Object.entries(e.allowedDeviationByCountry).some(([id,n])=>!Object.hasOwn(e.quotas,id)||n>((countries[id] as {resourceProduction?:{oil?:number}})?.resourceProduction?.oil??0)*.1))return false;
+    }else if(e.kind==='organizationTradeRemedy'){
+      if(p.kind!=='tradeRemedy'||e.organizationId!=='wto'||!known(e.remedy.targetId)||e.disputeId!==p.disputeId||
+        e.endsDay!==e.startsDay+p.remedy.durationDays||e.remedy.targetId!==p.remedy.targetId||e.remedy.commodity!==p.remedy.commodity||
+        e.remedy.tariffRate!==p.remedy.tariffRate||e.remedy.maximumValueB!==p.remedy.maximumValueB||e.remedy.durationDays!==p.remedy.durationDays)return false;
+    }else if(e.kind==='organizationMarketIntegration'){
+      if(p.kind!=='marketIntegration'||!['eu','asean'].includes(e.organizationId)||!e.agreement.countryIds.every(known)||
+        e.endsDay!==e.startsDay+p.agreement.durationDays||e.agreement.durationDays!==p.agreement.durationDays||e.agreement.tariffReduction!==p.agreement.tariffReduction||e.agreement.freeMovement!==p.agreement.freeMovement||
+        e.agreement.countryIds.length!==p.agreement.countryIds.length||e.agreement.countryIds.some((id,i)=>id!==p.agreement.countryIds[i]))return false;
+    }else{
+      if(p.kind!=='localCurrencySwap'||e.organizationId!=='bricsPlus'||e.endsDay!==e.startsDay+p.agreement.durationDays||e.agreement.durationDays!==p.agreement.durationDays||
+        e.agreement.countryA!==p.agreement.countryA||e.agreement.countryB!==p.agreement.countryB||e.agreement.limitB!==p.agreement.limitB||
+        ![e.agreement.countryA,e.agreement.countryB].every(known)||Object.keys(e.localBalanceByCountry).length!==2||
+        !Object.hasOwn(e.localBalanceByCountry,e.agreement.countryA)||!Object.hasOwn(e.localBalanceByCountry,e.agreement.countryB)||
+        Math.abs(Object.values(e.localBalanceByCountry).reduce((a,b)=>a+b,0))>1e-7||Object.values(e.localBalanceByCountry).some(n=>Math.abs(n)>e.usedB+1e-7))return false;
     }
   }
   for(const [financingId,f] of Object.entries(s.financing)){

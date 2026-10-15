@@ -1,3 +1,7 @@
+import {constrainedOilOutput} from './organizations/quotas';
+import {organizationSanctionsBlock,anonymousMarketBlocked} from './organizations/sanctions';
+import {integrationBenefits} from './organizations/marketIntegration';
+import {tradePaymentPreview,recordTradeSettlement} from './organizations/tradeSettlement';
 import {leaderModifiers} from './leaderPerks';
 import { activeCountries } from '../../domain/sovereignty';
 import type { CountryState, EventKind, GameState } from '../../domain/game';
@@ -114,7 +118,7 @@ export function worldSupply(s: GameState): WorldSupply {
   const oilProduction: Record<string, number> = {}, foodProduction: Record<string, number> = {};
   let worldGdp = 0;
   for (const c of activeCountries(s.countries)) {
-    const flow = simulateResources(c,1,undefined,leaderModifiers(s,c.id).consumer);
+    const flow = simulateResources(c,1,undefined,leaderModifiers(s,c.id).consumer,constrainedOilOutput(s,c.id));
     for (const r of ['food', 'oil', 'iron', 'uranium'] as const) { prod[r] += flow.production[r]; cons[r] += flow.consumption[r]; }
     oilProduction[c.id] = flow.production.oil; foodProduction[c.id] = flow.production.food;
     worldGdp += Math.max(0, c.economy.gdp);
@@ -210,10 +214,11 @@ const held = (p: CommodityPosition) => p.units + p.inbound;
 const tradedToday = (p: CommodityPosition, day: number) => (p.tradedDay === day ? p.tradedToday : 0);
 
 /** Both sides can trade: neither annexed or under global sanctions, no war and no bilateral sanctions. */
-export function exchangeCounterpartyOk(s: GameState, a: string, b: string): boolean {
+export function exchangeCounterpartyOk(s: GameState, a: string, b: string,g?:Commodity): boolean {
   const A = s.countries[a], B = s.countries[b];
   if (!A || !B || a === b || A.annexedBy || B.annexedBy || A.globalSanctions || B.globalSanctions) return false;
   const ab = relationFor(A, b), ba = relationFor(B, a);
+  if(organizationSanctionsBlock(s,a,b,'trade',g))return false;
   return ab.status !== 'war' && !ab.sanctions && ba.status !== 'war' && !ba.sanctions;
 }
 
@@ -223,14 +228,14 @@ export function exchangeSeller(s: GameState, buyerId: string, g: Commodity, quan
   for (const c of activeCountries(s.countries)) {
     if (c.id === buyerId) continue;
     const stock = exportableStock(s, c.id, g);
-    if (stock + 1e-9 < quantity || stock <= bestStock || !exchangeCounterpartyOk(s, buyerId, c.id)) continue;
+    if (stock + 1e-9 < quantity || stock <= bestStock || !exchangeCounterpartyOk(s, buyerId, c.id,g)) continue;
     best = c.id; bestStock = stock;
   }
   return best;
 }
 
 function importNeed(s: GameState, c: CountryState, g: Commodity): number {
-  if (RAW.has(g)) { const f = simulateResources(c,1,undefined,leaderModifiers(s,c.id).consumer); const r = g as 'food' | 'oil' | 'iron' | 'uranium'; return Math.max(0, f.consumption[r] - f.production[r]) * 30; }
+  if (RAW.has(g)) { const f = simulateResources(c,1,undefined,leaderModifiers(s,c.id).consumer,constrainedOilOutput(s,c.id)); const r = g as 'food' | 'oil' | 'iron' | 'uranium'; return Math.max(0, f.consumption[r] - f.production[r]) * 30; }
   const reserve = g in GOODS ? GOODS[g as keyof typeof GOODS].reserve : 0;
   return Math.max(0, reserve * 3 - exchangeStock(s, c.id, g));
 }
@@ -242,7 +247,7 @@ export const counterpartyReserve = (c: CountryState) => Math.max(1, Math.max(0, 
 export function exchangeBuyer(s: GameState, sellerId: string, g: Commodity, payment: number): string | null {
   let best: string | null = null, bestNeed = -1, bestTreasury = -Infinity;
   for (const c of activeCountries(s.countries)) {
-    if (c.id === sellerId || c.economy.treasury - payment < counterpartyReserve(c) || !exchangeCounterpartyOk(s, sellerId, c.id)) continue;
+    if (c.id === sellerId || c.economy.treasury - payment < counterpartyReserve(c) || !exchangeCounterpartyOk(s, sellerId, c.id,g)) continue;
     const need = importNeed(s, c, g);
     if (need > bestNeed || (need === bestNeed && c.economy.treasury > bestTreasury)) { best = c.id; bestNeed = need; bestTreasury = c.economy.treasury; }
   }
@@ -267,6 +272,7 @@ export interface CommodityOrderPreview {
   notional: number;
   fee: number;
   freight: number;
+  tariffB:number;
   /** Cash paid now (buy) or credited on settlement (sell). */
   total: number;
   counterpartyId: string | null;
@@ -311,14 +317,16 @@ export function commodityOrderPreview(s: GameState, countryId: string, good: Com
   if (!(q > 0)) reasons.push('Enter a quantity above zero.');
   if (q > 0 && dailyUsed + q > limit + 1e-9) reasons.push('Order exceeds the daily limit (10% of world daily volume).');
   if (ex.deliveries.length >= MAX_PENDING || ex.settlements.length >= MAX_PENDING) reasons.push('Too many shipments are waiting for settlement. Try again tomorrow.');
-  let counterpartyId: string | null = null, freight = 0, arrivalDays = 0, total = 0, fromPosition = 0, realized = 0;
+  let counterpartyId: string | null = null, tariffB=0,freight = 0, arrivalDays = 0, total = 0, fromPosition = 0, realized = 0;
   if (side === 'buy') {
     if (spec.physical && c && q > 0) {
       counterpartyId = exchangeSeller(s, countryId, g, q);
       if (!counterpartyId) reasons.push('No exporter with access can ship this quantity today.');
-      else { freight = notional * freightRate(counterpartyId, countryId); arrivalDays = travelDays('cargo', counterpartyId, countryId); }
+      else { freight = notional * freightRate(counterpartyId, countryId)*integrationBenefits(s,counterpartyId,countryId).frictionMultiplier; arrivalDays = travelDays('cargo', counterpartyId, countryId); }
     }
-    total = notional + fee + freight;
+    if(counterpartyId){const payment=tradePaymentPreview(s,counterpartyId,countryId,g,q*mid);tariffB=payment.tariffB;if(!payment.allowed)reasons.push('Treasury cannot pay for this order. Borrow through Sovereign Credit or reduce the quantity.');}
+    if(!spec.physical&&anonymousMarketBlocked(s,countryId))reasons.push('Global sanctions bar this country from the exchange.');
+    total = notional + fee + freight+tariffB;
     if (c && total > c.economy.treasury) reasons.push('Treasury cannot pay for this order. Borrow through Sovereign Credit or reduce the quantity.');
     if (c && posValue + q * mid > posLimit + 1e-9) reasons.push('Holdings would exceed the position limit (5% of GDP).');
     if (spec.physical && used + q > capacity + 1e-9) reasons.push('Strategic storage is full for this commodity.');
@@ -327,15 +335,16 @@ export function commodityOrderPreview(s: GameState, countryId: string, good: Com
     if (spec.physical && c && q > 0) {
       counterpartyId = exchangeBuyer(s, countryId, g, q * mid);
       if (!counterpartyId) reasons.push('No importer with access can buy this quantity today.');
-      else arrivalDays = travelDays('cargo', countryId, counterpartyId);
+      else {arrivalDays = travelDays('cargo', countryId, counterpartyId);const payment=tradePaymentPreview(s,countryId,counterpartyId,g,q*mid);tariffB=payment.tariffB;if(!payment.allowed)reasons.push('No importer with access can buy this quantity today.');}
     }
+    if(!spec.physical&&anonymousMarketBlocked(s,countryId))reasons.push('Global sanctions bar this country from the exchange.');
     total = notional - fee;
     fromPosition = Math.min(Math.max(0, q), p.units);
     realized = fromPosition * (fillPrice * (1 - EXCHANGE_FEE) - p.avgCost);
   }
   return {
     allowed: reasons.length === 0, reasons, good: g, side, quantity: q, mid, spread, impact: sign * (Math.exp(impactLog) - 1),
-    fillPrice, spreadCost: Math.max(0, q) * mid * spread / 2, notional, fee, freight, total, counterpartyId, arrivalDays, settlementDay: side === 'buy' ? s.day : s.day + 1,
+    fillPrice, spreadCost: Math.max(0, q) * mid * spread / 2, notional, fee, freight,tariffB, total, counterpartyId, arrivalDays, settlementDay: side === 'buy' ? s.day : s.day + 1,
     dailyLimit: limit, dailyUsed, positionLimit: posLimit, positionValue: posValue, storageCapacity: capacity, storageUsed: used,
     dailyStorageCost: Math.max(0, q) * mid * spec.storageRate / 365, sellable, fromPosition, realized,
   };
@@ -351,6 +360,7 @@ export function placeCommodityOrder(s: GameState, countryId: string, g: Commodit
   let ex = commodityExchange(s);
   const spec = COMMODITY_SPECS[g], p = commodityPosition(ex, countryId, g);
   const traded = tradedToday(p, s.day) + q.quantity;
+  const policy=q.counterpartyId?tradePaymentPreview(s,side==='buy'?q.counterpartyId:countryId,side==='buy'?countryId:q.counterpartyId,g,q.quantity*q.mid):undefined;
   let n = s;
   if (side === 'buy') {
     n = addTreasury(n, countryId, -q.total);
@@ -368,13 +378,14 @@ export function placeCommodityOrder(s: GameState, countryId: string, g: Commodit
   } else {
     if (spec.physical && q.counterpartyId) {
       n = changeExchangeStock(n, countryId, g, -q.quantity);
-      n = addTreasury(n, q.counterpartyId, -q.quantity * q.mid);
+      n = addTreasury(n, q.counterpartyId, -q.quantity * q.mid-q.tariffB);
       n = scheduleFlight(n, { kind: 'cargo', fromId: countryId, toId: q.counterpartyId, label: LABELS[g], payload: { type: 'goods', countryId: q.counterpartyId, good: g, amount: q.quantity }, shipmentId: `SH-${s.day}-${q.counterpartyId}-${g}-s${ex.settlements.length}` });
     }
     const units = Math.max(0, p.units - q.fromPosition);
     ex = setPosition(ex, countryId, g, { ...p, units, avgCost: units + p.inbound > 1e-12 ? p.avgCost : 0, realized: p.realized + q.realized, tradedDay: s.day, tradedToday: traded });
     ex = { ...ex, settlements: [...ex.settlements, { countryId, amount: q.total, day: s.day + 1 }] };
   }
+  if(q.counterpartyId&&policy)n=recordTradeSettlement(n,side==='buy'?q.counterpartyId:countryId,side==='buy'?countryId:q.counterpartyId,g,q.quantity*q.mid,policy);
   const market = ex.markets[g];
   const sign = side === 'buy' ? 1 : -1;
   ex = {

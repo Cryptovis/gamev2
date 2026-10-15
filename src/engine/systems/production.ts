@@ -1,3 +1,5 @@
+// Raw extraction is applied in tickCountry/simulateResources, before equipment production.
+export {constrainedOilOutput as oilExtractionOutput} from './organizations/quotas';
 import {leaderModifiers} from './leaderPerks';
 import {activeCountries} from '../../domain/sovereignty';
 import type { CountryState, EquipmentStockpile, EquipmentType, GameState, NationalProductionState, ProductionLine } from '../../domain/game';

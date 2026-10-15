@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.99.3 — Trade, Commodity & Regional Blocs (Slice 8.4)
+
+- Shared five-influence economic proposals and charter-specific execution for OPEC+, WTO, EU/ASEAN and BRICS+, with participant validation, deterministic duplicate topics and source-linked temporary effects.
+- Physical oil quotas feed actual stocks and existing price fundamentals once; bounded overproduction costs standing. WTO tariffs affect quotes/orders and collect capped customs with conserved treasury accounting.
+- Regional integration improves real bilateral trade friction/volume. Bilateral swaps use bounded local clearing instead of USD reserves while requiring treasury payment and both participants' consent.
+- Arms/trade/finance sanctions now restrict hardware transfers, market orders/listings/contracts, credit facilities and gift bypasses while respecting scoped humanitarian exemptions. Existing debt repayment remains intact.
+- Optional Schema 18 trade/reserve data, strict economic effect validation and engine-owned listing previews preserve existing save paths and UI formula boundaries.
+- Verified 1191 tests / 107 files, TypeScript and Vite, including 60 trade regressions and a full year with all four economic effects. Browser/native suites were not rerun; existing warnings remain. [Accounting assumptions and remaining work](docs/RELEASE-0993.md).
+
 ## 0.99.2 — Global Finance & Monetary Programs (Slice 8.3)
 
 - Funded IMF ($250B), World Bank ($120B), BRICS+/NDB ($50B) and OIC/IDB ($30B) scenario pools and distinct financial boards; borrower consent, member access and equal player/AI influence fees.

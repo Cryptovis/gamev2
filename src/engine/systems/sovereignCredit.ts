@@ -1,3 +1,4 @@
+import {hasFinancialRestriction,organizationSanctionsBlock} from './organizations/sanctions';
 import { activeCountries } from "../../domain/sovereignty";
 import type { GameState } from "../../domain/game";
 import type {
@@ -76,6 +77,7 @@ function validPair(s: GameState, a: string, b: string) {
     !x.controllerCountryId &&
     !y.controllerCountryId &&
     a !== b &&
+    !organizationSanctionsBlock(s,a,b,'finance') &&
     relationFor(x, b).status !== "war" &&
     !relationFor(x, b).sanctions
   );
@@ -85,6 +87,7 @@ export function creditOfferStatus(s:GameState,kind:CreditOffer['kind'],principal
  const maxPrincipal=c?Math.max(1,c.economy.gdp*.5):0;
  const openOffers=e.creditOffers.filter(o=>o.countryId===countryId&&o.status==='open').length;
  if(!c||c.annexedBy||c.controllerCountryId)reasons.push('Only an independent country can publish credit.');
+ if(hasFinancialRestriction(s,countryId))reasons.push('War or sanctions block this agreement.');
  if(!['lend','borrow'].includes(kind))reasons.push('Choose lending or borrowing.');
  if(!Number.isFinite(principal)||principal<.001)reasons.push('Principal must be at least $1M.');
  if(principal>maxPrincipal)reasons.push('Principal exceeds the national limit: 50% of GDP, with a $1B minimum limit.');

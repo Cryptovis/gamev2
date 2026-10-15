@@ -1,3 +1,6 @@
+import {organizationSanctionsBlock} from './organizations/sanctions';
+import {integrationBenefits} from './organizations/marketIntegration';
+import {tradePaymentPreview,settleTradePayment} from './organizations/tradeSettlement';
 import {leaderModifiers,facilityLeaderFactor} from './leaderPerks';
 import {activeCountries} from '../../domain/sovereignty';
 import {EQUIPMENT_CATALOG,EQUIPMENT_TYPES} from '../../data/equipmentCatalog';
@@ -70,22 +73,25 @@ export function industrialOrderError(state:GameState,partnerId:string,good:Indus
 export function canTradeIndustrial(state:GameState,sellerId:string,buyerId:string,good:IndustrialGood){
  const seller=state.countries[sellerId],buyer=state.countries[buyerId];if(!seller||!buyer||sellerId===buyerId)return false;
  const relation=relationFor(buyer,sellerId);
- if(seller.globalSanctions||buyer.globalSanctions||relation.status==='war'||relation.sanctions||!relation.treaties.includes('trade'))return false;
+ if(organizationSanctionsBlock(state,sellerId,buyerId,'trade',good)||good==='tanks'&&organizationSanctionsBlock(state,sellerId,buyerId,'arms')||seller.globalSanctions||buyer.globalSanctions||relation.status==='war'||relation.sanctions||!relation.treaties.includes('trade'))return false;
  return relation.score>=10&&(good!=='tanks'||(relation.treaties.includes('alliance')&&relation.score>=60));
 }
 export function industrialQuote(state:GameState,sellerId:string,buyerId:string,good:IndustrialGood,quantity:number,lockedPrice?:number){
  const seller=state.countries[sellerId],buyer=state.countries[buyerId];
- const price=lockedPrice??Math.max(industrialPrice(state,good)*(seller?.economy.treasury<5?.85:1.08),good==='tanks'?tankDomesticCost(state,sellerId)*1.35:0);
+ const basePrice=lockedPrice??Math.max(industrialPrice(state,good)*(seller?.economy.treasury<5?.85:1.08),good==='tanks'?tankDomesticCost(state,sellerId)*1.35:0);
+ const customsPrice=basePrice*integrationBenefits(state,sellerId,buyerId).frictionMultiplier;
+ const payment=tradePaymentPreview(state,sellerId,buyerId,good,customsPrice*quantity),price=quantity>0?payment.grossB/quantity:customsPrice;
  const available=Math.max(0,goodStock(state,sellerId,good)-GOODS[good].reserve);
  const error=!seller||!buyer||!Number.isFinite(quantity)||quantity<=0?'Invalid order':!canTradeIndustrial(state,sellerId,buyerId,good)?(good==='tanks'?'Trade pact and alliance required':'Trade pact required; sanctions and war block access'):available<quantity?'Supplier reserve protection':buyer.economy.treasury<price*quantity?'Buyer cannot afford shipment':buyerId!==state.playerCountryId&&quantity>aiPurchaseLimit(state,buyerId,good,price)+1e-9?'Buyer has no demand for this quantity':null;
- return {price,available,cost:price*quantity,error};
+ return {price,basePrice,customsPrice,available,cost:price*quantity,tariffB:payment.tariffB,error:error??(!payment.allowed?'Buyer cannot afford shipment':null)};
 }
 export function settleIndustrialTrade(state:GameState,sellerId:string,buyerId:string,good:IndustrialGood,quantity:number,lockedPrice?:number):GameState {
- const quote=industrialQuote(state,sellerId,buyerId,good,quantity,lockedPrice),price=lockedPrice??quote.price;
+ const quote=industrialQuote(state,sellerId,buyerId,good,quantity,lockedPrice),price=quote.price;
  if(quote.error||!Number.isFinite(price)||price<=0||state.countries[buyerId].economy.treasury<quantity*price)return state;
  let next=changeGoodStock(state,sellerId,good,-quantity);next=changeGoodStock(next,buyerId,good,quantity);
- const cost=quantity*price,seller=next.countries[sellerId],buyer=next.countries[buyerId];
- next={...next,countries:{...next.countries,[sellerId]:{...seller,economy:{...seller.economy,treasury:seller.economy.treasury+cost}},[buyerId]:{...buyer,economy:{...buyer.economy,treasury:buyer.economy.treasury-cost}}},industrialEconomy:{...next.industrialEconomy,[sellerId]:{...next.industrialEconomy[sellerId],lastTradeBalance:next.industrialEconomy[sellerId].lastTradeBalance+cost},[buyerId]:{...next.industrialEconomy[buyerId],lastTradeBalance:next.industrialEconomy[buyerId].lastTradeBalance-cost}}};
+ const cost=quantity*quote.customsPrice;
+ const paid=settleTradePayment(next,sellerId,buyerId,good,cost);if(paid===next)return state;
+ next={...paid,industrialEconomy:{...paid.industrialEconomy,[sellerId]:{...paid.industrialEconomy[sellerId],lastTradeBalance:paid.industrialEconomy[sellerId].lastTradeBalance+cost},[buyerId]:{...paid.industrialEconomy[buyerId],lastTradeBalance:paid.industrialEconomy[buyerId].lastTradeBalance-cost}}};
  return changeRelations(next,sellerId,buyerId,.03);
 }
 /** Shared calendar preview for the UI and contract creation; no clock advance or settlement. */
@@ -99,7 +105,7 @@ export function placeIndustrialOrder(state:GameState,partnerId:string,good:Indus
  if(years===0){const next=settleIndustrialTrade(state,sellerId,buyerId,good,quantity);return {...next,sitrep:[`MARKET // ${direction==='buy'?'Imported':'Exported'} ${quantity} ${GOODS[good].label}; $${quote.cost.toFixed(3)}B settled.`,...next.sitrep].slice(0,12)};}
  const id=`${sellerId}-${buyerId}-${good}-${state.day}-${Object.keys(state.industrialContracts).length}`;
  const schedule=industrialContractSchedule(state.day,years);
- const contract:IndustrialContract={id,sellerId,buyerId,good,quantity,price:quote.price,nextDeliveryDay:schedule.firstDeliveryDay,expiresDay:schedule.expiresDay,active:true,missedDeliveries:0};
+ const contract:IndustrialContract={id,sellerId,buyerId,good,quantity,price:quote.basePrice,nextDeliveryDay:schedule.firstDeliveryDay,expiresDay:schedule.expiresDay,active:true,missedDeliveries:0};
  return {...state,industrialContracts:{...state.industrialContracts,[id]:contract},sitrep:[`MARKET // ${years}-year ${GOODS[good].label} supply contract agreed; monthly delivery ${quantity} units.`,...state.sitrep].slice(0,12)};
 }
 export function processIndustrialContracts(state:GameState):GameState {

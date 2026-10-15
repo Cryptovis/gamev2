@@ -1,3 +1,6 @@
+import {isEconomicPayload,executeEconomicResolution} from './economic';
+import {economicEffects} from './effectSelectors';
+import {processQuotaStanding} from './quotas';
 import {adoptOrganizationFinancing,processOrganizationFinancing} from './financing';
 import type {GameState} from '../../../domain/game';
 import type {Resolution,OrganizationState,OrganizationSanctionEffect} from '../../../domain/organizations';
@@ -14,6 +17,7 @@ function updateResolution(state:GameState,resolution:Resolution):GameState {
 function executeResolution(state:GameState,r:Resolution):GameState {
   const fail=(reason:string)=>updateResolution(state,{...r,phase:'failed',execution:{status:'failed',effectIds:[],reason}});
   if(r.payload.kind==='finance')return adoptOrganizationFinancing(state,{...r,payload:r.payload});
+  if(isEconomicPayload(r.payload))return executeEconomicResolution(state,{...r,payload:r.payload});
   if(!isFoundationalPayload(r.payload))return fail('unsupportedPayload');
   const targetId=payloadTarget(r.payload),country=state.countries[targetId];
   if(!country||country.annexedBy)return fail('invalidTarget');
@@ -65,6 +69,7 @@ export function processOrganizations(state:GameState,phase:'all'|'decisions'|'fi
     }
     if(r.phase==='adopted'&&r.execution.status==='pending'&&state.day>=r.effectiveDay)next=executeResolution(next,r);
   }
+  next=processQuotaStanding(next);
   if(phase==='all')next=processOrganizationFinancing(next);
   const organizations=next.world.organizations;
   let effects=organizations.effects;
@@ -72,6 +77,7 @@ export function processOrganizations(state:GameState,phase:'all'|'decisions'|'fi
     const e=value as OrganizationSanctionEffect;
     if(e.status==='active'&&state.day>=e.endsDay)effects={...effects,[id]:{...e,status:'expired'}};
   }
+  for(const e of economicEffects(next))if(e.status==='active'&&state.day>=e.endsDay)effects={...effects,[e.id]:{...e,status:'expired'}};
   next={...next,world:{...next.world,organizations:{...organizations,effects,lastProcessedDay:state.day}}};
   return processOrganizationAiVotes(next);
 }

@@ -7,6 +7,7 @@ import {
   living,
   exchangePrice,
   exchangeAccess,
+  listingPurchasePreview,
   exportableStock,
   exchangeStock,
 } from "../../engine/systems/livingEconomy";
@@ -119,7 +120,7 @@ export function OpenExchange() {
         {offers.map((x) => {
           const accessible = exchangeAccess(s, x.sellerId, p.id, good),
             q = Math.min(quantity, x.remaining),
-            cost = q * x.unitPrice;
+            quote=listingPurchasePreview(s,x.id,q,p.id),cost=quote.cost;
           return (
             <article key={x.id}>
               <AssetThumbnail asset={good} size={42} />
@@ -128,7 +129,7 @@ export function OpenExchange() {
                   <LocaleText value={s.countries[x.sellerId].name} />
                 </strong>
                 <small>
-                  {money(x.unitPrice)} /{" "}
+                  {money(listingPurchasePreview(s,x.id,Math.min(quantity,x.remaining),p.id).unitPrice)} /{" "}
                   <LocaleText
                     value={
                       good in GOODS
@@ -149,11 +150,11 @@ export function OpenExchange() {
                         metrics: [
                           ["Seller", s.countries[x.sellerId].name],
                           ["Quantity", q.toFixed(3)],
-                          ["Unit price", money(x.unitPrice)],
+                          ["Unit price", money(quote.unitPrice)],
                           ["Shipment value", money(cost)],
-                          ["Treasury after", money(p.economy.treasury - cost)],
+                          ["Treasury after", money(quote.treasuryAfter)],
                         ],
-                        allowed: p.economy.treasury >= cost,
+                        allowed: quote.allowed,
                         execute: (commandId) => s.buyListing(x.id, q, commandId),
                       })
                     : s.navigate("diplomacy", x.sellerId)

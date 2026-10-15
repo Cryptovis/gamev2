@@ -38,7 +38,7 @@ function at(s:GameState,day:number){return processOrganizations({...s,day});}
 
 describe('0.99.2 funding pools and controlled Schema 18 defaults',()=>{
  it('retains Schema 18 and initializes four independent scenario capital pools and financial boards',()=>{
-  const s=makeInitialState();expect(version).toBe('0.99.2');expect(CURRENT_SCHEMA_VERSION).toBe(18);
+  const s=makeInitialState();expect(version).toBe('0.99.3');expect(CURRENT_SCHEMA_VERSION).toBe(18);
   for(const [id,funds] of [['imf',250],['worldBank',120],['bricsPlus',50],['oic',30]] as const){
    expect(s.world.organizations.byId[id].availableFundsB).toBe(funds);expect(s.world.organizations.byId[id].committedFundsB).toBe(0);
    expect(s.world.organizations.byId[id].bodies.financeBoard.kind).toBe('board');

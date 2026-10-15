@@ -1,3 +1,4 @@
+import {isEconomicPayload,economicParticipants} from './economic';
 import type {GameState} from '../../../domain/game';
 import {nextRandom} from '../../rng';
 import {applyOrganizationCommand} from './commands';
@@ -12,7 +13,7 @@ export function processOrganizationAiVotes(state:GameState):GameState {
     const command={type:'organization/castBallot',resolutionId:r.id,choice:'abstain'} as const;
     if(!validateOrganizationCommand(next,command,id).allowed)continue;
     const country=next.countries[id],relation=country.diplomacy.relations[r.proposerId]?.score??0;
-    const target=isFoundationalPayload(r.payload)?payloadTarget(r.payload):undefined;
+    const target=isFoundationalPayload(r.payload)?payloadTarget(r.payload):isEconomicPayload(r.payload)?economicParticipants(r.payload)[0]:undefined;
     const targetRelation=target?(country.diplomacy.relations[target]?.score??0):0;
     const standing=next.world.organizations.byId[r.organizationId].standingByCountry[r.proposerId]??0;
     const inclination=Math.max(.1,Math.min(.9,.5+relation*.002+(r.payload.kind==='sanctions'?-targetRelation*.002:targetRelation*.001)+standing*.001));

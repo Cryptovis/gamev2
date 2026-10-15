@@ -1,3 +1,6 @@
+import {isEconomicPayload,economicProposalReason} from './economic';
+import {activeOilQuota} from './quotas';
+import {canTransferMilitaryHardware} from './sanctions';
 import {financeAdoptionReason,financingPaymentReason} from './financing';
 import {isOrganizationFinancing} from '../../../domain/organizationFinancingSchemas';
 import {z} from 'zod';
@@ -12,6 +15,8 @@ const commandSchema=z.discriminatedUnion('type',[
   z.strictObject({type:z.literal('organization/proposeResolution'),organizationId:z.enum(ORGANIZATION_IDS),bodyId:id,payload:payloadSchema,commandId:id.optional()}),
   z.strictObject({type:z.literal('organization/repayOrganizationFinancing'),financingId:id,principalB:z.number().finite().nonnegative(),interestB:z.number().finite().nonnegative(),commandId:id.optional()}),
   z.strictObject({type:z.literal('organization/cancelOrganizationFinancing'),financingId:id,commandId:id.optional()}),
+  z.strictObject({type:z.literal('organization/setOilQuotaDeviation'),deviation:z.number().finite().nonnegative(),commandId:id.optional()}),
+  z.strictObject({type:z.literal('organization/transferMilitaryHardware'),recipientId:id,equipment:z.enum(['armor','fighters']),quantity:z.number().int().positive(),commandId:id.optional()}),
   z.strictObject({type:z.literal('organization/castBallot'),resolutionId:id,choice:z.enum(['yes','no','abstain']),commandId:id.optional()}),
 ]);
 export interface OrganizationCommandStatus {allowed:boolean;reason:string;fee:number;electorate?:ElectorateSnapshot}
@@ -19,7 +24,15 @@ export function isFoundationalPayload(payload:{kind:string}):payload is Foundati
   return payload.kind==='admission'||payload.kind==='membershipDiscipline'||payload.kind==='sanctions';
 }
 export function payloadTarget(payload:ExecutableResolutionPayload):string {
-  return payload.kind==='finance'?payload.borrowerId:payload.kind==='admission'?payload.applicantId:payload.targetId;
+  switch(payload.kind){
+    case 'finance':return payload.borrowerId;
+    case 'admission':return payload.applicantId;
+    case 'membershipDiscipline':case 'sanctions':return payload.targetId;
+    case 'oilQuota':return 'oilQuota';
+    case 'tradeRemedy':return JSON.stringify(['dispute',payload.disputeId]);
+    case 'marketIntegration':return JSON.stringify(payload.agreement.countryIds.slice().sort());
+    case 'localCurrencySwap':return JSON.stringify([payload.agreement.countryA,payload.agreement.countryB].sort());
+  }
 }
 export function snapshotElectorate(state:GameState,organization:OrganizationState,body:OrganizationBodyState):ElectorateSnapshot|null {
   if(!ruleSchema.safeParse(body.votingRule).success)return null;
@@ -49,6 +62,15 @@ export function validateOrganizationCommand(state:GameState,command:Organization
   if(!actor||actor.annexedBy||state.campaignStatus!=='active')return refuse('invalidActor');
   if(command.commandId&&state.world.commandIds?.includes(command.commandId))return refuse('duplicateCommand');
   const organizations=state.world.organizations;
+  if(command.type==='organization/setOilQuotaDeviation'){
+    return activeOilQuota(state,actorId)&&command.deviation<=actor.resourceProduction.oil*.1?
+      {allowed:true,reason:'allowed',fee:0}:refuse('quotaDeviation');
+  }
+  if(command.type==='organization/transferMilitaryHardware'){
+    return canTransferMilitaryHardware(state,actorId,command.recipientId)&&
+      (state.production[actorId]?.stockpile[command.equipment]??0)>=command.quantity&&!!state.production[command.recipientId]?
+      {allowed:true,reason:'allowed',fee:0}:refuse('hardwareTransfer');
+  }
   if(command.type==='organization/repayOrganizationFinancing'){
     const reason=financingPaymentReason(state,command.financingId,command.principalB,command.interestB,actorId);
     return reason?refuse(reason):{allowed:true,reason:'allowed',fee:0};
@@ -65,7 +87,7 @@ export function validateOrganizationCommand(state:GameState,command:Organization
     if(r.ballots[actorId]===command.choice)return refuse('duplicateBallot');
     return {allowed:true,reason:'allowed',fee:0};
   }
-  if(!isFoundationalPayload(command.payload)&&command.payload.kind!=='finance')return refuse('unsupportedPayload');
+  if(!isFoundationalPayload(command.payload)&&!isEconomicPayload(command.payload)&&command.payload.kind!=='finance')return refuse('unsupportedPayload');
   const closesDay=state.day+ORGANIZATION_VOTING_DAYS;
   if(!Number.isSafeInteger(closesDay)||command.payload.kind==='sanctions'&&!Number.isSafeInteger(closesDay+command.payload.durationDays))return refuse('invalidDeadline');
   const o=organizations.byId[command.organizationId],body=Object.hasOwn(o.bodies,command.bodyId)?o.bodies[command.bodyId]:undefined,membership=o.memberships[actorId];
@@ -75,15 +97,19 @@ export function validateOrganizationCommand(state:GameState,command:Organization
     const reason=financeAdoptionReason({...state,day:closesDay},command.organizationId,command.payload);
     if(reason)return refuse(reason);
   }
+  if(isEconomicPayload(command.payload)){
+    const reason=economicProposalReason({...state,day:closesDay},command.organizationId,command.bodyId,command.payload,actorId);
+    if(reason)return refuse(reason);
+  }
   const targetId=payloadTarget(command.payload),target=Object.hasOwn(state.countries,targetId)?state.countries[targetId]:undefined;
-  if(!target||target.annexedBy)return refuse('invalidTarget');
+  if(!isEconomicPayload(command.payload)&&(!target||target.annexedBy))return refuse('invalidTarget');
   const targetMembership=o.memberships[targetId];
   if(command.payload.kind==='membershipDiscipline'&&(!targetMembership||targetMembership.tier==='PermanentCouncil'))return refuse('protectedOrMissingMember');
   if(command.payload.kind==='admission'&&(targetMembership?.tier==='PermanentCouncil'||targetMembership?.status==='active'&&targetMembership.tier==='Member'))return refuse('alreadyMember');
   if(command.payload.kind==='sanctions'&&command.payload.exemptions.some(e=>e.countryIds.some(id=>!Object.hasOwn(state.countries,id))))return refuse('invalidExemption');
   const open=Object.values(organizations.resolutions).filter(r=>r.phase==='voting'||r.phase==='debate');
   if(open.length>=64||open.filter(r=>r.proposerId===actorId).length>=4||Object.keys(organizations.resolutions).length>=1024)return refuse('resolutionCapacity');
-  if(open.some(r=>r.organizationId===command.organizationId&&r.bodyId===command.bodyId&&(isFoundationalPayload(r.payload)||r.payload.kind==='finance')&&r.payload.kind===command.payload.kind&&payloadTarget(r.payload)===targetId))return refuse('duplicateProposal');
+  if(open.some(r=>r.organizationId===command.organizationId&&r.bodyId===command.bodyId&&(isFoundationalPayload(r.payload)||isEconomicPayload(r.payload)||r.payload.kind==='finance')&&r.payload.kind===command.payload.kind&&payloadTarget(r.payload)===targetId))return refuse('duplicateProposal');
   if(!Number.isSafeInteger(organizations.nextSequence)||organizations.nextSequence<1||organizations.nextSequence>=Number.MAX_SAFE_INTEGER||Object.hasOwn(organizations.resolutions,`ORG-${organizations.nextSequence}`))return refuse('sequenceCollision');
   const influence=state.council.influenceByCountry[actorId]??0,fee=proposalInfluenceCost(command.payload);
   if(!Number.isFinite(influence)||influence<fee)return refuse('influence');

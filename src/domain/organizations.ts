@@ -94,8 +94,10 @@ export interface FinancingLifecycle {
   tranches:Array<{reviewDay:number;amountB:number;status:'pending'|'paid'|'cancelled'}>;
 }
 export type FinancePayload=Extract<ResolutionPayload,{kind:'finance'}>;
-export type ExecutableResolutionPayload=FoundationalResolutionPayload|FinancePayload;
+export type ExecutableResolutionPayload=FoundationalResolutionPayload|FinancePayload|EconomicResolutionPayload;
+export type EconomicResolutionPayload=Extract<ResolutionPayload,{kind:'oilQuota'|'tradeRemedy'|'marketIntegration'|'localCurrencySwap'}>;
 export interface OrganizationsState {
+  tradeVersion?:1;
   /** One-time finance capital/board initialization; absent in pre-8.3 saves. */
   financeVersion?:1;
   catalogVersion:number;
@@ -119,5 +121,25 @@ export type OrganizationCommand=(
   | {type:'organization/proposeResolution';organizationId:OrganizationId;bodyId:string;payload:ExecutableResolutionPayload}
   | {type:'organization/repayOrganizationFinancing';financingId:string;principalB:number;interestB:number}
   | {type:'organization/cancelOrganizationFinancing';financingId:string}
+  | {type:'organization/setOilQuotaDeviation';deviation:number}
+  | {type:'organization/transferMilitaryHardware';recipientId:string;equipment:'armor'|'fighters';quantity:number}
   | {type:'organization/castBallot';resolutionId:string;choice:'yes'|'no'|'abstain'}
 ) & {commandId?:string};
+
+export interface OrganizationEconomicEffectBase {
+  id:string;organizationId:OrganizationId;bodyId:string;sourceResolutionId:string;
+  startsDay:number;endsDay:number;status:'active'|'expired';
+}
+export interface OilQuotaEffect extends OrganizationEconomicEffectBase {
+  kind:'organizationOilQuota';quotas:Record<string,number>;allowedDeviationByCountry:Record<string,number>;lastStandingDay:number;
+}
+export interface TradeRemedyEffect extends OrganizationEconomicEffectBase {
+  kind:'organizationTradeRemedy';disputeId:string;remedy:TradeRemedy;collectedB:number;
+}
+export interface MarketIntegrationEffect extends OrganizationEconomicEffectBase {
+  kind:'organizationMarketIntegration';agreement:IntegrationAgreement;
+}
+export interface CurrencySwapEffect extends OrganizationEconomicEffectBase {
+  kind:'organizationCurrencySwap';agreement:CurrencySwapAgreement;usedB:number;localBalanceByCountry:Record<string,number>;
+}
+export type OrganizationEconomicEffect=OilQuotaEffect|TradeRemedyEffect|MarketIntegrationEffect|CurrencySwapEffect;

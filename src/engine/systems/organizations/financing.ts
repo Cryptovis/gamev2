@@ -1,3 +1,4 @@
+import {hasFinancialRestriction} from './sanctions';
 import type {GameState} from '../../../domain/game';
 import type {FinancePayload,OrganizationFinancingRecord,Resolution,OrganizationId} from '../../../domain/organizations';
 import {isOrganizationFinancing} from '../../../domain/organizationFinancingSchemas';
@@ -69,6 +70,7 @@ function disburse(state:GameState,f:OrganizationFinancingRecord,amountB:number):
 export function financeAdoptionReason(state:GameState,organizationId:OrganizationId,p:FinancePayload):string|null {
   const o=state.world.organizations.byId[organizationId],c=state.countries[p.borrowerId],m=o.memberships[p.borrowerId];
   if(!FINANCIAL_ORGANIZATIONS.includes(organizationId)||!c||c.annexedBy||m?.status!=='active'||m.tier==='Observer')return 'borrowerMembership';
+  if(hasFinancialRestriction(state,c.id))return 'financialRestriction';
   if(hasFinancingDefault(state,c.id))return 'financingDefault';
   if(p.principalB>o.availableFundsB)return 'insufficientCapital';
   const initial=p.initialTrancheB??(p.conditions.length?p.principalB/2:p.principalB);

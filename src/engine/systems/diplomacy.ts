@@ -1,3 +1,4 @@
+import {organizationSanctionsBlock} from './organizations/sanctions';
 import {activeCountries} from '../../domain/sovereignty';
 import type { CountryState, DiplomaticRelation, EmbassyLevel, EmbassyMission, GameState, TradeResource, TreatyType } from '../../domain/game';
 
@@ -85,7 +86,7 @@ export function relationshipStance(relation: DiplomaticRelation): RelationshipSt
 export function sendTreasuryGift(state: GameState, fromId: string, toId: string, amountB: 1 | 5 | 10): GameState {
   const from = state.countries[fromId];
   const to = state.countries[toId];
-  if (!from || !to || from.economy.treasury < amountB || relationFor(from,toId).status === 'war') return state;
+  if (!from || !to || from.economy.treasury < amountB || organizationSanctionsBlock(state,fromId,toId,'finance') || relationFor(from,toId).status === 'war') return state;
   const delta = amountB === 1 ? 2 : amountB === 5 ? 8 : 14;
   let next: GameState = {
     ...state,
@@ -104,7 +105,7 @@ export const GIFT_PACKAGE: Record<TradeResource, number> = { food: 25, oil: 12, 
 export function sendResourceGift(state: GameState, fromId: string, toId: string, resource: TradeResource): GameState {
   const from = state.countries[fromId];
   const to = state.countries[toId];
-  if (!from || !to || relationFor(from,toId).status === 'war') return state;
+  if (!from || !to || organizationSanctionsBlock(state,fromId,toId,'trade',resource) || relationFor(from,toId).status === 'war') return state;
   const amount = Math.min(GIFT_PACKAGE[resource], from.resources[resource]);
   if (amount <= 0.01) return state;
   const scarcityBonus = to.resources[resource] < (resource === 'uranium' ? 3 : 60) ? 5 : 0;

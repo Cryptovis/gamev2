@@ -28,14 +28,14 @@ export function reserveDays(stock: number, production: number, consumption: numb
 }
 const severity = (days: number) => Math.min(1, Math.max(0, 1 - days / SHORTAGE_RESERVE_DAYS));
 
-function dailyFlows(country: CountryState, boost = 1, consumer = 1) {
+function dailyFlows(country: CountryState, boost = 1, consumer = 1,oilOutput=country.resourceProduction.oil) {
   const populationMillions = country.demographics.population / 1_000_000;
   const utilization = country.industry.utilization / 100;
 
   const production: ResourceStockpile = {
     // Per-capita floor applied here (not only at country creation) so saves from before 0.84 get it too.
     food: Math.max(country.resourceProduction.food, populationMillions * FOOD_OUTPUT_FLOOR_PER_MILLION) * (0.85 + country.economy.productivity / 500)*boost,
-    oil: country.resourceProduction.oil,
+    oil: Math.min(country.resourceProduction.oil,Math.max(0,oilOutput)),
     iron: country.resourceProduction.iron + country.industry.mines * 0.025 * utilization,
     uranium: country.resourceProduction.uranium,
   };
@@ -60,8 +60,8 @@ export type TradeInflow = Partial<Record<'food' | 'oil', number>>;
  * `tradeInflow` lets the shortage test count contracted imports/exports (deliveries themselves are applied
  * by processTradeDeals). Without it, an importer covering its deficit would still be flagged as short.
  */
-export function simulateResources(country: CountryState,boost=1,tradeInflow?: TradeInflow,consumer=1): ResourceFlow {
-  const { production, consumption } = dailyFlows(country, boost,consumer);
+export function simulateResources(country: CountryState,boost=1,tradeInflow?: TradeInflow,consumer=1,oilOutput=country.resourceProduction.oil): ResourceFlow {
+  const { production, consumption } = dailyFlows(country, boost,consumer,oilOutput);
 
   const net: ResourceStockpile = {
     food: round(production.food - consumption.food),
