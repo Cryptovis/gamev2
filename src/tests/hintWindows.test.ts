@@ -16,7 +16,7 @@ Object.assign(globalThis,{IS_REACT_ACT_ENVIRONMENT:true});
 let host:HTMLDivElement,root:Root;
 const render=async(node:ReactNode)=>{await act(async()=>{root.render(node);});};
 const click=async(element:Element)=>{await act(async()=>{(element as HTMLElement).click();});};
-const beacon=()=>host.querySelector<HTMLButtonElement>('.tactical-hint-beacon');
+const beacon=()=>document.querySelector<HTMLButtonElement>('.tactical-hint-beacon');
 const popover=()=>document.querySelector<HTMLElement>('.tactical-hint-popover');
 const stored=()=>JSON.parse(localStorage.getItem(UI_PREFS_KEY)??'null') as {state:{dismissedHints:Record<string,true>}}|null;
 
@@ -34,12 +34,12 @@ afterEach(async()=>{await act(async()=>{root.unmount();});host.remove();document
 describe('migrated window hints (mounted)',()=>{
   it('hint-prop window: rankings beacon follows the ranking kind, shows the body, and dismissal persists',async()=>{
     await render(createElement(WorldRankingsWindow));
-    expect(host.querySelectorAll('.tactical-hint-beacon')).toHaveLength(1);
-    expect(host.textContent).not.toContain(RANKING_HINTS.military.bodyKey);
+    expect(document.querySelectorAll('.tactical-hint-beacon')).toHaveLength(1);
+    expect(document.body.textContent).not.toContain(RANKING_HINTS.military.bodyKey);
     expect(beacon()!.getAttribute('data-hint-id')).toBe('rankings.military');
     await click(beacon()!);
     expect(popover()!.textContent).toContain(RANKING_HINTS.military.bodyKey);
-    const financial=Array.from(host.querySelectorAll('button')).find(b=>b.textContent?.includes('Financial ranking'))!;
+    const financial=Array.from(document.querySelectorAll('button')).find(b=>b.textContent?.includes('Financial ranking'))!;
     await click(financial);
     expect(popover()).toBeNull();
     expect(beacon()!.getAttribute('data-hint-id')).toBe('rankings.financial');
