@@ -4,6 +4,8 @@ import {proposeResolution} from '../src/engine/systems/organizations/commands';
 for(const width of [1440,390])for(const theme of ['light','dark'])test(`1.0 international hub ${theme} ${width}px`,async({page})=>{
  await page.setViewportSize({width,height:900});await page.addInitScript(theme=>localStorage.setItem('trp-appearance-v1',theme),theme);
  const state=campaignFixture('en');state.council.influenceByCountry.TUR=50;
+ // createWorld leaves the player outside the UN so they can apply to join; proposing needs an active seat in the plenary (validateOrganizationCommand: 'proposalAccess').
+ const un=state.world.organizations.byId.un;un.memberships.TUR={countryId:'TUR',tier:'Member',offices:[],status:'active',joinedDay:0,duesArrearsB:0};un.bodies.plenary.memberIds.push('TUR');
  const proposed=proposeResolution(state,'un','plenary',{kind:'sanctions',targetId:'GRC',measures:[{scope:'arms',intensity:1,enforcement:1}],exemptions:[{scope:'humanitarian',countryIds:[]}],durationDays:30});
  await resumeFixture(page,proposed);await page.locator('[data-guide="rail-international-affairs"]').click();
  const hub=page.locator('.international-affairs');await expect(hub.locator('.ia-organization-grid>.ia-card')).toHaveCount(14);
