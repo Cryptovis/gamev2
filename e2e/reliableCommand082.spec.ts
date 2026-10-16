@@ -161,7 +161,7 @@ for(const viewport of [{width:1440,height:900},{width:390,height:844}]){
 test('credit review explains unaffordable lending and publishes valid terms',async({page})=>{
  await start(page);await skip(page);await page.locator('[data-guide="rail-market"]').click();
  await page.getByRole('button',{name:'Ülkeler Arası Kredi ve Para Fonu',exact:true}).click();
- await page.locator('[aria-label="Credit offer type"]').selectOption('lend');await page.locator('[aria-label="Credit principal millions"]').fill('1000000');
+ await page.locator('.credit-desk .section-menu button').nth(1).click();await page.locator('[aria-label="Credit principal millions"]').fill('1000000');
  await page.getByRole('button',{name:'Kredi teklifini incele',exact:true}).click();await expect(page.locator('[data-guide="review-confirm"]')).toBeDisabled();
  await expect(page.locator('.review-notes')).toContainText('hazine yetersiz');await expect(page.locator('.review-metrics')).toContainText('Hazine açığı');await page.screenshot({path:'test-results/credit-feedback.png',fullPage:true});
  await page.locator('[data-guide="review-dismiss"]').first().click();await page.locator('[aria-label="Credit principal millions"]').fill('1000');

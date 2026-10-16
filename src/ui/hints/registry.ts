@@ -36,6 +36,11 @@ export const RESOURCES_SHORTAGE_HINT:TacticalHintSpec={
   id:'resources.shortage',titleKey:'Respond to shortages',
   bodyKey:'Shortage management is connected directly to diplomacy and trade. Trade pacts unlock imports; embassies can reduce bilateral friction.',
 };
+export const SOVEREIGN_CREDIT_HINT:TacticalHintSpec={
+  id:'credit.rules',titleKey:'Sovereign Credit & Monetary Fund',
+  bodyKey:'Applications are assessed after three game days. Funds arrive only on approval; relations, rating and lender cash are checked again.',
+  extraKeys:['Low treasury can unlock a larger three-year rescue offer at a higher interest rate.'],
+};
 export const RANKING_HINTS={
   military:{id:'rankings.military',titleKey:'Military ranking',bodyKey:'Sorted by current military power; readiness and equipment change the score.'},
   financial:{id:'rankings.financial',titleKey:'Financial ranking',bodyKey:'Sorted by GDP. Credit ratings reflect simulated finances and repayment history.'},
@@ -45,5 +50,5 @@ export const RANKING_HINTS={
 export const ALL_HINTS:readonly TacticalHintSpec[]=[
   ...Object.values(INTERNATIONAL_HINTS),
   WAR_TACTICAL_HINT,WAR_TASK_GROUPS_HINT,DIPLOMACY_RULES_HINT,SUPPLY_INVESTMENT_HINT,DESK_PROPOSALS_HINT,
-  PRODUCTION_DOCTRINE_HINT,RESOURCES_SHORTAGE_HINT,...Object.values(RANKING_HINTS),
+  PRODUCTION_DOCTRINE_HINT,RESOURCES_SHORTAGE_HINT,SOVEREIGN_CREDIT_HINT,...Object.values(RANKING_HINTS),
 ];

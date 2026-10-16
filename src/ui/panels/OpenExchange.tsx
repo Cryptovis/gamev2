@@ -246,7 +246,7 @@ export function OpenExchange() {
           </article>
         ))}
       </div>
-      </section></div>
+      </section>
       {vault && (
         <section className="gold-vault">
           <AssetThumbnail asset="gold" size={64} />
@@ -319,6 +319,7 @@ export function OpenExchange() {
           </div>
         </section>
       )}
+      </div>
       {review && (
         <ReviewDialog
           {...review}

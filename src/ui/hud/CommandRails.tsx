@@ -26,7 +26,7 @@ import {commandAlerts,newsEntries,strategicObjectives} from '../../store/command
 import {Suspense,useEffect, useMemo, useState, type ReactNode } from 'react';
 import { MARKET_RESOURCES, getMarketBoard, resourceReserveDays, resourceStrategicStatus } from '../../store/marketSelectors';
 import { useGameStore } from '../../store/gameStore';
-import { BlocIcon, CouncilIcon, DiplomacyIcon, EmbassyIcon, IntelligenceIcon, ResourceIcon, TreasuryIcon, WorldIcon } from '../icons/GameIcons';
+import { BlocIcon, CouncilIcon, IntelligenceIcon, ResourceIcon, TreasuryIcon, WorldIcon } from '../icons/GameIcons';
 import { DraggableWindow } from '../windows/DraggableWindow';
 import { MapModeBar } from './MapModeBar';
 import {ResourceCommandWindow} from '../panels/ResourceCommandWindow';
@@ -48,7 +48,6 @@ export function CommandRails(){
  const activeWars=Object.values(state.wars).filter(w=>w.status==='active');
  const activeTrades=Object.values(state.tradeDeals).filter(d=>d.active);
  const offers=state.diplomaticOffers.filter(o=>o.expiresDay>=state.day);
- const embassies=Object.values(state.embassies).filter(e=>e.countryA===player.id||e.countryB===player.id);
  const objectives=useMemo(()=>strategicObjectives(state),[state.tradeDeals,state.intelOperations,state.blocs,state.wars,state.day,player.id,player.technology.unlocked.length]);
  const critical=MARKET_RESOURCES.map(resource=>({resource,status:resourceStrategicStatus(player,resource,leaderModifiers(state,player.id).consumer),days:resourceReserveDays(player,resource,leaderModifiers(state,player.id).consumer)})).filter(x=>x.status==='CRITICAL'||x.status==='IMPORT NEED');
  const toggle=(id:ToolId)=>state.openTool(state.activeTool===id?null:id,false);
@@ -95,9 +94,8 @@ export function CommandRails(){
   {mounted.has('desk')&&<ExecutiveDesk onClose={()=>close('desk')}/>}
 
   {mounted.has('diplomacy')&&<ExecutiveWorkspaceShell id="diplomacy-window" kicker="FOREIGN MINISTRY" title={translateLive("Diplomatic Inbox")} onClose={()=>close('diplomacy')}>
-   <DiplomaticPost/><section className="diplomatic-messages"><header><strong><LocaleText value={"Leader correspondence"}/></strong><button onClick={state.readDiplomaticMessages}><LocaleText value={"Mark read"}/></button></header>{state.leadership.messages.map(m=><article key={m.id} className={m.tone}><small><LocaleText value={m.kind.toUpperCase()}/><LocaleText value={" · DAY "}/><LocaleText value={m.day}/><LocaleText value={" · "}/><LocaleText value={m.read?'READ':'NEW'}/></small><strong><LocaleText value={state.countries[m.senderId]?.name}/></strong><p><LocaleText value={m.text}/></p></article>)}{!state.leadership.messages.length&&<p><LocaleText value={"Friends and rivals may react to your birthday and national achievements."}/></p>}</section>
-   <div className="diplomatic-summary"><span><EmbassyIcon size={22}/><i><small><LocaleText value={"ACTIVE EMBASSIES"}/></small><strong><LocaleText value={embassies.length}/></strong></i></span><span><DiplomacyIcon size={22}/><i><small><LocaleText value={"PENDING OFFERS"}/></small><strong><LocaleText value={offers.length+living(state).letters.filter(x=>x.incoming&&x.status==='pending'&&x.expiresDay>=state.day).length}/></strong></i></span></div>
-   <div className="diplomatic-offer-list">{offers.length?offers.map(offer=>{const sender=state.countries[offer.senderId];return <article key={offer.id}><header><b><LocaleText value={sender?.iso2??'--'}/></b><span><small><LocaleText value={offer.type==='embassy'?'EMBASSY EXCHANGE':'TRADE FRAMEWORK'}/></small><strong><LocaleText value={sender?.name??offer.senderId}/></strong></span><em><LocaleText value={"D"}/><LocaleText value={offer.expiresDay-state.day}/></em></header><p><LocaleText value={offer.message}/></p><div><button onClick={()=>state.resolveDiplomaticOffer(offer.id,false)}><LocaleText value={"DECLINE"}/></button><button className="primary" onClick={()=>state.resolveDiplomaticOffer(offer.id,true)}><LocaleText value={"ACCEPT"}/></button></div></article>}):null}</div>
+   <DiplomaticPost/>
+   <div className="diplomatic-offer-list">{offers.length?offers.map(offer=>{const sender=state.countries[offer.senderId];return <article key={offer.id}><header><b><LocaleText value={sender?.iso2??'--'}/></b><span><small><LocaleText value={offer.type==='embassy'?'EMBASSY EXCHANGE':'TRADE FRAMEWORK'}/></small><strong><LocaleText value={sender?.name??offer.senderId}/></strong></span><em><LocaleText value={"D"}/><LocaleText value={offer.expiresDay-state.day}/></em></header><p><LocaleText value={offer.message}/></p><div><button className="decline-action" onClick={()=>state.resolveDiplomaticOffer(offer.id,false)}><span aria-hidden="true">×</span> <LocaleText value={"DECLINE"}/></button><button className="primary accept-action" onClick={()=>state.resolveDiplomaticOffer(offer.id,true)}><span aria-hidden="true">✓</span> <LocaleText value={"ACCEPT"}/></button></div></article>}):null}</div>
   </ExecutiveWorkspaceShell>}
 
   {mounted.has('alerts')&&<DraggableWindow expanded id="alerts-window" kicker="COMMAND CHANNEL" title={translateLive("National Alerts")} initialX={window.innerWidth-640} initialY={175} width={580} onClose={()=>close('alerts')}><CommandAlerts/></DraggableWindow>}

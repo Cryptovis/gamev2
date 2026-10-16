@@ -35,4 +35,9 @@ export const UI_CATALOG_110:Record<string,[string,string,string,string]>={
   "Cargo arrives after the travel time. You can cancel the flow in Diplomacy.":["Kargo yolculuk süresinden sonra gelir. Akışı Diplomasi'den iptal edebilirsiniz.", "La carga llega tras el tiempo de viaje. Puede cancelar el flujo en Diplomacia.", "货物将在运输时间后抵达。您可在外交中取消该流量。", "Груз прибудет после времени в пути. Поток можно отменить в разделе «Дипломатия»."],
   "Deliveries arrive every 30 days at the fixed price. Manage the agreement in Diplomacy.":["Teslimatlar sabit fiyatla her 30 günde bir gelir. Anlaşmayı Diplomasi'den yönetin.", "Las entregas llegan cada 30 días al precio fijo. Gestione el acuerdo en Diplomacia.", "货物每30天按固定价格送达。请在外交中管理该协议。", "Поставки прибывают каждые 30 дней по фиксированной цене. Соглашением можно управлять в разделе «Дипломатия»."],
   "Stocks move immediately. Your treasury and reserves are already updated.":["Stoklar hemen hareket eder. Hazineniz ve rezervleriniz güncellendi.", "Las existencias se mueven de inmediato. Su tesoro y reservas ya están actualizados.", "库存立即变动。您的国库和储备已更新。", "Запасы перемещаются сразу. Казна и резервы уже обновлены."],
+  "Borrowing":["Borçlanma","Préstamos recibidos","借款","Заимствование"],
+  "Lending":["Borç verme","Préstamos concedidos","放贷","Кредитование"],
+  "Current applications":["Güncel başvurular","Solicitudes actuales","当前申请","Текущие заявки"],
+  "Diplomatic network overview":["Diplomatik ağ özeti","Resumen de la red diplomática","外交网络概览","Обзор дипломатической сети"],
+  "Relations & proposal assessment":["İlişkiler ve teklif değerlendirmesi","Relaciones y evaluación de propuestas","关系与提案评估","Отношения и оценка предложений"],
 };

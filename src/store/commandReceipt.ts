@@ -5,6 +5,7 @@ import {expansion,repaymentPreview} from '../engine/systems/sovereignCredit';
 import {commodityExchange,COMMODITY_SPECS} from '../engine/systems/commodityExchange';
 import {exchangeStock} from '../engine/systems/livingEconomy';
 import type {ReviewContent} from '../ui/panels/ReviewDialog';
+import {longTermContractPreview} from '../engine/systems/trade';
 import {money} from '../ui/formatMoney';
 
 interface ActionCopy{title:string;next:string}
@@ -32,13 +33,19 @@ function actionCopy(command:GameCommand):ActionCopy|null{
 }
 const partnerOf=(command:GameCommand):string|undefined=>command.type==='diplomacy/request'?command.id:command.type==='industry/order'?command.partnerId:'targetCountryId' in command&&typeof command.targetCountryId==='string'?command.targetCountryId:undefined;
 
+/** Clean metric chips for a signed supply contract, priced from the engine preview taken before signing. */
+function supplyContractChips(before:GameState,command:Extract<GameCommand,{type:'trade/createLongTermContract'}>,fmt:typeof money,language:string):Pick<ReviewContent,'metrics'>{
+ const view=longTermContractPreview(before,before.playerCountryId,command.targetCountryId,command.resource,command.years);
+ return {metrics:[['Monthly delivery',`${view.monthlyQuantity.toFixed(2)} ${command.resource}`],['Unit price',`$${view.unitPrice.toFixed(3)}`],['Total monthly cost',fmt(view.monthlyCost,language)],['Delivery start',`Day ${before.day+30}`]]};
+}
+
 /** Describe settled engine results, including freight and delayed cargo/cash. */
 export function commandReceipt(before:GameState,command:GameCommand,result:CommandResult):ReviewContent {
  const after=result.state,id=before.playerCountryId,language=before.playerProfile.language;
  const treasury=after.countries[id].economy.treasury;
  const receipt:ReviewContent={title:result.status==='applied'?'Command completed':result.status==='duplicate'?'Command already applied':'Command unavailable',summary:result.message,metrics:[['Treasury',money(treasury,language)]]};
  const copy=result.status==='applied'?actionCopy(command):null,partnerId=partnerOf(command),home=before.countries[id],partner=partnerId?before.countries[partnerId]:undefined;
- if(copy&&home&&partner)return {...receipt,title:copy.title,visual:command.type.startsWith('diplomacy')?'diplomacy':'economy',outcome:'success',parties:{left:{iso2:home.iso2,name:home.name},right:{iso2:partner.iso2,name:partner.name}},nextSteps:copy.next};
+ if(copy&&home&&partner)return {...receipt,...(command.type==='trade/createLongTermContract'?supplyContractChips(before,command,money,language):{}),title:copy.title,visual:command.type.startsWith('diplomacy')?'diplomacy':'economy',outcome:'success',parties:{left:{iso2:home.iso2,name:home.name},right:{iso2:partner.iso2,name:partner.name}},nextSteps:copy.next};
  if(result.status==='applied'&&command.type==='credit/accept'){const application=expansion(after).creditApplications?.find(a=>a.offerId===command.id&&a.actorId===id&&a.status==='pending');if(application)return {...receipt,title:'Credit application submitted',summary:'Applications are assessed after three game days. Funds arrive only on approval; relations, rating and lender cash are checked again.',metrics:[['Principal',money(application.principal,language)],['Annual interest',`${application.apr}%`],['Decision day',String(application.decisionDay)],['Treasury now',money(treasury,language)]]};}
  if(result.status==='applied'&&command.type==='credit/repay'){const view=repaymentPreview(before,command.id);return {...receipt,title:'Loan settled',metrics:[['Payment now',money(view.amount,language)],['Interest saved',money(view.interestSaved,language)],['Credit score gain',`+${view.scoreGain.toFixed(2)}`],['Treasury now',money(treasury,language)]]};}
  if(result.status!=='applied'||command.type!=='commodity/order')return receipt;

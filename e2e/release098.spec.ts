@@ -21,11 +21,11 @@ for(const width of [1440,390])test(`0.98 ${width}px Light credit, inbox, help an
  const state=campaignFixture('en');state.selectedCountryId=null;state.countries.TUR.resources.oil=0;
  await resumeFixture(page,state);await page.locator('[data-guide="rail-market"]').click();
  await page.locator('#market-window > .floating-command-body .section-menu').first().getByRole('button',{name:'Sovereign Credit & Monetary Fund',exact:true}).click();
- const credit=page.locator('.credit-desk');await surface(credit.locator('.credit-status'));await surface(credit.getByRole('button',{name:'Credit offers',exact:true}));
+ const credit=page.locator('.credit-desk');await surface(credit.getByRole('button',{name:'Borrowing',exact:true}));
  for(const card of await credit.locator('.credit-overview>article,.credit-board>article').all())await surface(card);
  await page.screenshot({path:`test-results/release098-credit-${width}.png`});await page.keyboard.press('Escape');
  await page.locator('[data-guide="rail-diplo"]').click();const inbox=page.locator('#diplomacy-window');await surface(inbox.locator('.proposal-assessment'));
- await expect(inbox.locator('.diplomatic-summary>span')).toHaveCount(2);for(const card of await inbox.locator('.diplomatic-summary>span').all())await surface(card);
+ await expect(inbox.locator('.diplomatic-summary>span')).toHaveCount(3);for(const card of await inbox.locator('.diplomatic-summary>span').all())await surface(card);
  await page.screenshot({path:`test-results/release098-inbox-${width}.png`});await page.keyboard.press('Escape');
  await page.locator('[data-guide="rail-help"]').click();const help=page.locator('#help-window');await surface(help.locator('.help-situation'));
  await expect(help.locator('.help-situation dl>div')).toHaveCount(5);

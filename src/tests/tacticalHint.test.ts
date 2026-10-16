@@ -283,7 +283,8 @@ describe('Window chrome and the International Affairs pilot',()=>{
     expect(close.previousElementSibling?.classList.contains('tactical-hint-beacon')).toBe(true);
     await render(createElement(ExecutiveWorkspaceShell,{...props,children:'body'}));
     expect(document.querySelector('.tactical-hint-beacon')).toBeNull();
-    expect(Array.from(document.querySelector('.executive-header')!.children).map(c=>c.tagName)).toEqual(['SPAN','SPAN','BUTTON']);
+    expect(Array.from(document.querySelector('.executive-header')!.children).map(c=>c.tagName)).toEqual(['SPAN','DIV']);
+    expect(Array.from(document.querySelector('.executive-header .header-actions')!.children).map(c=>c.tagName)).toEqual(['SPAN','BUTTON']);
   });
   it('DraggableWindow puts the beacon right before the close button and is unchanged without a hint',async()=>{
     const props={id:'tactical-hint-drag',title:'T',kicker:'K',onClose:()=>undefined};

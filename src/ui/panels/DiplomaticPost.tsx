@@ -4,7 +4,8 @@ import {useWorldView} from '../../store/useWorldView';
 import {activeCountries} from '../../domain/sovereignty';
 import { useState } from "react";
 import { useGameStore } from "../../store/gameStore";
-import { LocaleText } from "../../i18n/localeText";
+import { LocaleText, translateLive } from "../../i18n/localeText";
+import { DiplomacyIcon, EmbassyIcon } from "../icons/GameIcons";
 import { living, letterCost, diplomaticProposalStatus,proposalAcceptanceChance } from "../../engine/systems/livingEconomy";
 import { CivicArt } from "../icons/CivicArt";
 import { ReviewDialog, type ReviewContent } from "./ReviewDialog";
@@ -20,6 +21,8 @@ export function DiplomaticPost() {
       (ReviewContent & { execute: (commandId:string) => void; allowed?: boolean }) | null
     >(null);
   const status=diplomaticProposalStatus(s,target,kind);
+  const pendingLetters=l.letters.filter(x=>x.status==='pending'&&x.expiresDay>=s.day),offersIn=s.diplomaticOffers.filter(o=>o.expiresDay>=s.day).length;
+  const embassies=Object.values(s.embassies).filter(e=>e.countryA===s.playerCountryId||e.countryB===s.playerCountryId).length,incoming=offersIn+pendingLetters.filter(x=>x.incoming).length,outgoing=pendingLetters.filter(x=>!x.incoming).length;
   const relation=relationFor(s.countries[s.playerCountryId],target),index=relationshipIndex(relation),chance=proposalAcceptanceChance(s,s.playerCountryId,target,kind);
   const visibleLetters=l.letters.filter(x=>filter==='history'?x.status!=='pending':x.status==='pending'&&(filter==='all'||(filter==='incoming'?x.incoming:!x.incoming)));
   const track=()=>{setFilter(status.letter&&status.letter.status!=='pending'?'history':status.letter?.incoming?'incoming':'outgoing');setHelp(true);window.setTimeout(()=>document.getElementById('proposal-tracker')?.scrollIntoView({block:'nearest'}),0);};
@@ -39,6 +42,21 @@ export function DiplomaticPost() {
           <LocaleText value="Mark letters read" />
         </button>
       </header>
+      <div className="diplomatic-dashboard">
+        <div className="dashboard-box">
+          <h4><LocaleText value="Relations & proposal assessment"/></h4>
+      <aside className="proposal-assessment"><strong><LocaleText value="Relations"/>: {index}/100 · <LocaleText value="Points to trade eligibility"/>: {Math.max(0,20-index)} · <LocaleText value="Points to Good"/>: {Math.max(0,51-index)} · <LocaleText value="Mission gain"/>: +{diplomaticMissionStatus(s,s.playerCountryId,target).gain/2}</strong><p><LocaleText value="Above 50/100 is Good and makes trade acceptance easier. Trade proposals need at least 20/100. Missions or aid raise relations; acceptance is not guaranteed."/></p>{status.allowed&&<p><LocaleText value="Estimated acceptance"/>: {Math.round(chance*100)}%</p>}</aside>
+        </div>
+        <section className="dashboard-box diplomatic-summary-box" aria-label={translateLive("Diplomatic network overview")}>
+          <h4><LocaleText value="Diplomatic network overview"/></h4>
+          <div className="diplomatic-summary"><span><EmbassyIcon size={22}/><i><small><LocaleText value="ACTIVE EMBASSIES"/></small><strong>{embassies}</strong></i></span><span><DiplomacyIcon size={22}/><i><small><LocaleText value="INCOMING"/></small><strong>{incoming}</strong></i></span><span><DiplomacyIcon size={22}/><i><small><LocaleText value="OUTGOING"/></small><strong>{outgoing}</strong></i></span></div>
+        </section>
+        <section className="dashboard-box diplomatic-messages">
+          <header><strong><LocaleText value="Leader correspondence"/></strong><button onClick={s.readDiplomaticMessages}><LocaleText value="Mark read"/></button></header>
+          {s.leadership.messages.map(m=><article key={m.id} className={m.tone}><small><LocaleText value={m.kind.toUpperCase()}/><LocaleText value=" · DAY "/><LocaleText value={m.day}/><LocaleText value=" · "/><LocaleText value={m.read?'READ':'NEW'}/></small><strong><LocaleText value={s.countries[m.senderId]?.name}/></strong><p><LocaleText value={m.text}/></p></article>)}
+          {!s.leadership.messages.length&&<p><LocaleText value="Friends and rivals may react to your birthday and national achievements."/></p>}
+        </section>
+      </div>
       <div className="letter-compose">
         <select
           aria-label="Letter recipient"
@@ -90,7 +108,7 @@ export function DiplomaticPost() {
           <LocaleText value={status.allowed?"Review proposal":"Track proposal / status"} />
         </button>
       </div>
-      <aside className="proposal-assessment"><strong><LocaleText value="Relations"/>: {index}/100 · <LocaleText value="Points to trade eligibility"/>: {Math.max(0,20-index)} · <LocaleText value="Points to Good"/>: {Math.max(0,51-index)} · <LocaleText value="Mission gain"/>: +{diplomaticMissionStatus(s,s.playerCountryId,target).gain/2}</strong><p><LocaleText value="Above 50/100 is Good and makes trade acceptance easier. Trade proposals need at least 20/100. Missions or aid raise relations; acceptance is not guaranteed."/></p>{status.allowed&&<p><LocaleText value="Estimated acceptance"/>: {Math.round(chance*100)}%</p>}</aside>
+
       {!status.allowed&&<aside className="proposal-status" role="status"><strong><LocaleText value="Proposal status"/></strong><p><LocaleText value={status.reason}/></p>{status.letter&&<small><LocaleText value="Reply day"/>: {status.letter.replyDay}{status.letter.status!=='pending'&&<> · <LocaleText value="Retry day"/>: {status.retryDay}</>}</small>}<div><button onClick={track}><LocaleText value="Help / track proposals"/></button><button onClick={()=>s.navigate('diplomacy',target)}><LocaleText value="Open partner diplomacy"/></button></div></aside>}
       {help&&<aside className="proposal-status"><strong><LocaleText value="Where are my proposals?"/></strong><p><LocaleText value="Open Diplomacy, then Proposal tracker and Sent proposals. Pending replies arrive after three campaign days; advance time to receive them. Sending again will not accelerate the answer. No fee is charged at submission; accepted outgoing proposals charge the stated fee once."/></p></aside>}
       <h4 id="proposal-tracker"><LocaleText value="Proposal tracker"/> · <LocaleText value="Pending"/>: {l.letters.filter(x=>x.status==='pending').length}</h4>
@@ -138,8 +156,9 @@ export function DiplomaticPost() {
                           execute: (commandId) => s.resolveIncomingLetter(x.id, false, commandId),
                         })
                       }
+                      className="decline-action"
                     >
-                      <LocaleText value="Decline" />
+                      <span aria-hidden="true">×</span> <LocaleText value="Decline" />
                     </button>
                     <button
                       onClick={() =>
@@ -167,8 +186,9 @@ export function DiplomaticPost() {
                           execute: (commandId) => s.resolveIncomingLetter(x.id, true, commandId),
                         })
                       }
+                      className="primary accept-action"
                     >
-                      <LocaleText value="Review shared offer" />
+                      <span aria-hidden="true">✓</span> <LocaleText value="Review shared offer" />
                     </button>
                   </div>
                 )}
