@@ -1,10 +1,10 @@
 import {describe,it,expect} from 'vitest';
+import {readFileSync} from 'node:fs';
 
-const styles=import.meta.glob<string>(['../ui/styles/landing094.css','../ui/styles/appearancePhase7.css'],{query:'?raw',import:'default',eager:true});
-const read=(name:string)=>styles[`../ui/styles/${name}`];
+const read=(name:string)=>readFileSync(new URL(`../ui/styles/${name}`,import.meta.url),'utf8');
 const landing=read('landing094.css'),appearance=read('appearancePhase7.css');
-
 const block=(css:string,opener:string)=>{const start=css.indexOf(opener);if(start<0)return '';const open=css.indexOf('{',start);return css.slice(open+1,css.indexOf('}',open));};
+
 const tokens=(body:string)=>Object.fromEntries([...body.matchAll(/(--[\w-]+)\s*:\s*([^;]+);/g)].map(m=>[m[1],m[2].trim()]));
 const navy={...tokens(block(appearance,':root,[data-theme="dark"]{')),...tokens(block(landing,':root,[data-theme="dark"]{'))};
 const ivory={...navy,...tokens(block(appearance,':root[data-theme="light"]{')),...tokens(block(landing,':root[data-theme="light"]{'))};
