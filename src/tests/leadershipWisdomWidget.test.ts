@@ -15,7 +15,7 @@ const LANGUAGES:GameLanguage[]=['en','tr','es','zh','ru'];
 let host:HTMLDivElement,root:Root;
 const setLanguage=(language:GameLanguage)=>{const s=makeInitialState();s.playerProfile={...s.playerProfile,language};useGameStore.setState(s);};
 const render=async(props:LeadershipWisdomWidgetProps)=>{await act(async()=>{root.render(createElement(LeadershipWisdomWidget,props));});};
-const figure=()=>host.querySelector('[data-testid="leadership-wisdom"]') as HTMLElement;
+const figure=()=>host.querySelector('[data-testid="wisdom-widget"]') as HTMLElement;
 const text=(selector:string)=>host.querySelector(selector)?.textContent??null;
 const quoteById=(id:string)=>LEADERSHIP_QUOTES.find(q=>q.id===id)!;
 const tick=async(ms:number)=>{await act(async()=>{vi.advanceTimersByTime(ms);});};

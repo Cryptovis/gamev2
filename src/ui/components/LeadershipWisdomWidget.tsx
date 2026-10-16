@@ -31,7 +31,7 @@ export function LeadershipWisdomWidget({variant,context,intervalMs=DEFAULT_QUOTE
  const t=(text:string)=>translateText(language,text);
  const controls=HAS_CONTROLS[variant]&&!fixed;
  const classes=['lw',`lw--${variant}`,className].filter(Boolean).join(' ');
- return <figure className={classes} data-testid="leadership-wisdom" data-variant={variant} data-quote-id={quote.id} data-paused={rotation.paused?'true':'false'} lang={language} {...rotation.bind}>
+ return <figure className={classes} data-testid="wisdom-widget" data-variant={variant} data-quote-id={quote.id} data-paused={rotation.paused?'true':'false'} lang={language} {...rotation.bind}>
   <div className="lw-body" key={quote.id}>
    <blockquote className="lw-text">{glyphs.open}{quote.text[language]}{glyphs.close}</blockquote>
    <figcaption className="lw-caption">

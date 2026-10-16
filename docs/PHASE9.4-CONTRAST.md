@@ -41,3 +41,7 @@ Gold #d4af37 is too light to carry text on Ivory (about 2:1), so Ivory uses #6f5
 ## Rendered check
 
 Every visible text node in a sample of all landing classes (hero, dock including a disabled button, save card in its four states, scenarios, drawer, and the hero, compact, loading and outcome widgets) was measured in Chromium in both themes by compositing the computed colour over the computed backgrounds. No text fell below its threshold, and the root had no horizontal overflow at 1440, 1024, 768, 390 and 320 px wide.
+
+## Rendered check with the real components (T11)
+
+The same check was repeated with the real HeroBrand, CommandMenu, SaveGameCard (ready, unreadable and empty), UtilityDock and wisdom widget rendered over the real backdrop (cover art, wash, graticule, vignette), in Navy and Ivory, in English, Chinese and Turkish, at 1440, 1024, 768, 390 and 320 px. For every text node the text was made transparent, the page was captured, and the lightest and darkest background pixel inside the text's box was compared with the text colour, so grid lines and the cover art count against the text. No text fell below 4.5:1 (3:1 for large text), and there was no horizontal overflow. Two things came out of it: the graticule is now masked out behind the text column (strongest at the edges), and the Ivory graticule alphas were lowered.

@@ -24,8 +24,8 @@
  --l94-gold:#9a7412;
  --l94-gold-text:#6f5207;
  --l94-gold-line:rgba(138,101,8,.45);
- --l94-grid:rgba(20,44,70,.07);
- --l94-grid-strong:rgba(20,44,70,.13);
+ --l94-grid:rgba(20,44,70,.06);
+ --l94-grid-strong:rgba(20,44,70,.1);
  --l94-glow:rgba(154,116,18,.10);
  --l94-cta-bg:#183b60;--l94-cta-bg-hover:#0f2e4d;--l94-cta-ink:#ffffff;
  --l94-card-bg:rgba(255,253,247,.9);
@@ -36,14 +36,22 @@
 /* Root and cartographic backdrop ------------------------------------------------------------------------------- */
 .landing094,.landing094 *,.landing094 *::before,.landing094 *::after,.l94-drawer,.l94-drawer *,.lw,.lw *{box-sizing:border-box}
 .landing094{position:fixed;inset:0;z-index:30;display:grid;grid-template-rows:auto 1fr auto;min-height:100dvh;overflow:auto;color:var(--ink);
- background:radial-gradient(120% 90% at 78% 8%,var(--l94-glow),transparent 60%),var(--surface-inset);isolation:isolate}
-.landing094::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+ background:var(--surface-inset);isolation:isolate}
+/* Backdrop layers (LandingBackdrop): cover art, colour wash, cartographic graticule, vignette */
+.l94-backdrop{position:absolute;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+.l94-art{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:60% 40%;opacity:.16;filter:saturate(.7)}
+:root[data-theme="light"] .l94-art{opacity:.07;mix-blend-mode:multiply}
+.l94-wash{position:absolute;inset:0;background:linear-gradient(100deg,var(--surface-inset) 0%,var(--surface-inset) 46%,color-mix(in srgb,var(--surface-inset) 62%,transparent) 100%),radial-gradient(120% 90% at 78% 8%,var(--l94-glow),transparent 60%)}
+@media (max-width:1023px){.l94-wash{background:color-mix(in srgb,var(--surface-inset) 90%,transparent)}}
+.l94-graticule{position:absolute;inset:0;pointer-events:none;
  background:
   repeating-linear-gradient(0deg,transparent 0 63px,var(--l94-grid) 63px 64px),
   repeating-linear-gradient(90deg,transparent 0 63px,var(--l94-grid) 63px 64px),
   repeating-linear-gradient(0deg,transparent 0 255px,var(--l94-grid-strong) 255px 256px),
   repeating-linear-gradient(90deg,transparent 0 255px,var(--l94-grid-strong) 255px 256px);
- -webkit-mask-image:radial-gradient(90% 80% at 50% 40%,#000 35%,transparent 100%);mask-image:radial-gradient(90% 80% at 50% 40%,#000 35%,transparent 100%)}
+ /* Strongest at the edges and clear in the middle, so the grid never runs through the text column. */
+ -webkit-mask-image:radial-gradient(75% 70% at 50% 45%,transparent 55%,#000 100%);mask-image:radial-gradient(75% 70% at 50% 45%,transparent 55%,#000 100%)}
+.l94-vignette{position:absolute;inset:0;background:radial-gradient(130% 110% at 50% 45%,transparent 55%,var(--surface-inset) 100%)}
 .landing094::after{content:"";position:absolute;inset:16px;z-index:-1;pointer-events:none;border:1px solid var(--l94-gold-line);border-radius:4px;
  -webkit-mask-image:linear-gradient(#000,transparent 30%,transparent 70%,#000);mask-image:linear-gradient(#000,transparent 30%,transparent 70%,#000)}
 
@@ -101,6 +109,25 @@
 .l94-drawer h2{margin:0;font:700 18px/1.2 Georgia,serif}
 .l94-drawer-body{overflow:auto;padding:20px;display:grid;gap:14px;align-content:start}
 .l94-drawer-body p,.l94-drawer-body li{color:var(--ink-muted);font:400 14px/1.55 var(--l94-sans)}
+
+/* Components (T11) ------------------------------------------------------------------------------------------------ */
+.l94-hero-brand{display:grid;gap:18px;justify-items:start}
+.l94-emblem{display:inline-grid;place-items:center;min-width:34px;height:22px;margin-right:12px;padding:0 6px;border:1px solid var(--l94-gold);border-radius:4px;color:var(--l94-gold-text);font:800 11px/1 var(--l94-sans);letter-spacing:.12em}
+.l94-version{margin:0;color:var(--ink-muted);font:400 12px/1.4 var(--l94-sans);letter-spacing:.04em}
+.l94-menu{display:grid;gap:14px;justify-items:start;width:100%}
+.l94-menu-list{display:flex;flex-wrap:wrap;gap:4px 20px;margin:0;padding:0;list-style:none}
+.l94-menu .l94-link[aria-disabled="true"]{color:var(--ink-muted);text-decoration-style:dotted;cursor:not-allowed}
+.l94-segmented{display:inline-flex;gap:0;border:1px solid var(--l94-border);border-radius:10px;overflow:hidden}
+.l94-seg-btn{min-width:44px;border:0;border-radius:0;background:var(--l94-card-bg)}
+.l94-seg-btn+.l94-seg-btn{border-left:1px solid var(--l94-border)}
+.l94-seg-btn[aria-pressed="true"]{background:var(--accent-surface);color:var(--accent-ink)}
+.l94-chip{max-width:240px}
+.l94-chip .l94-dock-label{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.l94-cta--card{min-height:48px;box-shadow:none}
+.l94-cta--card[aria-disabled="true"]{background:transparent;border-color:var(--l94-border);color:var(--ink-muted);cursor:not-allowed;filter:none}
+.l94-card-error{margin:0;color:var(--l94-warn);font:600 14px/1.4 var(--l94-sans)}
+.l94-flag-emoji{font-size:1.2em;line-height:1}
+.l94-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
 /* Focus ---------------------------------------------------------------------------------------------------------- */
 .landing094 :is(button,a,[tabindex]):focus-visible,.l94-drawer :is(button,a,[tabindex]):focus-visible{outline:3px solid var(--focus);outline-offset:3px;border-radius:10px}
@@ -165,7 +192,7 @@
 /* Forced colors: drop decorative colour and keep real borders and system text ----------------------------------------- */
 @media (forced-colors:active){
  .landing094{background:Canvas;color:CanvasText}
- .landing094::before,.landing094::after{display:none}
+ .l94-backdrop,.landing094::after{display:none}
  .l94-card,.l94-dock-btn,.lw-btn,.l94-drawer,.l94-scenarios li{border:1px solid CanvasText;background:Canvas;color:CanvasText;box-shadow:none}
  .l94-cta{border:2px solid ButtonText;background:ButtonFace;color:ButtonText;box-shadow:none}
  .l94-eyebrow,.l94-link,.lw-name,.l94-badge,.l94-card h2,.l94-card h3{color:LinkText}
