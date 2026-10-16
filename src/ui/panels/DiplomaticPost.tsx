@@ -45,7 +45,16 @@ export function DiplomaticPost() {
       <div className="diplomatic-dashboard">
         <div className="dashboard-box">
           <h4><LocaleText value="Relations & proposal assessment"/></h4>
-      <aside className="proposal-assessment"><strong><LocaleText value="Relations"/>: {index}/100 · <LocaleText value="Points to trade eligibility"/>: {Math.max(0,20-index)} · <LocaleText value="Points to Good"/>: {Math.max(0,51-index)} · <LocaleText value="Mission gain"/>: +{diplomaticMissionStatus(s,s.playerCountryId,target).gain/2}</strong><p><LocaleText value="Above 50/100 is Good and makes trade acceptance easier. Trade proposals need at least 20/100. Missions or aid raise relations; acceptance is not guaranteed."/></p>{status.allowed&&<p><LocaleText value="Estimated acceptance"/>: {Math.round(chance*100)}%</p>}</aside>
+      <aside className="proposal-assessment">
+        <dl className="assessment-list" data-testid="relations-assessment">
+          <div className="assessment-row" data-row="relations" data-tone={index>50?'good':index<20?'bad':'neutral'}><dt><LocaleText value="Relations score"/></dt><dd>{index}/100</dd></div>
+          <div className="assessment-row" data-row="trade" data-tone={index>=20?'good':'bad'}><dt><LocaleText value="Trade eligibility"/></dt><dd>{index>=20?<LocaleText value="Eligible"/>:<><LocaleText value="Points needed"/>: {20-index}</>}</dd></div>
+          <div className="assessment-row" data-row="acceptance" data-tone={!status.allowed?'neutral':chance>=.5?'good':chance<.3?'bad':'neutral'}><dt><LocaleText value="Acceptance chance"/></dt><dd>{status.allowed?`${Math.round(chance*100)}%`:'—'}</dd></div>
+          <div className="assessment-row" data-row="good" data-tone={index>50?'good':'neutral'}><dt><LocaleText value="Points to Good"/></dt><dd>{Math.max(0,51-index)}</dd></div>
+          <div className="assessment-row" data-row="mission" data-tone="neutral"><dt><LocaleText value="Mission gain"/></dt><dd>+{diplomaticMissionStatus(s,s.playerCountryId,target).gain/2}</dd></div>
+        </dl>
+        <p><LocaleText value="Above 50/100 is Good and makes trade acceptance easier. Trade proposals need at least 20/100. Missions or aid raise relations; acceptance is not guaranteed."/></p>
+      </aside>
         </div>
         <section className="dashboard-box diplomatic-summary-box" aria-label={translateLive("Diplomatic network overview")}>
           <h4><LocaleText value="Diplomatic network overview"/></h4>

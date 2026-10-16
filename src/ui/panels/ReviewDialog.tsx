@@ -19,6 +19,10 @@ export interface ReviewContent {
   parties?: {left:{iso2:string;name:string};right:{iso2:string;name:string}};
   /** What happens next, in plain words. */
   nextSteps?: string;
+  /** A photograph that replaces the generic illustration. Decorative. */
+  image?: string;
+  /** Compact executive layout: one column of label and value rows in a narrow dialog. */
+  briefing?: boolean;
 }
 export function ReviewDialog({
   title,
@@ -35,6 +39,8 @@ export function ReviewDialog({
   metricTones={},
   parties,
   nextSteps,
+  image,
+  briefing,
   actions=[],
   children,
   className="",
@@ -59,13 +65,13 @@ export function ReviewDialog({
         role="dialog"
         aria-modal="true"
         aria-label={translateLive(title)}
-        className={`review-dialog ${onConfirm?'review-confirmation':'review-result'} ${outcome?'receipt-success':''} ${parties&&!onConfirm?'receipt-compact':''} ${className}`}
+        className={`review-dialog ${onConfirm?'review-confirmation':'review-result'} ${outcome?'receipt-success':''} ${parties&&!onConfirm?'receipt-compact':''} ${briefing?'review-briefing':''} ${className}`}
       >
         <header>
           <small><LocaleText value={"COMMAND REVIEW"}/></small>
           <button data-guide="review-dismiss" aria-label={translateLive("Close review")} onClick={onCancel}><LocaleText value={"×"}/></button>
         </header>
-        {asset?<div className="review-visual receipt-art" aria-hidden="true"><AssetThumbnail asset={asset} size={72}/><span className="receipt-check">✓</span></div>:<ReviewVisual kind={visual??reviewVisualKind(title+' '+summary)} signed={!onConfirm&&/signed|agreed/i.test(title)}/>}
+        {image?<div className="review-photo" data-testid="review-photo" aria-hidden="true"><img src={image} alt="" decoding="async"/></div>:asset?<div className="review-visual receipt-art" aria-hidden="true"><AssetThumbnail asset={asset} size={72}/><span className="receipt-check">✓</span></div>:<ReviewVisual kind={visual??reviewVisualKind(title+' '+summary)} signed={!onConfirm&&/signed|agreed/i.test(title)}/>}
         <h2><LocaleText value={title}/></h2>
         <p><LocaleText value={summary}/></p>
         {parties&&<div className="review-parties" data-testid="review-parties"><span><LocaleText value={flagEmoji(parties.left.iso2)}/> <LocaleText value={parties.left.name}/></span><i aria-hidden="true">↔</i><span><LocaleText value={flagEmoji(parties.right.iso2)}/> <LocaleText value={parties.right.name}/></span></div>}

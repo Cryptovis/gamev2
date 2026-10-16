@@ -39,11 +39,31 @@ function supplyContractChips(before:GameState,command:Extract<GameCommand,{type:
  return {metrics:[['Monthly delivery',`${view.monthlyQuantity.toFixed(2)} ${command.resource}`],['Unit price',`$${view.unitPrice.toFixed(3)}`],['Total monthly cost',fmt(view.monthlyCost,language)],['Delivery start',`Day ${before.day+30}`]]};
 }
 
+const INTEL_PHOTO='/assets/command/intel-espionage.jpg';
+const INTEL_OPERATION_LABEL:Record<string,string>={gather_intelligence:'Gather Intelligence',influence_campaign:'Influence Campaign',sabotage_industry:'Sabotage Industry',counter_network:'Counter Network'};
+/** UI-side risk and yield tiers, worded from the engine's operation table (the engine does not export it). Qualitative on purpose. */
+const INTEL_TIER:Record<string,{risk:'Low'|'Medium'|'High';yield:'High'|'Medium'|'Low'}>={gather_intelligence:{risk:'Low',yield:'High'},counter_network:{risk:'Low',yield:'Medium'},influence_campaign:{risk:'Medium',yield:'Medium'},sabotage_industry:{risk:'High',yield:'Low'}};
+const TIER_TONE:Record<string,'positive'|'neutral'|'negative'>={Low:'positive',Medium:'neutral',High:'negative'};
+
+/** Executive briefing for a launched covert operation: target, type, risk, yield and the budget it actually cost. */
+function intelBriefing(before:GameState,command:Extract<GameCommand,{type:'intelligence/launch'}>,after:GameState,receipt:ReviewContent):ReviewContent|null{
+ const target=before.countries[command.targetCountryId],id=before.playerCountryId,language=before.playerProfile.language;
+ const launched=Object.values(after.intelOperations).some(op=>op.type===command.operationType&&op.targetCountryId===command.targetCountryId&&op.sourceCountryId===id&&op.startedDay===before.day);
+ if(!target||!launched)return null;
+ const tier=INTEL_TIER[command.operationType]??{risk:'Medium',yield:'Medium'};
+ const cost=before.countries[id].economy.treasury-after.countries[id].economy.treasury;
+ return {...receipt,title:'Intelligence Briefing',image:INTEL_PHOTO,briefing:true,outcome:'success',
+  metrics:[['Target Nation',target.name],['Operation Type',INTEL_OPERATION_LABEL[command.operationType]??command.operationType],['Risk Level',tier.risk],['Estimated Intel Yield',tier.yield],['Budget Cost',money(cost,language)],['Treasury',receipt.metrics?.[0]?.[1]??'']],
+  metricTones:{'Risk Level':TIER_TONE[tier.risk],'Estimated Intel Yield':{High:'positive',Medium:'neutral',Low:'negative'}[tier.yield] as 'positive'|'neutral'|'negative'},
+  nextSteps:'Results arrive when the operation completes. Review them in the Executive Desk.'};
+}
+
 /** Describe settled engine results, including freight and delayed cargo/cash. */
 export function commandReceipt(before:GameState,command:GameCommand,result:CommandResult):ReviewContent {
  const after=result.state,id=before.playerCountryId,language=before.playerProfile.language;
  const treasury=after.countries[id].economy.treasury;
  const receipt:ReviewContent={title:result.status==='applied'?'Command completed':result.status==='duplicate'?'Command already applied':'Command unavailable',summary:result.message,metrics:[['Treasury',money(treasury,language)]]};
+ if(result.status==='applied'&&command.type==='intelligence/launch'){const briefing=intelBriefing(before,command,after,receipt);if(briefing)return briefing;}
  const copy=result.status==='applied'?actionCopy(command):null,partnerId=partnerOf(command),home=before.countries[id],partner=partnerId?before.countries[partnerId]:undefined;
  if(copy&&home&&partner)return {...receipt,...(command.type==='trade/createLongTermContract'?supplyContractChips(before,command,money,language):{}),title:copy.title,visual:command.type.startsWith('diplomacy')?'diplomacy':'economy',outcome:'success',parties:{left:{iso2:home.iso2,name:home.name},right:{iso2:partner.iso2,name:partner.name}},nextSteps:copy.next};
  if(result.status==='applied'&&command.type==='credit/accept'){const application=expansion(after).creditApplications?.find(a=>a.offerId===command.id&&a.actorId===id&&a.status==='pending');if(application)return {...receipt,title:'Credit application submitted',summary:'Applications are assessed after three game days. Funds arrive only on approval; relations, rating and lender cash are checked again.',metrics:[['Principal',money(application.principal,language)],['Annual interest',`${application.apr}%`],['Decision day',String(application.decisionDay)],['Treasury now',money(treasury,language)]]};}

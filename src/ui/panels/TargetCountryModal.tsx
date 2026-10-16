@@ -67,7 +67,7 @@ export function TargetCountryModal({countryId,mode='hub',active=true}:{countryId
   };
 
   const node = <div className="target-hub-backdrop" hidden={!visible} onMouseDown={event=>{if(ownsWindowDismissal(ref.current)){event.preventDefault();state.closeWorkspace();}}}>
-    <section ref={ref} tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby="target-hub-title" className={`target-hub stance-${summary.stance.toLowerCase().replaceAll(' ', '-')}${lowEffects ? ' low-effects' : ''}`} data-country={target.id} onMouseDown={(e) => e.stopPropagation()}>
+    <section ref={ref} tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby="target-hub-title" className={`target-hub stance-${summary.stance.toLowerCase().replaceAll(' ', '-')}${lowEffects ? ' low-effects' : ''}`} data-country={target.id} data-view={view} onMouseDown={(e) => e.stopPropagation()}>
       <header className="target-hub-header">
         <div className="target-hub-flags" aria-hidden="true">
           <span className="target-hub-flag own"><LocaleText value={flagEmoji(player.iso2)} /></span>
