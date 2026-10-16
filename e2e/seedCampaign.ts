@@ -16,7 +16,9 @@ export async function resumeFixture(page:Page,state:GameState) {
  },snapshotGame(state));
  await page.reload();await page.locator('.load-previous').click();
 }
-/** Opens the player's country panel. The flag button toggles, and a fixture can already have the panel selected, so only click when it is closed. */
+/** Opens the player's country panel. The flag button toggles and a fixture can already have the panel selected, so click only when it is not pressed. */
 export async function openNation(page:Page){
- if(!(await page.locator('.command-panel').isVisible()))await page.locator('[data-guide="nation"]').first().click();
+ const flag=page.locator('[data-guide="nation"]').first();
+ await flag.waitFor();
+ if((await flag.getAttribute('aria-pressed'))!=='true')await flag.click();
 }
