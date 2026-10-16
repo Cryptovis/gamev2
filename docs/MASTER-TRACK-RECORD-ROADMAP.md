@@ -4,9 +4,9 @@ Last Updated: 2026-10-16
 Status: Active Living Record
 Working Directory: /Users/alpy/.gemini/antigravity/scratch/gamev2
 Active Branch: dev/ron-phase9
-Current HEAD Commit: fea8ef3
-Baseline Verification: 143/143 test files passed (1,646 unit tests passed, 0 failures, 1 expected seed invariant, tsc --noEmit clean with 0 errors, Vite build in 582 ms, Playwright 26/26 passed)
-Bundle Baseline: ~946.3 kB gzip (JS) + 87.7 kB gzip (CSS)
+Current HEAD Commit: 19404cd
+Baseline Verification: 144/144 test files passed (1,663 unit tests passed, 0 failures, 1 expected seed invariant, tsc --noEmit clean with 0 errors, Vite build in 564 ms, Playwright 26/26 passed)
+Bundle Baseline: ~946.9 kB gzip (JS) + 88.3 kB gzip (CSS)
 
 ---
 
@@ -123,7 +123,15 @@ All playtest hotfixes are merged, committed, and fully verified on origin/dev/ro
 - Tutorial Button Contrast: Enforced dark executive navy (#0e2035) with bold weight (700) on NEXT button in light theme across all states (normal, hover, focus, disabled).
 - Top-Left Player Capsule & Clock Tenure Relocation: Relocated "Days in Office: [N]" to top-right clock container beneath campaign calendar date; top-left player capsule now tightly hugs portrait avatar and commander name with 20-character graceful ellipsis truncation.
 - Diplomatic Hub Action Buttons Clean Icons: Removed circular/oval clipping borders and backgrounds behind the 8 diplomatic action icons.
-- National Command Solid Header & Zero Rail Bands: Made National Command header band solid and opaque in both themes; completely cleared any semi-transparent background rail stripes from the left and right screen edges.
+### Playtest 1.8 (Commits 01c86a0 -> 19404cd)
+- Pinned Fullscreen Wallpaper: Pinned background art to position: fixed; inset: 0; width: 100vw; height: 100vh; background-size: cover; background-attachment: fixed; preventing detachment during scroll.
+- Lifted Quote Box & Scaled Title: Lifted leadership quote card higher with breathing room above footer disclaimer; scaled Rule of Nations title to clamp(2.1rem, 4.2vw, 3.2rem).
+- Language Selector Relocated to Top-Right: Moved 5-language flag switcher (🇬🇧, 🇹🇷, 🇪🇸, 🇨🇳, 🇷🇺) into the top-right header dock.
+- Setup Wizard Kicker Cleanups & Centered Quote: Dropped redundant step subtitles (STEP 01 to STEP 04) and top subtitle; centered leadership quote in right panel; conditioned "System follows device appearance" note strictly to active System preference.
+- National Command Permanent Leader Credentials: Compacted modal to 680px; removed editable input fields (change portrait, update identity, country dropdown, birth date); displayed leader credentials as clean, immutable presidential records.
+- Alliances Organization Badges in One Row: Aligned Member and Active badges side-by-side in a horizontal row; styled Member in soft green and Non-member in soft amber across dual themes.
+- Compact Arms Hardware Transfer Card: Bound hardware transfer section to 680px with clear diplomatic context explaining defense materiel aid and embargo compliance.
+- Visual Pack 2 Expansion: Added and committed high-fidelity artworks for Ministry of Economy (ministry-economy.jpg) and Science Directorate (ministry-science.jpg).
 
 
 ---
