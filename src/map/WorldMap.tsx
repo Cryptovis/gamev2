@@ -452,7 +452,7 @@ function WorldMapView() {
       const dx=e.key==='ArrowLeft'?-40:e.key==='ArrowRight'?40:0,dy=e.key==='ArrowUp'?-40:e.key==='ArrowDown'?40:0;
       if(projectionMode==='globe')setRotation(r=>[r[0]+dx*.2/globeZoom,Math.max(-75,Math.min(75,r[1]-dy*.17/globeZoom)),0]);
       else setFlatPan(p=>boundPan({x:p.x+dx,y:p.y+dy},flatZoom));
-    }} ref={svgRef} data-zoom={mapZoom.toFixed(4)} aria-label={translateLive("Interactive world map")} viewBox={`0 0 ${W} ${H}`} className={projectionMode === 'globe' ? 'strategy-svg globe-svg' : 'strategy-svg flat-svg'} onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerCancel={pointerUp} onClick={selectFromSurface} shapeRendering="geometricPrecision">
+    }} ref={svgRef} data-zoom={mapZoom.toFixed(4)} aria-label={translateLive("Interactive world map")} viewBox={`0 0 ${W} ${H}`} preserveAspectRatio={projectionMode === 'globe' ? 'xMidYMid slice' : 'xMidYMid meet'} className={projectionMode === 'globe' ? 'strategy-svg globe-svg' : 'strategy-svg flat-svg'} onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerCancel={pointerUp} onClick={selectFromSurface} shapeRendering="geometricPrecision">
       <defs>
         <pattern id="executive-coordinate-grid" width="48" height="48" patternUnits="userSpaceOnUse"><path d="M48 0H0V48" fill="none" stroke="var(--ink)" strokeWidth="1"/></pattern>
         <pattern id="terrain-plains" width="18" height="18" patternUnits="userSpaceOnUse"><rect width="18" height="18" fill="#6d8061"/><path d="M0 14C5 11 10 16 18 12" fill="none" stroke="#9aab83" strokeOpacity=".22" strokeWidth="1"/></pattern>
