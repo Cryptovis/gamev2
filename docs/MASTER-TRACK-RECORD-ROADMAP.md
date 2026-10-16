@@ -4,9 +4,9 @@ Last Updated: 2026-10-16
 Status: Active Living Record
 Working Directory: /Users/alpy/.gemini/antigravity/scratch/gamev2
 Active Branch: dev/ron-phase9
-Current HEAD Commit: 13dcc45
-Baseline Verification: 142/142 test files passed (1,630 unit tests passed, 0 failures, 1 expected seed invariant, tsc --noEmit clean with 0 errors, Vite build in 580 ms, Playwright 19/19 passed)
-Bundle Baseline: ~946.2 kB gzip (JS) + 86.8 kB gzip (CSS)
+Current HEAD Commit: fea8ef3
+Baseline Verification: 143/143 test files passed (1,646 unit tests passed, 0 failures, 1 expected seed invariant, tsc --noEmit clean with 0 errors, Vite build in 582 ms, Playwright 26/26 passed)
+Bundle Baseline: ~946.3 kB gzip (JS) + 87.7 kB gzip (CSS)
 
 ---
 
@@ -116,7 +116,14 @@ All playtest hotfixes are merged, committed, and fully verified on origin/dev/ro
 - Diplomatic Inbox Proportions & Clean Rows: Capped modal at 820px and centered; cleaned up relations assessment into borderless, structured stat rows with soft green (#4ade80 / #166534) and soft red (#f87171 / #991b1b) accents.
 - Covert Operations Intelligence Briefing: Replaced generic building with tactical intelligence artwork (/assets/command/intel-espionage.jpg) in a 600px executive briefing card with target nation, operation type, risk rating, intel yield, and live budget deduction.
 - Country Info Proportions: Capped modal at 760px and centered for balanced presentation.
-- Top-Left Commander Tenure Badge: Encased player portrait avatar in a gold executive border frame, displayed commander name prominently, and introduced tenure badge: "Days in Office: [N]" (localized in 5 languages).
+### Playtest 1.7 (Commits 94dabf3 -> fea8ef3)
+- Centered Brand Header: Centered "Rule of Nations" title and "Be the president you have always dreamed of." on the landing page; stripped "RON GRAND STRATEGY" pill and "v1.0.0" subtitle label.
+- Landing 3-Card Row & Full-Width Resume Bar: Structured landing actions into 3 equal-width cards (New Campaign, Historical Scenarios, Player Profile) in a clean top row, with a full-width horizontal resume card below ("Continue with Last Saved Campaign") spanning all 3 cards with flag, leader, date, and Continue action.
+- Setup Wizard Atmospheric Backdrop & Narrow Poster: Added graticule and vignette backdrop to CampaignSetup in both themes; normalized left poster column to compact 34% width across all 4 steps, expanding room for configuration controls.
+- Tutorial Button Contrast: Enforced dark executive navy (#0e2035) with bold weight (700) on NEXT button in light theme across all states (normal, hover, focus, disabled).
+- Top-Left Player Capsule & Clock Tenure Relocation: Relocated "Days in Office: [N]" to top-right clock container beneath campaign calendar date; top-left player capsule now tightly hugs portrait avatar and commander name with 20-character graceful ellipsis truncation.
+- Diplomatic Hub Action Buttons Clean Icons: Removed circular/oval clipping borders and backgrounds behind the 8 diplomatic action icons.
+- National Command Solid Header & Zero Rail Bands: Made National Command header band solid and opaque in both themes; completely cleared any semi-transparent background rail stripes from the left and right screen edges.
 
 
 ---
