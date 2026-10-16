@@ -59,3 +59,15 @@ Eleven UI items from the second live playtest, applied on top of Hotfix 1.5 (`sr
 - Width caps: Diplomatic Inbox 820px, Country Info 760px, intelligence briefing 600px.
 - The footer year is written as 2026, as the brief states.
 - Test harness note: the stand-in runner now maps `zod` to its v4 build, so the engine loads and the new intel tests run against the real engine. Still not run: vitest itself, real `tsc`, `vite build`, Playwright and the determinism replay. No file under `src/engine` or `src/simulation` was touched.
+
+## Playtest hotfix 1.7
+
+Six UI items from the third live playtest (`src/ui/styles/hotfix17.css` is loaded last and carries items 2 to 6; item 1 lives in `landing094.css`).
+
+- The landing header is centred and has no kicker pill and no version label. `HeroBrand` lost its `version` and `buildId` props; the release history button in the dock is the only place the version appears. A soft radial scrim sits behind the brand so the centred tagline stays above 7:1 over the artwork.
+- The Last campaign card is now the full-width bar under the three art cards (`.l94-resume`), titled Continue with Last Saved Campaign. The old `Last campaign` catalog row is unused but kept.
+- The setup wizard uses the 34 / 66 split on every step (Step 2 already did). The backdrop is a graticule and vignette built from CSS gradients, so no new asset ships.
+- Days in Office moved to the campaign clock as a `span` under the date (the date stays the only `strong`, which several e2e specs read). The capsule keeps the portrait and the name; names over 20 characters end in an ellipsis and the full name is the tooltip. The `.day-chip` rules in `hotfix16.css` were removed. `release097.spec.ts` now checks the Ivory surface on `.campaign-clock`, which hotfix17 sets to the raised surface like the old chip.
+- The tutorial NEXT button rules moved from `hotfix16.css` to `hotfix17.css` and now cover hover, focus, active and disabled, the feature tour and the guided card, with weight 700.
+- Rail backgrounds were already transparent in earlier sheets; hotfix17 repeats the rule for the left rail, the right rail and the map cluster, including pseudo-elements, so no later sheet can bring a band back. The National Command header is solid on `#country-section-window` (all three header variants) and on the side panel heading.
+- Not run here: vitest itself, real `tsc`, `vite build`, Playwright and the determinism replay. No file under `src/engine` or `src/simulation` was touched.

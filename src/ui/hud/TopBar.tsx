@@ -1,4 +1,4 @@
-import {daysInOffice} from './daysInOffice';
+import {capCommanderName,daysInOffice} from './daysInOffice';
 import {leaderModifiers} from '../../engine/systems/leaderPerks';
 import {LeaderCapsule,MetricsIsland} from './HudIslands';
 import {displayCountry} from '../../presentation/countryIdentity';
@@ -65,7 +65,7 @@ export function TopBar(){
  return <><div className="brand-watermark" translate="no">{BRAND_NAME}</div><header className="topbar">
   <div className="command-overview-island"><LeaderCapsule>
    <button className="leader-avatar-button" data-mood={mood} onClick={()=>{useGameStore.getState().openTool(null,false);setOptionsOpen(true)}} title={translateLive("Open commander options")}><AvatarPortrait id={profile.avatarId} size={52}/><span><LocaleText value={"⋯"}/></span>{mood!=='calm'&&<b className="mood-note"><LocaleText value={mood==='alarm'?'Crisis alert':'Prosperity'}/></b>}</button>
-   <div className="brand-block"><div className="brand-line"><strong><LocaleText value={profile.commanderName}/></strong><span className="day-chip" data-testid="days-in-office">{daysInOffice(lang,day)}</span></div></div>
+   <div className="brand-block"><div className="brand-line"><strong title={profile.commanderName} data-testid="commander-name"><LocaleText value={capCommanderName(profile.commanderName)}/></strong></div></div>
   </LeaderCapsule>
 
   <MetricsIsland label={translateLive("National command indicators")}>
@@ -80,7 +80,7 @@ export function TopBar(){
   <div className="top-actions clock-island">
    <div className="clock-speed-card">
    <div className="speed-segment" aria-label={translateLive("Game speed controls")}>{speeds.map(item=><button key={item.speed} aria-pressed={item.speed===speed} className={item.speed===speed?'active':''} onClick={()=>setSpeed(item.speed)} title={translateLive(item.hint)}><strong><LocaleText value={item.label}/></strong><small><LocaleText value={item.speed===0?tr(lang,'pause'):item.hint}/></small></button>)}</div>
-   <div className="campaign-clock"><small><LocaleText value={"CAMPAIGN DATE"}/></small><strong><LocaleText value={gameDate(useGameStore.getState())}/></strong></div>
+   <div className="campaign-clock"><small><LocaleText value={"CAMPAIGN DATE"}/></small><strong><LocaleText value={gameDate(useGameStore.getState())}/></strong><span className="days-in-office" data-testid="days-in-office">{daysInOffice(lang,day)}</span></div>
    </div>
    <button data-guide="nation" className="national-flag-card" aria-pressed={selectedCountryId===playerCountryId} title={translateLive("Open your nation")} aria-label={translateLive("Open your nation")} onClick={()=>{setOptionsOpen(false);useGameStore.getState().selectCountry(selectedCountryId===playerCountryId?null:playerCountryId)}}><b>{flagEmoji(player.iso2)}</b><span><strong><LocaleText value={player.name}/></strong><small><LocaleText value={player.politics.regime}/></small><em><LocaleText value={"Open your nation"}/></em></span></button>
   </div>

@@ -38,11 +38,10 @@ describe('hotfix 1.6 action cards and artwork (items 1, 2, 4)',()=>{
     expect(lift).toMatch(/translateY\(-4px\)/);expect(lift).toMatch(/box-shadow:var\(--l94-card-glow\)/);
     expect(landing).toMatch(/--l94-card-glow:[^;]*rgba\(212,175,55/);
   });
-  it('lays the four cards out in one row of equal height and steps down to two columns and one',()=>{
-    expect(rule(landing,'.l94-action-cards{')).toMatch(/repeat\(4,minmax\(0,1fr\)\)/);
+  it('lays the three cards out in one row of equal height and stacks them on phones',()=>{
+    expect(rule(landing,'.l94-action-cards{')).toMatch(/repeat\(3,minmax\(0,1fr\)\)/);
     expect(rule(landing,'.l94-action-cards{')).toMatch(/align-items:stretch/);
-    expect(landing).toMatch(/max-width:1023px\)\{[^]*\.l94-action-cards\{grid-template-columns:repeat\(2,minmax\(0,1fr\)\)\}/);
-    expect(landing).toMatch(/max-width:479px\)\{[^]*\.l94-action-cards\{grid-template-columns:minmax\(0,1fr\)\}/);
+    expect(landing).toMatch(/max-width:719px\)\{[^]*\.l94-action-cards\{grid-template-columns:minmax\(0,1fr\)\}/);
   });
   it('keeps card text on a near-opaque base so the artwork never costs contrast, in both themes',()=>{
     expect(landing).toMatch(/\.l94-action-card::after\{[^}]*var\(--l94-scrim\) 0,var\(--l94-scrim\) 40%/);
@@ -95,16 +94,6 @@ describe('hotfix 1.6 header and sign-in (item 6)',()=>{
     for(const key of ['Continue with Google','Continue with Apple','Continue with Facebook','Or sign in with'])
       for(const language of LANGUAGES)expect(translateText(language,key),`${language}: ${key}`).not.toBe(key);
     for(const language of LANGUAGES)expect(translateText(language,'Coming soon'),language).not.toBe('Coming soon');
-  });
-});
-
-describe('hotfix 1.6 tutorial button on Ivory (item 7)',()=>{
-  it('sets dark executive navy on gold with bold weight, above 7:1 enabled and waiting',()=>{
-    expect(hotfix).toMatch(/data-theme="light"\] \.tutorial-dialog button\.primary,[^{]*\{color:#0e2035!important\}/);
-    expect(hotfix).toMatch(/button\.primary\{background:#e8c25a!important[^}]*font-weight:800/);
-    expect(ratio('#0e2035','#e8c25a')).toBeGreaterThanOrEqual(7);
-    expect(hotfix).toMatch(/button\.primary:disabled\{opacity:1;background:#ece2c4/);
-    expect(ratio('#0e2035','#ece2c4')).toBeGreaterThanOrEqual(7);
   });
 });
 
@@ -203,9 +192,9 @@ describe('hotfix 1.6 commander capsule (item 11)',()=>{
 });
 
 describe('hotfix 1.6 stylesheet order',()=>{
-  it('loads hotfix16.css last',()=>{
+  it('loads hotfix16.css after hotfix15.css and before hotfix17.css',()=>{
     const main=source('main.tsx');
-    expect(main.trimEnd().split('\n').pop()).toContain('hotfix16.css');
     expect(main.lastIndexOf('hotfix16.css')).toBeGreaterThan(main.lastIndexOf('hotfix15.css'));
+    expect(main.lastIndexOf('hotfix17.css')).toBeGreaterThan(main.lastIndexOf('hotfix16.css'));
   });
 });

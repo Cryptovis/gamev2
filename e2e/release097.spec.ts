@@ -51,7 +51,7 @@ for(const width of [1440,390])test(`0.97 ${width}px Light goals, commodity excha
  await page.setViewportSize({width,height:900});await page.addInitScript(()=>localStorage.setItem('trp-appearance-v1','light'));await page.emulateMedia({reducedMotion:'reduce'});
  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
  let state=campaignFixture('en');state.selectedCountryId=null;state.countries.TUR.economy.treasury=10000;state=placeIndustrialOrder(state,'BGR','fuel',1,'buy',1);expect(Object.keys(state.industrialContracts).length).toBeGreaterThan(0);
- await resumeFixture(page,state);await surface(page.locator('.day-chip'));
+ await resumeFixture(page,state);await surface(page.locator('.campaign-clock'));
  await expect(page.locator('.executive-coordinate-grid')).toHaveCSS('opacity','0.04');await expect(page.locator('.executive-coordinate-grid')).toHaveCSS('pointer-events','none');
  await page.locator('[data-guide="rail-goals"]').click();
  for(const card of await page.locator('#objectives-window .floating-objectives>div').all())await surface(card);

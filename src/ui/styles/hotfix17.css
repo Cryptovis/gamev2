@@ -1,0 +1,77 @@
+/* Playtest hotfix 1.7. Loaded after hotfix16.css. Landing layout lives in landing094.css; this sheet carries items 2 to 6. */
+:root{
+ --h17-gold:#d4af37;--h17-gold-soft:rgba(212,175,55,.55);--h17-ink-days:#e6d9b8;
+ --h17-grat:rgba(212,175,55,.07);--h17-grat-strong:rgba(212,175,55,.14);--h17-wash-a:rgba(26,58,92,.55);--h17-wash-b:rgba(155,59,59,.14);--h17-base:#0a1625;
+ --h17-header-bg:#182e46;--h17-header-line:#526c86;--h17-header-ink:#eef3f8;
+}
+:root[data-theme="light"]{
+ --h17-gold:#9a7412;--h17-gold-soft:rgba(154,116,18,.5);--h17-ink-days:#142c46;
+ --h17-grat:rgba(20,44,70,.07);--h17-grat-strong:rgba(20,44,70,.13);--h17-wash-a:rgba(212,175,55,.18);--h17-wash-b:rgba(24,59,96,.1);--h17-base:#f1ecdd;
+ --h17-header-bg:#f3efe5;--h17-header-line:#8192a1;--h17-header-ink:#142c46;
+}
+
+/* Item 2: setup wizard backdrop. A graticule over a soft vignette instead of a flat fill, in both themes. */
+:root .campaign-wizard-backdrop{
+ background-color:var(--h17-base)!important;
+ background-image:
+  radial-gradient(ellipse 80% 70% at 50% 45%,transparent 45%,rgba(2,8,16,.38) 100%),
+  repeating-radial-gradient(circle at 50% 120%,transparent 0 118px,var(--h17-grat-strong) 118px 119px),
+  repeating-linear-gradient(0deg,transparent 0 63px,var(--h17-grat) 63px 64px),
+  repeating-linear-gradient(90deg,transparent 0 63px,var(--h17-grat) 63px 64px),
+  radial-gradient(1100px 620px at 18% 10%,var(--h17-wash-a),transparent 62%),
+  radial-gradient(900px 560px at 92% 100%,var(--h17-wash-b),transparent 60%)!important;
+}
+:root[data-theme="light"] .campaign-wizard-backdrop{
+ background-image:
+  radial-gradient(ellipse 80% 70% at 50% 45%,transparent 50%,rgba(20,44,70,.14) 100%),
+  repeating-radial-gradient(circle at 50% 120%,transparent 0 118px,var(--h17-grat-strong) 118px 119px),
+  repeating-linear-gradient(0deg,transparent 0 63px,var(--h17-grat) 63px 64px),
+  repeating-linear-gradient(90deg,transparent 0 63px,var(--h17-grat) 63px 64px),
+  radial-gradient(1100px 620px at 18% 10%,var(--h17-wash-a),transparent 62%),
+  radial-gradient(900px 560px at 92% 100%,var(--h17-wash-b),transparent 60%)!important;
+}
+/* Item 2: one poster width on every step. This is Step 2's 34 / 66 split, applied to Steps 1, 3 and 4. */
+@media (min-width:761px){
+ :root .campaign-wizard-backdrop .campaign-wizard,:root .campaign-wizard-backdrop .campaign-wizard[data-step]{grid-template-columns:minmax(0,34fr) minmax(0,66fr)}
+}
+
+/* Item 3: Command Tutorial primary button in Ivory. Dark executive navy, bold, in every state and on every tutorial surface. */
+:root[data-theme="light"] .tutorial-dialog button.primary,
+:root[data-theme="light"] .tutorial-dialog.feature-tour button.primary,
+:root[data-theme="light"] .tutorial-dialog.guided-card button.primary,
+:root[data-theme="light"] .tutorial-dialog button.primary:is(:hover,:focus,:focus-visible,:active,:disabled),
+:root[data-theme="light"] .tutorial-dialog button.primary *{color:#0e2035!important;-webkit-text-fill-color:#0e2035!important;font-weight:700!important;text-shadow:none!important;opacity:1}
+:root[data-theme="light"] .tutorial-dialog button.primary{background:#e8c25a!important;border:1px solid #8a6508!important;letter-spacing:.04em}
+:root[data-theme="light"] .tutorial-dialog button.primary:hover:not(:disabled){background:#f0cf72!important}
+:root[data-theme="light"] .tutorial-dialog button.primary:disabled{background:#ece2c4!important;border-style:dashed!important;cursor:not-allowed}
+
+/* Item 4: the campaign clock carries Days in Office under the date; the capsule keeps only portrait and name. */
+:root .topbar .campaign-clock{flex-wrap:wrap;row-gap:2px}
+:root .topbar .campaign-clock .days-in-office{flex:1 0 100%;text-align:center;color:var(--h17-ink-days);font:600 11.5px/1.25 system-ui,sans-serif;letter-spacing:.02em;white-space:nowrap}
+:root .topbar .campaign-clock strong{font-size:13px}
+:root[data-theme="light"] .topbar .campaign-clock{background:var(--surface-raised)!important}
+:root .topbar .leader-capsule{width:max-content;max-width:100%;gap:10px}
+:root .topbar .command-overview-island .leader-capsule{flex:0 0 auto}
+:root .topbar .leader-capsule .brand-block{min-width:0}
+:root .topbar .leader-capsule .brand-line{flex-wrap:nowrap}
+:root .topbar .leader-capsule .brand-line>strong{display:block;max-width:20ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+ font:600 clamp(16px,1.3vw,19px)/1.25 Georgia,"Times New Roman",serif;letter-spacing:.015em;
+ text-shadow:0 0 1px var(--h17-gold-soft),0 1px 0 rgba(212,175,55,.28)}
+:root[data-theme="light"] .topbar .leader-capsule .brand-line>strong{text-shadow:0 0 1px rgba(154,116,18,.35)}
+@media (max-width:760px){:root .topbar .campaign-clock .days-in-office{font-size:10.5px}:root .topbar .leader-capsule .brand-line>strong{max-width:12ch}}
+@media (forced-colors:active){:root .topbar .campaign-clock .days-in-office{color:CanvasText}}
+
+/* Item 5: Diplomatic Hub action cards. The artwork sits on the card with no oval clip, border or disc behind it. */
+:root .hub-card .hub-card-art,:root .hub-card.tone-danger .hub-card-art{border-radius:0;border:0;background:transparent;overflow:visible;box-shadow:none}
+:root .hub-card .hub-card-art>*{box-shadow:none}
+
+/* Item 6: National Command header is solid. The map and content never show through behind the name and the close button. */
+:root #country-section-window :is(.executive-header,.floating-command-header,.command-window-header),
+:root .command-panel>.national-panel-heading{background:var(--h17-header-bg)!important;background-image:none!important;opacity:1;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;border-bottom:1px solid var(--h17-header-line)!important;color:var(--h17-header-ink)}
+:root #country-section-window :is(.executive-header,.floating-command-header,.command-window-header) :is(strong,h2,h3,small,p){color:var(--h17-header-ink)!important}
+/* Item 6: no rail bands. The dock buttons float over the map. */
+:root :is(.command-rail,.command-rail-left,.command-rail-right,.command-rail.map-help-cluster),
+:root :is(.command-rail,.command-rail-left,.command-rail-right,.map-help-cluster)::before,
+:root :is(.command-rail,.command-rail-left,.command-rail-right,.map-help-cluster)::after{background:transparent!important;background-image:none!important;border:0!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;padding:0!important;outline:0}
+:root :is(.command-rail,.command-rail-left,.command-rail-right,.map-help-cluster)::before,
+:root :is(.command-rail,.command-rail-left,.command-rail-right,.map-help-cluster)::after{content:none!important;display:none!important}

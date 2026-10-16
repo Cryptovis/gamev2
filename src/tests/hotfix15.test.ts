@@ -133,7 +133,7 @@ describe('hotfix 1.5 HUD docks (item 10)',()=>{
     expect(hotfix).toMatch(/\.map-help-cluster \.rail-button/);
     const main=source('main.tsx');
     expect(main.lastIndexOf('hotfix15.css')).toBeGreaterThan(main.lastIndexOf('playtest130.css'));
-    expect(main.trimEnd().split('\n').slice(-2).join('\n')).toContain('hotfix15.css');
+    expect(main.trimEnd().split('\n').slice(-3).join('\n')).toContain('hotfix15.css');
   });
   it('gives forced-colors users system colours',()=>{
     expect(hotfix).toMatch(/forced-colors:active[^]*ButtonFace/);
