@@ -1,0 +1,44 @@
+/* Playtest hotfix 1.8. Loaded after hotfix17.css. Item 1 lives in landing094.css; this sheet carries items 2 to 5. */
+:root{
+ --h18-good-bg:rgba(74,222,128,.15);--h18-good-ink:#4ade80;--h18-warn-bg:rgba(217,119,6,.12);--h18-warn-ink:#fcd34d;
+ --h18-cred-bg:rgba(255,255,255,.04);--h18-cred-line:rgba(212,175,55,.35);--h18-cred-label:#d5c6a4;
+}
+:root[data-theme="light"]{
+ --h18-good-ink:#166534;--h18-warn-ink:#92400e;--h18-cred-bg:rgba(20,44,70,.04);--h18-cred-line:rgba(154,116,18,.45);--h18-cred-label:#465b70;
+}
+
+/* Item 2: the leadership quote sits centred in the wizard's right-hand panel with even margins. */
+:root .campaign-wizard .lw--compact{width:min(560px,100%);margin:clamp(14px,3vh,28px) auto;padding:14px 22px;justify-items:center;text-align:center;
+ border:1px solid var(--h18-cred-line);border-radius:10px;background:var(--h18-cred-bg)}
+:root .campaign-wizard .lw--compact .lw-body{justify-items:center}
+:root .campaign-wizard .lw--compact .lw-caption{justify-content:center}
+
+/* Item 3: National Command is a compact executive card, and the credentials are plain read-only rows. */
+:root .player-options-modal{width:min(680px,calc(100vw - 24px))!important;max-width:680px!important;height:auto!important;max-height:calc(100dvh - 56px)!important}
+:root .player-options-layout{display:grid;grid-template-columns:190px minmax(0,1fr);align-items:start}
+:root .player-options-modal .commander-profile-card{padding:16px}
+:root .player-options-modal .commander-profile-card h3{font-size:20px;overflow-wrap:anywhere}
+:root .player-options-modal .commander-profile-hero svg,:root .player-options-modal .commander-profile-hero .portrait-generated{max-width:100%}
+.leader-credentials .credential-list{display:grid;gap:8px;margin:12px 0 0;padding:0}
+.leader-credentials .credential-row{display:grid;grid-template-columns:minmax(110px,150px) minmax(0,1fr);gap:4px 14px;align-items:baseline;padding:10px 12px;border:1px solid var(--h18-cred-line);border-radius:10px;background:var(--h18-cred-bg)}
+.leader-credentials dt{margin:0;color:var(--h18-cred-label);font:700 11px/1.3 system-ui,sans-serif;letter-spacing:.1em;text-transform:uppercase}
+.leader-credentials dd{margin:0;min-width:0;overflow-wrap:anywhere;color:var(--ink);font:600 15px/1.35 Georgia,"Times New Roman",serif}
+.leader-credentials .credential-ideology{text-transform:capitalize}
+.leader-credentials .credential-perk dd{display:grid;gap:3px}
+.leader-credentials .credential-perk dd span{font:400 13px/1.45 system-ui,sans-serif;color:var(--ink-muted)}
+.leader-credentials .credential-note{margin:12px 0 0;color:var(--ink-muted);font:400 12px/1.45 system-ui,sans-serif}
+@media (max-width:560px){
+ :root .player-options-layout{grid-template-columns:minmax(0,1fr)}
+ .leader-credentials .credential-row{grid-template-columns:minmax(0,1fr)}
+}
+
+/* Item 4: organization badges sit side by side. Member is green, non-member is amber. */
+.ia-org-badges{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+:root .ia-organization-grid .ia-badge[data-tone="good"]{background:var(--h18-good-bg);color:var(--h18-good-ink);border-color:transparent}
+:root .ia-organization-grid .ia-badge[data-tone="warn"]{background:var(--h18-warn-bg);color:var(--h18-warn-ink);border-color:transparent}
+
+/* Item 5: the hardware transfer card is bounded and carries its diplomatic context. */
+:root .ia-hardware-card{width:100%;max-width:680px;margin-inline:auto}
+:root .ia-hardware-card .ia-section-note,:root .ia-hardware-card .ia-section-context{max-width:none}
+:root .ia-hardware-card .ia-section-context{margin:0;padding:10px 12px;border-left:3px solid var(--h18-cred-line);border-radius:0 8px 8px 0;background:var(--h18-cred-bg);color:var(--ink);font:400 13px/1.5 system-ui,sans-serif}
+@media (forced-colors:active){:root .ia-organization-grid .ia-badge{border:1px solid ButtonText;background:Canvas;color:CanvasText}}

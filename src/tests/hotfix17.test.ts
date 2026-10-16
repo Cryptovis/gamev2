@@ -137,8 +137,8 @@ describe('hotfix 1.7 National Command header and rails (item 6)',()=>{
 });
 
 describe('hotfix 1.7 stylesheet order',()=>{
-  it('loads hotfix17.css last',()=>{
+  it('loads hotfix17.css before hotfix18.css',()=>{
     const main=source('main.tsx');
-    expect(main.trimEnd().split('\n').pop()).toContain('hotfix17.css');
+    expect(main.lastIndexOf('hotfix18.css')).toBeGreaterThan(main.lastIndexOf('hotfix17.css'));
   });
 });

@@ -5,7 +5,7 @@ import {LocaleText,translateLive} from '../../../i18n/localeText';
 import {previewOrganizationCommand} from '../../../engine/systems/organizations/previews';
 export const statusLabel=(value:string)=>({nonMember:'Non-member',Observer:'Observer',Member:'Member',PermanentCouncil:'Permanent council',Chair:'Chair',active:'Active',suspended:'Suspended',withdrawalPending:'Withdrawal pending',draft:'Draft',debate:'Debate',voting:'Voting',adopted:'Adopted',rejected:'Rejected',implementing:'Implementing',expired:'Expired',revoked:'Revoked',failed:'Failed',paused:'Paused',closed:'Closed',defaulted:'Defaulted',cancelled:'Cancelled',pending:'Pending',paid:'Paid',applied:'Applied',yes:'Yes',no:'No',abstain:'Abstain',loan:'Loan',grant:'Grant',arms:'Arms embargo',trade:'Trade embargo',finance:'Financial restriction',food:'Food',medicine:'Medicine',humanitarian:'Humanitarian'}[value]??'Unknown');
 export function Metrics({rows}:{rows:string[][]}){return <dl className="ia-metrics">{rows.map(([label,value],i)=><div key={label+i}><dt><LocaleText value={label}/></dt><dd><LocaleText value={value}/></dd></div>)}</dl>;}
-export function Badge({value}:{value:string}){return <span className="ia-badge"><LocaleText value={statusLabel(value)}/></span>;}
+export function Badge({value,tone}:{value:string;tone?:'good'|'warn'}){return <span className="ia-badge" data-tone={tone}><LocaleText value={statusLabel(value)}/></span>;}
 export type ReviewAction=(command:OrganizationCommand,title?:string)=>void;
 export function ReviewedAction({state,command,onReview,label='Review action'}:{state:GameState;command:OrganizationCommand;onReview:ReviewAction;label?:string}){
  const preview=previewOrganizationCommand(state,command);

@@ -13,6 +13,7 @@ export const UI_CATALOG_LANDING:Record<string,[string,string,string,string]>={
  'Historical scenarios':['Tarihî senaryolar','Escenarios históricos','历史剧本','Исторические сценарии'],
  'Coming soon':['Yakında','Próximamente','敬请期待','Скоро'],
  'Player Profile':['Oyuncu Profili','Perfil de Jugador','玩家档案','Профиль Игрока'],
+ 'This panel manages sovereign defense materiel transfers to bilateral partners and ensures compliance with multilateral arms embargoes.':['Bu panel, ikili ortaklara yapılan egemen savunma malzemesi devirlerini yönetir ve çok taraflı silah ambargolarına uyumu sağlar.','Este panel gestiona las transferencias soberanas de material de defensa a socios bilaterales y garantiza el cumplimiento de los embargos multilaterales de armas.','本面板管理向双边伙伴转让的主权国防物资，并确保遵守多边武器禁运。','Эта панель управляет суверенными поставками оборонных материалов двусторонним партнёрам и обеспечивает соблюдение многосторонних оружейных эмбарго.'],
  'Continue with Last Saved Campaign':['Son Kaydedilen Kampanyayla Devam Et','Continuar con la última campaña guardada','继续上次保存的战役','Продолжить последнюю сохранённую кампанию'],
  'Last campaign':['Son kampanya','Última campaña','最近的战役','Последняя кампания'],
  'Last saved':['Son kayıt','Último guardado','上次保存','Последнее сохранение'],

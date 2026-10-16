@@ -71,3 +71,14 @@ Six UI items from the third live playtest (`src/ui/styles/hotfix17.css` is loade
 - The tutorial NEXT button rules moved from `hotfix16.css` to `hotfix17.css` and now cover hover, focus, active and disabled, the feature tour and the guided card, with weight 700.
 - Rail backgrounds were already transparent in earlier sheets; hotfix17 repeats the rule for the left rail, the right rail and the map cluster, including pseudo-elements, so no later sheet can bring a band back. The National Command header is solid on `#country-section-window` (all three header variants) and on the side panel heading.
 - Not run here: vitest itself, real `tsc`, `vite build`, Playwright and the determinism replay. No file under `src/engine` or `src/simulation` was touched.
+
+## Playtest hotfix 1.8
+
+Five UI items from the fourth live playtest (`src/ui/styles/hotfix18.css` is loaded last and carries items 2 to 5; item 1 lives in `landing094.css`).
+
+- The wallpaper was `position:absolute` inside the scrolling landing layer, which is why it detached. `.l94-backdrop` and the gold frame are now `position:fixed` with `background-attachment:fixed`. The language bar moved to the right of the dock (second row on narrow screens). The title uses `clamp(2.1rem,4.2vw,3.2rem)`, with a container-width guard so it still fits at 320px. The brand scrim was widened and the language label and "No account needed" use full ink colour to stay above 7:1 over the artwork.
+- The wizard lost all step kickers, the top subtitle and the Step 2 intro block (it held only the kicker). The System note shows only while System is selected. The old kicker strings stay in the catalogs, unused.
+- National Command is 680px wide and its height follows the content. The portrait picker, the identity form and `AvatarPicker` usage are gone from the menu; `AvatarPicker.tsx` itself is now unused. Credentials are rows (name, citizenship with flag, date of birth, ideology, starting perk). Their labels live in `src/ui/panels/leaderCredentials.ts`, not in the catalogs, because the shared catalog maps the single word IDEOLOGY to an unrelated term in Chinese (伊斯兰主义). That catalog row is outside this hotfix and was not changed. A save with no birth date shows "Not recorded" in the local language.
+- Badge colours: dark uses the requested #4ade80 and #fcd34d. Ivory uses #166534 and #92400e instead of #15803d and #b45309, which measure 4.05 and 3.90 on the tinted badge background. The roster table badges are unchanged.
+- The hardware card keeps the existing one-line note and adds the requested context sentence below it, bounded at 680px.
+- Not run here: vitest itself, real `tsc`, `vite build`, Playwright and the determinism replay. No file under `src/engine` or `src/simulation` was touched.
