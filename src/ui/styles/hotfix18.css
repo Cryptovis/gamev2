@@ -52,3 +52,93 @@
 :root .ia-hardware-card .ia-section-note,:root .ia-hardware-card .ia-section-context{max-width:none}
 :root .ia-hardware-card .ia-section-context{margin:0;padding:10px 12px;border-left:3px solid var(--h18-cred-line);border-radius:0 8px 8px 0;background:var(--h18-cred-bg);color:var(--ink);font:400 13px/1.5 system-ui,sans-serif}
 @media (forced-colors:active){:root .ia-organization-grid .ia-badge{border:1px solid ButtonText;background:Canvas;color:CanvasText}}
+
+/* Sovereign Emblem Rail Buttons with Dynamic Text Overlay */
+:root .command-rail .rail-button,
+:root[data-theme="light"] .command-rail .rail-button,
+:root[data-theme="dark"] .command-rail .rail-button,
+:root .map-help-cluster .rail-button,
+:root[data-theme="light"] .map-help-cluster .rail-button,
+:root[data-theme="dark"] .map-help-cluster .rail-button {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  width: 76px !important;
+  min-width: 76px !important;
+  min-height: 76px !important;
+  height: 76px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
+  cursor: pointer !important;
+  transition: transform 0.16s ease, filter 0.16s ease !important;
+}
+:root .command-rail .rail-button::before,
+:root .command-rail .rail-button::after,
+:root .map-help-cluster .rail-button::before,
+:root .map-help-cluster .rail-button::after {
+  content: none !important;
+  display: none !important;
+}
+:root .command-rail .rail-button:hover,
+:root .map-help-cluster .rail-button:hover {
+  transform: translateY(-2px) scale(1.05) !important;
+  filter: drop-shadow(0 6px 14px rgba(212, 175, 55, 0.45)) !important;
+}
+:root .command-rail .rail-button.active,
+:root[data-theme="light"] .command-rail .rail-button.active,
+:root[data-theme="dark"] .command-rail .rail-button.active,
+:root .map-help-cluster .rail-button.active,
+:root[data-theme="light"] .map-help-cluster .rail-button.active,
+:root[data-theme="dark"] .map-help-cluster .rail-button.active {
+  transform: scale(1.06) !important;
+  filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.7)) brightness(1.08) !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+:root .command-rail .rail-button .rail-emblem-wrap {
+  position: relative !important;
+  width: 72px !important;
+  height: 72px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+:root .command-rail .rail-button .rail-emblem-art {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  display: block !important;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.35)) !important;
+}
+:root .command-rail .rail-button .rail-emblem-text {
+  position: absolute !important;
+  bottom: 8.5px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: 76% !important;
+  text-align: center !important;
+  font-family: Georgia, 'Times New Roman', serif !important;
+  font-size: 7.5px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.05em !important;
+  text-transform: uppercase !important;
+  color: #381e05 !important;
+  text-shadow: 0 1px 0 rgba(255, 235, 175, 0.75) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  pointer-events: none !important;
+  user-select: none !important;
+  line-height: 1 !important;
+}
+:root .command-rail .rail-button > b {
+  position: absolute !important;
+  top: 2px !important;
+  right: 2px !important;
+  z-index: 5 !important;
+}
+

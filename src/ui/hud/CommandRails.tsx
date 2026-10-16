@@ -35,8 +35,8 @@ import {InternationalAffairsWorkspace} from '../panels/InternationalAffairsWorks
 
 type ToolId='objectives'|'market'|'pulse'|'map'|'resources'|'sitrep'|'alerts'|'diplomacy'|'desk'|'alliances';
 
-function RailButton({active,badge,label,children,onClick,guide}:{active:boolean;badge?:number|string;label:string;children:ReactNode;onClick:()=>void;guide?:string}){
- return <button data-guide={'rail-'+(guide??(label==='DIPLOMACY'?'diplo':label.toLowerCase()))} className={active?'rail-button active':'rail-button'} onClick={onClick} aria-pressed={active} title={translateLive(`${label} · ${active?'Open — click to close':'Closed — click to open'}`)}><span><LocaleText value={children}/></span>{badge!==undefined&&badge!==0&&<b><LocaleText value={badge}/></b>}<small><LocaleText value={label}/></small></button>;
+function RailButton({active,badge,label,children,onClick,guide,emblem}:{active:boolean;badge?:number|string;label:string;children?:ReactNode;onClick:()=>void;guide?:string;emblem?:string}){
+ return <button data-guide={'rail-'+(guide??(label==='DIPLOMACY'?'diplo':label.toLowerCase()))} className={active?'rail-button active':'rail-button'} onClick={onClick} aria-pressed={active} title={translateLive(`${label} · ${active?'Open — click to close':'Closed — click to open'}`)}>{emblem?<span className="rail-emblem-wrap"><img className="rail-emblem-art" src={`/assets/command/emblem-${emblem}.png`} alt="" aria-hidden="true"/><small className="rail-emblem-text"><LocaleText value={label}/></small></span>:(<><span><LocaleText value={children}/></span><small><LocaleText value={label}/></small></>)}{badge!==undefined&&badge!==0&&<b><LocaleText value={badge}/></b>}</button>;
 }
 
 export function CommandRails(){
@@ -56,22 +56,22 @@ export function CommandRails(){
 
  return <Suspense fallback={<div className="loading-popup"><LocaleText value="Loading command…"/></div>}>
   <nav className="command-rail command-rail-left" aria-label={translateLive("World command tools")}>
-   <RailButton active={['market','exchange','credit'].some(id=>open.has(id))} badge={activeTrades.length} label="MARKET" onClick={()=>toggle('market')}><NavigationArt kind="market"/></RailButton>
-   <RailButton active={open.has('alliances')} label="ALLIANCES" onClick={()=>toggle('alliances')}><CivicArt kind="bloc" size={36}/></RailButton>
-   <RailButton active={open.has('pulse')} badge={activeWars.length} label="WORLD" onClick={()=>toggle('pulse')}><NavigationArt kind="world"/></RailButton>
-   <RailButton active={open.has('resources')} badge={critical.length} label="RESOURCES" guide="supply" onClick={()=>toggle('resources')}><AssetThumbnail asset="logistics" size={36}/></RailButton>
+   <RailButton active={['market','exchange','credit'].some(id=>open.has(id))} badge={activeTrades.length} label="MARKET" emblem="market" onClick={()=>toggle('market')}><NavigationArt kind="market"/></RailButton>
+   <RailButton active={open.has('alliances')} label="ALLIANCES" emblem="alliances" onClick={()=>toggle('alliances')}><CivicArt kind="bloc" size={36}/></RailButton>
+   <RailButton active={open.has('pulse')} badge={activeWars.length} label="WORLD" emblem="world" onClick={()=>toggle('pulse')}><NavigationArt kind="world"/></RailButton>
+   <RailButton active={open.has('resources')} badge={critical.length} label="RESOURCES" guide="supply" emblem="resources" onClick={()=>toggle('resources')}><AssetThumbnail asset="logistics" size={36}/></RailButton>
   </nav>
   <nav className={`command-rail command-rail-right ${state.selectedCountryId?'country-open':'country-closed'}`} aria-label={translateLive("Information tools")}>
-   <RailButton active={open.has('desk')} badge={deskOffers(state).length} label="DESK" onClick={()=>toggle('desk')}><CivicArt kind="letter" size={36}/></RailButton>
-   <RailButton active={open.has('objectives')} badge={`${done}/6`} label="GOALS" onClick={()=>toggle('objectives')}><NavigationArt kind="objectives"/></RailButton>
-   <RailButton active={open.has('diplomacy')} badge={living(state).letters.filter(m=>!m.read).length+state.leadership.messages.filter(m=>!m.read).length} label="DIPLOMACY" onClick={()=>toggle('diplomacy')}><NavigationArt kind="diplomacy"/></RailButton>
-   <RailButton active={open.has('alerts')} badge={commandAlerts(state).length} label="ALERTS" onClick={()=>toggle('alerts')}><NavigationArt kind="alerts"/></RailButton>
-   <RailButton active={open.has('sitrep')} badge={newsEntries(state).length} label="NEWS" onClick={()=>toggle('sitrep')}><NavigationArt kind="intel"/></RailButton>
+   <RailButton active={open.has('desk')} badge={deskOffers(state).length} label="DESK" emblem="desk" onClick={()=>toggle('desk')}><CivicArt kind="letter" size={36}/></RailButton>
+   <RailButton active={open.has('objectives')} badge={`${done}/6`} label="GOALS" emblem="goals" onClick={()=>toggle('objectives')}><NavigationArt kind="objectives"/></RailButton>
+   <RailButton active={open.has('diplomacy')} badge={living(state).letters.filter(m=>!m.read).length+state.leadership.messages.filter(m=>!m.read).length} label="DIPLOMACY" emblem="diplomacy" onClick={()=>toggle('diplomacy')}><NavigationArt kind="diplomacy"/></RailButton>
+   <RailButton active={open.has('alerts')} badge={commandAlerts(state).length} label="ALERTS" emblem="alerts" onClick={()=>toggle('alerts')}><NavigationArt kind="alerts"/></RailButton>
+   <RailButton active={open.has('sitrep')} badge={newsEntries(state).length} label="NEWS" emblem="news" onClick={()=>toggle('sitrep')}><NavigationArt kind="intel"/></RailButton>
   </nav>
 
   <nav className="command-rail map-help-cluster" aria-label={translateLive("Map and help tools")}>
-   <RailButton active={open.has('map')} label="MAP" onClick={()=>toggle('map')}><NavigationArt kind="map"/></RailButton>
-   <RailButton active={open.has('help')} label="HELP" onClick={()=>state.openTool(state.activeTool==='help'?null:'help',false)}><NavigationArt kind="help"/></RailButton>
+   <RailButton active={open.has('map')} label="MAP" emblem="map" onClick={()=>toggle('map')}><NavigationArt kind="map"/></RailButton>
+   <RailButton active={open.has('help')} label="HELP" emblem="help" onClick={()=>state.openTool(state.activeTool==='help'?null:'help',false)}><NavigationArt kind="help"/></RailButton>
   </nav>
   <Suspense fallback={<div className="loading-popup"><LocaleText value="Loading command…"/></div>}>
   {mounted.has('research')&&<ResearchWindow/>}
