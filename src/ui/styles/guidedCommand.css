@@ -58,6 +58,10 @@ body {
   border-radius: 9px;
   box-shadow: 0 2px 7px #07192366;
 }
+:is(.command-rail, .map-help-cluster, .rail-button) .navigation-art {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
 .navigation-art img,
 .asset-thumbnail img {
   display: block;

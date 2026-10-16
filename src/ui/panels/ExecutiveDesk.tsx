@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { LocaleText, translateLive } from '../../i18n/localeText';
 import { flagEmoji } from '../../data/countryThemes';
 import { useGameStore } from '../../store/gameStore';
@@ -12,10 +12,10 @@ import { CommandArt } from '../icons/CommandArt';
 import { deskCounts, deskNews, deskOffers, deskOperations, deskWars, DESK_TABS, type DeskCountdown, type DeskOffer, type DeskTab } from './executiveDeskModel';
 import { DESK_PROPOSALS_HINT } from '../hints/registry';
 
-const TAB_META: Record<DeskTab, { icon: string; label: string; empty: string }> = {
-  diplomacy: { icon: '✉️', label: 'Diplomacy', empty: 'No proposals are waiting for your answer.' },
-  war: { icon: '🪖', label: 'Wars', empty: 'Your country is at peace.' },
-  intel: { icon: '🕵️', label: 'Intelligence & crises', empty: 'No covert operation is running.' },
+const TAB_META: Record<DeskTab, { icon: ReactNode; label: string; empty: string }> = {
+  diplomacy: { icon: <CommandArt kind="diplomacy" size={20} />, label: 'Diplomacy', empty: 'No proposals are waiting for your answer.' },
+  war: { icon: <CommandArt kind="war" size={20} />, label: 'Wars', empty: 'Your country is at peace.' },
+  intel: { icon: <CommandArt kind="intel" size={20} />, label: 'Intelligence & crises', empty: 'No covert operation is running.' },
 };
 const OPERATION_LABEL = { gather_intelligence: 'Gather Intelligence', influence_campaign: 'Influence Campaign', sabotage_industry: 'Sabotage Industry', counter_network: 'Counter Network' } as const;
 

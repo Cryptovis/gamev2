@@ -9,8 +9,8 @@ import type {PreloadStage} from './preloadPipeline';
 export const PRELOAD_ASSETS:readonly string[]=[
   '/assets/command/campaign-cover.webp','/assets/command/administration-atlas-078.svg','/assets/command/civic-atlas-079.webp',
   '/assets/command/navigation-atlas.webp','/assets/command/resource-atlas.webp',
-  '/assets/visual-pack-1/ministry-economy.svg','/assets/visual-pack-1/ministry-defense.svg','/assets/visual-pack-1/ministry-science.svg',
-  '/assets/visual-pack-1/ministry-intelligence.svg','/assets/visual-pack-1/ministry-interior.svg','/assets/visual-pack-1/ministry-society.svg',
+  '/assets/visual-pack-2/ministry-economy.jpg','/assets/visual-pack-2/defense-war-room.jpg','/assets/visual-pack-2/ministry-science.jpg',
+  '/assets/visual-pack-2/ministry-intelligence.jpg','/assets/visual-pack-2/ministry-interior.jpg','/assets/visual-pack-2/ministry-society.jpg',
   '/assets/leaders/civilian-atlas.webp','/assets/leaders/military-atlas.webp','/assets/leaders/aviator-atlas.webp','/assets/leaders/worker-atlas.webp',
 ];
 
