@@ -1,13 +1,6 @@
 /* Entry pills have individual surfaces without a dark enclosing tray. */
-:root .entry-backdrop .entry-languages {
-  background: transparent !important; box-shadow: none !important;
-  border: 0; padding: 0; gap: 6px;
-}
-:root .entry-backdrop .entry-languages button {
-  border: 1px solid transparent;
-  box-shadow: none;
-  transition: border-color 150ms ease, background-color 150ms ease;
-}
+
+
 :root[data-theme] .entry-backdrop .entry-languages button:is(:hover, :focus-visible) { border-color: #d4af37 !important; }
 
 /* Content can scroll on unusually short screens; the footer never scrolls away. */
@@ -140,9 +133,7 @@
   :root .campaign-wizard[data-step="1"] .wizard-personal-fields :is(input, select) { width: 100%; min-width: 0; font-size: 13px; }
   :root .campaign-wizard-backdrop .campaign-wizard .wizard-leadership-quote blockquote { font-size: 14px; }
 }
-@media (prefers-reduced-motion: reduce) {
-  :root .entry-backdrop .entry-languages button { transition: none; }
-}
+
 
 :root[data-theme="light"] .campaign-wizard .wizard-stepper span:not(.active) b { background: var(--surface-raised); color: var(--ink); border: 1px solid var(--border); }
 :root[data-theme="light"] .campaign-wizard .wizard-personal-fields :is(input, select) { color-scheme: light; }

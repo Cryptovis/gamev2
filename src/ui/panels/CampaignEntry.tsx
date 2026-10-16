@@ -1,30 +1,6 @@
-import {BrandMark} from '../BrandMark';
-import {useEffect,useState} from 'react';
-import {version} from '../../../package.json';
-import {useGameStore} from '../../store/gameStore';
-import {LocaleText,translateLive} from '../../i18n/localeText';
-import {LANGUAGE_OPTIONS} from '../../i18n/gameI18n';
-import {enterDemoSession,leaveDemoSession,hasDemoSession,loginDemoAccount,registerDemoAccount,mathChallenge} from '../../session/demoAccounts';
-import {loadMostRecentSave} from '../../persistence/saveGame';
-import {CampaignSetup} from './CampaignSetup';
-export function CampaignEntry({onPlaying}:{onPlaying:(playing:boolean)=>void}){
- const complete=useGameStore(s=>s.playerProfile.setupComplete),language=useGameStore(s=>s.playerProfile.language);
- const [screen,setScreen]=useState<'login'|'register'|'hub'|'setup'|'game'>(hasDemoSession()?'hub':'login'),[username,setUsername]=useState(''),[password,setPassword]=useState(''),[email,setEmail]=useState(''),[answer,setAnswer]=useState(''),[challenge,setChallenge]=useState(mathChallenge),[error,setError]=useState(''),[busy,setBusy]=useState(false),[canContinue,setCanContinue]=useState(false),[checking,setChecking]=useState(true);
- useEffect(()=>{if(screen==='setup'&&complete)setScreen('game');if(screen==='game'&&!complete)setScreen('setup');},[complete,screen]);
- useEffect(()=>{if(screen!=='hub')return;let live=true;setChecking(true);loadMostRecentSave().then(saved=>{if(live)setCanContinue(Boolean(saved));}).catch(()=>{if(live)setError('Could not read saved progress. Try again.');}).finally(()=>{if(live)setChecking(false);});return()=>{live=false;};},[screen]);
- useEffect(()=>{onPlaying(screen==='game');},[screen,onPlaying]);
- useEffect(()=>{if(screen!=='game')useGameStore.getState().setSpeed(0);},[screen]);
- if(screen==='game')return null;
- if(screen==='setup')return <CampaignSetup onReturnToMenu={()=>{leaveDemoSession();setPassword('');setError('');setScreen('login');}}/>;
- const demo=()=>{enterDemoSession();setPassword('');setError('');setScreen('hub');};
- return <div className="entry-backdrop"><section className="entry-shell" aria-label={translateLive('Game entry')}><aside className="entry-art"><BrandMark/><span className="entry-tagline"><LocaleText value="Be the president you have always dreamed of."/></span><small translate="no">{version}</small></aside><div className="entry-content"><header><small><LocaleText value="DEMO / LOCAL PLAY"/></small><h1><LocaleText value={screen==='hub'?'Welcome to command':screen==='register'?'Create a demo account':'Sign in'}/></h1></header>
- {screen==='login'&&<div className="entry-languages">{LANGUAGE_OPTIONS.map(l=><button key={l.id} aria-pressed={l.id===language} onClick={()=>useGameStore.setState(s=>({playerProfile:{...s.playerProfile,language:l.id}}))}>{l.label}</button>)}</div>}
- {screen==='hub'?<div className="entry-game-menu"><button disabled={busy} data-entry="new-game" onClick={()=>{setError('');useGameStore.getState().resetGame();useGameStore.setState(s=>({playerProfile:{...s.playerProfile,language}}));setScreen('setup');}}><LocaleText value="Start a new game"/><small><LocaleText value="Create your leader and choose a country."/></small></button><button className="load-previous" disabled={checking||!canContinue||busy} onClick={async()=>{setBusy(true);try{if(await useGameStore.getState().loadLatest())setScreen('game');else setError('No compatible save found. Start a new game.');}catch{setError('Could not read saved progress. Try again.');}finally{setBusy(false);}}}><LocaleText value="Continue your game"/><small><LocaleText value={checking?'Checking saved progress…':canContinue?'Resume your latest compatible save.':'No saved game on this device.'}/></small></button><button disabled={busy} onClick={()=>{leaveDemoSession();setPassword('');setError('');useGameStore.getState().resetGame();setScreen('login');}}><LocaleText value="Back to sign in"/></button></div>:<form className="entry-form" onSubmit={async e=>{e.preventDefault();if(busy)return;setBusy(true);setError('');try{if(screen==='register'&&Number(answer)!==challenge.answer){setChallenge(mathChallenge());setAnswer('');throw Error('The answer is not correct. Try the new question.');}if(screen==='register')await registerDemoAccount(username,email,password);else await loginDemoAccount(username,password);setPassword('');setScreen('hub');}catch(e){setError(e instanceof Error?e.message:'Could not save your demo account.');}finally{setBusy(false);}}}>
- <label><LocaleText value="Username"/><input name="username" autoComplete="username" required maxLength={24} value={username} onChange={e=>setUsername(e.target.value)}/></label>
- {screen==='register'&&<label><LocaleText value="Email"/><input name="email" type="email" autoComplete="email" required value={email} onChange={e=>setEmail(e.target.value)}/></label>}
- <label><LocaleText value="Password"/><input name="password" type="password" autoComplete={screen==='register'?'new-password':'current-password'} required maxLength={128} minLength={screen==='register'?8:undefined} value={password} onChange={e=>setPassword(e.target.value)}/></label>
- {screen==='register'&&<label><LocaleText value="Math check"/><span data-testid="math-question">{challenge.question} = ?</span><input name="answer" inputMode="numeric" required value={answer} onChange={e=>setAnswer(e.target.value)}/></label>}
- <button className="primary" disabled={busy} type="submit"><LocaleText value={busy?'Please wait…':screen==='register'?'Create account':'Sign in'}/></button><button type="button" disabled={busy} onClick={()=>{setError('');setPassword('');setAnswer('');setChallenge(mathChallenge());setScreen(screen==='register'?'login':'register');}}><LocaleText value={screen==='register'?'I already have an account':'Create a demo account'}/></button><button type="button" data-entry="demo" disabled={busy} onClick={demo}><LocaleText value="DEMO — play without an account"/></button>
- </form>}
- {error&&<p className="entry-error" role="alert"><LocaleText value={error}/></p>}<p className="entry-note"><LocaleText value="Demo accounts and saves stay on this device. Online sign-in and email checks are not connected yet. The math question is a demo check, not bot protection."/></p></div></section></div>;
+import {LandingShell} from './landing/LandingShell';
+
+/** Entry flow for the app: landing, setup, loading, then the game. The flow itself lives in LandingShell. */
+export function CampaignEntry({onPlaying}:{onPlaying:(playing:boolean)=>void}) {
+  return <LandingShell onPlaying={onPlaying}/>;
 }

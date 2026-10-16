@@ -11,9 +11,9 @@
  border:1px solid rgba(232,197,112,.38)!important;border-radius:20px;
  background:var(--entry-surface)!important;box-shadow:0 40px 120px rgba(0,0,0,.65),inset 0 1px 0 rgba(255,236,186,.08)!important;overflow:hidden;
 }
-.entry-backdrop .entry-content{min-height:0;overflow:auto;scrollbar-width:thin;scrollbar-color:#b79a58 #141a18}
-.entry-backdrop .entry-content h1{font-size:32px}
-.entry-backdrop .entry-game-menu{margin-top:24px}
+
+
+
 .campaign-wizard-backdrop .campaign-wizard{grid-template-rows:122px minmax(0,1fr) 82px!important}
 .campaign-wizard-backdrop .setup-cover{grid-row:1/4;grid-column:1;height:auto;background:#141a18;display:flex;flex-direction:column;justify-content:flex-end;padding:36px}
 .campaign-wizard-backdrop .campaign-wizard>:is(.wizard-header,.wizard-body,.wizard-footer){grid-column:2}
@@ -85,12 +85,12 @@
 @media(max-width:760px){
  :is(.entry-backdrop,.campaign-wizard-backdrop){padding:12px;--entry-height:calc(100dvh - 24px)}
  .entry-backdrop .entry-shell,.campaign-wizard-backdrop .campaign-wizard{width:calc(100vw - 24px)!important;grid-template-columns:minmax(0,1fr);border-radius:16px}
- .entry-backdrop .entry-shell{grid-template-rows:64px minmax(0,1fr)}
- .entry-backdrop .entry-art{min-height:0;height:64px;padding:14px 20px;box-sizing:border-box}
- .entry-backdrop .entry-art>span{font-size:22px}
+ 
+ 
+ 
  .entry-backdrop .entry-art :is(p,small){display:none}
- .entry-backdrop .entry-content{padding:20px;justify-content:flex-start}
- .entry-backdrop .entry-content h1{font-size:26px}
+ 
+ 
  .campaign-wizard-backdrop .campaign-wizard{grid-template-rows:64px 105px minmax(0,1fr) 82px!important}
  .campaign-wizard-backdrop .setup-cover{grid-column:1;grid-row:1;height:64px;padding:14px 20px}
  .campaign-wizard-backdrop .setup-cover>span{font-size:22px}
