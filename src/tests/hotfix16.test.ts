@@ -69,7 +69,7 @@ describe('hotfix 1.6 footer and quote frame (items 3, 5)',()=>{
   });
   it('frames the quote in a centred translucent box with no left rule and a fixed height',()=>{
     const hero=rule(landing,'.lw--hero{');
-    expect(hero).toMatch(/margin:clamp\(8px,3vh,30px\) auto 0/);
+    expect(hero).toMatch(/margin:clamp\(0px,1\.5vh,14px\) auto clamp\(32px,8vh,80px\)/);
     expect(hero).toMatch(/height:var\(--lw-h\)/);expect(hero).toMatch(/overflow:hidden/);expect(hero).toMatch(/border-radius:8px/);
     expect(hero).toMatch(/border:1px solid var\(--l94-quote-line\)/);expect(hero).not.toMatch(/border-left/);
     expect(landing).toContain('--l94-quote-line:rgba(212,175,55,.25)');
