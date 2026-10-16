@@ -94,6 +94,9 @@
 .l94-hero{display:grid;gap:clamp(16px,3vh,28px);align-content:center;justify-items:center;text-align:center;min-width:0;container-type:inline-size}
 .l94-title{margin:0;font:700 clamp(2.1rem,4.2vw,3.2rem)/1.05 Georgia,"Times New Roman",serif;letter-spacing:-.01em;color:var(--ink);white-space:nowrap}
 @supports (font-size:1cqw){.l94-title{font-size:clamp(26px,min(4.2vw,11.4cqw),3.2rem)}}
+.l94-brand-logo{display:block;width:min(380px,82vw);max-height:170px;height:auto;margin:0 auto;object-fit:contain;filter:drop-shadow(0 6px 20px rgba(0,0,0,0.5));pointer-events:none;user-select:none}
+:root[data-theme="light"] .l94-brand-logo{filter:drop-shadow(0 4px 12px rgba(20,44,70,0.25))}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 .l94-lede{margin:0 auto;max-width:46ch;color:var(--ink);font:400 clamp(15px,1.5vw,18px)/1.55 var(--l94-sans)}
 .l94-actions{display:grid;gap:10px;justify-items:center;margin-top:8px}
 .l94-cta{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:56px;min-width:min(280px,100%);padding:14px 32px;border:1px solid var(--l94-gold);
