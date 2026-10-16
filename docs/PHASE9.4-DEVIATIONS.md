@@ -46,3 +46,16 @@ Ten UI items from the live playtest, applied on top of T18 (`src/ui/styles/hotfi
 - Organization emblems are filled colour discs with a per-organization palette (`ORGANIZATION_PALETTE`). The palette is fixed in both themes because each emblem carries its own background.
 - Title Case is applied to the five International Affairs tabs and to the section headings. Catalog lookup ignores case, so the existing translations still apply. The `OPENING PROFILE` row was changed to Title Case values; all-caps uses still upper-case it at render time.
 - Not run here: vitest, real `tsc`, `vite build`, Playwright and the determinism replay. No file under `src/engine` or `src/simulation` was touched.
+
+## Playtest hotfix 1.6
+
+Eleven UI items from the second live playtest, applied on top of Hotfix 1.5 (`src/ui/styles/hotfix16.css` is loaded last; items 1 to 5 live in `landing094.css`).
+
+- The top-right "Playing as guest" chip is gone. A signed-in profile name is now shown on the Player Profile card instead, so the signed-in state is still visible on the landing screen. The testid `landing-dossier` was kept.
+- The New Campaign card is always shown (it is the primary card when there is no save); the Play now hero stays for the no-session case only. The Last Campaign card sits in the same four-column row as the three art cards.
+- The quote box has a fixed height per breakpoint and four font-size buckets chosen from the quote length (`quoteSizeBucket`), so no quote can move the cards.
+- Social sign-in buttons (Google, Apple, Facebook) only show a "Coming soon" toast. No auth provider is wired.
+- The intelligence briefing risk and yield tiers are UI-side qualitative labels per operation kind, because the engine operation config is not exported and `src/engine` is off limits. Budget Cost is the real treasury difference of the command.
+- Width caps: Diplomatic Inbox 820px, Country Info 760px, intelligence briefing 600px.
+- The footer year is written as 2026, as the brief states.
+- Test harness note: the stand-in runner now maps `zod` to its v4 build, so the engine loads and the new intel tests run against the real engine. Still not run: vitest itself, real `tsc`, `vite build`, Playwright and the determinism replay. No file under `src/engine` or `src/simulation` was touched.
