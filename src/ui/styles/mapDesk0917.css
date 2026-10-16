@@ -9,6 +9,9 @@
 /* Desk tilt: the flat map lies on a desk, 18 degrees back. WorldMap only adds .desk-tilt for the flat projection on widths above 760 px.
    The HUD (.map-camera-hud, hover readout, legends) is outside the SVG and stays flat. Pointer maths: src/map/deskTilt.ts (keep the constants in sync). */
 .world-map{overflow:hidden}
+.world-map.flat-projection, .world-map.flat-projection .strategy-svg{background:#1d4258!important}
+:root[data-theme="light"] .world-map.flat-projection, :root[data-theme="light"] .world-map.flat-projection .strategy-svg{background:#1d4258!important}
+.strategy-svg.flat-svg{overflow:visible!important;contain:none!important}
 .world-map.desk-tilt{perspective:1600px;perspective-origin:50% 40%}
 .world-map.desk-tilt .strategy-svg{transform-origin:50% 100%;transform:rotateX(18deg) scale(1.12);transition:transform 190ms var(--motion-ease,ease-out)}
 .world-map.desk-tilt::before{/* soft desk edge shadow at the top */content:"";position:absolute;inset:0 0 auto 0;height:90px;pointer-events:none;background:linear-gradient(#000a,#0000);z-index:1}

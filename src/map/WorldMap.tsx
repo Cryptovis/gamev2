@@ -435,7 +435,7 @@ function WorldMapView() {
     </g>;
   });
 
-  return <div className={`world-map political-map${deskTiltActive?' desk-tilt':''}`}>
+  return <div className={`world-map political-map${deskTiltActive?' desk-tilt':''}${projectionMode === 'flat' ? ' flat-projection' : ' globe-projection'}`}>
     <div className="map-hover-readout">
       <strong><LocaleText value={hoveredCountry?.name ?? selectedCountry?.name ?? 'WORLD COMMAND'}/></strong>
       <span><LocaleText value={hoveredCountry ? `${hoveredCountry.region || 'Global'} · ${hoveredCountry.military.assessment.capability.toFixed(0)} MIL` : projectionMode === 'globe' ? 'drag globe · wheel zoom · click sovereign territory' : 'drag to pan · wheel zoom · click sovereign territory'}/></span>
@@ -477,8 +477,14 @@ function WorldMapView() {
         </symbol>
         <clipPath id="capital-flag-clip"><circle r="7" cy="-22"/></clipPath>
       </defs>
-      {projectionMode === 'flat' && <rect x="0" y="0" width={W} height={H} className="flat-ocean"/>}
-      <rect className="executive-coordinate-grid" width={W} height={H} fill="url(#executive-coordinate-grid)" aria-hidden="true" pointerEvents="none"/>
+      {projectionMode === 'flat' ? (
+        <>
+          <rect x="-4000" y="-2000" width="9200" height="4700" className="flat-ocean"/>
+          <rect className="executive-coordinate-grid" x="-4000" y="-2000" width="9200" height="4700" fill="url(#executive-coordinate-grid)" aria-hidden="true" pointerEvents="none"/>
+        </>
+      ) : (
+        <rect className="executive-coordinate-grid" width={W} height={H} fill="url(#executive-coordinate-grid)" aria-hidden="true" pointerEvents="none"/>
+      )}
       {projectionMode === 'globe' && <>
         <circle cx={W/2} cy={H/2+8} r={286*globeZoom*1.06} fill="url(#globe-atmosphere)" className="globe-atmosphere" pointerEvents="none"/>
         <path d={path({ type: 'Sphere' } as any) ?? ''} className="ocean-sphere"/>
