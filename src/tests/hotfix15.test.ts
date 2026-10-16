@@ -5,10 +5,11 @@ import {ORGANIZATION_IDS} from '../domain/organizations';
 import {OrganizationEmblem,ORGANIZATION_PALETTE} from '../ui/icons/OrganizationIcons';
 import {translateText} from '../i18n/localeText';
 
-const css=import.meta.glob<string>(['../ui/styles/hotfix15.css'],{query:'?raw',import:'default',eager:true});
-const sources=import.meta.glob<string>(['../ui/panels/CampaignSetup.tsx','../ui/panels/international/SanctionsTab.tsx','../ui/panels/international/OverviewTab.tsx','../ui/panels/ExecutiveDesk.tsx','../ui/panels/InternationalAffairsWorkspace.tsx','../main.tsx'],{query:'?raw',import:'default',eager:true});
-const hotfix=Object.values(css)[0];
-const source=(name:string)=>sources[`../ui/panels/${name}`]??sources[`../${name}`];
+import {readFileSync} from 'node:fs';
+
+const read=(rel:string)=>readFileSync(new URL(rel,import.meta.url),'utf8');
+const hotfix=read('../ui/styles/hotfix15.css');
+const source=(name:string)=>read(name==='main.tsx'?`../${name}`:`../ui/panels/${name}`);
 const TAB_LABELS=[...source('InternationalAffairsWorkspace.tsx').matchAll(/label:'([^']+)'/g)].map(m=>m[1]);
 const LANGUAGES=['tr','es','zh','ru'] as const;
 

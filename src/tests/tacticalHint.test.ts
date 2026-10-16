@@ -320,7 +320,7 @@ describe('Window chrome and the International Affairs pilot',()=>{
       await click(Array.from(host.querySelectorAll('button')).find(b=>b.textContent?.trim()===item.label)!);
       for(const note of REMOVED_NOTES)expect(host.textContent,`${item.id}: ${note}`).not.toContain(note);
     }
-    await click(Array.from(host.querySelectorAll('button')).find(b=>b.textContent?.trim()==='Resolutions & voting')!);
+    await click(Array.from(host.querySelectorAll('button')).find(b=>b.textContent?.trim()==='Resolutions & Voting')!);
     expect(host.querySelector('.ia-composer')).not.toBeNull();
   });
 });
