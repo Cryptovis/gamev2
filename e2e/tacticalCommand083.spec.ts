@@ -3,8 +3,9 @@ import {withWarFuel} from '../src/tests/warFixture';
 import {readFileSync} from 'node:fs';
 const {version}=JSON.parse(readFileSync(new URL('../package.json',import.meta.url),'utf8'));
 import {test,expect,type Page} from '@playwright/test';
+import {enterAsGuest,continueCampaign} from './helpers/enterAsGuest';
 async function start(page:Page){
- await page.goto('/');await page.getByRole('button',{name:'Türkçe',exact:true}).click();await page.locator('[data-entry="demo"]').click();await page.locator('[data-entry="new-game"]').click();await expect(page.locator('.wizard-release')).toHaveText(version);
+ await page.goto('/');await page.getByRole('button',{name:'Türkçe',exact:true}).click();await enterAsGuest(page);await expect(page.locator('.wizard-release')).toHaveText(version);
  await page.locator('.wizard-name-field input').fill('Tactical playtest');
  for(let i=0;i<4;i++)await page.locator('.wizard-footer .wizard-next').click();
  await page.locator('.guided-card footer button').first().click();
@@ -29,7 +30,7 @@ for(const viewport of [{width:1440,height:900},{width:390,height:844}]){
   await page.screenshot({path:`test-results/tactical-083-${viewport.width}.png`,fullPage:true});
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
   await page.locator('.war-theatre > header > button:not(.tactical-hint-beacon)').click();await page.keyboard.press('Escape');await page.locator('.leader-avatar-button').click();await page.locator('.profile-tabs button').last().click();await page.locator('.campaign-option-actions button').first().click();
-  await expect(page.locator('.campaign-save-status')).toContainText('kaydedildi');await page.reload();await page.locator('.load-previous').click();await expect(page.locator('.campaign-wizard')).toHaveCount(0);
+  await expect(page.locator('.campaign-save-status')).toContainText('kaydedildi');await page.reload();await continueCampaign(page);await expect(page.locator('.campaign-wizard')).toHaveCount(0);
   await expect(page.locator('[data-testid="tactical-battlefield"]')).toBeVisible();await expect(page.locator('.tactical-round-result p').first()).toHaveText(result);await expect(page.locator('.tactical-commit')).toBeDisabled();expect(errors).toEqual([]);
  });
 }

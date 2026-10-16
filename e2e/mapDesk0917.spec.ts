@@ -3,6 +3,7 @@ import {readFileSync} from 'node:fs';
 import {geoNaturalEarth1} from 'd3-geo';
 import {campaignFixture,resumeFixture} from './seedCampaign';
 import {tilt} from '../src/map/deskTilt';
+import {continueCampaign} from './helpers/enterAsGuest';
 
 /** Phase 6.3: tactile map. Hillshade layer, 18 degree desk tilt with exact click mapping, capital pins, and the three settings. */
 const geojson=JSON.parse(readFileSync('public/data/countries.geojson','utf8'));
@@ -111,7 +112,7 @@ test('tr 1440px each setting turns its layer off, and the choice persists after 
  expect(JSON.parse((await page.evaluate(key=>localStorage.getItem(key),KEY))!)).toEqual({tilt:false,relief:false,pins:false});
 
  // After a reload the projection is back to the globe (a store setting), so switch to the flat map again before checking.
- await page.reload();await page.locator('.load-previous').click();
+ await page.reload();await continueCampaign(page);
  await expect(page.locator('.country-shape').first()).toBeAttached();
  await showFlatMap(page,true);
  const dockAgain=page.locator('.map-command-dock');

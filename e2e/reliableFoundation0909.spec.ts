@@ -4,6 +4,7 @@ import {applyGameCommand} from '../src/engine/commands';
 import {withWarFuel} from '../src/tests/warFixture';
 import {queueVictory} from '../src/engine/systems/victory';
 import {initialFactions} from '../src/engine/systems/factions';
+import {continueCampaign} from './helpers/enterAsGuest';
 
 for(const language of ['en','tr','es','zh','ru'] as const)for(const kind of ['victory','crisis'] as const)test(`${language} ${kind} captures keyboard focus and traps both Tab directions`,async({page})=>{
  let s=campaignFixture(language);
@@ -44,6 +45,6 @@ test('real IndexedDB manual save and resume preserve optional country fields',as
    const rows=await new Promise<any[]>((resolve,reject)=>{const r=db.transaction('saves').objectStore('saves').getAll();r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});db.close();return rows.sort((a,b)=>b.updatedAt-a.updatedAt)[0].state.countries;
  });
  expect(countries).toEqual(s.countries);
- await page.reload();await page.locator('.load-previous').click();await expect(page.locator('.leader-avatar-button')).toBeVisible();
+ await page.reload();await continueCampaign(page);await expect(page.locator('.leader-avatar-button')).toBeVisible();
  }
 });

@@ -1,6 +1,7 @@
 import {test,expect,type Page} from '@playwright/test';
 import {campaignFixture,resumeFixture,openNation} from './seedCampaign';
 import {withWarFuel} from '../src/tests/warFixture';
+import {continueCampaign} from './helpers/enterAsGuest';
 
 /** Phase 5: one tactical round (player bombards) and its recorded replay. */
 async function foughtRound(page:Page){
@@ -21,7 +22,7 @@ test('sound options persist in this browser, and missing sound files never break
  const options=page.locator('[data-testid="audio-options"]');await expect(options).toBeVisible();
  await options.locator('.audio-toggle input').first().check();
  await options.locator('.audio-toggle input').last().check();
- await page.reload();await page.locator('.load-previous').click();
+ await page.reload();await continueCampaign(page);
  await page.locator('.leader-avatar-button').click();await page.locator('.profile-tabs button',{hasText:'Sound'}).click();
  await expect(options.locator('.audio-toggle input').first()).toBeChecked();await expect(options.locator('.audio-toggle input').last()).toBeChecked();
  await expect(options.locator('.audio-slider input').first()).toBeDisabled();
@@ -48,7 +49,7 @@ test('replay draws recorded effects; low effects shows one round summary instead
  await page.locator('.war-theatre > header > button:not(.tactical-hint-beacon)').click();await page.keyboard.press('Escape');await page.locator('.leader-avatar-button').click();await page.locator('.profile-tabs button').last().click();await page.locator('.campaign-option-actions button').first().click();
  // The status line also shows the older 'Loaded Day N' message, so wait for the save's own message before reloading (playtest.18: this was a race).
  await expect(page.locator('.campaign-save-status')).toContainText('Saved Day');
- await page.reload();await page.locator('.load-previous').click();
+ await page.reload();await continueCampaign(page);
  await expect(page.locator('[data-testid="tactical-battlefield"]')).toBeVisible();
  await expect(page.locator('.round-summary-strip')).toBeVisible();
  // A loaded war shows the last round's result first; close it.

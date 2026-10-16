@@ -12,7 +12,7 @@ async function surface(card:Locator){
 for(const width of [1440,390])test(`0.98 ${width}px quote remains readable with reachable wizard footer`,async({page})=>{
  await page.setViewportSize({width,height:width===390?650:900});await page.addInitScript(()=>localStorage.setItem('trp-appearance-v1','light'));
  const state=campaignFixture(width===390?'tr':'en');state.playerProfile.setupComplete=false;await resumeFixture(page,state);
- const quote=page.locator('.wizard-leadership-quote blockquote');await expect(quote).toHaveCSS('font-size',width===390?'14px':'15px');
+ const quote=page.locator('.lw--compact .lw-text');await expect(quote).toHaveCSS('font-size',width===390?'15px':'18px');
  expect(await page.locator('.wizard-body').evaluate(el=>el.scrollHeight-el.clientHeight)).toBeLessThanOrEqual(1);
  await expect(page.locator('.wizard-next')).toBeInViewport();await page.screenshot({path:`test-results/release098-quote-${width}.png`});
 });

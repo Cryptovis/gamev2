@@ -1,6 +1,7 @@
 import {test,expect,type Locator} from '@playwright/test';
 import {campaignFixture,resumeFixture,openNation} from './seedCampaign';
-import {UI_CATALOG_096} from '../src/i18n/uiCatalog096';
+import {UI_CATALOG_LANDING} from '../src/i18n/uiCatalogLanding';
+import {chooseLanguage,enterAsGuest,landingReady} from './helpers/enterAsGuest';
 
 async function readableSurface(card:Locator){
  await expect(card).toHaveCSS('background-color','rgb(243, 239, 229)');
@@ -16,14 +17,13 @@ for(const [index,language] of ['en','tr','es','zh','ru'].entries()){
  test(`0.96 ${language} wizard footer, portrait hierarchy and Light review`,async({page})=>{
   await page.setViewportSize({width:language==='en'?1440:390,height:language==='en'?900:language==='tr'?650:844});
   await page.addInitScript(()=>localStorage.setItem('trp-appearance-v1','light'));
-  await page.goto('/');await page.locator('.entry-languages button').nth(index).click();
-  await expect(page.locator('.entry-languages')).toHaveCSS('background-color','rgba(0, 0, 0, 0)');
-  const languageButton=page.locator('.entry-languages button').nth(index);await languageButton.hover();
-  await expect(languageButton).toHaveCSS('border-top-color','rgb(212, 175, 55)');
-  await page.locator('[data-entry="demo"]').click();await page.locator('[data-entry="new-game"]').click();
+  await page.goto('/');await landingReady(page);await chooseLanguage(page,language as 'en'|'tr'|'es'|'zh'|'ru');
+  const languageButton=page.getByTestId(`dock-language-${language}`);await expect(languageButton).toHaveAttribute('aria-pressed','true');await languageButton.hover();
+  await expect(languageButton).toHaveCSS('border-top-color','rgb(154, 116, 18)');
+  await enterAsGuest(page);
   await page.locator('.wizard-name-field input').fill('Release review');
   const wizard=page.locator('.campaign-wizard');
-  await expect(wizard.locator('.wizard-save-tools button').first()).toHaveText(index===0?'Return to sign in':UI_CATALOG_096['Return to sign in'][index-1]);
+  await expect(wizard.locator('.wizard-save-tools button').first()).toHaveText(index===0?'Main menu':UI_CATALOG_LANDING['Main menu'][index-1]);
   const tools=await wizard.locator('.wizard-save-tools button').evaluateAll(els=>els.map(el=>el.getBoundingClientRect().height));expect(tools[0]).toBeCloseTo(tools[1]);
   expect(await wizard.locator('.wizard-body').evaluate(el=>el.scrollHeight-el.clientHeight)).toBeLessThanOrEqual(1);
   for(let step=1;step<=4;step++){
@@ -39,17 +39,16 @@ for(const [index,language] of ['en','tr','es','zh','ru'].entries()){
    if(step<4)await wizard.locator('.wizard-next').click();
   }
   await wizard.locator('.wizard-next').click();
-  await expect(page.locator('.campaign-loading')).toBeVisible();
-  expect(await page.locator('.campaign-loading').evaluate(el=>getComputedStyle(el,'::before').opacity)).toBe('0.1');
+  await expect(page.getByTestId('game-loading')).toBeVisible();
  });
 }
-test('0.96 return action reaches sign-in and short-screen footer remains reachable',async({page})=>{
+test('0.96 return action reaches the main menu and short-screen footer remains reachable',async({page})=>{
  await page.setViewportSize({width:844,height:390});await page.goto('/');
- await page.locator('[data-entry="demo"]').click();await page.locator('[data-entry="new-game"]').click();
+ await enterAsGuest(page);
  await expect(page.locator('.wizard-footer .wizard-next')).toBeInViewport();
  await page.locator('.wizard-save-tools button').first().click();
- await expect(page.locator('.entry-languages')).toBeVisible();
- expect(await page.evaluate(()=>sessionStorage.getItem('trp-demo-session-v1'))).toBeNull();
+ await landingReady(page);await expect(page.getByTestId('dock-language')).toBeVisible();
+ expect(await page.evaluate(()=>sessionStorage.getItem('trp-demo-session-v1'))).toBe('guest');
 });
 for(const width of [1440,390])test(`0.96 ${width}px national cards, supplier grid and fuel action routing`,async({page})=>{
  await page.setViewportSize({width,height:900});await page.addInitScript(()=>localStorage.setItem('trp-appearance-v1','light'));

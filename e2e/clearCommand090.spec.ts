@@ -1,5 +1,6 @@
 import {test,expect} from '@playwright/test';
 import {campaignFixture,resumeFixture,openNation} from './seedCampaign';
+import {enterAsGuest} from './helpers/enterAsGuest';
 for(const language of ['en','tr','es','zh','ru'] as const)test(`Affairs explains unavailable foreign actions in ${language}`,async({page})=>{
  await resumeFixture(page,campaignFixture(language));await openNation(page);await page.locator('.country-select').selectOption('GRC');
  await expect(page.locator('.trade-desk-shortcut')).toHaveCount(0);
@@ -24,9 +25,11 @@ for(const width of [1440,390])test(`${width}px territory sections retain navigat
  await expect(nav).toBeInViewport();await expect(page.locator('[data-guide="close-workspace"]:visible').last()).toBeInViewport();
  await page.screenshot({path:`test-results/territory-090-${width}.png`});
 });
-test('fresh openings rotate quotes while preserving them within a wizard',async({page})=>{
- await page.addInitScript(()=>{Math.random=()=>.1;});await page.goto('/');await page.locator('[data-entry="demo"]').click();await page.locator('[data-entry="new-game"]').click();
- const quote=page.locator('.wizard-leadership-quote');const first=await quote.getAttribute('data-quote-id');await page.reload();await page.locator('[data-entry="new-game"]').click();await expect(quote).not.toHaveAttribute('data-quote-id',first!);
+test('the setup wizard shows one compact leadership quote that stays put while the player types',async({page})=>{
+ await page.addInitScript(()=>{Math.random=()=>.1;});await page.goto('/');await enterAsGuest(page);
+ const quote=page.getByTestId('wisdom-widget');await expect(quote).toBeVisible();await expect(quote).toHaveAttribute('data-variant','compact');
+ const first=await quote.getAttribute('data-quote-id');expect(first).toBeTruthy();
+ await page.locator('.wizard-name-field input').fill('Quiet reader');await page.waitForTimeout(500);await expect(quote).toHaveAttribute('data-quote-id',first!);
  await expect(page.locator('.entry-tagline')).toBeVisible();await expect(page.locator('.setup-cover')).not.toContainText('THE REAL PRESIDENT');
 });
 test('keyboard map controls zoom, return home and open the nation without selecting a hidden country',async({page})=>{

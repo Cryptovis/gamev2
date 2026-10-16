@@ -1,8 +1,9 @@
 import {readFileSync} from 'node:fs';
 const {version}=JSON.parse(readFileSync(new URL('../package.json',import.meta.url),'utf8'));
 import {test,expect,type Page} from '@playwright/test';
+import {enterAsGuest,continueCampaign} from './helpers/enterAsGuest';
 async function start(page:Page){
- await page.goto('/');await page.getByRole('button',{name:'Türkçe',exact:true}).click();await page.locator('[data-entry="demo"]').click();await page.locator('[data-entry="new-game"]').click();await page.locator('.wizard-name-field input').fill('Playtest');
+ await page.goto('/');await page.getByRole('button',{name:'Türkçe',exact:true}).click();await enterAsGuest(page);await page.locator('.wizard-name-field input').fill('Playtest');
  for(let i=0;i<4;i++)await page.locator('.wizard-footer .wizard-next').click();
  await expect(page.locator('.guided-tutorial')).toBeVisible();
 }
@@ -23,7 +24,7 @@ for(const viewport of [{width:1440,height:900},{width:390,height:844}]){
   await page.locator('[data-guide="close-workspace"]:visible').click();await page.locator('.leader-avatar-button').click();
   await page.locator('.profile-tabs button').last().click();await page.locator('.campaign-option-actions button').first().click();
   await expect(page.locator('.campaign-save-status')).toContainText('kaydedildi');await page.reload();
-  await page.locator('.load-previous').click();await expect(page.locator('.campaign-wizard')).toHaveCount(0);await expect(page.locator('.brand-line')).toContainText('Playtest');
+  await continueCampaign(page);await expect(page.locator('.campaign-wizard')).toHaveCount(0);await expect(page.locator('.brand-line')).toContainText('Playtest');
   await expect(page.locator('body')).not.toContainText('Loaded Day');expect(errors).toEqual([]);
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);
   await page.screenshot({path:`test-results/082-${viewport.width}.png`,fullPage:true});
@@ -65,7 +66,7 @@ test(`${viewport.width}px all ten tutorial lessons including funded construction
 
 for(const viewport of [{width:1440,height:900},{width:1280,height:720},{width:390,height:844}]){
  test(`${viewport.width}px stable setup and readable nation selection`,async({page})=>{
-  await page.setViewportSize(viewport);await page.goto('/');await page.locator('[data-entry="demo"]').click();await page.locator('[data-entry="new-game"]').click();
+  await page.setViewportSize(viewport);await page.goto('/');await enterAsGuest(page);
   await expect(page.locator('.wizard-release')).toHaveText(version);
   const nextButton=page.locator('.wizard-next');
   const nextBounds=await nextButton.boundingBox(),footerBounds=await page.locator('.wizard-footer').boundingBox();
@@ -140,7 +141,7 @@ for(const viewport of [{width:1440,height:900},{width:390,height:844}]){
   await page.setViewportSize(viewport);
   // The warm palette values asserted below are the dark-theme tokens; the app now defaults to light, so pin dark explicitly.
   await page.addInitScript(()=>localStorage.setItem('trp-appearance-v1','dark'));
-  await page.goto('/');await page.getByRole('button',{name:'Türkçe',exact:true}).click();await page.locator('[data-entry="demo"]').click();await page.locator('[data-entry="new-game"]').click();await page.locator('.wizard-name-field input').fill('Palette test');
+  await page.goto('/');await page.getByRole('button',{name:'Türkçe',exact:true}).click();await enterAsGuest(page);await page.locator('.wizard-name-field input').fill('Palette test');
   await page.locator('.wizard-next').click();await page.locator('.wizard-next').click();
   const search=page.locator('.country-search');
   for(const query of ['Türkiye','Turkiye','TUR']){

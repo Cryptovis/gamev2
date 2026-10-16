@@ -1,5 +1,6 @@
 import {test,expect,type Page} from '@playwright/test';
 import {campaignFixture,resumeFixture,openNation} from './seedCampaign';
+import {enterAsGuest,landingReady} from './helpers/enterAsGuest';
 
 const LANGUAGES=['en','tr','es','zh','ru'] as const;
 const animationOf=(page:Page,selector:string)=>page.locator(selector).evaluate(el=>{const s=getComputedStyle(el);return {name:s.animationName,ms:parseFloat(s.animationDuration)*1000};});
@@ -71,10 +72,11 @@ for(const language of LANGUAGES)test(`${language} shows Rule of Nations untransl
 });
 
 test('entry and setup screens carry the Rule of Nations mark over the cover art',async({page})=>{
- await page.goto('/');await expect(page.locator('.entry-art .brand-mark')).toContainText('Rule of Nations');
- await expect(page.locator('.entry-art .brand-mark')).toHaveAttribute('translate','no');
- await expect(page.locator('.entry-art .brand-mark-emblem')).toHaveText('RON');
- await page.locator('[data-entry="demo"]').click();await page.locator('[data-entry="new-game"]').click();
+ await page.goto('/');await landingReady(page);const brand=page.getByTestId('landing-brand');
+ await expect(brand.locator('h1')).toContainText('Rule of Nations');
+ await expect(brand.locator('h1')).toHaveAttribute('translate','no');
+ await expect(brand.locator('.l94-emblem')).toHaveText('RON');
+ await enterAsGuest(page);
  await expect(page.locator('.setup-cover .brand-mark')).toContainText('Rule of Nations');await expect(page.locator('.wizard-header > div > small').first()).toContainText('Rule of Nations');
  await page.screenshot({path:'test-results/ron-setup-0910.png'});
 });

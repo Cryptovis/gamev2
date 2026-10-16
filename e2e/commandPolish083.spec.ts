@@ -2,6 +2,7 @@ import {test,expect,type Page} from '@playwright/test';
 import {makeInitialState} from '../src/data/initialState';
 import type {GameState} from '../src/domain/game';
 import {UI_CATALOG_POLISH} from '../src/i18n/uiCatalogPolish';
+import {enterAsGuest,continueCampaign} from './helpers/enterAsGuest';
 const languages=['en','tr','es','zh','ru'] as const;
 function fixture(language:typeof languages[number],advisor=false){
  const s=makeInitialState();s.playerProfile={...s.playerProfile,setupComplete:true,language};s.world.tutorial={active:false,step:0,completed:true};s.eventCooldownUntil=10000;s.advisorCooldownUntil=10000;s.selectedCountryId=null;
@@ -11,12 +12,12 @@ function fixture(language:typeof languages[number],advisor=false){
  return s;
 }
 async function load(page:Page,state:GameState){
- await page.goto('/');await page.locator('[data-entry="demo"]').click();await page.locator('[data-entry="new-game"]').click();await expect(page.locator('.campaign-wizard')).toBeVisible();
+ await page.goto('/');await enterAsGuest(page);await expect(page.locator('.campaign-wizard')).toBeVisible();
  await page.locator('.wizard-name-field input').fill('Fixture loader');for(let i=0;i<4;i++)await page.locator('.wizard-next').click();await page.locator('.guided-card footer button').first().click();await page.locator('.leader-avatar-button').click();await page.locator('.profile-tabs button').last().click();await page.locator('.campaign-option-actions button').first().click();await expect(page.locator('.campaign-save-status')).toContainText(/saved/i);
  await page.evaluate(async state=>{
   await new Promise<void>((resolve,reject)=>{const req=indexedDB.open('alpyx-global-command');req.onerror=()=>reject(req.error);req.onsuccess=()=>{const db=req.result;const tx=db.transaction('saves','readwrite');tx.objectStore('saves').put({id:'manual',name:'Browser fixture',updatedAt:Date.now(),schemaVersion:state.schemaVersion,state});tx.oncomplete=()=>{db.close();resolve();};tx.onerror=()=>reject(tx.error);};});
  },state);
- await page.reload();await page.locator('.load-previous').click();await expect(page.locator('.campaign-wizard')).toHaveCount(0);
+ await page.reload();await continueCampaign(page);await expect(page.locator('.campaign-wizard')).toHaveCount(0);
 }
 for(const {language,width} of [...languages.map(language=>({language,width:1440})),{language:'tr' as const,width:390}])test(`${width}px ${language} proposal history separates outcomes and keeps supply values clear`,async({page})=>{
  await page.setViewportSize({width,height:width===390?844:900});await load(page,fixture(language));await page.locator('[data-guide="rail-diplo"]').click();

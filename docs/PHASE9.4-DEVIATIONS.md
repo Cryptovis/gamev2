@@ -18,7 +18,15 @@ Each item says what the blueprint asked for, what was built, and why. Nothing he
 14. Frame line. The decorative frame can cross the footer note when the page scrolls, so the note has a near-opaque chip.
 15. z-index. `.landing094` uses the literal 10000 (the value of `--layer-entry`) so its token test stays self-contained.
 
-## Not done in T6 to T16 (belongs to T17)
+16. Quote across setup steps. The wizard's quote is only on step 1, so going Back from step 2 shows a new quote instead of the same one. The old "stays the same within a wizard" check was dropped from e2e; the quote still stays fixed while the player types on step 1.
+17. e2e landing spec. The blueprint's 13 scenarios are in `e2e/landingExperience.spec.ts` as tests 1 to 13, plus test 14 for the preloader stages. The visual-only blueprint items (frame line, screenshots matrix) stay manual.
+18. Quote size in `release098.spec.ts`. The compact widget scales 15 px on phones and 18 px on desktop (it was 14/15 px for the old quote box), so the assertion moved with it.
+
+## Migrated in T17
+
+The e2e specs that used `data-entry`, `.load-previous`, `.entry-*` and `.wizard-leadership-quote` now use `e2e/helpers/enterAsGuest.ts` (`enterAsGuest`, `continueCampaign`, `chooseLanguage`, `landingReady`) and the Appendix C test ids. `e2e/seedCampaign.ts` gained `seedRecords` and `seedSave`, which leave the player on the landing screen. `src/tests/e2eMigration094.test.ts` fails if a spec uses the retired markup again.
+
+## Not done in T6 to T16 (done in T17)
 
 - Several e2e specs still use the old markup (`data-entry`, `.load-previous`, `.entry-*`, `.wizard-leadership-quote`). They need an `enterAsGuest` helper and the new test ids.
 - `e2e/landingExperience.spec.ts` is not written.
