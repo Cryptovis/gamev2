@@ -1,5 +1,5 @@
 import {test,expect,type Page} from '@playwright/test';
-import {campaignFixture,resumeFixture} from './seedCampaign';
+import {campaignFixture,resumeFixture,openNation} from './seedCampaign';
 
 /** Phase 6.1: selecting another country opens the diplomatic hub, not the player's 14-section panel. */
 const FRANCE={en:'France',tr:'Fransa'} as const;
@@ -50,7 +50,7 @@ for(const [language,width] of [['tr',1440],['en',390]] as const)test(`${language
  await openFromRankings(page,language);await expect(hub).toBeVisible();
  await page.keyboard.press('Escape');await expect(page.locator('.target-hub')).toHaveCount(0);await expect(page.locator('#pulse-window')).toBeVisible();
  // The player's own nation still opens the full panel.
- await page.keyboard.press('Escape');await expect(page.locator('#pulse-window')).toBeHidden();await page.locator('[data-guide="nation"]').first().click();
+ await page.keyboard.press('Escape');await expect(page.locator('#pulse-window')).toBeHidden();await openNation(page);
  await expect(page.locator('.command-panel')).toBeVisible();await expect(page.locator('.target-hub')).toHaveCount(0);
  expect(errors).toEqual([]);
 });

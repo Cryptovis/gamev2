@@ -1,5 +1,5 @@
 import {test,expect} from '@playwright/test';
-import {campaignFixture,resumeFixture} from './seedCampaign';
+import {campaignFixture,resumeFixture,openNation} from './seedCampaign';
 import {withWarFuel} from '../src/tests/warFixture';
 
 /** Phase 4: the player's task groups in the war theatre. The player declares war on Greece from the country panel. */
@@ -8,7 +8,7 @@ for(const [language,width] of [['tr',1440],['en',390]] as const)test(`${language
  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
  await page.setViewportSize({width,height:width<500?844:900});
  await resumeFixture(page,withWarFuel(campaignFixture(language)));
- await page.locator('[data-guide="nation"]').first().click();await page.locator('.country-select').selectOption('GRC');await page.locator('[data-guide="tab-war"]').click();
+ await openNation(page);await page.locator('.country-select').selectOption('GRC');await page.locator('[data-guide="tab-war"]').click();
  await page.locator('.declare-war').click();await page.locator('.strategic-decision-modal .confirm').click();
  await expect(page.locator('.war-theatre-backdrop')).toBeVisible();
  const opened=await page.locator('.review-dialog').waitFor({state:'visible',timeout:5000}).then(()=>true,()=>false);

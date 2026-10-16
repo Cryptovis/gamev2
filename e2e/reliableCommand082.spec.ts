@@ -175,7 +175,7 @@ test('country trade proposal preserves sent receipt and market labels use consis
  await page.locator('.letter-compose button').click();await page.locator('[data-guide="review-confirm"]').click();await page.locator('[data-guide="review-dismiss"]').first().click();
  await page.locator('.letter-list article[data-status="pending"] > button').click();
  await page.locator('[data-action="trade"]').click();await expect(page.locator('.strategic-decision-modal')).toBeVisible();await page.locator('.strategic-decision-modal .confirm').click();
- await expect(page.locator('.review-dialog h2')).toContainText('Karar uygulandı');await expect(page.locator('.review-dialog')).not.toContainText('Conditions changed');
+ await expect(page.locator('.review-dialog h2')).toContainText('Ticaret anlaşması önerildi');await expect(page.locator('.review-dialog .review-parties')).toBeVisible();await expect(page.locator('.review-dialog')).not.toContainText('Conditions changed');
  await page.locator('[data-guide="review-dismiss"]').first().click();await page.locator('[data-guide="close-workspace"]:visible').click();
  await expect(page.locator('#diplomacy-window')).toBeVisible();await page.keyboard.press('Escape');await page.locator('[data-guide="rail-market"]').click();await expect(page.locator('.exchange-filters')).toBeVisible();
  await expect(page.locator('.exchange-filters button').first()).toHaveText('Gıda');

@@ -1,5 +1,5 @@
 import {test,expect,type Locator} from '@playwright/test';
-import {campaignFixture,resumeFixture} from './seedCampaign';
+import {campaignFixture,resumeFixture,openNation} from './seedCampaign';
 test.setTimeout(30000);
 async function surface(card:Locator){
  await expect(card).toHaveCSS('background-color','rgb(243, 239, 229)');
@@ -35,7 +35,7 @@ for(const width of [1440,390])test(`0.98 ${width}px Light credit, inbox, help an
 });
 for(const width of [1440,390])test(`0.98 ${width}px energy, bilateral, institutions, dossier and single influence route`,async({page})=>{
  await page.setViewportSize({width,height:900});await page.addInitScript(()=>localStorage.setItem('trp-appearance-v1','light'));await page.emulateMedia({reducedMotion:'reduce'});
- const state=campaignFixture('en');state.selectedCountryId=null;await resumeFixture(page,state);await page.locator('[data-guide="nation"]').click();
+ const state=campaignFixture('en');state.selectedCountryId=null;await resumeFixture(page,state);await openNation(page);
  await page.locator('.command-panel [data-guide="tab-production"]').click();await expect(page.locator('.energy-summary>span')).toHaveCount(5);
  for(const card of await page.locator('.energy-summary>span,.power-plant-grid>article').all())await surface(card);
  await page.screenshot({path:`test-results/release098-energy-${width}.png`});await page.keyboard.press('Escape');

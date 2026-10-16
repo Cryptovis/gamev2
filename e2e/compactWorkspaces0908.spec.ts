@@ -1,5 +1,5 @@
 import {test,expect} from '@playwright/test';
-import {campaignFixture,resumeFixture} from './seedCampaign';
+import {campaignFixture,resumeFixture,openNation} from './seedCampaign';
 
 for(const [width,language] of [[1440,'en'],[2048,'tr'],[390,'tr'],[1440,'es'],[1440,'zh'],[1440,'ru']] as const) {
  test(`${width}px ${language} compact World, Supply and national workspaces`,async({page})=>{
@@ -40,7 +40,7 @@ for(const [width,language] of [[1440,'en'],[2048,'tr'],[390,'tr'],[1440,'es'],[1
   expect(cols).toBe(width>=1440?3:1);
   const overflowing=await resources.locator('.resource-command-card').evaluateAll(cards=>cards.some(el=>el.scrollWidth>el.clientWidth+1));expect(overflowing).toBe(false);
   await page.screenshot({path:`test-results/resources-0908-${width}-${language}.png`});await page.keyboard.press('Escape');
-  await page.locator('[data-guide="nation"]').click();await page.locator('[data-guide="tab-power"]').click();
+  await openNation(page);await page.locator('[data-guide="tab-power"]').click();
   const dossier=page.locator('.country-dossier-window');await expect(dossier).toBeVisible();
   const dossierBox=(await dossier.boundingBox())!;expect(dossierBox.width).toBeLessThanOrEqual(920);expect(dossierBox.x).toBeGreaterThanOrEqual(12);expect(dossierBox.x+dossierBox.width).toBeLessThanOrEqual(width-12);
   await dossier.locator('.command-subtabs button').nth(2).click();

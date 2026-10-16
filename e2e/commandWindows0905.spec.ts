@@ -1,8 +1,8 @@
 import {test,expect} from '@playwright/test';
-import {campaignFixture,resumeFixture} from './seedCampaign';
+import {campaignFixture,resumeFixture,openNation} from './seedCampaign';
 for(const width of [1440,390])test(`${width}px spacious windows restore parent menus and retain their sections`,async({page})=>{
  await page.setViewportSize({width,height:900});await resumeFixture(page,campaignFixture('en'));
- await page.locator('[data-guide="nation"]').click();
+ await openNation(page);
  await expect(page.locator('[data-menu-group="summary"] button')).toHaveCount(3);
  await expect(page.locator('[data-menu-group="strategy"] button')).toHaveCount(3);
  for(const tab of ['technology','world','war','production']){

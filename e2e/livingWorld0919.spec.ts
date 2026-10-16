@@ -1,5 +1,5 @@
 import {test,expect,type Page} from '@playwright/test';
-import {campaignFixture,resumeFixture} from './seedCampaign';
+import {campaignFixture,resumeFixture,openNation} from './seedCampaign';
 import {withWarFuel} from '../src/tests/warFixture';
 import {applyGameCommand} from '../src/engine/commands';
 import type {GameState} from '../src/domain/game';
@@ -102,7 +102,7 @@ test('en 1440px a quiet world has no event pins and a calm portrait',async({page
 for(const [width,lang] of [[1440,'tr'],[390,'en']] as const)test(`${lang} ${width}px covert operations are 3:4 poster cards with the same buttons`,async({page})=>{
  await page.setViewportSize({width,height:900});
  await resumeFixture(page,fixture(lang));
- await page.locator('[data-guide="nation"]').click();
+ await openNation(page);
  await page.locator('.country-select').selectOption('GRC');
  await page.locator('[data-guide="tab-intel"]').click();
  const posters=page.locator('.intel-actions .op-poster');

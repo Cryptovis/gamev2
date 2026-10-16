@@ -24,7 +24,9 @@ for(const width of [1440,390])for(const theme of ['light','dark'])test(`1.0 inte
 for(const width of [1440,390])test(`1.0 hint beacon pulse stays inside the hub ${width}px`,async({page})=>{
  await page.setViewportSize({width,height:900});
  await resumeFixture(page,campaignFixture('en'));await page.locator('[data-guide="rail-alliances"]').click();
- const hub=page.locator('.international-affairs'),beacon=hub.locator('.tactical-hint-beacon');
+ const hub=page.locator('.international-affairs'),beacon=page.locator('#alliances-window .executive-header .tactical-hint-beacon');
+ await expect(page.locator('#alliances-window .executive-header [data-guide="close-workspace"]')).toBeVisible();
+ await expect(hub.locator('.tactical-hint-beacon')).toHaveCount(0);
  await expect(beacon).toHaveAttribute('data-state','unseen');await expect(beacon).toHaveAttribute('data-motion','full');
  await page.addStyleTag({content:'.tactical-hint-beacon,.tactical-hint-beacon::after{animation:none !important}.tactical-hint-beacon[data-state="unseen"]::after{transform:scale(1.55) !important}'});
  expect(await hub.evaluate(el=>el.scrollWidth<=el.clientWidth+1)).toBe(true);

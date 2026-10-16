@@ -1,5 +1,5 @@
 import {test,expect} from '@playwright/test';
-import {campaignFixture,resumeFixture} from './seedCampaign';
+import {campaignFixture,resumeFixture,openNation} from './seedCampaign';
 import {postCredit,acceptCredit,expansion,applyForCredit} from '../src/engine/systems/sovereignCredit';
 function creditFixture(){
  let s=campaignFixture('en');for(const id of ['TUR','FRA']){s.countries[id].economy={...s.countries[id].economy,treasury:100,gdp:1000,debt:100,inflation:2};s.countries[id].politics.stability=90;s.countries[id].diplomacy.reputation=80;}
@@ -10,7 +10,7 @@ for(const width of [1440,390])test(`${width}px every command menu works without 
  // playtest.17: the map now starts its relief worker on load (hillshade layer). Wait for it, so only click-time menu chunks are counted below.
  await expect(page.locator('[data-relief-render="worker-ready"]')).toBeAttached({timeout:30000});let downloads=0;
  await page.route(/\/(src|assets)\/.*\.(tsx?|js)(\?.*)?$/,route=>{downloads++;return route.abort('failed');});
- await page.locator('[data-guide="nation"]').click();await expect(page.locator('.national-development-shortcuts')).toHaveCount(0);
+ await openNation(page);await expect(page.locator('.national-development-shortcuts')).toHaveCount(0);
  await page.locator('[data-guide="tab-technology"]').click();await expect(page.locator('.technology-sections')).toBeVisible();await page.locator('.technology-sections .section-menu').getByRole('button',{name:'Investments',exact:true}).click();await expect(page.locator('[data-development="investments"] .campus-grid article')).toHaveCount(2);await expect(page.locator('.pilot-recruitment')).toHaveCount(0);
  await page.keyboard.press('Escape');await page.locator('[data-guide="tab-military"]').click();await page.locator('.military-panel .section-menu').getByRole('button',{name:'Pilot training',exact:true}).click();await expect(page.locator('.pilot-recruitment')).toBeVisible();await expect(page.locator('[data-development="pilots"] .campus-grid article')).toHaveCount(1);
  await page.screenshot({path:`test-results/pilot-0904-${width}.png`});await page.keyboard.press('Escape');await page.locator('.command-panel [data-guide="close-workspace"]').click();
@@ -27,7 +27,7 @@ for(const width of [1440,390])test(`${width}px World has three live rankings and
  const nav=await page.locator('#market-window>.floating-command-body>.section-menu').boundingBox(),summary=await page.locator('.legacy-exchange summary').boundingBox();expect(summary!.y-nav!.y-nav!.height).toBeLessThan(20);
 });
 for(const lang of ['en','tr','es','zh','ru'] as const)test(`${lang} credit and ranking navigation translates with consistent display case`,async({page})=>{
- const s=creditFixture();s.playerProfile.language=lang;await resumeFixture(page,s);await page.locator('[data-guide="nation"]').click();expect(await page.locator('.panel-tabs button span').last().evaluate(el=>getComputedStyle(el).textTransform)).toBe('none');
+ const s=creditFixture();s.playerProfile.language=lang;await resumeFixture(page,s);await openNation(page);expect(await page.locator('.panel-tabs button span').last().evaluate(el=>getComputedStyle(el).textTransform)).toBe('none');
  await page.locator('[data-guide="tab-technology"]').click();await page.locator('.technology-sections .section-menu button').last().click();await expect(page.locator('[data-development="investments"]')).toBeVisible();await page.keyboard.press('Escape');await page.locator('[data-guide="rail-market"]').click();await page.locator('#market-window>.floating-command-body>.section-menu button').nth(2).click();await expect(page.locator('.credit-desk')).toBeVisible();await expect(page.locator('.credit-partner>span').first()).toHaveText('🇫🇷');await expect(page.locator('.credit-rating-grade').first()).not.toBeEmpty();if(lang!=='en')await expect(page.locator('.credit-desk')).not.toContainText('Applications are assessed after three game days.');
 });
 test('credit applies once, stays pending with unchanged cash, then approval arrives as game days pass',async({page})=>{

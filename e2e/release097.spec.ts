@@ -1,5 +1,5 @@
 import {test,expect,type Locator} from '@playwright/test';
-import {campaignFixture,resumeFixture} from './seedCampaign';
+import {campaignFixture,resumeFixture,openNation} from './seedCampaign';
 import {UI_CATALOG_097} from '../src/i18n/uiCatalog097';
 import {placeIndustrialOrder} from '../src/engine/systems/industrialMarket';
 import {applyGameCommand} from '../src/engine/commands';
@@ -19,7 +19,7 @@ async function surface(card:Locator){
 for(const [index,language] of (['en','tr','es','zh','ru'] as const).entries())test(`0.97 ${language} tax review and wide relief card preserve routing`,async({page})=>{
  await page.setViewportSize({width:index===0?1440:390,height:900});await page.addInitScript(()=>localStorage.setItem('trp-appearance-v1','light'));
  const state=campaignFixture(language);state.selectedCountryId=null;const player=state.countries.TUR;
- await resumeFixture(page,state);await page.locator('[data-guide="nation"]').click();await page.locator('.command-panel [data-guide="tab-policies"]').click();
+ await resumeFixture(page,state);await openNation(page);await page.locator('.command-panel [data-guide="tab-policies"]').click();
  const workspace=page.locator('#country-section-window'),banner=workspace.locator('.policy-relief-banner');
  await surface(workspace.locator('.policy-budget'));await surface(banner);
  expect(await banner.evaluate(el=>el.previousElementSibling?.classList.contains('policy-card-grid'))).toBe(true);
@@ -81,7 +81,7 @@ for(const width of [1440,390])test(`0.97 ${width}px Light dossier, cabinet, inte
  let state=campaignFixture('en');state.selectedCountryId=null;state=launchIntelOperation(state,'gather_intelligence','FRA');
  expect(Object.keys(state.intelOperations).length).toBeGreaterThan(0);
  state.leadership.messages=[{id:'warm-ui',senderId:'BGR',day:1,kind:'achievement',tone:'warm',text:'A warm message',read:false},{id:'rival-ui',senderId:'FRA',day:1,kind:'achievement',tone:'rival',text:'A rival message',read:false}];
- await resumeFixture(page,state);await page.locator('[data-guide="nation"]').click();await page.locator('[data-guide="tab-power"]').click();const dossier=page.locator('.country-dossier-window');
+ await resumeFixture(page,state);await openNation(page);await page.locator('[data-guide="tab-power"]').click();const dossier=page.locator('.country-dossier-window');
  for(const [index,selector] of ['.dossier-score-stack>div','.dossier-economy-grid>div','.trade-desk-hero','.society-identity-grid>article,.society-indicators>article'].entries()){
   await dossier.locator('.command-subtabs button').nth(index).click();for(const card of await dossier.locator(selector).all())await surface(card);
  }
@@ -104,7 +104,7 @@ test('0.97 active-war legacy overview uses readable Light metrics',async({page})
  await page.addInitScript(()=>localStorage.setItem('trp-appearance-v1','light'));
  let state=withWarFuel(campaignFixture('en'));state=applyGameCommand(state,{type:'military/declareWar',targetCountryId:'GRC'});state.selectedCountryId=null;
  expect(Object.keys(state.wars).length).toBeGreaterThan(0);await resumeFixture(page,state);
- await page.locator('[data-guide="nation"]').click();await page.locator('.country-select').selectOption('GRC');
+ await openNation(page);await page.locator('.country-select').selectOption('GRC');
  await page.locator('.command-panel [data-guide="tab-war"]').click();for(const card of await page.locator('.war-command .war-theatre,.war-command .war-progress,.war-command .front-metrics,.war-command .casualty-grid').all())await surface(card);
  await page.screenshot({path:'test-results/release097-war.png'});
 });

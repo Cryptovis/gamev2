@@ -1,5 +1,5 @@
 import {test,expect} from '@playwright/test';
-import {campaignFixture,resumeFixture} from './seedCampaign';
+import {campaignFixture,resumeFixture,openNation} from './seedCampaign';
 import {withWarFuel} from '../src/tests/warFixture';
 import {updateBilateralRelation} from '../src/engine/systems/diplomacy';
 async function oilTrade(page:import('@playwright/test').Page,score:number) {
@@ -17,14 +17,14 @@ for(const width of [1440,390])test(`${width}px monthly contract choices and disa
 });
 test('war review blocks inadequate refined fuel and shows the exact shortfall',async({page})=>{
  const s=campaignFixture('en');s.countries.TUR.resources.oil=100000;s.countries.TUR.processedResources.fuel=0;
- await resumeFixture(page,s);await page.locator('[data-guide="nation"]').first().click();await page.locator('.country-select').selectOption('GRC');await page.locator('[data-guide="tab-war"]').click();await expect(page.locator('.declare-war')).toBeDisabled();await page.locator('.assessment-review-blocked').click();await expect(page.locator('.strategic-decision-modal .confirm')).toBeDisabled();await expect(page.locator('.strategic-decision-modal')).toContainText('14 operational days');await expect(page.locator('.strategic-decision-modal')).toContainText('FUEL SHORTFALL');
+ await resumeFixture(page,s);await openNation(page);await page.locator('.country-select').selectOption('GRC');await page.locator('[data-guide="tab-war"]').click();await expect(page.locator('.declare-war')).toBeDisabled();await page.locator('.assessment-review-blocked').click();await expect(page.locator('.strategic-decision-modal .confirm')).toBeDisabled();await expect(page.locator('.strategic-decision-modal')).toContainText('14 operational days');await expect(page.locator('.strategic-decision-modal')).toContainText('FUEL SHORTFALL');
 });
 test('auto assault selects 5× and advances days without fuel advice modals',async({page})=>{
- await resumeFixture(page,withWarFuel(campaignFixture('en')));await page.locator('[data-guide="nation"]').first().click();await page.locator('.country-select').selectOption('GRC');await page.locator('[data-guide="tab-war"]').click();await page.locator('.declare-war').click();await page.locator('.strategic-decision-modal .confirm').click();
+ await resumeFixture(page,withWarFuel(campaignFixture('en')));await openNation(page);await page.locator('.country-select').selectOption('GRC');await page.locator('[data-guide="tab-war"]').click();await page.locator('.declare-war').click();await page.locator('.strategic-decision-modal .confirm').click();
  const day=await page.locator('.campaign-clock strong').innerText();await page.getByRole('button',{name:'Enable auto assault',exact:true}).click();await expect(page.locator('.speed-segment button').last()).toHaveClass(/active/);await expect(page.locator('.campaign-clock strong')).not.toHaveText(day);await expect(page.locator('.war-theatre[role="dialog"]')).toContainText('one day per second');await expect(page.locator('.economic-advice-backdrop')).toHaveCount(0);
 });
 test('country panel is ready at startup and remains usable with subsequent downloads blocked',async({page})=>{
  await resumeFixture(page,campaignFixture('en'));let requests=0;
  await page.route(/\/(assets|src)\/.*CountryPanel.*\.(js|tsx)/,route=>{requests++;return route.abort('failed');});
- await page.locator('[data-guide="nation"]').click();await expect(page.locator('.command-panel')).toBeVisible();expect(requests).toBe(0);await expect(page.locator('[data-testid="error-boundary"]')).toHaveCount(0);await expect(page.locator('.brand-line')).toContainText('Browser playtest');
+ await openNation(page);await expect(page.locator('.command-panel')).toBeVisible();expect(requests).toBe(0);await expect(page.locator('[data-testid="error-boundary"]')).toHaveCount(0);await expect(page.locator('.brand-line')).toContainText('Browser playtest');
 });

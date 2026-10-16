@@ -1,5 +1,5 @@
 import {test,expect} from '@playwright/test';
-import {campaignFixture,resumeFixture} from './seedCampaign';
+import {campaignFixture,resumeFixture,openNation} from './seedCampaign';
 import {UI_CATALOG_089_K} from '../src/i18n/uiCatalog089K';
 const translateText = (language:string,key:string) => language==='en'?key:UI_CATALOG_089_K[key][['tr','es','zh','ru'].indexOf(language)];
 import {TECHNOLOGY_TREE} from '../src/data/technologyTree';
@@ -22,7 +22,7 @@ test('research active project, progress and cancellation refund agree',async({pa
 });
 for(const width of [1440,390])test(`${width}px war blocker is prominent and confirm visibly disabled`,async({page})=>{
  await page.setViewportSize({width,height:900});const s=campaignFixture('tr');s.countries.TUR.processedResources.fuel=0;
- await resumeFixture(page,s);await page.locator('[data-guide="nation"]').first().click();await page.locator('.country-select').selectOption('GRC');await page.locator('[data-guide="tab-war"]').click();await expect(page.locator('.declare-war')).toBeDisabled();await page.locator('.assessment-review-blocked').click();
+ await resumeFixture(page,s);await openNation(page);await page.locator('.country-select').selectOption('GRC');await page.locator('[data-guide="tab-war"]').click();await expect(page.locator('.declare-war')).toBeDisabled();await page.locator('.assessment-review-blocked').click();
  await expect(page.locator('#strategic-decision-title')).toHaveText('Yunanistan ülkesine savaş aç');
  const blocker=page.locator('#strategic-block-reason');await expect(blocker).toBeVisible();await expect(blocker).toContainText('işlenmiş yakıt');
  const confirm=page.locator('.strategic-decision-modal .confirm');await expect(confirm).toBeDisabled();await expect(confirm).toHaveAttribute('aria-describedby','strategic-block-reason');await expect(confirm).toHaveCSS('cursor','not-allowed');await expect(confirm).toHaveCSS('border-top-style','dashed');

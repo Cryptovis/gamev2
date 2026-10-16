@@ -1,5 +1,5 @@
 import {test,expect} from '@playwright/test';
-import {campaignFixture,resumeFixture} from './seedCampaign';
+import {campaignFixture,resumeFixture,openNation} from './seedCampaign';
 import {applyGameCommand} from '../src/engine/commands';
 import {withWarFuel} from '../src/tests/warFixture';
 import {queueVictory} from '../src/engine/systems/victory';
@@ -25,7 +25,7 @@ for(const language of ['en','tr','es','zh','ru'] as const)for(const kind of ['vi
 });
 
 test('hidden country panel is absent from the accessibility tree and restores keyboard focus',async({page})=>{
- await resumeFixture(page,campaignFixture('en'));await page.locator('[data-guide="nation"]').first().click();
+ await resumeFixture(page,campaignFixture('en'));await openNation(page);
  const panel=page.locator('.command-panel');await expect(panel).toBeVisible();
  await page.locator('[data-guide="tab-power"]').click();await expect(page.locator('.country-dossier-window')).toBeVisible();await expect(panel).toBeHidden();await expect(panel).toHaveCount(1);
  expect(await panel.ariaSnapshot()).toBe('');

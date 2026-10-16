@@ -1,8 +1,8 @@
 import {test,expect} from '@playwright/test';
-import {campaignFixture,resumeFixture} from './seedCampaign';
+import {campaignFixture,resumeFixture,openNation} from './seedCampaign';
 for(const width of [1440,390])test(`${width}px core executive sections share a centered, keyboard reachable shell`,async({page})=>{
  await page.setViewportSize({width,height:900});await resumeFixture(page,campaignFixture('en'));
- await page.locator('[data-guide="nation"]').click();
+ await openNation(page);
  for(const tab of ['policies','military','economy']){
   await page.locator(`[data-guide="tab-${tab}"]`).click();const shell=page.locator('#country-section-window.executive-workspace');await expect(shell).toBeVisible();await expect(page.locator('.command-panel')).toBeHidden();
   const box=await shell.boundingBox();expect(Math.abs(box!.x+box!.width/2-width/2)).toBeLessThan(2);expect(box!.width).toBeGreaterThan(width===390?350:900);

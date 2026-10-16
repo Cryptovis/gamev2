@@ -1,5 +1,5 @@
 import {test,expect} from '@playwright/test';
-import {campaignFixture,resumeFixture} from './seedCampaign';
+import {campaignFixture,resumeFixture,openNation} from './seedCampaign';
 import {UI_CATALOG_094} from '../src/i18n/uiCatalog094';
 
 for(const width of [1440,390])test(`0.94 ${width}px independent HUD, Light globe and bottom-left toast clearance`,async({page})=>{
@@ -11,7 +11,7 @@ for(const width of [1440,390])test(`0.94 ${width}px independent HUD, Light globe
  }
  expect(await page.locator('.strategy-svg').evaluate(e=>getComputedStyle(e).backgroundImage)).toContain('radial-gradient');
  expect(await page.locator('.ocean-sphere').evaluate(e=>getComputedStyle(e).filter)).toContain('drop-shadow');
- await page.locator('[data-guide="nation"]').click();const badges=page.locator('.command-panel .identity-strip>span');
+ await openNation(page);const badges=page.locator('.command-panel .identity-strip>span');
  for(const badge of await badges.all())expect(await badge.evaluate(e=>getComputedStyle(e).backgroundColor)).toBe('rgb(243, 239, 229)');
  await expect(page.locator('.command-panel .national-panel-heading button')).not.toHaveAttribute('title');
  expect(await page.locator('.national-flag-card strong').evaluate(e=>getComputedStyle(e).color)).toBe('rgb(255, 255, 255)');

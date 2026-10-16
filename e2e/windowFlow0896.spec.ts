@@ -1,5 +1,5 @@
 import {test,expect} from '@playwright/test';
-import {campaignFixture,resumeFixture} from './seedCampaign';
+import {campaignFixture,resumeFixture,openNation} from './seedCampaign';
 
 test('the inbox is ready after startup even when later module downloads are unavailable',async({page})=>{
  await resumeFixture(page,campaignFixture('en'));let requests=0;
@@ -12,7 +12,7 @@ test('closing and reopening the ready inbox needs no import retries and preserve
  await expect(page.locator('[data-testid="panel-load-error"]')).toHaveCount(0);
 });
 for(const width of [1440,390])test(`${width}px country trade heading separates label, country and metrics`,async({page})=>{
- await page.setViewportSize({width,height:900});await resumeFixture(page,campaignFixture('en'));await page.locator('[data-guide="nation"]').first().click();await page.locator('.country-select').selectOption('AZE');await page.locator('[data-guide="tab-trade"]').click();const hero=page.locator('.trade-country-hero');await expect(hero).toBeVisible();await hero.scrollIntoViewIfNeeded();const label=await hero.locator('.trade-desk-title small').boundingBox(),name=await hero.locator('.trade-desk-title strong').boundingBox(),facts=await hero.locator('.trade-desk-facts').boundingBox();expect(name!.y).toBeGreaterThanOrEqual(label!.y+label!.height);expect(facts!.y).toBeGreaterThan(name!.y+name!.height);await page.screenshot({path:`test-results/trade-heading-0896-${width}.png`,fullPage:true});
+ await page.setViewportSize({width,height:900});await resumeFixture(page,campaignFixture('en'));await openNation(page);await page.locator('.country-select').selectOption('AZE');await page.locator('[data-guide="tab-trade"]').click();const hero=page.locator('.trade-country-hero');await expect(hero).toBeVisible();await hero.scrollIntoViewIfNeeded();const label=await hero.locator('.trade-desk-title small').boundingBox(),name=await hero.locator('.trade-desk-title strong').boundingBox(),facts=await hero.locator('.trade-desk-facts').boundingBox();expect(name!.y).toBeGreaterThanOrEqual(label!.y+label!.height);expect(facts!.y).toBeGreaterThan(name!.y+name!.height);await page.screenshot({path:`test-results/trade-heading-0896-${width}.png`,fullPage:true});
 });
 test('nested review owns Escape and Tab, restores focus and keeps its parent open',async({page})=>{
  const s=campaignFixture('en');s.countries.TUR.economy.treasury=10000;

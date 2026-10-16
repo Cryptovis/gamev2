@@ -1,7 +1,7 @@
 import {test,expect} from '@playwright/test';
-import {campaignFixture,resumeFixture} from './seedCampaign';
+import {campaignFixture,resumeFixture,openNation} from './seedCampaign';
 for(const language of ['en','tr','es','zh','ru'] as const)test(`Affairs explains unavailable foreign actions in ${language}`,async({page})=>{
- await resumeFixture(page,campaignFixture(language));await page.locator('[data-guide="nation"]').first().click();await page.locator('.country-select').selectOption('GRC');
+ await resumeFixture(page,campaignFixture(language));await openNation(page);await page.locator('.country-select').selectOption('GRC');
  await expect(page.locator('.trade-desk-shortcut')).toHaveCount(0);
  if(language==='en')await page.screenshot({path:'test-results/country-090.png'});
  await page.locator('[data-guide="tab-affairs"]').click();await expect(page.locator('.affairs-hero')).toBeVisible();
@@ -12,7 +12,7 @@ for(const language of ['en','tr','es','zh','ru'] as const)test(`Affairs explains
 });
 for(const width of [1440,390])test(`${width}px territory sections retain navigation and apply one reviewed preparation`,async({page})=>{
  await page.setViewportSize({width,height:900});const s=campaignFixture('en');s.countries.GRC.controllerCountryId='TUR';await resumeFixture(page,s);
- await page.locator('[data-guide="nation"]').first().click();await page.locator('.country-select').selectOption('GRC');await page.locator('[data-guide="tab-affairs"]').click();
+ await openNation(page);await page.locator('.country-select').selectOption('GRC');await page.locator('[data-guide="tab-affairs"]').click();
  const nav=page.locator('.affairs-shell .section-menu');await nav.getByRole('button',{name:'Territory integration',exact:true}).click();
  await expect(page.locator('.integration-requirements')).toBeVisible();const action=page.locator('.affairs-action').first();await action.locator('button').click();
  await expect(page.locator('.review-dialog')).toBeVisible();await page.locator('[data-guide="review-confirm"]').click();

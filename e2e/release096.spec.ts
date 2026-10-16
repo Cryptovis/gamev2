@@ -1,5 +1,5 @@
 import {test,expect,type Locator} from '@playwright/test';
-import {campaignFixture,resumeFixture} from './seedCampaign';
+import {campaignFixture,resumeFixture,openNation} from './seedCampaign';
 import {UI_CATALOG_096} from '../src/i18n/uiCatalog096';
 
 async function readableSurface(card:Locator){
@@ -61,7 +61,7 @@ for(const width of [1440,390])test(`0.96 ${width}px national cards, supplier gri
   await expect(button.locator('small')).toHaveCSS('font-size','10px');
   expect(await button.locator('small').evaluate(el=>el.scrollWidth<=el.clientWidth)).toBe(true);
  }
- await page.locator('[data-guide="nation"]').click();
+ await openNation(page);
  await expect(page.locator('.identity-scripture')).toHaveCount(1);
  for(const card of await page.locator('.identity-strip > span').all())await expect(card).toHaveCSS('align-items','center');
  for(const tab of ['economy','policies','military']){
@@ -113,7 +113,7 @@ test('0.96 recorded economic chart follows Light/Dark changes without remounting
  const state=campaignFixture('en');state.selectedCountryId=null;
  const c=state.countries.TUR;state.day=2;
  state.world.economicHistory={countryId:'TUR',points:[{day:1,gdp:c.economy.gdp,treasury:c.economy.treasury,inflation:c.economy.inflation,treasuryChange:0},{day:2,gdp:c.economy.gdp+1,treasury:c.economy.treasury+1,inflation:c.economy.inflation,treasuryChange:1}]};
- await resumeFixture(page,state);await page.locator('[data-guide="nation"]').click();await page.locator('.command-panel [data-guide="tab-economy"]').click();
+ await resumeFixture(page,state);await openNation(page);await page.locator('.command-panel [data-guide="tab-economy"]').click();
  const canvas=page.locator('.economic-chart canvas');await expect(canvas).toBeVisible();
  const light=await canvas.evaluate(el=>(el as HTMLCanvasElement).toDataURL());
  await page.evaluate(()=>window.dispatchEvent(new StorageEvent('storage',{key:'trp-appearance-v1',newValue:'dark'})));

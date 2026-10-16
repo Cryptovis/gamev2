@@ -1,5 +1,5 @@
 import {test,expect,type Page} from '@playwright/test';
-import {campaignFixture,resumeFixture} from './seedCampaign';
+import {campaignFixture,resumeFixture,openNation} from './seedCampaign';
 import {FACILITIES} from '../src/data/industrialCatalog';
 import type {GameState} from '../src/domain/game';
 import type {FacilityKind} from '../src/domain/industrial';
@@ -27,7 +27,7 @@ for(const [width,lang] of [[1440,'tr'],[390,'en']] as const)test(`${lang} ${widt
  const w=WORDS[lang],errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
  await page.setViewportSize({width,height:900});
  await resumeFixture(page,rich(lang));
- await page.locator('[data-guide="nation"]').click();await page.locator('[data-guide="tab-policies"]').click();
+ await openNation(page);await page.locator('[data-guide="tab-policies"]').click();
  const cards=page.locator('.policy-card');
  await expect(cards).toHaveCount(6);
  await expect(page.locator('.policy-card-grid')).toContainText(w.policies);
@@ -62,7 +62,7 @@ for(const [width,lang] of [[1440,'tr'],[390,'en']] as const)test(`${lang} ${widt
  const w=WORDS[lang],errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
  await page.setViewportSize({width,height:900});
  await resumeFixture(page,withFacility(rich(lang),'waterworks',2));
- await page.locator('[data-guide="nation"]').click();await page.locator('[data-guide="tab-production"]').click();
+ await openNation(page);await page.locator('[data-guide="tab-production"]').click();
  // The tutorial hook stays on the card's own build button.
  await expect(page.locator('.facility-card [data-guide="learn-build"]').first()).toBeAttached();
  const card=page.locator('.facility-card').nth(KINDS.indexOf('waterworks'));
@@ -97,7 +97,7 @@ for(const [width,lang] of [[1440,'tr'],[390,'en']] as const)test(`${lang} ${widt
 test('en 390px six construction projects: Limit Reached badge and a disabled Build another',async({page})=>{
  const w=WORDS.en;await page.setViewportSize({width:390,height:844});
  await resumeFixture(page,withFacility(rich('en'),'civil_factory',1,6));
- await page.locator('[data-guide="nation"]').click();await page.locator('[data-guide="tab-production"]').click();
+ await openNation(page);await page.locator('[data-guide="tab-production"]').click();
  await page.locator('.facility-card').nth(KINDS.indexOf('civil_factory')).locator('.facility-details').click();
  const modal=page.locator('.factory-modal');
  await expect(modal.locator('.factory-limit-badge')).toHaveText(w.limit);

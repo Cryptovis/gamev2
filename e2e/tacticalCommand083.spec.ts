@@ -1,4 +1,4 @@
-import {campaignFixture,resumeFixture} from './seedCampaign';
+import {campaignFixture,resumeFixture,openNation} from './seedCampaign';
 import {withWarFuel} from '../src/tests/warFixture';
 import {readFileSync} from 'node:fs';
 const {version}=JSON.parse(readFileSync(new URL('../package.json',import.meta.url),'utf8'));
@@ -10,7 +10,7 @@ async function start(page:Page){
  await page.locator('.guided-card footer button').first().click();
 }
 async function battle(page:Page){
- await resumeFixture(page,withWarFuel(campaignFixture()));await page.locator('[data-guide="nation"]').first().click();await page.locator('.country-select').selectOption('GRC');await page.locator('[data-guide="tab-war"]').click();
+ await resumeFixture(page,withWarFuel(campaignFixture()));await openNation(page);await page.locator('.country-select').selectOption('GRC');await page.locator('[data-guide="tab-war"]').click();
  await page.locator('.declare-war').click();await page.locator('.strategic-decision-modal .confirm').click();
  await expect(page.locator('.war-theatre-backdrop')).toBeVisible();
  await page.locator('.hd-war-button').click();await page.locator('[data-guide="review-dismiss"]').first().click();await expect(page.locator('[data-testid="tactical-battlefield"]')).toBeVisible();
@@ -34,7 +34,7 @@ for(const viewport of [{width:1440,height:900},{width:390,height:844}]){
  });
 }
 test('economic observations draw a chart and accessible table after a campaign day',async({page})=>{
- await start(page);await page.locator('[data-guide="nation"]').first().click();await page.locator('[data-guide="tab-economy"]').click();
+ await start(page);await openNation(page);await page.locator('[data-guide="tab-economy"]').click();
  await expect(page.locator('[data-testid="economic-trends"]')).toContainText('Sonraki verinin');const date=await page.locator('.campaign-clock strong').innerText();
  await page.keyboard.press('Escape');await page.locator('.speed-segment button').last().click();await expect(page.locator('.campaign-clock strong')).not.toHaveText(date);await page.locator('.speed-segment button').first().click();await page.locator('[data-guide="tab-economy"]').click();
  await expect(page.locator('.economic-chart canvas')).toBeVisible();await page.getByRole('button',{name:'Veri tablosunu göster',exact:true}).click();expect(await page.locator('.economic-table-scroll tbody tr').count()).toBeGreaterThanOrEqual(2);

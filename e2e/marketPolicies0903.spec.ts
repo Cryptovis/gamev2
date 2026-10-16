@@ -1,5 +1,5 @@
 import {test,expect} from '@playwright/test';
-import {campaignFixture,resumeFixture} from './seedCampaign';
+import {campaignFixture,resumeFixture,openNation} from './seedCampaign';
 import {UI_CATALOG_0903} from '../src/i18n/uiCatalog0903';
 
 for(const width of [1440,390])test(`${width}px compact contracts and partner choices remain readable without horizontal scroll`,async({page})=>{
@@ -23,7 +23,7 @@ test('purchase receipt shows green incoming goods, actual debit and treasury sep
  await expect(receipt.locator('[data-metric="Total paid"]')).toHaveAttribute('data-tone','negative');await expect(receipt.locator('[data-metric="Incoming cargo"]')).toHaveAttribute('data-tone','positive');await expect(receipt.locator('[data-metric="Treasury now"]')).toBeVisible();const art=await receipt.locator('.receipt-art').boundingBox(),image=await receipt.locator('.receipt-art .asset-thumbnail').boundingBox();expect(Math.abs((image!.x+image!.width/2)-(art!.x+art!.width/2))).toBeLessThan(2);await expect(receipt.locator('.review-notes')).toContainText('Reserves increase when the cargo arrives.');await page.screenshot({path:'test-results/receipt-0903.png'});
 });
 for(const [index,lang] of (['en','tr','es','zh','ru'] as const).entries())test(`${lang}: Policies owns the tax review and ministry-budget route`,async({page})=>{
- await resumeFixture(page,campaignFixture(lang));await page.locator('[data-guide="nation"]').click();await expect(page.locator('.command-panel .population-panel')).toHaveCount(0);await page.locator('[data-guide="tab-policies"]').click();const label=index===0?'Policies':UI_CATALOG_0903.Policies[index-1];await expect(page.locator('[data-guide="tab-policies"]')).toContainText(label);await expect(page.locator('.tax-policy-panel')).toBeVisible();
+ await resumeFixture(page,campaignFixture(lang));await openNation(page);await expect(page.locator('.command-panel .population-panel')).toHaveCount(0);await page.locator('[data-guide="tab-policies"]').click();const label=index===0?'Policies':UI_CATALOG_0903.Policies[index-1];await expect(page.locator('[data-guide="tab-policies"]')).toContainText(label);await expect(page.locator('.tax-policy-panel')).toBeVisible();
  const slider=page.locator('.tax-policy-panel input[type="range"]');await slider.fill('35');await page.locator('.tax-policy-panel>button').first().click();await expect(page.locator('.review-confirmation')).toBeVisible();await page.locator('[data-guide="review-confirm"]').click();await expect(page.locator('.review-result')).toBeVisible();await page.locator('.review-result [data-guide="review-dismiss"]').first().click();await expect(page.locator('.tax-policy-panel')).toContainText('35%');
  await page.screenshot({path:`test-results/policies-0903-${lang}.png`});await page.locator('.policy-budget-link').click();await expect(page.locator('.ministry-list')).toBeVisible();await page.locator('.country-select').selectOption('GRC');await page.locator('[data-guide="tab-policies"]').click();await expect(page.locator('.tax-policy-panel input')).toHaveCount(0);await expect(page.locator('.policy-budget-link')).toHaveCount(0);
 });

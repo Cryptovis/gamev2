@@ -1,10 +1,10 @@
 import {test,expect,type Page} from '@playwright/test';
-import {campaignFixture,resumeFixture} from './seedCampaign';
+import {campaignFixture,resumeFixture,openNation} from './seedCampaign';
 import {withWarFuel} from '../src/tests/warFixture';
 
 /** Phase 5: one tactical round (player bombards) and its recorded replay. */
 async function foughtRound(page:Page){
- await resumeFixture(page,withWarFuel(campaignFixture('en')));await page.locator('[data-guide="nation"]').first().click();await page.locator('.country-select').selectOption('GRC');await page.locator('[data-guide="tab-war"]').click();
+ await resumeFixture(page,withWarFuel(campaignFixture('en')));await openNation(page);await page.locator('.country-select').selectOption('GRC');await page.locator('[data-guide="tab-war"]').click();
  await page.locator('.declare-war').click();await page.locator('.strategic-decision-modal .confirm').click();await expect(page.locator('.war-theatre-backdrop')).toBeVisible();
  await page.locator('.hd-war-button').click();await page.locator('[data-guide="review-dismiss"]').first().click();await expect(page.locator('[data-testid="tactical-battlefield"]')).toBeVisible();
  await page.locator('[data-unit="attacker-infantry-1"]').click();await page.locator('[data-order-kind="move"]').click();await page.locator('[data-cell="22"]').click();await page.locator('.tactical-queue').click();
