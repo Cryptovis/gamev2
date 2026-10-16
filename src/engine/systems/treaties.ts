@@ -15,7 +15,7 @@ export type AgreementKind = TreatyType | 'embassy';
 export type ProposedAgreementKind = 'embassy' | 'trade';
 
 /** Base fee ($B at the reference GDP); every country pays it scaled to its GDP (audit C15, policyPressure.costScale). */
-export const AGREEMENT_BASE_COST: Record<AgreementKind, number> = { embassy: 3, trade: 5, nonAggression: 4, alliance: 10 };
+export const AGREEMENT_BASE_COST: Record<AgreementKind, number> = { embassy: 0.05, trade: 5, nonAggression: 4, alliance: 10 };
 /** Trade uses the 0-100 relationship index; pacts use the raw -100..100 score, as the player's commands always did. */
 export const TRADE_MIN_INDEX = 20;
 export const NON_AGGRESSION_MIN_SCORE = 25;

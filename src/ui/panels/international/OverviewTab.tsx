@@ -4,6 +4,7 @@ import {ORGANIZATION_IDS,type OrganizationId} from '../../../domain/organization
 import {ORGANIZATION_LABELS,bodyLabel} from '../../../engine/systems/organizations/previews';
 import {LocaleText} from '../../../i18n/localeText';
 import {Badge,Metrics} from './shared';
+import {flagEmoji} from '../../../data/countryThemes';
 export function OverviewTab({state,onPropose}:{state:GameState;onPropose:(id:OrganizationId)=>void}){
  const [roster,setRoster]=useState<OrganizationId>('un'),[limit,setLimit]=useState(40),actor=state.playerCountryId,organization=state.world.organizations.byId[roster];
  const members=Object.values(organization.memberships).sort((a,b)=>a.countryId.localeCompare(b.countryId));
@@ -14,7 +15,8 @@ export function OverviewTab({state,onPropose}:{state:GameState;onPropose:(id:Org
   <div className="ia-buttons"><button type="button" aria-pressed={roster===id} onClick={()=>{setRoster(id);setLimit(40);}}><LocaleText value="Show roster"/></button><button type="button" onClick={()=>onPropose(id)}><LocaleText value="Create resolution"/></button></div>
  </article>;})}</div>
  <section className="ia-card"><h3><LocaleText value={ORGANIZATION_LABELS[roster]}/> · <LocaleText value="Member roster"/></h3>
-  <div className="ia-roster">{members.slice(0,limit).map(m=><article key={m.countryId}><strong><LocaleText value={state.countries[m.countryId].name}/></strong><Badge value={m.tier}/><Badge value={m.status}/><span><LocaleText value="Standing"/> {(organization.standingByCountry[m.countryId]??0).toFixed(1)}</span>{m.offices.map(office=><span key={office.bodyId}><LocaleText value="Chair"/> · <LocaleText value={bodyLabel(office.bodyId)}/> · <LocaleText value="Until day"/> {office.untilDay}</span>)}</article>)}</div>
+  <div className="ranking-table-wrap ia-roster-wrap"><table className="ranking-table ia-roster-table"><thead><tr><th>#</th><th><LocaleText value="Country"/></th><th><LocaleText value="Tier"/></th><th><LocaleText value="Status"/></th><th><LocaleText value="Standing"/></th><th><LocaleText value="Active offices"/></th></tr></thead>
+  <tbody>{members.slice(0,limit).map((m,i)=><tr key={m.countryId} className={m.countryId===actor?'player-row':''}><td>{i+1}</td><td><span aria-hidden="true">{flagEmoji(state.countries[m.countryId].iso2)}</span> <LocaleText value={state.countries[m.countryId].name}/></td><td><Badge value={m.tier}/></td><td><Badge value={m.status}/></td><td>{(organization.standingByCountry[m.countryId]??0).toFixed(1)}</td><td>{m.offices.length?m.offices.map(office=><span className="ia-office" key={office.bodyId}><LocaleText value={office.role}/> · <LocaleText value={bodyLabel(office.bodyId)}/> · <LocaleText value="Until day"/> {office.untilDay}</span>):'—'}</td></tr>)}</tbody></table></div>
   {members.length>limit&&<button type="button" onClick={()=>setLimit(n=>n+40)}><LocaleText value="Show more"/></button>}
  </section></>;
 }

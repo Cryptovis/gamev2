@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { useGameStore } from "../../store/gameStore";
 import {ReviewVisual,reviewVisualKind,type ReviewVisualKind} from '../icons/ReviewVisual';
 import {AssetThumbnail} from '../icons/AssetThumbnail';
+import {flagEmoji} from '../../data/countryThemes';
 export interface ReviewContent {
   title: string;
   summary: string;
@@ -14,6 +15,10 @@ export interface ReviewContent {
   outcome?: 'success';
   asset?: string;
   metricTones?: Record<string,'positive'|'negative'|'neutral'>;
+  /** Both sides of a diplomatic or trade action, shown as flags and names. */
+  parties?: {left:{iso2:string;name:string};right:{iso2:string;name:string}};
+  /** What happens next, in plain words. */
+  nextSteps?: string;
 }
 export function ReviewDialog({
   title,
@@ -28,6 +33,8 @@ export function ReviewDialog({
   outcome,
   asset,
   metricTones={},
+  parties,
+  nextSteps,
   actions=[],
   children,
   className="",
@@ -52,7 +59,7 @@ export function ReviewDialog({
         role="dialog"
         aria-modal="true"
         aria-label={translateLive(title)}
-        className={`review-dialog ${onConfirm?'review-confirmation':'review-result'} ${outcome?'receipt-success':''} ${className}`}
+        className={`review-dialog ${onConfirm?'review-confirmation':'review-result'} ${outcome?'receipt-success':''} ${parties&&!onConfirm?'receipt-compact':''} ${className}`}
       >
         <header>
           <small><LocaleText value={"COMMAND REVIEW"}/></small>
@@ -61,6 +68,7 @@ export function ReviewDialog({
         {asset?<div className="review-visual receipt-art" aria-hidden="true"><AssetThumbnail asset={asset} size={72}/><span className="receipt-check">✓</span></div>:<ReviewVisual kind={visual??reviewVisualKind(title+' '+summary)} signed={!onConfirm&&/signed|agreed/i.test(title)}/>}
         <h2><LocaleText value={title}/></h2>
         <p><LocaleText value={summary}/></p>
+        {parties&&<div className="review-parties" data-testid="review-parties"><span><LocaleText value={flagEmoji(parties.left.iso2)}/> <LocaleText value={parties.left.name}/></span><i aria-hidden="true">↔</i><span><LocaleText value={flagEmoji(parties.right.iso2)}/> <LocaleText value={parties.right.name}/></span></div>}
         <div className="review-metrics">
           {metrics.map(([label, value], index) => (
             <div key={label+index} data-metric={label} data-tone={metricTones[label]??'neutral'}>
@@ -69,6 +77,7 @@ export function ReviewDialog({
             </div>
           ))}
         </div>
+        {nextSteps&&<p className="review-next-steps"><strong><LocaleText value="Next steps"/></strong> <LocaleText value={nextSteps}/></p>}
         {children}
         <div className="review-notes">
           {warnings.map((w) => (

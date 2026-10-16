@@ -1,4 +1,4 @@
-import {useLayoutEffect,useRef,type ReactNode} from 'react';
+import {useLayoutEffect,useRef,useState,type ReactNode} from 'react';
 import {createPortal} from 'react-dom';
 import {useWorkspaceVisibility} from './useWorkspaceVisibility';
 import {useWindowLifecycle,ownsWindowDismissal,WINDOW_LAYERS} from './useWindowLifecycle';
@@ -7,10 +7,11 @@ import {LocaleText,translateLive} from '../../i18n/localeText';
 import {GuideBriefing} from '../panels/GuideBriefing';
 import {TacticalHint} from '../hints/TacticalHint';
 import type {TacticalHintSpec} from '../hints/types';
+import {WindowHintSlot} from '../hints/HintSlot';
 
 /** A centered primary workspace: fixed heading/tabs, one scrolling body, suspended ownership while a child is active. */
 export function ExecutiveWorkspaceShell({id,title,kicker='EXECUTIVE OFFICE',tabs,children,onClose,scrollKey='body',active,hint}:{id:string;title:string;kicker?:string;tabs?:ReactNode;children:ReactNode;onClose:()=>void;scrollKey?:string;active?:boolean;hint?:TacticalHintSpec}){
- const owned=useWorkspaceVisibility(),visible=active??owned,ref=useRef<HTMLElement>(null),body=useRef<HTMLDivElement>(null),positions=useRef(new Map<string,number>());
+ const [hintSlot,setHintSlot]=useState<HTMLElement|null>(null),owned=useWorkspaceVisibility(),visible=active??owned,ref=useRef<HTMLElement>(null),body=useRef<HTMLDivElement>(null),positions=useRef(new Map<string,number>());
  useLayoutEffect(()=>{if(visible&&body.current)body.current.scrollTop=positions.current.get(scrollKey)??0;},[scrollKey,visible]);
  useWindowLifecycle(ref,{onClose,layer:WINDOW_LAYERS.workspace,enabled:visible});
  useScrollMemory(ref,visible);
@@ -19,6 +20,7 @@ export function ExecutiveWorkspaceShell({id,title,kicker='EXECUTIVE OFFICE',tabs
    <header className="floating-command-header executive-header" onMouseDown={e=>e.stopPropagation()}>
     <span><small><LocaleText value={kicker}/></small><strong><LocaleText value={title}/></strong></span>
     {hint&&<TacticalHint spec={hint}/>}
+    <span className="window-hint-slot" ref={setHintSlot}/>
     <button data-guide="close-workspace" onClick={onClose} aria-label={translateLive('Close command window')}><LocaleText value="×"/></button>
    </header>
    {tabs&&<div className="executive-tabs" onKeyDown={event=>{
@@ -28,7 +30,7 @@ export function ExecutiveWorkspaceShell({id,title,kicker='EXECUTIVE OFFICE',tabs
     const next=event.key==='Home'?0:event.key==='End'?tabs.length-1:(index+(event.key==='ArrowRight'?1:-1)+tabs.length)%tabs.length;
     tabs[next].focus();tabs[next].click();
    }} onMouseDown={e=>e.stopPropagation()}>{tabs}</div>}
-   <div ref={body} onScroll={()=>{if(visible&&body.current)positions.current.set(scrollKey,body.current.scrollTop);}} className="floating-command-body executive-body" onMouseDown={e=>e.stopPropagation()}><GuideBriefing/>{children}</div>
+   <div ref={body} onScroll={()=>{if(visible&&body.current)positions.current.set(scrollKey,body.current.scrollTop);}} className="floating-command-body executive-body" onMouseDown={e=>e.stopPropagation()}><GuideBriefing/><WindowHintSlot.Provider value={hintSlot}>{children}</WindowHintSlot.Provider></div>
   </section>
  </div>;
  return typeof document==='undefined'?node:createPortal(node,document.body);

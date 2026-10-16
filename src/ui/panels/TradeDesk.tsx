@@ -6,7 +6,7 @@ import { GOODS } from '../../data/industrialCatalog';
 import { flagEmoji } from '../../data/countryThemes';
 import { LocaleText, translateLive } from '../../i18n/localeText';
 import { EXCHANGE_GOODS, letterCost } from '../../engine/systems/livingEconomy';
-import { countryTradeOptions, rankSuppliers, type SaleOption, type TradeOption } from '../../engine/systems/tradeOptions';
+import { countryTradeOptions, industrialOrderPreview, rankSuppliers, type SaleOption, type TradeOption } from '../../engine/systems/tradeOptions';
 import { useGameStore } from '../../store/gameStore';
 import {useWorldView} from '../../store/useWorldView';
 import { MARKET_RESOURCES, resourceStrategicStatus } from '../../store/marketSelectors';
@@ -42,12 +42,40 @@ function priceDelta(option: TradeOption) {
   return delta === 0 ? 'world price' : `${delta > 0 ? '+' : ''}${delta}% vs world`;
 }
 
-type Dialog = ReviewContent & { actions?:Array<{label:string;onClick:()=>void;disabled?:boolean}>; allowed?: boolean; confirmLabel?: string; run: (commandId: string) => void };
+const NO_SURPLUS = 'Partner has no exportable surplus of this good at this time';
+const NO_DEMAND = 'Partner has no demand for this good at this time';
+const roundQty = (v: number) => Math.round(v * 100) / 100;
+
+/** [flag] Seller -> [flag] Buyer, so the dialog states who trades with whom. */
+function TradeParties({ from, to }: { from: CountryState; to: CountryState }) {
+  return <div className="trade-parties" data-testid="trade-parties">
+    <span><LocaleText value={flagEmoji(from.iso2)} /> <LocaleText value={from.name} /></span>
+    <i aria-hidden="true">→</i>
+    <span><LocaleText value={flagEmoji(to.iso2)} /> <LocaleText value={to.name} /></span>
+  </div>;
+}
+
+function QuantityStepper({ value, max, onChange }: { value: number; max: number; onChange: (value: number) => void }) {
+  const step = max >= 10 ? 1 : 0.01, set = (v: number) => onChange(Math.min(max, Math.max(0, roundQty(Number.isFinite(v) ? v : 0))));
+  return <div className="trade-quantity">
+    <small><LocaleText value="Order quantity" /></small>
+    <div>
+      <button type="button" aria-label={translateLive('Decrease quantity')} disabled={value <= 0} onClick={() => set(value - step)}>−</button>
+      <input type="number" aria-label={translateLive('Order quantity')} min={0} max={max} step={step} value={value} onChange={(event) => set(Number(event.target.value))} />
+      <button type="button" aria-label={translateLive('Increase quantity')} disabled={value >= max} onClick={() => set(value + step)}>+</button>
+      <button type="button" className="trade-quantity-max" disabled={value >= max} onClick={() => set(max)}><LocaleText value="MAX" /></button>
+    </div>
+    <small><LocaleText value="Maximum now" />: <b>{amount(max)}</b></small>
+  </div>;
+}
+
+type Dialog = ReviewContent & { actions?:Array<{label:string;onClick:()=>void;disabled?:boolean}>; partner?: CountryState; allowed?: boolean; confirmLabel?: string; run: (commandId: string) => void };
 
 /** Turns a route's next step into a button and, where the action costs money, a review dialog. */
 function useTradeActions() {
   const state = useWorldView();
   const [dialog, setDialog] = useState<Dialog | null>(null);
+  const [order, setOrder] = useState<{ option: TradeOption; direction: 'buy' | 'sell'; quantity: number } | null>(null);
   const player = state.countries[state.playerCountryId];
   const [contract,setContract]=useState<{partnerId:string;resource:TradeResource}|null>(null);
   const [years,setYears]=useState<1|3|5|10>(1);
@@ -62,24 +90,16 @@ function useTradeActions() {
           const terms=longTermContractPreview(state,player.id,partner.id,option.good as TradeResource,1);
           setDialog({ title: translateLive('Review import flow'), summary: `Import ${label.toLowerCase()} from ${partner.name}.`, visual: 'contract',
             metrics: [['Daily supply', amount(option.suggestedQuantity)], ['Daily cost', money(option.orderCost)], ['Cargo travel', `${option.travelDays} days`], ['Treasury', money(player.economy.treasury)]],
-            warnings: ['This daily flow can be cancelled in Diplomacy. Actual supply depends on available stock and funds.',...(!terms.allowed?[terms.reason]:[])],
+            warnings: [...(option.suggestedQuantity <= 0 ? [NO_SURPLUS] : []), 'This daily flow can be cancelled in Diplomacy. Actual supply depends on available stock and funds.',...(!terms.allowed?[terms.reason]:[])], partner,
             actions:[{label:'LONG-TERM AGREEMENT',disabled:!terms.allowed,onClick:()=>{setDialog(null);setYears(1);setContract({partnerId:partner.id,resource:option.good as TradeResource});}}],
             allowed: option.suggestedQuantity > 0,
-            run: () => { state.createImport(partner.id, option.good as TradeResource); state.showReceipt({ title: 'Import flow updated', summary: useGameStore.getState().sitrep[0] }); } });
+            run: () => { state.createImport(partner.id, option.good as TradeResource); state.showReceipt({ title: 'Import Flow Opened', summary: useGameStore.getState().sitrep[0], visual: 'economy', outcome: 'success', parties: { left: { iso2: player.iso2, name: player.name }, right: { iso2: partner.iso2, name: partner.name } }, nextSteps: 'Cargo arrives after the travel time. You can cancel the flow in Diplomacy.' }); } });
         } else {
-          setDialog({ title: translateLive('Review industrial order'), summary: `Buy ${label} from ${partner.name}.`, visual: 'contract',
-            metrics: [['Quantity', amount(option.suggestedQuantity)], ['Unit price', money(option.price)], ['Shipment value', money(option.orderCost)], ['Treasury', money(player.economy.treasury)]],
-            warnings: option.orderError ? [option.orderError] : ['Stocks move immediately.'],
-            allowed: !option.orderError && option.suggestedQuantity > 0,
-            run: (commandId) => state.placeIndustrialOrder(partner.id, option.good as IndustrialGood, option.suggestedQuantity, 'buy', 0, commandId) });
+          setOrder({ option, direction: 'buy', quantity: option.suggestedQuantity });
         }
         return;
       case 'sell':
-        setDialog({ title: translateLive('Review industrial export'), summary: `Sell ${label} to ${partner.name}.`, visual: 'contract',
-          metrics: [['Quantity', amount(option.suggestedQuantity)], ['Unit price', money(option.price)], ['Shipment value', money(option.orderCost)]],
-          warnings: option.orderError ? [option.orderError] : ['Stocks move immediately.'],
-          allowed: !option.orderError && option.suggestedQuantity > 0,
-          run: (commandId) => state.placeIndustrialOrder(partner.id, option.good as IndustrialGood, option.suggestedQuantity, 'sell', 0, commandId) });
+        setOrder({ option, direction: 'sell', quantity: option.suggestedQuantity });
         return;
       case 'propose_pact':
         proposePact(partner);
@@ -101,17 +121,28 @@ function useTradeActions() {
     setDialog({ title: translateLive('Propose a trade pact'), summary: `Send a trade pact proposal to ${partner.name}.`, visual: 'diplomacy',
       metrics: [['Fee if accepted', money(letterCost(state, player.id, 'trade_pact'))], ['Treasury', money(player.economy.treasury)]],
       warnings: ['The reply arrives after three campaign days. Payment is charged only if accepted.'],
-      confirmLabel: 'SEND PROPOSAL',
+      confirmLabel: 'SEND PROPOSAL', partner,
       run: (commandId) => state.requestDiplomacy(partner.id, 'trade_pact', 1, commandId) });
   }
 
   const terms=contract?longTermContractPreview(state,player.id,contract.partnerId,contract.resource,years):null;
-  const element = <>{contract&&terms&&<ReviewDialog className="supply-contract-review" title="Long-term supply agreement" summary={`Import ${goodLabel(contract.resource).toLowerCase()} from ${state.countries[contract.partnerId].name}.`} visual="contract"
+  const orderView = order ? industrialOrderPreview(state, order.option.partnerId, order.option.good as IndustrialGood, order.quantity, order.direction) : null;
+  const element = <>{order && orderView && (() => {
+    const partner = state.countries[order.option.partnerId], buy = order.direction === 'buy', none = orderView.maxQuantity <= 0, label = goodLabel(order.option.good);
+    return <ReviewDialog className="trade-order-review" title={buy ? 'Review industrial order' : 'Review industrial export'} summary={`${buy ? 'Buy' : 'Sell'} ${label} ${buy ? 'from' : 'to'} ${partner.name}.`} visual="contract"
+      metrics={[['Quantity', amount(orderView.quantity)], ['Unit price', money(orderView.unitPrice)], ['Shipment value', money(orderView.value)], ['Treasury', money(player.economy.treasury)]]}
+      warnings={none ? [buy ? NO_SURPLUS : NO_DEMAND] : orderView.error ? [orderView.error] : ['Stocks move immediately.']}
+      allowed={!none && orderView.quantity > 0 && !orderView.error} confirmLabel="CONFIRM" onCancel={() => setOrder(null)}
+      onConfirm={(commandId) => { state.placeIndustrialOrder(partner.id, order.option.good as IndustrialGood, orderView.quantity, order.direction, 0, commandId); setOrder(null); }}>
+      <TradeParties from={buy ? partner : player} to={buy ? player : partner} />
+      {!none && <QuantityStepper value={order.quantity} max={orderView.maxQuantity} onChange={(quantity) => setOrder({ ...order, quantity })} />}
+    </ReviewDialog>;
+  })()}{contract&&terms&&<ReviewDialog className="supply-contract-review" title="Long-term supply agreement" summary={`Import ${goodLabel(contract.resource).toLowerCase()} from ${state.countries[contract.partnerId].name}.`} visual="contract"
     metrics={[["Monthly supply",amount(terms.monthlyQuantity)],["Monthly payment",money(terms.monthlyCost)],["Unit price",money(terms.unitPrice)],["RELATIONS",terms.relationIndex+'/100']]}
     warnings={["Delivery every 30 days at a fixed price. Pay on arrival. Low stock or funds can reduce delivery.","Replaces this supplier's daily flow. Manage or cancel the agreement in Diplomacy.",...(!terms.allowed?[terms.reason]:[])]}
     allowed={terms.allowed} confirmLabel="SIGN AGREEMENT" onCancel={()=>setContract(null)} onConfirm={commandId=>{state.createLongTermContract(contract.partnerId,contract.resource,years,commandId);setContract(null);}}>
     <div className="contract-duration"><small><LocaleText value="Contract duration"/></small><div>{([1,3,5,10] as const).map(y=><button key={y} aria-pressed={years===y} onClick={()=>setYears(y)}><LocaleText value={y+(y===1?' year':' years')}/></button>)}</div></div>
-  </ReviewDialog>}{dialog && <ReviewDialog title={dialog.title} summary={dialog.summary} metrics={dialog.metrics} warnings={dialog.warnings} visual={dialog.visual} actions={dialog.actions} allowed={dialog.allowed ?? true} confirmLabel={dialog.confirmLabel ?? 'CONFIRM'} onCancel={() => setDialog(null)} onConfirm={(commandId) => { dialog.run(commandId); setDialog(null); }} />}</>;
+  </ReviewDialog>}{dialog && <ReviewDialog title={dialog.title} summary={dialog.summary} metrics={dialog.metrics} warnings={dialog.warnings} visual={dialog.visual} actions={dialog.actions} allowed={dialog.allowed ?? true} confirmLabel={dialog.confirmLabel ?? 'CONFIRM'} onCancel={() => setDialog(null)} onConfirm={(commandId) => { dialog.run(commandId); setDialog(null); }}>{dialog.partner && <TradeParties from={player} to={dialog.partner} />}</ReviewDialog>}</>;
   return { open, proposePact, element };
 }
 
@@ -223,8 +254,6 @@ export function CountryTradeDesk({ country }: { country: CountryState }) {
 
   if (isPlayer || !desk) {
     const player = state.countries[state.playerCountryId];
-  const [contract,setContract]=useState<{partnerId:string;resource:TradeResource}|null>(null);
-  const [years,setYears]=useState<1|3|5|10>(1);
     const needs = MARKET_RESOURCES.filter((r) => ['CRITICAL', 'IMPORT NEED'].includes(resourceStrategicStatus(player, r)));
     return <section className="trade-desk">
       <header className="trade-desk-hero trade-shortfall-hero"><CivicArt kind="trade" size={46} /><span className="trade-desk-title"><small><LocaleText value="TRADE DESK" /></small><strong><LocaleText value="Best suppliers for your shortfalls" /></strong><p><LocaleText value="Select another country to see what you can buy from it and sell to it." /></p></span></header>

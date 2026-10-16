@@ -31,3 +31,8 @@ const CAMPUS:Record<'university'|'institute'|'academy',ReactNode>={
 export function CampusIcon({kind}:{kind:'university'|'institute'|'academy'}){
   return <svg {...base} width={44} height={44} className="campus-icon" data-campus={kind}>{CAMPUS[kind]}</svg>;
 }
+
+/** Fighter jet silhouette for the aircraft crew coverage tile. */
+export function JetIcon({size=28}:{size?:number}){
+  return <svg {...base} width={size} height={size} className="jet-icon"><path d="M12 2.5c.9 0 1.5 1 1.5 2.4V9l7 4.5V16l-7-2-.5 4 2 1.5V22l-3-.8-3 .8v-.5l2-1.5-.5-4-7 2v-2.5L10.5 9V4.9c0-1.4.6-2.4 1.5-2.4z"/></svg>;
+}

@@ -30,13 +30,13 @@ import { BlocIcon, CouncilIcon, DiplomacyIcon, EmbassyIcon, IntelligenceIcon, Re
 import { DraggableWindow } from '../windows/DraggableWindow';
 import { MapModeBar } from './MapModeBar';
 import {ResourceCommandWindow} from '../panels/ResourceCommandWindow';
-import {AllianceCrestIcon} from '../icons/PlaytestIcons';
+import {AssetThumbnail} from '../icons/AssetThumbnail';
 import {InternationalAffairsWorkspace} from '../panels/InternationalAffairsWorkspace';
 
 type ToolId='objectives'|'market'|'pulse'|'map'|'resources'|'sitrep'|'alerts'|'diplomacy'|'desk'|'alliances';
 
-function RailButton({active,badge,label,children,onClick}:{active:boolean;badge?:number|string;label:string;children:ReactNode;onClick:()=>void}){
- return <button data-guide={'rail-'+(label==='DIPLOMACY'?'diplo':label.toLowerCase())} className={active?'rail-button active':'rail-button'} onClick={onClick} aria-pressed={active} title={translateLive(`${label} · ${active?'Open — click to close':'Closed — click to open'}`)}><span><LocaleText value={children}/></span>{badge!==undefined&&badge!==0&&<b><LocaleText value={badge}/></b>}<small><LocaleText value={label}/></small></button>;
+function RailButton({active,badge,label,children,onClick,guide}:{active:boolean;badge?:number|string;label:string;children:ReactNode;onClick:()=>void;guide?:string}){
+ return <button data-guide={'rail-'+(guide??(label==='DIPLOMACY'?'diplo':label.toLowerCase()))} className={active?'rail-button active':'rail-button'} onClick={onClick} aria-pressed={active} title={translateLive(`${label} · ${active?'Open — click to close':'Closed — click to open'}`)}><span><LocaleText value={children}/></span>{badge!==undefined&&badge!==0&&<b><LocaleText value={badge}/></b>}<small><LocaleText value={label}/></small></button>;
 }
 
 export function CommandRails(){
@@ -58,9 +58,9 @@ export function CommandRails(){
  return <Suspense fallback={<div className="loading-popup"><LocaleText value="Loading command…"/></div>}>
   <nav className="command-rail command-rail-left" aria-label={translateLive("World command tools")}>
    <RailButton active={['market','exchange','credit'].some(id=>open.has(id))} badge={activeTrades.length} label="MARKET" onClick={()=>toggle('market')}><NavigationArt kind="market"/></RailButton>
-   <RailButton active={open.has('alliances')} label="ALLIANCES" onClick={()=>toggle('alliances')}><AllianceCrestIcon/></RailButton>
+   <RailButton active={open.has('alliances')} label="ALLIANCES" onClick={()=>toggle('alliances')}><CivicArt kind="bloc" size={36}/></RailButton>
    <RailButton active={open.has('pulse')} badge={activeWars.length} label="WORLD" onClick={()=>toggle('pulse')}><NavigationArt kind="world"/></RailButton>
-   <RailButton active={open.has('resources')} badge={critical.length} label="SUPPLY" onClick={()=>toggle('resources')}><NavigationArt kind="alerts"/></RailButton>
+   <RailButton active={open.has('resources')} badge={critical.length} label="RESOURCES" guide="supply" onClick={()=>toggle('resources')}><AssetThumbnail asset="logistics" size={36}/></RailButton>
   </nav>
   <nav className={`command-rail command-rail-right ${state.selectedCountryId?'country-open':'country-closed'}`} aria-label={translateLive("Information tools")}>
    <RailButton active={open.has('desk')} badge={deskOffers(state).length} label="DESK" onClick={()=>toggle('desk')}><CivicArt kind="letter" size={36}/></RailButton>

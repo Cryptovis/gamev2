@@ -313,3 +313,32 @@ export function countryTradeOptions(state: GameState, partnerId: string, viewerI
     buy, sell,
   };
 }
+
+/** Live preview of an industrial shipment of any size, for the order dialog's quantity stepper. */
+export interface IndustrialOrderPreview {
+  quantity: number;
+  unitPrice: number;
+  /** quantity x unitPrice ($B). */
+  value: number;
+  /** The order validator's verdict for `quantity` (null = accepted). */
+  error: string | null;
+  /** Largest shipment the seller's exportable stock, the counterparty's appetite and (when buying) the treasury allow. */
+  maxQuantity: number;
+  /** Seller's stock above its protected reserve. */
+  exportable: number;
+}
+
+export function industrialOrderPreview(state: GameState, partnerId: string, good: IndustrialGood, quantity: number, direction: 'buy' | 'sell'): IndustrialOrderPreview {
+  const playerId = state.playerCountryId;
+  const sellerId = direction === 'buy' ? partnerId : playerId, buyerId = direction === 'buy' ? playerId : partnerId;
+  const unit = industrialQuote(state, sellerId, buyerId, good, 1);
+  const exportable = exportableStock(state, sellerId, good);
+  const limit = direction === 'buy'
+    ? Math.min(unit.available, exportable, unit.price > 0 ? Math.max(0, state.countries[buyerId].economy.treasury) / unit.price : 0)
+    : Math.min(exportable, aiPurchaseLimit(state, buyerId, good, unit.price));
+  const maxQuantity = roundOrder(limit);
+  const q = Math.min(Math.max(0, Number.isFinite(quantity) ? quantity : 0), maxQuantity);
+  const priced = q > 0 ? industrialQuote(state, sellerId, buyerId, good, q) : unit;
+  const unitPrice = priced.price;
+  return { quantity: q, unitPrice, value: q * unitPrice, error: q > 0 ? industrialOrderError(state, partnerId, good, q, direction) : null, maxQuantity, exportable };
+}

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { CommandWindow } from "./CommandWindow";
 import { ReviewDialog, type ReviewContent } from "./ReviewDialog";
-import { LocaleText } from "../../i18n/localeText";
+import { LocaleText, translateLive } from "../../i18n/localeText";
 import {useWorldView} from '../../store/useWorldView';
 import {
   CAMPUSES,
@@ -10,7 +10,8 @@ import {
   campusPreview,pilotTrainingPreview,academySummary,
 } from "../../engine/systems/governance";
 import type { CampusKind } from "../../domain/governance";
-import { CampusIcon } from "../icons/PlaytestIcons";
+import { CampusIcon, JetIcon } from "../icons/PlaytestIcons";
+import { TreasuryIcon } from "../icons/GameIcons";
 export function InvestmentWindow({embedded=false,section='investments'}:{embedded?:boolean;section?:'investments'|'pilots'}={}) {
   const s = useWorldView(),
     c = s.countries[s.playerCountryId],
@@ -21,23 +22,53 @@ export function InvestmentWindow({embedded=false,section='investments'}:{embedde
     >(null);
   const summary=academySummary(s,c.id),training=pilotTrainingPreview(s,count);
   const content = <section className="development-section" data-development={section}>
-      <div className="investment-summary">
-        {section==='investments'&&<span>
+      {section==='pilots'?<div className="pilot-dashboard">
+        <article className="pilot-recruitment pilot-tile">
+          <small><LocaleText value="Pilots" /></small>
+          <b>{a.pilots}</b>
+          <div className="pilot-quick">
+            {[10,50].map(n=><button key={n} type="button" onClick={()=>setCount(Math.min(1000,(Number.isInteger(count)?count:0)+n))}>+{n}</button>)}
+            <input type="number" min="1" max="1000" aria-label={translateLive("Pilot intake")} value={count} onChange={(e) => setCount(Number(e.target.value))} />
+            <button type="button" className="primary" disabled={!Number.isInteger(count) || count < 1 || count > 1000}
+              onClick={() => setReview({
+                title: "Pilot recruitment",
+                summary: "Pay training costs now. Pilot wages begin when training completes. Academies accelerate training.",
+                metrics: [
+                  ["Cost", `$${training.cost.toFixed(4)}B`],
+                  ["Training duration", `${training.days} days`],
+                  ["Monthly wages", `$${training.monthlyWages.toFixed(5)}B`],
+                  ["Pilots after training", String(training.pilotsAfter)],
+                ],
+                allowed:training.allowed,
+                execute: (commandId) => s.hirePilots(count, commandId),
+              })}>
+              <LocaleText value="Recruit" />
+            </button>
+          </div>
+          {a.training.map((t) => (
+            <small key={t.id}>
+              {t.count} <LocaleText value="pilots in training" /> · {Math.max(0, t.readyDay - s.day)} <LocaleText value="days remaining" />
+            </small>
+          ))}
+        </article>
+        <article className="pilot-tile">
+          <small><LocaleText value="Aircraft crew coverage" /></small>
+          <b><JetIcon /> {(pilotCoverage(s, c.id) * 100).toFixed(0)}%</b>
+        </article>
+        <article className="pilot-tile">
+          <small><LocaleText value="Monthly upkeep" /></small>
+          <b><TreasuryIcon size={24} /> ${summary.monthlyUpkeep.toFixed(5)}B</b>
+        </article>
+      </div>:<div className="investment-summary">
+        <span>
           <LocaleText value="Research speed bonus" />{" "}
           <b>+{summary.researchBonusPercent.toFixed(2)}%</b>
-        </span>}
-        {section==='pilots'&&<span>
-          <LocaleText value="Pilots" /> <b>{a.pilots}</b>
-        </span>}
-        {section==='pilots'&&<span>
-          <LocaleText value="Aircraft crew coverage" />{" "}
-          <b>{(pilotCoverage(s, c.id) * 100).toFixed(0)}%</b>
-        </span>}
+        </span>
         <span>
           <LocaleText value="Monthly upkeep" />{" "}
           <b>${summary.monthlyUpkeep.toFixed(5)}B</b>
         </span>
-      </div>
+      </div>}
       {!a.funded && (
         <p className="negative">
           <LocaleText value="Upkeep is underfunded; research bonuses are suspended." />
@@ -106,56 +137,6 @@ export function InvestmentWindow({embedded=false,section='investments'}:{embedde
           </p>
         ))}
       </div>
-      {section==='pilots'&&<section className="pilot-recruitment">
-        <h3>
-          <LocaleText value="Recruit pilots from your armed forces" />
-        </h3>
-        <p>
-          <LocaleText value="Each fighter and bomber needs one trained pilot. Recruitment is limited to 5% of military personnel. Training takes time; newly built aircraft without crews reduce effective air power." />
-        </p>
-        <label>
-          <LocaleText value="Pilot intake" />
-          <input
-            type="number"
-            min="1"
-            max="1000"
-            value={count}
-            onChange={(e) => setCount(Number(e.target.value))}
-          />
-        </label>
-        <button
-          disabled={!Number.isInteger(count) || count < 1 || count > 1000}
-          onClick={() =>
-            setReview({
-              title: "Pilot recruitment",
-              summary:
-                "Pay training costs now. Pilot wages begin when training completes. Academies accelerate training.",
-              metrics: [
-                ["Cost", `$${training.cost.toFixed(4)}B`],
-                ["Training duration", `${training.days} days`],
-                ["Monthly wages", `$${training.monthlyWages.toFixed(5)}B`],
-                [
-                  "Pilots after training",
-                  String(
-                    training.pilotsAfter,
-                  ),
-                ],
-              ],
-              allowed:training.allowed,
-              execute: (commandId) => s.hirePilots(count, commandId),
-            })
-          }
-        >
-          <LocaleText value="Review recruitment" />
-        </button>
-        {a.training.map((t) => (
-          <p key={t.id}>
-            {t.count} <LocaleText value="pilots in training" /> ·{" "}
-            {Math.max(0, t.readyDay - s.day)}{" "}
-            <LocaleText value="days remaining" />
-          </p>
-        ))}
-      </section>}
       {review && (
         <ReviewDialog
           {...review}

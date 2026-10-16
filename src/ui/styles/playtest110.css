@@ -50,3 +50,90 @@
 /* News toast category badge */
 .sitrep-toast>.news-badge{display:grid;place-items:center;flex:0 0 auto;width:34px;height:34px;border-radius:50%;border:1.5px solid #d4af37;background:rgba(212,175,55,.14);color:#f3cd7e}
 :root[data-theme="light"] .sitrep-toast>.news-badge{color:#8a6a1c;background:#fbf1d6}
+
+/* ---- Playtest 1.2 ---- */
+
+/* Hint slot: lets a hosted workspace publish its beacon into the window title bar, beside the close button. */
+.window-hint-slot{display:contents}
+
+/* Trade order dialog and compact receipts */
+.trade-parties,.review-parties{display:flex;align-items:center;justify-content:center;gap:12px;margin:8px 0;font-weight:700}
+.trade-parties>span,.review-parties>span{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border:1px solid rgba(212,175,55,.45);border-radius:999px}
+.trade-parties>i,.review-parties>i{font-style:normal;opacity:.8}
+.trade-quantity{display:grid;gap:6px;margin:10px 0}
+.trade-quantity>div{display:flex;gap:6px;align-items:center}
+.trade-quantity input{width:110px;min-height:36px;text-align:center;font:inherit;border:1px solid var(--border,#526c86);border-radius:8px;background:var(--surface-inset,#091728);color:var(--ink,#eef3f8)}
+.trade-quantity button{min-width:36px;min-height:36px;border-radius:8px;border:1px solid var(--border,#526c86);background:var(--surface-raised,#182e46);color:var(--ink,#eef3f8);cursor:pointer}
+.trade-quantity button:disabled{opacity:.45;cursor:not-allowed}
+.review-dialog.receipt-compact{width:min(500px,calc(100vw - 24px));max-width:500px}
+.review-dialog.receipt-compact .review-visual{display:none}
+.review-dialog.receipt-compact .review-metrics{grid-template-columns:repeat(auto-fit,minmax(120px,1fr))}
+.review-next-steps{margin:8px 0;padding:10px 12px;border-left:3px solid #d4af37;border-radius:6px;background:rgba(212,175,55,.1);font-size:13px;line-height:1.5}
+.review-next-steps strong{margin-right:4px}
+
+/* Left rail and country panel anchoring: rails never jump when a country opens. */
+@media(min-width:761px){
+  :root .command-rail-right,:root .command-rail-right.country-open,:root .command-rail-right.country-closed{right:14px!important;left:auto!important}
+  :root .command-panel{right:calc(84px + 16px)!important}
+}
+
+/* Sticky headers stay opaque so scrolling content never bleeds through. */
+:root[data-theme="light"] .command-panel>.national-panel-heading{background:var(--surface-raised)!important;border-bottom:1px solid var(--border)}
+
+/* Bilateral index */
+.relation-meter{display:grid;gap:6px;min-width:0}
+.relation-meter>div{display:flex;justify-content:space-between;font-size:10px;color:var(--ink-muted,#b5c7d8);letter-spacing:.04em}
+.command-panel .relation-hero{grid-template-columns:auto minmax(0,1fr);row-gap:10px}
+.command-panel .relation-hero .relation-meter{grid-column:1/-1}
+
+/* Zoom readout and active rail text in light theme */
+:root[data-theme="light"] .map-camera-hud output{color:var(--ink,#142c46)!important;font-weight:700}
+:root[data-theme="light"] :is(.command-rail,.map-help-cluster) .rail-button.active :is(small,span,strong){color:var(--ink,#142c46)!important}
+
+/* Light-theme glass: translucent cream islands; icons, badges and numbers stay solid */
+:root[data-theme="light"] :is(.leader-brand,.top-metric,.clock-island,.clock-speed-card,.national-flag-card,.command-rail .rail-button,.map-help-cluster .rail-button){
+  background:rgba(255,253,247,.88)!important;backdrop-filter:blur(12px)!important;border:1px solid rgba(212,175,55,.45)!important;color:var(--ink)!important}
+:root[data-theme="light"] :is(.command-rail,.map-help-cluster) .rail-button.active{background:rgba(246,233,195,.92)!important;border-color:#d4af37!important;box-shadow:inset 0 -2px 0 #d4af37!important}
+:root[data-theme="light"] :is(.command-rail,.map-help-cluster) .rail-button small{color:var(--ink)!important}
+
+/* National alerts: resources tab cards match the alert cards above */
+:root[data-theme="light"] .resource-alert-list>div{background:var(--surface-raised)!important;border:1px solid var(--border)!important;color:var(--ink)!important}
+:root[data-theme="light"] .resource-alert-list>div :is(strong,small,em,span){color:var(--ink)!important}
+
+/* Policies and laws: four to five compact cards per row on desktop */
+@media(min-width:900px){
+  .policy-card-list{grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
+  .policy-card{padding:10px 8px}
+  .policy-card-art{width:40px;height:40px}
+}
+
+/* War planning action: deep crimson in both themes */
+.target-hub-warplan,:root[data-theme="light"] .target-hub-warplan{background:#8b2520!important;color:#fff!important;border:1px solid #a8322a!important}
+.target-hub-warplan:hover,:root[data-theme="light"] .target-hub-warplan:hover{background:#a8322a!important}
+
+/* Alliance member roster */
+.ia-roster-table td:nth-child(2){white-space:nowrap}
+.ia-roster-table .ia-office{display:block;font-size:12px}
+.ia-roster-wrap{max-height:420px}
+
+/* Pilot training dashboard */
+.pilot-dashboard{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:12px 0}
+.pilot-tile{display:grid;gap:8px;align-content:start;padding:14px;border:1px solid var(--border,#526c86);border-radius:12px;background:var(--surface-raised,#182e46);color:var(--ink,#eef3f8)}
+.pilot-tile>b{display:flex;align-items:center;gap:8px;font-size:24px}
+.pilot-tile>small{font-size:12px;opacity:.85}
+.pilot-quick{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.pilot-quick input{width:84px;min-height:34px;text-align:center;font:inherit;border:1px solid var(--border,#526c86);border-radius:8px;background:var(--surface-inset,#091728);color:var(--ink,#eef3f8)}
+.pilot-quick button{min-height:34px;padding:0 10px;border-radius:8px;border:1px solid var(--border,#526c86);background:var(--surface,#0e2035);color:var(--ink,#eef3f8);cursor:pointer}
+.pilot-quick button.primary{border-color:#d4af37;background:#8a6a1c;color:#fff}
+.pilot-quick button:disabled{opacity:.45;cursor:not-allowed}
+@media(max-width:760px){.pilot-dashboard{grid-template-columns:1fr}}
+
+/* Strategic advisor in light theme */
+.warning-preference{display:block;margin:2px 0 8px;padding:2px 0;border:0;background:none;box-shadow:none;outline:none;color:var(--ink-muted,#b5c7d8);font-size:12px;text-decoration:underline;cursor:pointer}
+.warning-preference:hover{color:var(--ink,#eef3f8)}
+.warning-preference:focus-visible{outline:2px solid var(--focus,#89c6ff);outline-offset:2px}
+:root[data-theme="light"] .advisor-modal{background:var(--surface);color:var(--ink)}
+:root[data-theme="light"] .advisor-modal :is(.advisor-supplier span,.advisor-contract-title){background:var(--surface-raised)!important;border:1px solid var(--border)!important;color:var(--ink)!important}
+:root[data-theme="light"] .advisor-modal :is(.advisor-supplier,.advisor-contract-title) :is(small,strong,span,b){color:var(--ink)!important}
+:root[data-theme="light"] .advisor-modal :is(.contract-years button,.advisor-dismiss,.advisor-actions button:not(.primary)){background:var(--surface-raised)!important;border:1px solid var(--border)!important;color:var(--ink)!important}
+:root[data-theme="light"] .advisor-modal .contract-years button[aria-pressed="true"]{border:2px solid #d4af37!important;background:#fbf1d6!important;font-weight:700}
