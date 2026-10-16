@@ -14,7 +14,7 @@ for(const width of [1440,390])test(`0.94 ${width}px independent HUD, Light globe
  await openNation(page);const badges=page.locator('.command-panel .identity-strip>span');
  for(const badge of await badges.all())expect(await badge.evaluate(e=>getComputedStyle(e).backgroundColor)).toBe('rgb(243, 239, 229)');
  await expect(page.locator('.command-panel .national-panel-heading button')).not.toHaveAttribute('title');
- expect(await page.locator('.national-flag-card strong').evaluate(e=>getComputedStyle(e).color)).toBe('rgb(255, 255, 255)');
+ expect(await page.locator('.national-flag-card strong').evaluate(e=>getComputedStyle(e).color)).toBe('rgb(20, 44, 70)');
  await page.keyboard.press('Escape');
  await page.locator('[data-guide="rail-world"]').click();await page.locator('#pulse-window .ranking-table tbody button').filter({hasText:'France'}).first().click();
  const action=page.locator('.target-hub [data-action="aid"] .hub-card-variants button').first();await action.hover();
