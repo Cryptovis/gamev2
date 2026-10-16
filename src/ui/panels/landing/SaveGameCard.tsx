@@ -23,8 +23,8 @@ export function SaveGameCard({language,state,loadError,busy,onContinue,now=Date.
   const t=(text:string)=>translateText(language,text);
   const dataState=state.status;
   return <section className="l94-card" data-testid="save-card" data-state={dataState} aria-labelledby="save-card-title" aria-busy={dataState==='loading'||undefined}>
-    <h2 id="save-card-title">{t('Last campaign')}</h2>
-    {state.status==='loading'&&<p className="l94-card-title"><span className="l94-sr">{t('Last campaign')}</span></p>}
+    <h2 id="save-card-title">{t('Continue with Last Saved Campaign')}</h2>
+    {state.status==='loading'&&<p className="l94-card-title"><span className="l94-sr">{t('Continue with Last Saved Campaign')}</span></p>}
     {state.status==='ready'&&<>
       <p className="l94-card-title"><span className="l94-flag-emoji" role="img" aria-label={state.summary.countryName}>{flagEmoji(state.summary.iso2)}</span> {state.summary.countryName}</p>
       <p className="l94-card-meta">

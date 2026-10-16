@@ -90,29 +90,34 @@
 
 /* Stage ---------------------------------------------------------------------------------------------------------- */
 .l94-stage{display:grid;align-content:center;gap:clamp(18px,3vh,32px);width:min(1180px,100%);margin:0 auto;padding:clamp(20px,4vh,48px) clamp(20px,4vw,48px);grid-template-columns:minmax(0,1fr)}
-.l94-hero{display:grid;gap:clamp(16px,3vh,28px);align-content:center;justify-items:start;min-width:0;container-type:inline-size}
-.l94-eyebrow{margin:0;color:var(--l94-gold-text);font:700 12px/1 var(--l94-sans);letter-spacing:.28em;text-transform:uppercase}
-.l94-eyebrow::after{content:"";display:block;width:56px;height:1px;margin-top:14px;background:var(--l94-gold)}
+.l94-hero{display:grid;gap:clamp(16px,3vh,28px);align-content:center;justify-items:center;text-align:center;min-width:0;container-type:inline-size}
 .l94-title{margin:0;font:700 clamp(28px,6vw,84px)/1.02 Georgia,"Times New Roman",serif;letter-spacing:-.01em;color:var(--ink);white-space:nowrap}
 @supports (font-size:1cqw){.l94-title{font-size:clamp(28px,11.4cqw,84px)}}
-.l94-lede{margin:0;max-width:46ch;color:var(--l94-muted);font:400 clamp(15px,1.5vw,18px)/1.55 var(--l94-sans)}
-.l94-actions{display:grid;gap:10px;justify-items:start;margin-top:8px}
+.l94-lede{margin:0 auto;max-width:46ch;color:var(--ink);font:400 clamp(15px,1.5vw,18px)/1.55 var(--l94-sans)}
+.l94-actions{display:grid;gap:10px;justify-items:center;margin-top:8px}
 .l94-cta{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:56px;min-width:min(280px,100%);padding:14px 32px;border:1px solid var(--l94-gold);
  border-radius:12px;background:var(--l94-cta-bg);color:var(--l94-cta-ink);font:800 16px/1.1 var(--l94-sans);letter-spacing:.06em;text-transform:uppercase;cursor:pointer;
  box-shadow:var(--l94-shadow);transition:background-color .15s,transform .15s}
 .l94-cta:hover{background:var(--l94-cta-bg-hover)}
 .l94-cta:active{transform:translateY(1px)}
 .l94-cta:disabled{opacity:1;cursor:wait;filter:saturate(.5)}
-.l94-cta-note{margin:0;color:var(--l94-muted);font:400 13px/1.4 var(--l94-sans)}
+.l94-cta-note{margin:0;color:var(--ink);font:400 13px/1.4 var(--l94-sans)}
 /* Markup that had no rule of its own: brand block, menu list, segmented language control, chip, card helpers */
-.l94-hero-brand{display:grid;gap:14px;justify-items:start}
-.l94-emblem{display:inline-block;margin-right:12px;padding:4px 7px;border:1px solid var(--l94-gold);border-radius:4px;color:var(--l94-gold-text);font:800 11px/1 var(--l94-sans);letter-spacing:.14em;vertical-align:1px}
-.l94-version{margin:0;color:var(--l94-muted);font:400 12px/1.4 var(--l94-sans);letter-spacing:.06em}
-.l94-menu{display:grid;gap:18px;justify-items:start;width:100%}
-/* Action cards: Last campaign (lead slot), New campaign, Historical scenarios, Player Profile. One row, one height. */
-.l94-action-cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;align-items:stretch;width:100%;margin:0;padding:0;list-style:none}
+.l94-hero-brand{display:grid;gap:14px;justify-items:center;text-align:center}
+.l94-hero-brand{position:relative;isolation:isolate}
+.l94-hero-brand::before{content:"";position:absolute;inset:-20px 0;z-index:-1;pointer-events:none;background:radial-gradient(closest-side,var(--l94-scrim) 55%,transparent)}
+.l94-hero-brand .l94-title::after{content:"";display:block;width:56px;height:1px;margin:16px auto 0;background:var(--l94-gold)}
+.l94-menu{display:grid;gap:14px;justify-items:center;width:100%}
+/* Action cards: New campaign, Historical scenarios and Player Profile in one row; the resume bar spans all three below. */
+.l94-action-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;align-items:stretch;width:100%;margin:0;padding:0;list-style:none}
 .l94-action-cards>li{display:flex;min-width:0}
-.l94-deck-slot>.l94-card{flex:1;min-width:0}
+.l94-resume{width:100%;min-width:0}
+.l94-resume>.l94-card{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"head cta" "title cta" "meta cta";align-items:center;column-gap:24px;row-gap:6px;padding:18px 22px;text-align:left}
+.l94-resume>.l94-card h2{grid-area:head}
+.l94-resume>.l94-card .l94-card-title{grid-area:title}
+.l94-resume>.l94-card .l94-card-meta{grid-area:meta}
+.l94-resume>.l94-card .l94-card-error{grid-area:meta}
+.l94-resume>.l94-card .l94-cta--card{grid-area:cta;margin-top:0;align-self:center;min-width:220px}
 .l94-action-card{--art:none;position:relative;isolation:isolate;overflow:hidden;display:flex;flex:1;flex-direction:column;justify-content:flex-end;min-width:0;min-height:264px;padding:0;text-align:left;
  border:1px solid var(--l94-border);border-top:2px solid var(--l94-gold);border-radius:14px;background:var(--l94-card-bg);color:var(--ink);box-shadow:var(--l94-shadow);cursor:pointer;
  transition:border-color .25s,transform .25s,box-shadow .25s}
@@ -253,7 +258,7 @@
 }
 @media (max-width:1023px){
  .l94-stage{align-content:start;width:min(820px,100%)}
- .l94-action-cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .l94-action-cards{gap:10px}
 }
 @media (max-width:767px){
  .l94-drawer{width:100%;border-left:0}
@@ -262,6 +267,9 @@
  .landing094::after{inset:8px}
  .l94-dock{padding-top:14px}
  .l94-stage{gap:24px;padding-top:20px}
+ .l94-action-cards{grid-template-columns:minmax(0,1fr)}
+ .l94-resume>.l94-card{grid-template-columns:minmax(0,1fr);grid-template-areas:"head" "title" "meta" "cta"}
+ .l94-resume>.l94-card .l94-cta--card{width:100%;margin-top:8px}
  .l94-cta{width:100%}
  .l94-actions{justify-items:stretch;width:100%}
  .lw--hero{--lw-h:240px;padding:14px 16px}
@@ -277,7 +285,6 @@
  .l94-dock-btn{padding:8px 10px}
  .l94-dock-btn .l94-dock-label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
  .l94-card{padding:16px}
- .l94-action-cards{grid-template-columns:minmax(0,1fr)}
  .l94-action-card{min-height:208px}
 }
 @media (max-width:359px){
@@ -295,7 +302,7 @@
  .l94-card-art,.l94-action-card::after{display:none}
  .l94-card,.l94-action-card,.l94-flag-btn,.l94-dock-btn,.lw-btn,.l94-drawer,.l94-scenarios li{border:1px solid CanvasText;background:Canvas;color:CanvasText;box-shadow:none}
  .l94-cta{border:2px solid ButtonText;background:ButtonFace;color:ButtonText;box-shadow:none}
- .l94-eyebrow,.lw-name,.l94-badge,.l94-card h2,.l94-card h3{color:LinkText}
+ .lw-name,.l94-badge,.l94-card h2,.l94-card h3{color:LinkText}
  .l94-card-meta,.lw-role,.lw-year,.l94-lede,.l94-cta-note,.l94-footer,.l94-action-sub,.l94-dock-language-label{color:CanvasText}
  .landing094 :is(button,a,[tabindex]):focus-visible,.lw :is(button):focus-visible{outline:3px solid Highlight}
  .l94-gauge{border:1px solid CanvasText;background:Canvas}

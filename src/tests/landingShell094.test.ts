@@ -193,12 +193,15 @@ describe('LandingShell overlays and dock',()=>{
     expect(footer.textContent).toContain('RON Interactive © 2026. All rights reserved.');
     expect(footer.querySelector('[translate="no"]')!.textContent).toBe('RON Interactive © 2026.');
   });
-  it('shows Last campaign beside the three action cards and keeps the quote below them',async()=>{
+  it('shows the resume bar under the three action cards and keeps the quote below both',async()=>{
     await mount(makeDeps({peekSummary:async()=>READY}));
     const items=[...host.querySelectorAll('.l94-action-cards>li')];
-    expect(items).toHaveLength(4);
-    expect(items[0].querySelector('[data-testid="save-card"]')).not.toBeNull();
-    const cards=host.querySelector('.l94-action-cards')!,quote=host.querySelector('[data-testid="wisdom-widget"]')!;
+    expect(items).toHaveLength(3);
+    const bar=host.querySelector('.l94-resume')!;
+    expect(bar.querySelector('[data-testid="save-card"]')).not.toBeNull();
+    expect(bar.querySelector('h2')!.textContent).toBe('Continue with Last Saved Campaign');
+    expect(host.querySelector('.l94-hero-brand')!.textContent).not.toMatch(/v\d|Grand Strategy/);
+    const cards=bar,quote=host.querySelector('[data-testid="wisdom-widget"]')!;
     expect(cards.compareDocumentPosition(quote)&Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(host.querySelector('.l94-side')).toBeNull();
   });

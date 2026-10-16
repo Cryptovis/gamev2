@@ -26,22 +26,17 @@ const click=async(id:string)=>{await act(async()=>{byId(id)!.click();});};
 const TR=(key:string)=>UI_CATALOG_LANDING[key][0];
 
 describe('HeroBrand',()=>{
- it('shows the kicker, the untranslatable title, the tagline and the version',async()=>{
-  await show(createElement(HeroBrand,{language:'en',version:'1.0.0'}));
-  expect(q('.l94-eyebrow')!.textContent).toContain('Grand Strategy');
+ it('shows the untranslatable title and the tagline, with no kicker pill and no version label',async()=>{
+  await show(createElement(HeroBrand,{language:'en'}));
   expect(q('h1')!.textContent).toBe('Rule of Nations');
   expect(q('h1')!.getAttribute('translate')).toBe('no');
   expect(q('h1')!.id).toBe('landing-title');
   expect(q('.l94-lede')!.textContent).toBe('Be the president you have always dreamed of.');
-  expect(q('.l94-version')!.textContent).toBe('v1.0.0');
+  expect(q('.l94-eyebrow')).toBeNull();expect(q('.l94-emblem')).toBeNull();expect(q('.l94-version')).toBeNull();
+  expect(host.textContent).not.toContain('Grand Strategy');expect(host.textContent).not.toMatch(/v\d+\.\d+/);
  });
- it('adds the build only when one is given',async()=>{
-  await show(createElement(HeroBrand,{language:'en',version:'1.0.0',buildId:'abc123'}));
-  expect(q('.l94-version')!.textContent).toBe('v1.0.0 · build abc123');
- });
- it('translates the kicker and tagline but never the title',async()=>{
-  await show(createElement(HeroBrand,{language:'tr',version:'1.0.0'}));
-  expect(q('.l94-eyebrow')!.textContent).toContain(TR('Grand Strategy'));
+ it('translates the tagline but never the title',async()=>{
+  await show(createElement(HeroBrand,{language:'tr'}));
   expect(q('h1')!.textContent).toBe('Rule of Nations');
   expect(q('.l94-lede')!.textContent).not.toBe('Be the president you have always dreamed of.');
  });
@@ -82,11 +77,14 @@ describe('CommandMenu',()=>{
   expect(host.querySelectorAll('a').length).toBe(0);
   expect(host.querySelectorAll('.l94-action-cards .l94-action-card').length).toBe(3);
  });
- it('puts the lead card first in the same list, so the four cards share a row',async()=>{
-  await show(createElement(CommandMenu,props('continue',{lead:createElement('section',{'data-testid':'lead'},'Last campaign')})));
+ it('keeps three equal cards in one list and puts the resume bar below them, spanning all three',async()=>{
+  await show(createElement(CommandMenu,props('continue',{lead:createElement('section',{'data-testid':'lead'},'Resume')})));
   const items=[...host.querySelectorAll('.l94-action-cards>li')];
-  expect(items).toHaveLength(4);expect(items[0].querySelector('[data-testid="lead"]')).not.toBeNull();
-  expect(items.slice(1).map(li=>li.querySelector('button')!.getAttribute('data-testid'))).toEqual(['landing-new-campaign','landing-scenarios','landing-dossier']);
+  expect(items).toHaveLength(3);
+  expect(items.map(li=>li.querySelector('button')!.getAttribute('data-testid'))).toEqual(['landing-new-campaign','landing-scenarios','landing-dossier']);
+  const list=host.querySelector('.l94-action-cards')!,resume=host.querySelector('.l94-resume')!;
+  expect(resume.querySelector('[data-testid="lead"]')).not.toBeNull();
+  expect(list.compareDocumentPosition(resume)&Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
  });
  it('gives each artwork card its own art layer and names the Player Profile card in plain words',async()=>{
   await show(createElement(CommandMenu,props('continue')));

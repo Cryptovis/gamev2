@@ -1,11 +1,15 @@
 import {test,expect} from '@playwright/test';
 import {landingReady} from './helpers/enterAsGuest';
 
-test('1.6-1 four cards share one row and one height, with the last campaign first', async ({page}) => {
+test('1.6-1 three cards share one row and one height, with the resume bar full width below them', async ({page}) => {
   await page.setViewportSize({width:1440,height:900});await page.goto('/');await landingReady(page);
-  const boxes=await Promise.all(['save-card','landing-new-campaign','landing-scenarios','landing-dossier'].map(async id=>(await page.getByTestId(id).boundingBox())!));
+  const boxes=await Promise.all(['landing-new-campaign','landing-scenarios','landing-dossier'].map(async id=>(await page.getByTestId(id).boundingBox())!));
   for(const box of boxes){expect(Math.abs(box.y-boxes[0].y)).toBeLessThanOrEqual(1);expect(Math.abs(box.height-boxes[0].height)).toBeLessThanOrEqual(1);}
   for(let i=1;i<boxes.length;i++)expect(boxes[i].x).toBeGreaterThan(boxes[i-1].x);
+  const bar=(await page.getByTestId('save-card').boundingBox())!;
+  expect(bar.y).toBeGreaterThan(boxes[0].y+boxes[0].height-1);
+  expect(Math.abs(bar.x-boxes[0].x)).toBeLessThanOrEqual(1);
+  expect(Math.abs(bar.x+bar.width-(boxes[2].x+boxes[2].width))).toBeLessThanOrEqual(1);
 });
 
 test('1.6-2 the artwork is muted at rest and full colour on hover', async ({page}) => {

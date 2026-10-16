@@ -75,7 +75,7 @@ test('entry and setup screens carry the Rule of Nations mark over the cover art'
  await page.goto('/');await landingReady(page);const brand=page.getByTestId('landing-brand');
  await expect(brand.locator('h1')).toContainText('Rule of Nations');
  await expect(brand.locator('h1')).toHaveAttribute('translate','no');
- await expect(brand.locator('.l94-emblem')).toHaveText('RON');
+ await expect(brand.locator('.l94-emblem')).toHaveCount(0);
  await enterAsGuest(page);
  await expect(page.locator('.setup-cover .brand-mark')).toContainText('Rule of Nations');await expect(page.locator('.wizard-header > div > small').first()).toContainText('Rule of Nations');
  await page.screenshot({path:'test-results/ron-setup-0910.png'});

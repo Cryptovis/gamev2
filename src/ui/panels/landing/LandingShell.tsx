@@ -137,7 +137,7 @@ export function LandingShell({onPlaying,deps=defaultLandingDeps,Setup=CampaignSe
       version={version} onOpenReleaseNotes={()=>dispatch({type:'OPEN_RELEASE_NOTES'})}/>
     <main className="l94-stage" aria-labelledby="landing-title">
       <section className="l94-hero">
-        <HeroBrand language={language} version={version}/>
+        <HeroBrand language={language}/>
         <CommandMenu
           language={language} heroAction={heroAction} busy={false}
           onPlayNow={()=>startNew('PLAY_NOW')} onNewCampaign={()=>startNew('NEW_CAMPAIGN')}
