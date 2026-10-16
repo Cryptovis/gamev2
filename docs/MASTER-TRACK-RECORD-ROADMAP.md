@@ -4,9 +4,9 @@ Last Updated: 2026-10-16
 Status: Active Living Record
 Working Directory: /Users/alpy/.gemini/antigravity/scratch/gamev2
 Active Branch: dev/ron-phase9
-Current HEAD Commit: 919ac4e
-Baseline Verification: 141/141 test files passed (1,601 unit tests passed, 0 failures, 1 expected seed invariant, tsc --noEmit clean with 0 errors, Vite build in 566 ms, Playwright 14/14 passed)
-Bundle Baseline: ~942.7 kB gzip (JS) + 85.3 kB gzip (CSS)
+Current HEAD Commit: 13dcc45
+Baseline Verification: 142/142 test files passed (1,630 unit tests passed, 0 failures, 1 expected seed invariant, tsc --noEmit clean with 0 errors, Vite build in 580 ms, Playwright 19/19 passed)
+Bundle Baseline: ~946.2 kB gzip (JS) + 86.8 kB gzip (CSS)
 
 ---
 
@@ -105,7 +105,18 @@ All playtest hotfixes are merged, committed, and fully verified on origin/dev/ro
 - Executive Desk Proportions: Constrained maximum width to 780px with balanced internal padding and centered, bordered empty states.
 - Alliances Roster Equal-Height Grid: Normalized organization card heights, aligned metrics grid across cards, pinned action buttons to bottom via margin-top: auto, and upgraded alliance insignia to distinct colored emblems (NATO, CSTO, SCO, UN, IMF, World Bank, OPEC, G20).
 - Title Case Headers & Arms Transfer Clarity: Strictly enforced Title Case across modal headers and tabs; added contextual subheader for sovereign military hardware aid and defense transfers with full 5-language localization.
-- HUD Dock Button Styling: Refined background of side and bottom dock buttons to cream-tinted luminous slate in dark theme and polished ivory-cream in light theme, making colorful atlas icons instantly identifiable.
+### Playtest 1.6 (Commits 671cfb4 -> 13dcc45)
+- Landing Action Cards & Artwork: Mapped action cards to dedicated artwork (/assets/command/card-new-campaign.jpg, card-scenarios.jpg, card-profile.jpg); muted at rest with smooth transition to full-color vivid saturation, lift, and golden glow on hover.
+- Player Profile B1 Rewording: Renamed Commander Dossier to Player Profile (localized across en, tr, es, zh, ru).
+- 4-Card Equal Height Row: Aligned the Last Campaign summary card in the same unified row with the 3 action cards, sharing identical height and responsive grid step-down (4 columns -> 2 -> 1).
+- Centered Footer & Trademark: Centered device save notice with legal line: "RON Interactive © 2026. All rights reserved."
+- Framed Leadership Wisdom Box: Removed left rule; encased quote in a centered translucent dark frame with fixed height and adaptive font sizing that prevents layout shifting.
+- Header Cleanup & Social Sign-In: Removed top-right "Playing as guest" button; added Google, Apple, and Facebook sign-in options in the profile drawer with localized "Coming soon" toasts.
+- Tutorial Button Contrast: Styled NEXT button on light theme with dark executive navy (#0e2035) on gold with bold weight, guaranteeing >7:1 contrast.
+- Diplomatic Inbox Proportions & Clean Rows: Capped modal at 820px and centered; cleaned up relations assessment into borderless, structured stat rows with soft green (#4ade80 / #166534) and soft red (#f87171 / #991b1b) accents.
+- Covert Operations Intelligence Briefing: Replaced generic building with tactical intelligence artwork (/assets/command/intel-espionage.jpg) in a 600px executive briefing card with target nation, operation type, risk rating, intel yield, and live budget deduction.
+- Country Info Proportions: Capped modal at 760px and centered for balanced presentation.
+- Top-Left Commander Tenure Badge: Encased player portrait avatar in a gold executive border frame, displayed commander name prominently, and introduced tenure badge: "Days in Office: [N]" (localized in 5 languages).
 
 
 ---
