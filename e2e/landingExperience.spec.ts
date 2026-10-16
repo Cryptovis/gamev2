@@ -1,5 +1,6 @@
 import {test,expect,type Page} from '@playwright/test';
-import {version} from '../package.json';
+import {readFileSync} from 'node:fs';
+const {version}=JSON.parse(readFileSync(new URL('../package.json',import.meta.url),'utf8'));
 import {UI_CATALOG_LANDING} from '../src/i18n/uiCatalogLanding';
 import {campaignFixture,seedRecords,seedSave,resumeFixture} from './seedCampaign';
 import {chooseLanguage,continueCampaign,enterAsGuest,landingReady} from './helpers/enterAsGuest';
