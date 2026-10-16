@@ -91,7 +91,7 @@
 :root[data-theme="light"] :is(.command-rail,.map-help-cluster) .rail-button.active :is(small,span,strong){color:var(--ink,#142c46)!important}
 
 /* Light-theme glass: translucent cream islands; icons, badges and numbers stay solid */
-:root[data-theme="light"] :is(.leader-brand,.top-metric,.clock-island,.clock-speed-card,.national-flag-card,.command-rail .rail-button,.map-help-cluster .rail-button){
+:root[data-theme="light"] :is(.leader-brand,.top-metric,.speed-segment,.national-flag-card,.command-rail .rail-button,.map-help-cluster .rail-button){
   background:rgba(255,253,247,.88)!important;backdrop-filter:blur(12px)!important;border:1px solid rgba(212,175,55,.45)!important;color:var(--ink)!important}
 :root[data-theme="light"] :is(.command-rail,.map-help-cluster) .rail-button.active{background:rgba(246,233,195,.92)!important;border-color:#d4af37!important;box-shadow:inset 0 -2px 0 #d4af37!important}
 :root[data-theme="light"] :is(.command-rail,.map-help-cluster) .rail-button small{color:var(--ink)!important}

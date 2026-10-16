@@ -19,7 +19,12 @@ for(const width of [1440,390])test(`${width}px compact tool windows preserve rai
  expect(await page.evaluate(()=>({y:window.scrollY,samples:(window as any).scrollSamples}))).toEqual({y:0,samples:[]});
 });
 test('nation flag shows name, regime and hint, opens the country window, and is the sole tutorial anchor',async({page})=>{
- const s=campaignFixture('en');s.countries.TUR.name='Turkey';await resumeFixture(page,s);const flag=page.locator('[data-guide="nation"]');await expect(flag).toHaveCount(1);await expect(flag).toContainText('Türkiye');await expect(flag).toContainText('democracy');await expect(flag).toHaveAttribute('title','Open your nation');await flag.click();await expect(flag).toHaveAttribute('aria-pressed','true');await expect(page.locator('.command-panel')).toBeVisible();await page.locator('.command-panel [data-guide="close-workspace"]').click();await expect(page.locator('.command-panel')).toHaveCount(0);await expect(flag).toHaveAttribute('aria-pressed','false');
+ const s=campaignFixture('en');s.countries.TUR.name='Turkey';await resumeFixture(page,s);const flag=page.locator('[data-guide="nation"]');await expect(flag).toHaveCount(1);await expect(flag).toContainText('Türkiye');await expect(flag).toContainText('democracy');await expect(flag).toHaveAttribute('title','Open your nation');if((await flag.getAttribute('aria-pressed'))!=='true')await flag.click();await expect(flag).toHaveAttribute('aria-pressed','true');await expect(page.locator('.command-panel')).toBeVisible();await page.locator('.command-panel [data-guide="close-workspace"]').click();await expect(page.locator('.command-panel')).toHaveCount(0);await expect(flag).toHaveAttribute('aria-pressed','false');
+});
+test('the national flag button toggles the country panel open and closed',async({page})=>{
+ const s=campaignFixture('en');s.selectedCountryId=null;await resumeFixture(page,s);const flag=page.locator('[data-guide="nation"]');
+ await flag.click();await expect(flag).toHaveAttribute('aria-pressed','true');await expect(page.locator('.command-panel')).toBeVisible();
+ await flag.click();await expect(flag).toHaveAttribute('aria-pressed','false');await expect(page.locator('.command-panel')).toHaveCount(0);
 });
 test('credit, contracts and Help open without any click-time module download; supplier title has its own readable row',async({page})=>{
  await resumeFixture(page,campaignFixture('en'));await page.route(/\/(assets|src)\/.*(HelpPanel|CreditWindow|IndustrialMarketPanel).*\.(js|tsx)/,r=>r.abort());await page.locator('[data-guide="rail-market"]').click();
