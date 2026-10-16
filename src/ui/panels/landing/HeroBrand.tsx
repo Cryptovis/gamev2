@@ -7,7 +7,7 @@ export interface HeroBrandProps {
 }
 
 /** Game title, gold rule and tagline, centred. The version lives in the utility dock. The name is a proper noun: never translated. */
-export function HeroBrand({language,version,buildId}:HeroBrandProps) {
+export function HeroBrand({language}:HeroBrandProps) {
   const t=(text:string)=>translateText(language,text);
   return <header className="l94-hero-brand" data-testid="landing-brand">
     <h1 id="landing-title" className="l94-title" translate="no">{BRAND_NAME}</h1>
