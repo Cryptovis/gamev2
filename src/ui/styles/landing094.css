@@ -1,0 +1,174 @@
+/*
+ * Phase 9.4 landing screen and leadership wisdom widget.
+ * Reuses the global semantic tokens from appearancePhase7.css (--surface, --surface-raised, --surface-inset, --ink,
+ * --ink-muted, --border, --focus) and adds a few landing-only ones below. Navy is the default; Ivory comes from
+ * :root[data-theme="light"]. Every text and surface pair here is checked for contrast in both themes by
+ * docs/PHASE9.4-CONTRAST.md. Gold is a hairline and highlight colour in Navy; in Ivory it darkens so text stays readable.
+ */
+:root,[data-theme="dark"]{
+ --l94-sans:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans","Helvetica Neue",Arial,sans-serif;
+ --l94-border:#526c86;       /* control and card outlines, at least 3:1 on the page */
+ --l94-gold:#d4af37;          /* hairlines, ornaments, large type */
+ --l94-gold-text:#e6c866;     /* small text on --surface */
+ --l94-gold-line:rgba(212,175,55,.38);
+ --l94-grid:rgba(137,198,255,.075);
+ --l94-grid-strong:rgba(137,198,255,.14);
+ --l94-glow:rgba(212,175,55,.10);
+ --l94-cta-bg:#d4af37;--l94-cta-bg-hover:#e3c25a;--l94-cta-ink:#17120a;
+ --l94-card-bg:rgba(24,46,70,.82);
+ --l94-shadow:0 18px 48px rgba(3,11,23,.55);
+ --l94-warn:#ffd9a0;
+}
+:root[data-theme="light"]{
+ --l94-border:#667a8c;
+ --l94-gold:#9a7412;
+ --l94-gold-text:#6f5207;
+ --l94-gold-line:rgba(138,101,8,.45);
+ --l94-grid:rgba(20,44,70,.07);
+ --l94-grid-strong:rgba(20,44,70,.13);
+ --l94-glow:rgba(154,116,18,.10);
+ --l94-cta-bg:#183b60;--l94-cta-bg-hover:#0f2e4d;--l94-cta-ink:#ffffff;
+ --l94-card-bg:rgba(255,253,247,.9);
+ --l94-shadow:0 14px 36px rgba(20,44,70,.18);
+ --l94-warn:#7a3b00;
+}
+
+/* Root and cartographic backdrop ------------------------------------------------------------------------------- */
+.landing094,.landing094 *,.landing094 *::before,.landing094 *::after,.l94-drawer,.l94-drawer *,.lw,.lw *{box-sizing:border-box}
+.landing094{position:fixed;inset:0;z-index:30;display:grid;grid-template-rows:auto 1fr auto;min-height:100dvh;overflow:auto;color:var(--ink);
+ background:radial-gradient(120% 90% at 78% 8%,var(--l94-glow),transparent 60%),var(--surface-inset);isolation:isolate}
+.landing094::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+ background:
+  repeating-linear-gradient(0deg,transparent 0 63px,var(--l94-grid) 63px 64px),
+  repeating-linear-gradient(90deg,transparent 0 63px,var(--l94-grid) 63px 64px),
+  repeating-linear-gradient(0deg,transparent 0 255px,var(--l94-grid-strong) 255px 256px),
+  repeating-linear-gradient(90deg,transparent 0 255px,var(--l94-grid-strong) 255px 256px);
+ -webkit-mask-image:radial-gradient(90% 80% at 50% 40%,#000 35%,transparent 100%);mask-image:radial-gradient(90% 80% at 50% 40%,#000 35%,transparent 100%)}
+.landing094::after{content:"";position:absolute;inset:16px;z-index:-1;pointer-events:none;border:1px solid var(--l94-gold-line);border-radius:4px;
+ -webkit-mask-image:linear-gradient(#000,transparent 30%,transparent 70%,#000);mask-image:linear-gradient(#000,transparent 30%,transparent 70%,#000)}
+
+/* Dock ----------------------------------------------------------------------------------------------------------- */
+.l94-dock{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:20px clamp(20px,4vw,48px) 0}
+.l94-dock-group{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.l94-dock-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:44px;min-height:44px;padding:8px 14px;border:1px solid var(--l94-border);
+ border-radius:10px;background:var(--l94-card-bg);color:var(--ink);font:600 13px/1.2 var(--l94-sans);cursor:pointer;transition:border-color .15s,background-color .15s}
+.l94-dock-btn:hover{border-color:var(--l94-gold)}
+.l94-dock-btn[aria-pressed="true"]{border-color:var(--l94-gold);background:var(--surface-raised)}
+.l94-dock-btn:disabled,.l94-dock-btn[aria-disabled="true"]{color:var(--ink-muted);cursor:not-allowed;border-style:dashed}
+.l94-dock-btn svg{width:18px;height:18px;flex:none}
+
+/* Stage ---------------------------------------------------------------------------------------------------------- */
+.l94-stage{display:grid;align-content:center;gap:clamp(24px,4vw,56px);width:min(1180px,100%);margin:0 auto;padding:clamp(24px,5vh,56px) clamp(20px,4vw,48px);
+ grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr)}
+.l94-hero{display:grid;gap:18px;align-content:center;justify-items:start}
+.l94-eyebrow{margin:0;color:var(--l94-gold-text);font:700 12px/1 var(--l94-sans);letter-spacing:.28em;text-transform:uppercase}
+.l94-eyebrow::after{content:"";display:block;width:56px;height:1px;margin-top:14px;background:var(--l94-gold)}
+.l94-title{margin:0;font:700 clamp(40px,6.4vw,84px)/.98 Georgia,"Times New Roman",serif;letter-spacing:-.01em;color:var(--ink);text-wrap:balance}
+.l94-lede{margin:0;max-width:46ch;color:var(--ink-muted);font:400 clamp(15px,1.5vw,18px)/1.55 var(--l94-sans)}
+.l94-actions{display:grid;gap:10px;justify-items:start;margin-top:8px}
+.l94-cta{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:56px;min-width:min(280px,100%);padding:14px 32px;border:1px solid var(--l94-gold);
+ border-radius:12px;background:var(--l94-cta-bg);color:var(--l94-cta-ink);font:800 16px/1.1 var(--l94-sans);letter-spacing:.06em;text-transform:uppercase;cursor:pointer;
+ box-shadow:var(--l94-shadow);transition:background-color .15s,transform .15s}
+.l94-cta:hover{background:var(--l94-cta-bg-hover)}
+.l94-cta:active{transform:translateY(1px)}
+.l94-cta:disabled{opacity:1;cursor:wait;filter:saturate(.5)}
+.l94-cta-note{margin:0;color:var(--ink-muted);font:400 13px/1.4 var(--l94-sans)}
+.l94-secondary{display:flex;flex-wrap:wrap;gap:10px}
+.l94-link{min-height:44px;padding:8px 4px;border:0;background:none;color:var(--l94-gold-text);font:600 14px/1.2 var(--l94-sans);text-decoration:underline;text-underline-offset:4px;cursor:pointer}
+
+/* Cards: last campaign, dossier, scenarios ----------------------------------------------------------------------- */
+.l94-side{display:grid;gap:16px;align-content:center}
+.l94-card{position:relative;display:grid;gap:10px;padding:20px;border:1px solid var(--l94-border);border-top:2px solid var(--l94-gold);border-radius:14px;
+ background:var(--l94-card-bg);color:var(--ink);box-shadow:var(--l94-shadow);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.l94-card h2,.l94-card h3{margin:0;color:var(--l94-gold-text);font:700 12px/1.2 var(--l94-sans);letter-spacing:.2em;text-transform:uppercase}
+.l94-card-title{margin:0;font:700 22px/1.2 Georgia,serif;color:var(--ink)}
+.l94-card-meta{display:flex;flex-wrap:wrap;gap:6px 16px;margin:0;color:var(--ink-muted);font:400 14px/1.4 var(--l94-sans)}
+.l94-card-meta strong{color:var(--ink);font-weight:600}
+.l94-card[data-state="loading"] .l94-card-title{height:1.2em;max-width:60%;overflow:hidden;white-space:nowrap;text-indent:-9999px;border-radius:4px;background:linear-gradient(90deg,var(--surface-raised),var(--surface-inset),var(--surface-raised));background-size:200% 100%;animation:l94-shimmer 1.4s linear infinite}
+.l94-card[data-state="none"] .l94-card-title{color:var(--ink-muted);font-style:italic}
+.l94-card[data-state="unreadable"]{border-top-color:var(--l94-warn)}
+.l94-card[data-state="unreadable"] .l94-card-title{color:var(--l94-warn)}
+.l94-flag{width:28px;height:20px;border:1px solid var(--l94-border);border-radius:3px;object-fit:cover}
+.l94-scenarios{display:grid;gap:8px;margin:0;padding:0;list-style:none}
+.l94-scenarios li{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:10px 12px;border:1px dashed var(--l94-border);border-radius:10px;color:var(--ink-muted);font:400 14px/1.3 var(--l94-sans)}
+.l94-badge{padding:2px 8px;border:1px solid var(--l94-gold-line);border-radius:999px;color:var(--l94-gold-text);font:700 11px/1.4 var(--l94-sans);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+
+/* Footer and drawer ---------------------------------------------------------------------------------------------- */
+.l94-footer{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 24px;padding:0 clamp(20px,4vw,48px) 22px;color:var(--ink-muted);font:400 12px/1.4 var(--l94-sans)}
+.l94-drawer-scrim{position:fixed;inset:0;z-index:40;background:var(--overlay)}
+.l94-drawer{position:fixed;top:0;right:0;bottom:0;z-index:41;display:grid;grid-template-rows:auto 1fr;width:min(420px,100%);border-left:1px solid var(--l94-border);background:var(--surface);color:var(--ink);box-shadow:var(--l94-shadow);animation:l94-drawer-in .22s ease-out}
+.l94-drawer header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 20px;border-bottom:1px solid var(--l94-gold-line)}
+.l94-drawer h2{margin:0;font:700 18px/1.2 Georgia,serif}
+.l94-drawer-body{overflow:auto;padding:20px;display:grid;gap:14px;align-content:start}
+.l94-drawer-body p,.l94-drawer-body li{color:var(--ink-muted);font:400 14px/1.55 var(--l94-sans)}
+
+/* Focus ---------------------------------------------------------------------------------------------------------- */
+.landing094 :is(button,a,[tabindex]):focus-visible,.l94-drawer :is(button,a,[tabindex]):focus-visible{outline:3px solid var(--focus);outline-offset:3px;border-radius:10px}
+
+/* Leadership wisdom widget (also used on setup, loading and the outcome screens) ----------------------------------- */
+.lw{position:relative;display:grid;gap:12px;margin:0;color:var(--ink)}
+.lw-body{display:grid;gap:12px;animation:lw-fade .6s ease-out}
+.lw-text{margin:0;font:italic 400 clamp(17px,1.9vw,24px)/1.5 Georgia,"Times New Roman",serif;text-wrap:balance;quotes:none}
+.lw-caption{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 12px;color:var(--ink-muted);font:400 13px/1.4 var(--l94-sans)}
+.lw-name{color:var(--l94-gold-text);font-weight:700;letter-spacing:.04em}
+.lw-name::before{content:"— "}
+.lw-role{color:var(--ink-muted)}
+.lw-year{color:var(--ink-muted);font-variant-numeric:tabular-nums}
+.lw-year::before{content:"· "}
+.lw-controls{display:flex;flex-wrap:wrap;gap:8px}
+.lw-btn{min-height:44px;padding:8px 14px;border:1px solid var(--l94-border);border-radius:10px;background:transparent;color:var(--ink);font:600 13px/1.2 var(--l94-sans);cursor:pointer}
+.lw-btn:hover{border-color:var(--l94-gold)}
+.lw-btn[aria-pressed="true"]{background:var(--surface-raised);border-color:var(--l94-gold)}
+.lw :is(button):focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+.lw--hero{padding-left:20px;border-left:2px solid var(--l94-gold)}
+.lw--hero .lw-text{font-size:clamp(19px,2.2vw,28px)}
+.lw--compact .lw-text{font-size:clamp(15px,1.5vw,18px);line-height:1.45}
+.lw--compact .lw-caption{font-size:12px}
+.lw--loading{max-width:62ch;text-align:center;justify-items:center}
+.lw--loading .lw-caption{justify-content:center}
+.lw--outcome{max-width:56ch;padding-top:16px;border-top:1px solid var(--l94-gold-line)}
+
+/* Motion --------------------------------------------------------------------------------------------------------- */
+@keyframes lw-fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes l94-shimmer{to{background-position:-200% 0}}
+@keyframes l94-drawer-in{from{transform:translateX(24px);opacity:0}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){
+ .lw-body,.l94-drawer{animation:none}
+ .l94-card[data-state="loading"] .l94-card-title{animation:none}
+ .l94-cta,.l94-dock-btn{transition:none}
+}
+
+/* Breakpoints ---------------------------------------------------------------------------------------------------- */
+@media (max-width:1023px){
+ .l94-stage{grid-template-columns:minmax(0,1fr);align-content:start;width:min(720px,100%)}
+ .l94-side{align-content:start}
+}
+@media (max-width:719px){
+ .landing094::after{inset:8px}
+ .l94-dock{padding-top:14px}
+ .l94-stage{gap:24px;padding-top:20px}
+ .l94-cta{width:100%}
+ .l94-actions{justify-items:stretch;width:100%}
+ .lw--hero{padding-left:14px}
+}
+@media (max-width:479px){
+ .l94-dock-btn{padding:8px 10px}
+ .l94-dock-btn .l94-dock-label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+ .l94-card{padding:16px}
+ .l94-footer{flex-direction:column;align-items:flex-start}
+}
+@media (max-height:520px) and (orientation:landscape){
+ .l94-stage{padding-block:12px}
+ .l94-title{font-size:clamp(32px,8vh,48px)}
+}
+
+/* Forced colors: drop decorative colour and keep real borders and system text ----------------------------------------- */
+@media (forced-colors:active){
+ .landing094{background:Canvas;color:CanvasText}
+ .landing094::before,.landing094::after{display:none}
+ .l94-card,.l94-dock-btn,.lw-btn,.l94-drawer,.l94-scenarios li{border:1px solid CanvasText;background:Canvas;color:CanvasText;box-shadow:none}
+ .l94-cta{border:2px solid ButtonText;background:ButtonFace;color:ButtonText;box-shadow:none}
+ .l94-eyebrow,.l94-link,.lw-name,.l94-badge,.l94-card h2,.l94-card h3{color:LinkText}
+ .l94-card-meta,.lw-role,.lw-year,.l94-lede,.l94-cta-note,.l94-footer{color:CanvasText}
+ .landing094 :is(button,a,[tabindex]):focus-visible,.lw :is(button):focus-visible{outline:3px solid Highlight}
+}
