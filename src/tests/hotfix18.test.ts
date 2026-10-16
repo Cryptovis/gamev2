@@ -2,10 +2,18 @@ import {describe,expect,it} from 'vitest';
 import {translateText} from '../i18n/localeText';
 import {CREDENTIAL_WORDING} from '../ui/panels/leaderCredentials';
 
-const css=import.meta.glob<string>(['../ui/styles/hotfix18.css','../ui/styles/landing094.css'],{query:'?raw',import:'default',eager:true});
-const sources=import.meta.glob<string>(['../ui/panels/CampaignSetup.tsx','../ui/panels/AppearanceOptions.tsx','../ui/panels/PlayerOptionsMenu.tsx','../ui/panels/international/OverviewTab.tsx','../ui/panels/international/SanctionsTab.tsx','../ui/panels/international/shared.tsx','../ui/panels/landing/UtilityDock.tsx','../main.tsx'],{query:'?raw',import:'default',eager:true});
-const hotfix=css['../ui/styles/hotfix18.css'],landing=css['../ui/styles/landing094.css'];
-const source=(name:string)=>Object.entries(sources).find(([path])=>path.endsWith('/'+name))![1];
+import {readFileSync} from 'node:fs';
+
+const read=(rel:string)=>readFileSync(new URL(rel,import.meta.url),'utf8');
+const hotfix=read('../ui/styles/hotfix18.css');
+const landing=read('../ui/styles/landing094.css');
+const source=(name:string)=>{
+  if(name==='main.tsx') return read(`../${name}`);
+  if(name==='UtilityDock.tsx') return read(`../ui/panels/landing/${name}`);
+  if(name.startsWith('international/')) return read(`../ui/panels/${name}`);
+  if(['OverviewTab.tsx','SanctionsTab.tsx','shared.tsx'].includes(name)) return read(`../ui/panels/international/${name}`);
+  return read(`../ui/panels/${name}`);
+};
 const rule=(sheet:string,selector:string)=>{const at=sheet.indexOf(selector);if(at<0)return '';const open=sheet.indexOf('{',at);return sheet.slice(open+1,sheet.indexOf('}',open));};
 const channel=(v:number)=>{v/=255;return v<=0.03928?v/12.92:Math.pow((v+0.055)/1.055,2.4);};
 const luminance=(hex:string)=>{const [r,g,b]=[1,3,5].map(i=>parseInt(hex.slice(i,i+2),16));return 0.2126*channel(r)+0.7152*channel(g)+0.0722*channel(b);};
