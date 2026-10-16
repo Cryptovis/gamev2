@@ -10,6 +10,17 @@ export function demoOwner(){try{return sessionStorage.getItem(SESSION_KEY)??'gue
 export function hasDemoSession(){try{return sessionStorage.getItem(SESSION_KEY)!==null;}catch{return false;}}
 export function leaveDemoSession(){sessionStorage.removeItem(SESSION_KEY);}
 export function enterDemoSession(username='guest'){sessionStorage.setItem(SESSION_KEY,username);}
+export interface DemoSessionInfo {username:string;kind:'guest'|'profile';}
+/**
+ * Makes sure this tab has a demo session and describes it. With no session yet it starts the guest one; an existing
+ * guest or profile session is left as it is, so calling it again changes nothing. It asks for no credentials and never
+ * touches mathChallenge, which only the registration form uses. Blocked storage does not throw: the tab then behaves as guest.
+ */
+export function ensureGuestSession():DemoSessionInfo {
+  if(!hasDemoSession()){try{enterDemoSession('guest');}catch{/* storage blocked: demoOwner() falls back to guest */}}
+  const username=demoOwner();
+  return {username,kind:username==='guest'?'guest':'profile'};
+}
 export function mathChallenge(){const bytes=crypto.getRandomValues(new Uint8Array(2));const a=bytes[0]%9+1,b=bytes[1]%9+1;return {question:`${a} + ${b}`,answer:a+b};}
 export async function registerDemoAccount(username:string,email:string,password:string){
  const name=normalize(username),mail=normalize(email);
