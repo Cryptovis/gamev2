@@ -19,8 +19,8 @@ export function ExecutiveWorkspaceShell({id,title,kicker='EXECUTIVE OFFICE',tabs
   <section id={id} ref={ref} tabIndex={-1} role="dialog" aria-modal="true" aria-label={translateLive(title)} className="executive-workspace" onMouseDown={e=>e.stopPropagation()}>
    <header className="floating-command-header executive-header" onMouseDown={e=>e.stopPropagation()}>
     <span><small><LocaleText value={kicker}/></small><strong><LocaleText value={title}/></strong></span>
-    {hint&&<TacticalHint spec={hint}/>}
     <span className="window-hint-slot" ref={setHintSlot}/>
+    {hint&&<TacticalHint spec={hint}/>}
     <button data-guide="close-workspace" onClick={onClose} aria-label={translateLive('Close command window')}><LocaleText value="×"/></button>
    </header>
    {tabs&&<div className="executive-tabs" onKeyDown={event=>{

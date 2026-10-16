@@ -48,6 +48,7 @@ import { migrateSave } from "../persistence/migrations";
 import { snapshotGame } from "../persistence/snapshot";
 import { money } from "../ui/formatMoney";
 import type { GameState } from "../domain/game";
+import { AGREEMENT_BASE_COST } from "../engine/systems/treaties";
 function friendly(s = makeInitialState()) {
   s = changeRelations(s, "TUR", "BRA", 100);
   return addTreaty(s, "TUR", "BRA", "trade");
@@ -394,7 +395,9 @@ describe("retained diplomatic correspondence", () => {
     const a = s.countries.TUR.economy.treasury,
       b = s.countries.BRA.economy.treasury,
       n = resolveIncomingLetter(s, "shared", true);
-    expect(n.countries.TUR.economy.treasury).toBe(a - 1.5);
+    // Embassy base fee is $0.05B; TUR (cost scale 1) pays half of it.
+    expect(AGREEMENT_BASE_COST.embassy).toBe(0.05);
+    expect(n.countries.TUR.economy.treasury).toBeCloseTo(a - AGREEMENT_BASE_COST.embassy * 0.5);
     // 0.87: each side pays half of its own GDP-scaled fee (audit C15).
     expect(n.countries.BRA.economy.treasury).toBeCloseTo(b - letterCost(s, "BRA", "embassy") * 0.5);
     expect(resolveIncomingLetter(n, "shared", true)).toBe(n);
