@@ -26,7 +26,7 @@ describe('landing094.css tokens',()=>{
   expect(ivory['--surface']).toBe('#fffdf7');expect(ivory['--l94-gold']).not.toBe(navy['--l94-gold']);
  });
  it('only references tokens that exist',()=>{
-  const defined=new Set(Object.keys(ivory));
+  const defined=new Set([...Object.keys(ivory),...[...landing.matchAll(/(--[\w-]+)\s*:/g)].map(m=>m[1])]);
   for(const [,name] of landing.matchAll(/var\((--[\w-]+)/g))expect(defined.has(name),name).toBe(true);
  });
  it('never writes a font shorthand with inherit as the family, which would invalidate the declaration',()=>{
@@ -56,6 +56,6 @@ describe('landing094.css responsive and accessibility rules',()=>{
   for(const query of ['(max-width:1023px)','(max-width:719px)','(max-width:479px)','(prefers-reduced-motion:reduce)','(forced-colors:active)'])expect(landing.includes(query),query).toBe(true);
  });
  it('keeps controls at least 44px tall',()=>{
-  for(const selector of ['.l94-dock-btn{','.l94-cta{','.l94-action-card{'])expect(landing.slice(landing.indexOf(selector)).split('}')[0],selector).toMatch(/min-height:(44|56|120)px/);
+  for(const selector of ['.l94-dock-btn{','.l94-cta{','.l94-action-card{'])expect(landing.slice(landing.indexOf(selector)).split('}')[0],selector).toMatch(/min-height:(44|56|120|264)px/);
  });
 });

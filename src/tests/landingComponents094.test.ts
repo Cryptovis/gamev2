@@ -67,8 +67,8 @@ describe('CommandMenu',()=>{
   await show(createElement(CommandMenu,props('play_now')));expect(q('.l94-cta-note')!.textContent).toBe('No account needed');
   await show(createElement(CommandMenu,props('continue')));expect(q('.l94-cta-note')).toBeNull();
  });
- it('offers New campaign as an action card beside a save, and marks it primary when there is no save to continue',async()=>{
-  await show(createElement(CommandMenu,props('play_now')));expect(byId('landing-new-campaign')).toBeNull();
+ it('always offers New campaign as an action card, and marks it primary when there is no save to continue',async()=>{
+  await show(createElement(CommandMenu,props('play_now')));expect(byId('landing-new-campaign')).not.toBeNull();expect(byId('landing-new-campaign')!.getAttribute('data-primary')).toBeNull();
   await show(createElement(CommandMenu,props('continue')));expect(byId('landing-new-campaign')).not.toBeNull();expect(byId('landing-new-campaign')!.getAttribute('data-primary')).toBeNull();
   await show(createElement(CommandMenu,props('new_campaign')));expect(byId('landing-new-campaign')!.getAttribute('data-primary')).toBe('true');
  });
@@ -81,6 +81,30 @@ describe('CommandMenu',()=>{
   await show(createElement(CommandMenu,props('continue')));
   expect(host.querySelectorAll('a').length).toBe(0);
   expect(host.querySelectorAll('.l94-action-cards .l94-action-card').length).toBe(3);
+ });
+ it('puts the lead card first in the same list, so the four cards share a row',async()=>{
+  await show(createElement(CommandMenu,props('continue',{lead:createElement('section',{'data-testid':'lead'},'Last campaign')})));
+  const items=[...host.querySelectorAll('.l94-action-cards>li')];
+  expect(items).toHaveLength(4);expect(items[0].querySelector('[data-testid="lead"]')).not.toBeNull();
+  expect(items.slice(1).map(li=>li.querySelector('button')!.getAttribute('data-testid'))).toEqual(['landing-new-campaign','landing-scenarios','landing-dossier']);
+ });
+ it('gives each artwork card its own art layer and names the Player Profile card in plain words',async()=>{
+  await show(createElement(CommandMenu,props('continue')));
+  expect([...host.querySelectorAll('.l94-action-card')].map(card=>card.getAttribute('data-art'))).toEqual(['new','scenarios','profile']);
+  for(const card of host.querySelectorAll('.l94-action-card')){expect(card.querySelector('.l94-card-art')!.getAttribute('aria-hidden')).toBe('true');}
+  const profile=byId('landing-dossier')!;
+  expect(profile.querySelector('.l94-action-title')!.textContent).toBe('Player Profile');
+  expect(profile.querySelector('.l94-action-sub')!.textContent).toBe('Manage profile, cloud sync and saves');
+  expect(host.textContent).not.toContain('Commander dossier');
+ });
+ it('shows the signed-in profile name on the Player Profile card',async()=>{
+  await show(createElement(CommandMenu,props('continue',{profileName:'alper'})));
+  expect(byId('landing-profile-name')!.textContent).toBe('alper');expect(byId('landing-dossier')!.getAttribute('data-session')).toBe('profile');
+  await show(createElement(CommandMenu,props('continue')));expect(byId('landing-profile-name')).toBeNull();
+ });
+ it('names the Player Profile card in every language',async()=>{
+  const names={en:'Player Profile',tr:'Oyuncu Profili',es:'Perfil de Jugador',zh:'玩家档案',ru:'Профиль Игрока'} as const;
+  for(const language of Object.keys(names) as (keyof typeof names)[]){await show(createElement(CommandMenu,props('continue',{language})));expect(byId('landing-dossier')!.querySelector('.l94-action-title')!.textContent,language).toBe(names[language]);}
  });
  it('keeps Historical scenarios focusable but inert, with a Coming soon badge',async()=>{
   const onOpenScenarios=vi.fn();await show(createElement(CommandMenu,props('play_now',{onOpenScenarios})));
@@ -105,18 +129,19 @@ describe('CommandMenu',()=>{
   await show(createElement(CommandMenu,props('play_now',{language:'tr'})));
   expect(q('nav')!.getAttribute('aria-label')).toBe(TR('Main menu'));
   expect(byId('landing-hero')!.textContent).toBe(TR('Play now'));
-  expect(byId('landing-dossier')!.textContent).toContain(TR('Commander dossier'));
+  expect(byId('landing-dossier')!.textContent).toContain(TR('Player Profile'));
   await show(createElement(CommandMenu,props('continue',{language:'tr'})));
   expect(byId('landing-new-campaign')!.textContent).toContain(translateText('tr','New campaign'));
  });
 });
 
 describe('UtilityDock',()=>{
- const dock=(extra:Partial<UtilityDockProps>={}):UtilityDockProps=>({language:'en',onLanguageChange:vi.fn(),theme:'dark',onToggleTheme:vi.fn(),muted:false,audioAvailable:true,onToggleMuted:vi.fn(),version:'1.0.0',onOpenReleaseNotes:vi.fn(),sessionKind:'guest',onOpenDossier:vi.fn(),...extra});
- it('is a labelled toolbar with the five dock controls',async()=>{
+ const dock=(extra:Partial<UtilityDockProps>={}):UtilityDockProps=>({language:'en',onLanguageChange:vi.fn(),theme:'dark',onToggleTheme:vi.fn(),muted:false,audioAvailable:true,onToggleMuted:vi.fn(),version:'1.0.0',onOpenReleaseNotes:vi.fn(),...extra});
+ it('is a labelled toolbar with the four dock controls and no profile chip',async()=>{
   await show(createElement(UtilityDock,dock()));
   expect(q('[role="toolbar"]')!.getAttribute('aria-label')).toBe('Settings');
-  for(const id of ['dock-language','dock-theme','dock-audio','dock-release-notes','dock-dossier-chip'])expect(byId(id),id).not.toBeNull();
+  for(const id of ['dock-language','dock-theme','dock-audio','dock-release-notes'])expect(byId(id),id).not.toBeNull();
+  expect(byId('dock-dossier-chip')).toBeNull();expect(host.textContent).not.toContain('Playing as guest');
  });
  it('offers all five languages, marks the current one and switches on click',async()=>{
   const p=dock({language:'es'});await show(createElement(UtilityDock,p));
@@ -149,15 +174,6 @@ describe('UtilityDock',()=>{
   expect(byId('dock-release-notes')!.textContent).toBe('v1.0.0');expect(byId('dock-release-notes')!.getAttribute('aria-label')).toBe('Release notes');
   await click('dock-release-notes');expect(p.onOpenReleaseNotes).toHaveBeenCalledTimes(1);
  });
- it('shows Playing as guest for a guest or no session and the profile name for a profile',async()=>{
-  for(const sessionKind of ['none','guest'] as const){await show(createElement(UtilityDock,dock({sessionKind,profileName:'alper'})));expect(byId('dock-dossier-chip')!.textContent,sessionKind).toBe('Playing as guest');}
-  const p=dock({sessionKind:'profile',profileName:'alper'});await show(createElement(UtilityDock,p));
-  expect(byId('dock-dossier-chip')!.textContent).toBe('alper');expect(byId('dock-dossier-chip')!.getAttribute('data-session')).toBe('profile');
-  await click('dock-dossier-chip');expect(p.onOpenDossier).toHaveBeenCalledTimes(1);
- });
- it('falls back to the guest wording for a profile without a name',async()=>{
-  await show(createElement(UtilityDock,dock({sessionKind:'profile'})));expect(byId('dock-dossier-chip')!.textContent).toBe('Playing as guest');
- });
  it('labels the language group in each language and shows a national flag on every button',async()=>{
   const labels={en:'Language',tr:'Dil',es:'Idioma',zh:'语言',ru:'Язык'} as const;
   for(const language of Object.keys(labels) as (keyof typeof labels)[]){
@@ -177,7 +193,6 @@ describe('UtilityDock',()=>{
   await show(createElement(UtilityDock,dock({language:'tr'})));
   expect(q('[role="toolbar"]')!.getAttribute('aria-label')).toBe('Ayarlar');
   expect(byId('dock-theme')!.getAttribute('aria-label')).toBe(TR('Switch to light theme'));
-  expect(byId('dock-dossier-chip')!.textContent).toBe(TR('Playing as guest'));
  });
 });
 

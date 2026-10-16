@@ -11,6 +11,7 @@ import {useGamePreloader} from '../../hooks/useGamePreloader';
 import {resolveHeroAction,sessionKindOf} from '../../landing/heroAction';
 import {INITIAL_LANDING_STATE,landingReducer,type LoadFailureReason} from '../../landing/landingMachine';
 import {CampaignSetup} from '../CampaignSetup';
+import {STUDIO_NAME} from '../../BrandMark';
 import {CommandMenu} from './CommandMenu';
 import {GameLoadingScreen} from './GameLoadingScreen';
 import {HeroBrand} from './HeroBrand';
@@ -133,22 +134,22 @@ export function LandingShell({onPlaying,deps=defaultLandingDeps,Setup=CampaignSe
       language={language} onLanguageChange={deps.setLanguage}
       theme={theme} onToggleTheme={()=>setPreference(theme==='dark'?'light':'dark')}
       muted={ambience.muted} audioAvailable={ambience.audioAvailable} onToggleMuted={ambience.toggleMuted}
-      version={version} onOpenReleaseNotes={()=>dispatch({type:'OPEN_RELEASE_NOTES'})}
-      sessionKind={kind} profileName={profileName} onOpenDossier={openProfile}/>
+      version={version} onOpenReleaseNotes={()=>dispatch({type:'OPEN_RELEASE_NOTES'})}/>
     <main className="l94-stage" aria-labelledby="landing-title">
       <section className="l94-hero">
         <HeroBrand language={language} version={version}/>
         <CommandMenu
           language={language} heroAction={heroAction} busy={false}
           onPlayNow={()=>startNew('PLAY_NOW')} onNewCampaign={()=>startNew('NEW_CAMPAIGN')}
-          onOpenDossier={openProfile}/>
-        <LeadershipWisdomWidget variant="hero" context={{screen:'landing'}}/>
+          onOpenDossier={openProfile} profileName={profileName}
+          lead={<SaveGameCard language={language} state={summary} loadError={loadError} busy={false} onContinue={()=>{deps.ensureGuest();setLoadError(null);dispatch({type:'CONTINUE'});}}/>}/>
       </section>
-      <aside className="l94-side">
-        <SaveGameCard language={language} state={summary} loadError={loadError} busy={false} onContinue={()=>{deps.ensureGuest();setLoadError(null);dispatch({type:'CONTINUE'});}}/>
-      </aside>
+      <LeadershipWisdomWidget variant="hero" context={{screen:'landing'}}/>
     </main>
-    <div className="l94-footer"><span>{t('Saves are stored per profile on this device')}</span></div>
+    <footer className="l94-footer">
+      <p>{t('Saves are stored per profile on this device')}</p>
+      <p className="l94-legal"><span translate="no">{STUDIO_NAME} © 2026.</span> {t('All rights reserved.')}</p>
+    </footer>
     <ProfileDrawer
       language={language} open={state.overlay==='profile'} tab={profileTab} sessionKind={kind} profileName={profileName}
       onTabChange={setProfileTab} onSignedIn={()=>afterSessionChange('account')} onSignedOut={()=>afterSessionChange('signIn')}

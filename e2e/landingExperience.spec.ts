@@ -58,9 +58,9 @@ test('4 a corrupt save is reported, Continue is disabled and the hero falls back
  expect(problems).toEqual([]);
 });
 
-test('5 the dossier traps focus, closes with Escape and shows the signed-in profile on the chip',async({page})=>{
+test('5 the dossier traps focus, closes with Escape and shows the signed-in profile on the Player Profile card',async({page})=>{
  await page.goto('/');await landingReady(page);
- const chip=page.getByTestId('dock-dossier-chip');
+ const chip=page.getByTestId('landing-dossier');
  await chip.click();
  await expect(drawer(page)).toBeVisible();await expect(drawer(page)).toHaveAttribute('aria-modal','true');
  expect(await insideDrawer(page)).toBe(true);
@@ -166,7 +166,7 @@ test('11 the layout is one column on a tablet and the drawer fills a phone',asyn
  const heroBox=(await menu(page).boundingBox())!,cardBox=(await card(page).boundingBox())!;
  expect(cardBox.y).toBeGreaterThanOrEqual(heroBox.y+heroBox.height);
  await page.setViewportSize({width:390,height:844});
- await page.getByTestId('dock-dossier-chip').click();
+ await page.getByTestId('landing-dossier').click();
  await expect(drawer(page)).toBeVisible();
  const box=(await drawer(page).boundingBox())!;
  expect(box.width).toBeCloseTo(390,0);

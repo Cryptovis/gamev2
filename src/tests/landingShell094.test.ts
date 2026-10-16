@@ -174,4 +174,32 @@ describe('LandingShell overlays and dock',()=>{
     expect(deps.calls).toContain('lang:tr');
     expect(byId('landing-root')?.getAttribute('lang')).toBe('tr');
   });
+  it('opens the Player Profile drawer from its card and shows the Coming soon notice for each social sign-in',async()=>{
+    await mount(makeDeps());
+    expect(byId('profile-drawer')).toBeNull();
+    await click('landing-dossier');
+    expect(byId('profile-drawer')).not.toBeNull();
+    expect(byId('social-toast')!.textContent).toBe('');
+    for(const provider of ['google','apple','facebook']){
+      await click(`social-${provider}`);
+      expect(byId('social-toast')!.textContent,provider).toBe('Coming soon');
+      expect(byId('social-toast')!.getAttribute('role')).toBe('status');
+    }
+  });
+  it('centres the saves note and carries the company notice in the footer',async()=>{
+    await mount(makeDeps());
+    const footer=host.querySelector('footer.l94-footer') as HTMLElement;
+    expect(footer.textContent).toContain('Saves are stored per profile on this device');
+    expect(footer.textContent).toContain('RON Interactive © 2026. All rights reserved.');
+    expect(footer.querySelector('[translate="no"]')!.textContent).toBe('RON Interactive © 2026.');
+  });
+  it('shows Last campaign beside the three action cards and keeps the quote below them',async()=>{
+    await mount(makeDeps({peekSummary:async()=>READY}));
+    const items=[...host.querySelectorAll('.l94-action-cards>li')];
+    expect(items).toHaveLength(4);
+    expect(items[0].querySelector('[data-testid="save-card"]')).not.toBeNull();
+    const cards=host.querySelector('.l94-action-cards')!,quote=host.querySelector('[data-testid="wisdom-widget"]')!;
+    expect(cards.compareDocumentPosition(quote)&Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(host.querySelector('.l94-side')).toBeNull();
+  });
 });

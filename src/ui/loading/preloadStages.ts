@@ -16,7 +16,7 @@ export const PRELOAD_ASSETS:readonly string[]=[
 
 /** English strings the loading and landing screens depend on. Every language must answer each of them with text. */
 export const DICTIONARY_PROBE_KEYS:readonly string[]=[
-  'Play now','Continue campaign','Main menu','Commander dossier','Release notes','Loading command…','Handing over command…','The campaign could not be loaded',
+  'Play now','Continue campaign','Main menu','Player Profile','Release notes','Loading command…','Handing over command…','The campaign could not be loaded',
 ];
 
 export type StateInspection={ok:true}|{ok:false;reason:LoadFailureReason};

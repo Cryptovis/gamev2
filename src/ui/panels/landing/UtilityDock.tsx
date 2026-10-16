@@ -1,8 +1,7 @@
 import type {GameLanguage} from '../../../domain/game';
 import {LANGUAGE_OPTIONS,tr} from '../../../i18n/gameI18n';
 import {translateText} from '../../../i18n/localeText';
-import type {SessionKind} from '../../landing/heroAction';
-import {DossierIcon,MoonIcon,NotesIcon,SpeakerIcon,SpeakerOffIcon,SunIcon} from './landingIcons';
+import {MoonIcon,NotesIcon,SpeakerIcon,SpeakerOffIcon,SunIcon} from './landingIcons';
 
 export interface UtilityDockProps {
   language:GameLanguage;
@@ -15,21 +14,16 @@ export interface UtilityDockProps {
   onToggleMuted():void;
   version:string;
   onOpenReleaseNotes():void;
-  sessionKind:SessionKind;
-  /** Shown on the dossier chip for a signed-in profile. */
-  profileName?:string;
-  onOpenDossier():void;
 }
 
 // The flag is the visible face of each language button; the language's own name is the accessible name.
 const FLAG:Record<GameLanguage,string>={en:'🇬🇧',tr:'🇹🇷',es:'🇪🇸',zh:'🇨🇳',ru:'🇷🇺'};
 
-/** Language, theme, sound, release notes and the profile chip. Every control is a plain button or group driven by props. */
+/** Language, theme, sound and release notes. The profile lives on the Player Profile card, not in the header. Every control is a plain button or group driven by props. */
 export function UtilityDock(props:UtilityDockProps) {
-  const {language,theme,muted,audioAvailable,sessionKind,profileName}=props;
+  const {language,theme,muted,audioAvailable}=props;
   const t=(text:string)=>translateText(language,text);
   const audioLabel=!audioAvailable?'Ambience coming soon':muted?'Play ambience':'Mute ambience';
-  const chipText=sessionKind==='profile'&&profileName?profileName:t('Playing as guest');
   return <div className="l94-dock" role="toolbar" aria-label={t('Settings')}>
     <div className="l94-dock-group l94-dock-tools">
       <button type="button" className="l94-dock-btn" data-testid="dock-theme" aria-pressed={theme==='light'} aria-label={t(theme==='light'?'Switch to dark theme':'Switch to light theme')} onClick={props.onToggleTheme}>{theme==='light'?<SunIcon/>:<MoonIcon/>}</button>
@@ -41,9 +35,6 @@ export function UtilityDock(props:UtilityDockProps) {
       <div className="l94-flags" role="group" aria-labelledby="dock-language-label" data-testid="dock-language">
         {LANGUAGE_OPTIONS.map(option=><button key={option.id} type="button" className="l94-flag-btn" lang={option.id} aria-pressed={option.id===language} aria-label={option.label} title={option.label} data-testid={`dock-language-${option.id}`} onClick={()=>props.onLanguageChange(option.id)}><span aria-hidden="true">{FLAG[option.id]}</span></button>)}
       </div>
-    </div>
-    <div className="l94-dock-group l94-dock-account">
-      <button type="button" className="l94-dock-btn l94-chip" data-testid="dock-dossier-chip" data-session={sessionKind} aria-label={`${t('Commander dossier')}: ${chipText}`} onClick={props.onOpenDossier}><DossierIcon/><span className="l94-dock-label">{chipText}</span></button>
     </div>
   </div>;
 }

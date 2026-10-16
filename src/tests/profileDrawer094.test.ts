@@ -32,8 +32,8 @@ describe('ProfileDrawer structure',()=>{
  it('is a modal dialog labelled by its title, with the test ids from the blueprint',async()=>{
   await show(props());
   const dialog=byId('profile-drawer')!;
-  expect(dialog.getAttribute('role')).toBe('dialog');expect(dialog.getAttribute('aria-modal')).toBe('true');expect(dialog.getAttribute('aria-label')).toBe('Commander dossier');
-  expect(dialog.querySelector('h2')!.textContent).toBe('Commander dossier');
+  expect(dialog.getAttribute('role')).toBe('dialog');expect(dialog.getAttribute('aria-modal')).toBe('true');expect(dialog.getAttribute('aria-label')).toBe('Player Profile');
+  expect(dialog.querySelector('h2')!.textContent).toBe('Player Profile');
   for(const id of ['profile-tab-signin','profile-tab-register','profile-close','profile-scrim'])expect(byId(id),id).not.toBeNull();
  });
  it('offers Sign in and Create profile to someone who is not signed in, and Account only to a profile',async()=>{
@@ -144,7 +144,7 @@ describe('ProfileDrawer account tab',()=>{
 describe('ProfileDrawer language',()=>{
  it('translates tabs, labels, buttons and the saves note',async()=>{
   await show(props({language:'tr'}));
-  expect(byId('profile-drawer')!.getAttribute('aria-label')).toBe(UI_CATALOG_LANDING['Commander dossier'][0]);
+  expect(byId('profile-drawer')!.getAttribute('aria-label')).toBe(UI_CATALOG_LANDING['Player Profile'][0]);
   expect(byId('profile-tab-register')!.textContent).toBe(UI_CATALOG_LANDING['Create profile'][0]);
   await show(props({language:'zh',sessionKind:'profile',profileName:'alper',tab:'account'}));
   expect(byId('profile-signout')!.textContent).toBe(UI_CATALOG_LANDING['Sign out'][2]);

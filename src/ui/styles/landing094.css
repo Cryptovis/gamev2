@@ -20,6 +20,10 @@
  --l94-warn:#ffd9a0;
  --l94-muted:#dae5ef;        /* secondary text over the wallpaper, 7:1 or better */
  --l94-flag-glow:0 0 8px rgba(212,175,55,.4);
+ --l94-scrim:rgba(9,22,39,.96);         /* solid base under card text, so the artwork never costs contrast */
+ --l94-quote-bg:rgba(14,32,53,.72);
+ --l94-quote-line:rgba(212,175,55,.25);
+ --l94-card-glow:0 0 0 1px rgba(212,175,55,.55),0 0 22px rgba(212,175,55,.38),0 18px 40px rgba(3,11,23,.55);
 }
 :root[data-theme="light"]{
  --l94-border:#667a8c;
@@ -35,6 +39,10 @@
  --l94-warn:#7a3b00;
  --l94-muted:#2e4257;
  --l94-flag-glow:0 0 8px rgba(154,116,18,.45);
+ --l94-scrim:rgba(255,251,240,.97);
+ --l94-quote-bg:rgba(255,252,243,.84);
+ --l94-quote-line:rgba(138,101,8,.4);
+ --l94-card-glow:0 0 0 1px rgba(154,116,18,.6),0 0 20px rgba(154,116,18,.3),0 14px 32px rgba(20,44,70,.22);
 }
 
 /* Root and cartographic backdrop ------------------------------------------------------------------------------- */
@@ -47,7 +55,7 @@
 :root[data-theme="light"] .l94-art{opacity:.5;filter:saturate(.5) brightness(1.2)}
 /* The wash keeps the text column readable: strong on the left where the title sits, lighter toward the picture. */
 .l94-wash{position:absolute;inset:0;background:
- linear-gradient(90deg,color-mix(in srgb,var(--surface-inset) 94%,transparent) 0%,color-mix(in srgb,var(--surface-inset) 88%,transparent) 40%,color-mix(in srgb,var(--surface-inset) 60%,transparent) 68%,color-mix(in srgb,var(--surface-inset) 26%,transparent) 100%),
+ linear-gradient(90deg,color-mix(in srgb,var(--surface-inset) 94%,transparent) 0%,color-mix(in srgb,var(--surface-inset) 88%,transparent) 40%,color-mix(in srgb,var(--surface-inset) 70%,transparent) 68%,color-mix(in srgb,var(--surface-inset) 48%,transparent) 100%),
  linear-gradient(0deg,color-mix(in srgb,var(--surface-inset) 85%,transparent) 0%,transparent 28%)}
 @media (max-width:1023px){.l94-wash{background:color-mix(in srgb,var(--surface-inset) 95%,transparent)}}
 .l94-graticule{position:absolute;inset:0;pointer-events:none;
@@ -65,7 +73,6 @@
 /* Dock ----------------------------------------------------------------------------------------------------------- */
 .l94-dock{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;padding:20px clamp(20px,4vw,48px) 0}
 .l94-dock-tools{justify-self:start}
-.l94-dock-account{justify-self:end}
 .l94-dock-group{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .l94-dock-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:44px;min-height:44px;padding:8px 14px;border:1px solid var(--l94-border);
  border-radius:10px;background:var(--l94-card-bg);color:var(--ink);font:600 13px/1.2 var(--l94-sans);cursor:pointer;transition:border-color .15s,background-color .15s}
@@ -82,9 +89,8 @@
 .l94-flag-btn[aria-pressed="true"]{border:2px solid var(--l94-gold);box-shadow:var(--l94-flag-glow)}
 
 /* Stage ---------------------------------------------------------------------------------------------------------- */
-.l94-stage{display:grid;align-content:center;gap:clamp(24px,4vw,56px);width:min(1180px,100%);margin:0 auto;padding:clamp(24px,5vh,56px) clamp(20px,4vw,48px);
- grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr)}
-.l94-hero{display:grid;gap:18px;align-content:center;justify-items:start;min-width:0;container-type:inline-size}
+.l94-stage{display:grid;align-content:center;gap:clamp(18px,3vh,32px);width:min(1180px,100%);margin:0 auto;padding:clamp(20px,4vh,48px) clamp(20px,4vw,48px);grid-template-columns:minmax(0,1fr)}
+.l94-hero{display:grid;gap:clamp(16px,3vh,28px);align-content:center;justify-items:start;min-width:0;container-type:inline-size}
 .l94-eyebrow{margin:0;color:var(--l94-gold-text);font:700 12px/1 var(--l94-sans);letter-spacing:.28em;text-transform:uppercase}
 .l94-eyebrow::after{content:"";display:block;width:56px;height:1px;margin-top:14px;background:var(--l94-gold)}
 .l94-title{margin:0;font:700 clamp(28px,6vw,84px)/1.02 Georgia,"Times New Roman",serif;letter-spacing:-.01em;color:var(--ink);white-space:nowrap}
@@ -103,28 +109,40 @@
 .l94-emblem{display:inline-block;margin-right:12px;padding:4px 7px;border:1px solid var(--l94-gold);border-radius:4px;color:var(--l94-gold-text);font:800 11px/1 var(--l94-sans);letter-spacing:.14em;vertical-align:1px}
 .l94-version{margin:0;color:var(--l94-muted);font:400 12px/1.4 var(--l94-sans);letter-spacing:.06em}
 .l94-menu{display:grid;gap:18px;justify-items:start;width:100%}
-/* Action cards: New campaign, Historical scenarios, Commander dossier */
-.l94-action-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(176px,1fr));gap:12px;width:100%;margin:0;padding:0;list-style:none}
-.l94-action-card{position:relative;display:grid;gap:6px;align-content:start;justify-items:start;width:100%;height:100%;min-height:120px;padding:16px;text-align:left;border:1px solid var(--l94-border);border-top:2px solid var(--l94-gold);border-radius:14px;
- background:var(--l94-card-bg);color:var(--ink);box-shadow:var(--l94-shadow);cursor:pointer;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);transition:border-color .15s,transform .15s}
-.l94-action-card:hover:not(:disabled){border-color:var(--l94-gold);transform:translateY(-1px)}
+/* Action cards: Last campaign (lead slot), New campaign, Historical scenarios, Player Profile. One row, one height. */
+.l94-action-cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;align-items:stretch;width:100%;margin:0;padding:0;list-style:none}
+.l94-action-cards>li{display:flex;min-width:0}
+.l94-deck-slot>.l94-card{flex:1;min-width:0}
+.l94-action-card{--art:none;position:relative;isolation:isolate;overflow:hidden;display:flex;flex:1;flex-direction:column;justify-content:flex-end;min-width:0;min-height:264px;padding:0;text-align:left;
+ border:1px solid var(--l94-border);border-top:2px solid var(--l94-gold);border-radius:14px;background:var(--l94-card-bg);color:var(--ink);box-shadow:var(--l94-shadow);cursor:pointer;
+ transition:border-color .25s,transform .25s,box-shadow .25s}
+.l94-action-card[data-art="new"]{--art:url("/assets/command/card-new-campaign.jpg")}
+.l94-action-card[data-art="scenarios"]{--art:url("/assets/command/card-scenarios.jpg")}
+.l94-action-card[data-art="profile"]{--art:url("/assets/command/card-profile.jpg")}
+/* Resting state is muted; hover and keyboard focus bring the artwork to full colour. */
+.l94-card-art{position:absolute;inset:0;z-index:-2;background:var(--art) center/cover no-repeat;opacity:.75;filter:grayscale(25%) brightness(.85);transform:scale(1);transition:opacity .35s ease,filter .35s ease,transform .5s ease}
+.l94-action-card::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(0deg,var(--l94-scrim) 0,var(--l94-scrim) 40%,transparent 84%)}
+:root[data-theme="light"] .l94-card-art{opacity:.55;filter:grayscale(25%) brightness(.95)}
+.l94-action-card:hover:not(:disabled),.l94-action-card:focus-visible{border-color:var(--l94-gold);transform:translateY(-4px);box-shadow:var(--l94-card-glow)}
+.l94-action-card:hover .l94-card-art,.l94-action-card:focus-visible .l94-card-art{opacity:1;filter:none;transform:scale(1.07)}
 .l94-action-card[data-primary]{border-width:2px;border-color:var(--l94-gold)}
-.l94-action-card[aria-disabled="true"]{cursor:not-allowed;border-style:dashed}
+.l94-action-card[aria-disabled="true"]{cursor:not-allowed}
 .l94-action-card[aria-disabled="true"]:hover{transform:none}
 .l94-action-card:disabled{cursor:wait}
-.l94-action-icon{display:inline-flex;color:var(--l94-gold-text)}
-.l94-action-title{font:700 16px/1.2 var(--l94-sans);color:var(--ink)}
+.l94-card-text{position:relative;display:grid;gap:5px;padding:16px 18px 18px}
+.l94-action-title{font:700 18px/1.2 Georgia,"Times New Roman",serif;color:var(--ink)}
 .l94-action-sub{font:400 13px/1.4 var(--l94-sans);color:var(--l94-muted)}
-.l94-chip{max-width:min(260px,52vw)}
+.l94-profile-name{color:var(--l94-gold-text);font-weight:700;letter-spacing:.03em;overflow-wrap:anywhere}
+.l94-action-card .l94-badge{position:absolute;top:12px;right:12px;background:var(--l94-scrim)}
 .l94-card-error{margin:0;color:var(--l94-warn);font:600 14px/1.4 var(--l94-sans)}
 .l94-cta--card{width:100%;min-width:0}
 .l94-flag-emoji{font-size:1.1em}
 .l94-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
 /* Cards: last campaign, dossier, scenarios ----------------------------------------------------------------------- */
-.l94-side{display:grid;gap:16px;align-content:center}
-.l94-card{position:relative;display:grid;gap:10px;padding:20px;border:1px solid var(--l94-border);border-top:2px solid var(--l94-gold);border-radius:14px;
+.l94-card{position:relative;display:flex;flex-direction:column;gap:10px;padding:20px;border:1px solid var(--l94-border);border-top:2px solid var(--l94-gold);border-radius:14px;
  background:var(--l94-card-bg);color:var(--ink);box-shadow:var(--l94-shadow);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.l94-card .l94-cta--card{margin-top:auto}
 .l94-card h2,.l94-card h3{margin:0;color:var(--l94-gold-text);font:700 12px/1.2 var(--l94-sans);letter-spacing:.2em;text-transform:uppercase}
 .l94-card-title{margin:0;font:700 22px/1.2 Georgia,serif;color:var(--ink)}
 .l94-card-meta{display:flex;flex-wrap:wrap;gap:6px 16px;margin:0;color:var(--l94-muted);font:400 14px/1.4 var(--l94-sans)}
@@ -139,19 +157,20 @@
 .l94-badge{padding:2px 8px;border:1px solid var(--l94-gold-line);border-radius:999px;color:var(--l94-gold-text);font:700 11px/1.4 var(--l94-sans);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
 
 /* Footer and drawer ---------------------------------------------------------------------------------------------- */
-.l94-footer{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 24px;padding:0 clamp(20px,4vw,48px) 36px;color:var(--l94-muted);font:400 12px/1.4 var(--l94-sans)}
-/* The frame line can cross the note when the page scrolls; a near-opaque chip keeps the text readable over it. */
-.l94-footer>span{padding:3px 8px;border-radius:6px;background:color-mix(in srgb,var(--surface-inset) 92%,transparent)}
+.l94-footer{display:grid;justify-items:center;gap:6px;padding:0 clamp(20px,4vw,48px) 38px;text-align:center;color:var(--l94-muted);font:400 12px/1.4 var(--l94-sans)}
+/* The frame line can cross the notes when the page scrolls; a near-opaque chip keeps the text readable over it. */
+.l94-footer p{margin:0;padding:3px 10px;border-radius:6px;background:color-mix(in srgb,var(--surface-inset) 92%,transparent)}
+.l94-legal{letter-spacing:.02em}
 .l94-drawer-layer{position:fixed;inset:0}
 .l94-drawer-scrim{position:absolute;inset:0;background:var(--overlay)}
 .l94-drawer{position:absolute;top:0;right:0;bottom:0;display:grid;grid-template-rows:auto auto 1fr;width:clamp(320px,32vw,440px);border-left:1px solid var(--l94-border);background:var(--surface);color:var(--ink);box-shadow:var(--l94-shadow);animation:l94-drawer-in .22s ease-out}
 .l94-drawer header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 20px;border-bottom:1px solid var(--l94-gold-line)}
 .l94-drawer h2{margin:0;font:700 18px/1.2 Georgia,serif}
 .l94-tabs{display:flex;gap:4px;padding:0 20px;border-bottom:1px solid var(--l94-border)}
-.l94-tab{min-height:44px;padding:8px 12px;border:0;border-bottom:3px solid transparent;background:none;color:var(--ink-muted);font:600 14px/1.2 var(--l94-sans);cursor:pointer}
+.l94-tab{min-height:44px;padding:8px 12px;border:0;border-bottom:3px solid transparent;background:none;color:var(--l94-muted);font:600 14px/1.2 var(--l94-sans);cursor:pointer}
 .l94-tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--l94-gold)}
 .l94-drawer-body{overflow:auto;padding:20px;display:grid;gap:14px;align-content:start}
-.l94-drawer-body p,.l94-drawer-body li{color:var(--ink-muted);font:400 14px/1.55 var(--l94-sans)}
+.l94-drawer-body p,.l94-drawer-body li{color:var(--l94-muted);font:400 14px/1.55 var(--l94-sans)}
 .l94-drawer-body p.l94-card-title{color:var(--ink);font:700 22px/1.2 Georgia,serif}
 .l94-form{display:grid;gap:14px}
 .l94-field{display:grid;gap:6px;color:var(--ink);font:600 13px/1.3 var(--l94-sans)}
@@ -202,8 +221,15 @@
 .lw-btn:hover{border-color:var(--l94-gold)}
 .lw-btn[aria-pressed="true"]{background:var(--surface-raised);border-color:var(--l94-gold)}
 .lw :is(button):focus-visible{outline:3px solid var(--focus);outline-offset:3px}
-.lw--hero{padding-left:20px;border-left:2px solid var(--l94-gold)}
-.lw--hero .lw-text{font-size:clamp(19px,2.2vw,28px)}
+.lw--hero{--lw-h:164px;position:relative;width:min(760px,100%);height:var(--lw-h);margin:clamp(8px,3vh,30px) auto 0;padding:18px 32px;align-content:center;justify-items:center;text-align:center;overflow:hidden;
+ background:var(--l94-quote-bg);border:1px solid var(--l94-quote-line);border-radius:8px;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.lw--hero .lw-body{justify-items:center;gap:10px;max-width:100%}
+.lw--hero .lw-text{font-size:22px;line-height:1.45}
+.lw--hero[data-size="s"] .lw-text{font-size:26px}
+.lw--hero[data-size="m"] .lw-text{font-size:22px}
+.lw--hero[data-size="l"] .lw-text{font-size:19px}
+.lw--hero[data-size="xl"] .lw-text{font-size:16.5px;line-height:1.4}
+.lw--hero .lw-caption{justify-content:center;max-height:2.9em;overflow:hidden}
 .lw--compact .lw-text{font-size:clamp(15px,1.5vw,18px);line-height:1.45}
 .lw--compact .lw-caption{font-size:12px}
 .lw--loading{max-width:62ch;text-align:center;justify-items:center}
@@ -226,8 +252,8 @@
  .l94-dock-language{grid-column:1/-1;grid-row:2;justify-content:center}
 }
 @media (max-width:1023px){
- .l94-stage{grid-template-columns:minmax(0,1fr);align-content:start;width:min(720px,100%)}
- .l94-side{align-content:start}
+ .l94-stage{align-content:start;width:min(820px,100%)}
+ .l94-action-cards{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media (max-width:767px){
  .l94-drawer{width:100%;border-left:0}
@@ -238,7 +264,12 @@
  .l94-stage{gap:24px;padding-top:20px}
  .l94-cta{width:100%}
  .l94-actions{justify-items:stretch;width:100%}
- .lw--hero{padding-left:14px}
+ .lw--hero{--lw-h:240px;padding:14px 16px}
+ .lw--hero .lw-caption{max-height:none;font-size:12px;gap:2px 8px}
+ .lw--hero[data-size="s"] .lw-text{font-size:21px}
+ .lw--hero[data-size="m"] .lw-text{font-size:17px}
+ .lw--hero[data-size="l"] .lw-text{font-size:15px}
+ .lw--hero[data-size="xl"] .lw-text{font-size:14px}
 }
 @media (max-width:479px){
  .l94-flag-btn{width:40px;height:40px;font-size:20px}
@@ -246,7 +277,11 @@
  .l94-dock-btn{padding:8px 10px}
  .l94-dock-btn .l94-dock-label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
  .l94-card{padding:16px}
- .l94-footer{flex-direction:column;align-items:flex-start}
+ .l94-action-cards{grid-template-columns:minmax(0,1fr)}
+ .l94-action-card{min-height:208px}
+}
+@media (max-width:359px){
+ .lw--hero{--lw-h:272px}
 }
 @media (max-height:520px) and (orientation:landscape){
  .l94-stage{padding-block:12px}
@@ -257,6 +292,7 @@
 @media (forced-colors:active){
  .landing094{background:Canvas;color:CanvasText}
  .l94-backdrop,.landing094::after{display:none}
+ .l94-card-art,.l94-action-card::after{display:none}
  .l94-card,.l94-action-card,.l94-flag-btn,.l94-dock-btn,.lw-btn,.l94-drawer,.l94-scenarios li{border:1px solid CanvasText;background:Canvas;color:CanvasText;box-shadow:none}
  .l94-cta{border:2px solid ButtonText;background:ButtonFace;color:ButtonText;box-shadow:none}
  .l94-eyebrow,.lw-name,.l94-badge,.l94-card h2,.l94-card h3{color:LinkText}
@@ -268,3 +304,15 @@
  .l94-loading-steps li{background:GrayText}
  .l94-loading-steps li[data-state="done"],.l94-loading-steps li[data-state="active"]{background:Highlight}
 }
+
+/* Player Profile drawer: social sign-in --------------------------------------------------------------------------- */
+.l94-social{display:grid;gap:10px;margin-top:8px;padding-top:16px;border-top:1px solid var(--l94-gold-line)}
+.l94-social-title{margin:0;color:var(--l94-muted);font:600 12px/1.3 var(--l94-sans);letter-spacing:.12em;text-transform:uppercase;text-align:center}
+.l94-social-buttons{display:grid;gap:8px}
+.l94-social-btn{display:flex;align-items:center;justify-content:center;gap:10px;min-height:44px;padding:8px 14px;border:1px solid var(--l94-border);border-radius:10px;background:var(--surface-raised);color:var(--ink);font:600 14px/1.2 var(--l94-sans);cursor:pointer;transition:border-color .15s,box-shadow .15s}
+.l94-social-btn:hover{border-color:var(--l94-gold);box-shadow:var(--l94-flag-glow)}
+.l94-social-btn svg{flex:none}
+.l94-toast{min-height:1.4em;margin:0;text-align:center;color:var(--l94-gold-text);font:700 13px/1.4 var(--l94-sans);letter-spacing:.04em}
+.l94-toast[data-visible="true"]{animation:lw-fade .25s ease-out}
+@media (prefers-reduced-motion:reduce){.l94-toast[data-visible="true"]{animation:none}.l94-card-art,.l94-action-card,.l94-social-btn{transition:none}}
+@media (forced-colors:active){.l94-social-btn{border:1px solid ButtonText;background:ButtonFace;color:ButtonText}}
