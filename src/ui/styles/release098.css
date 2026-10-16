@@ -1,5 +1,3 @@
-/* Readable quotes, including the compact wizard override from 0.96. */
-:root .campaign-wizard-backdrop .campaign-wizard[data-step="1"] .wizard-leadership-quote blockquote { font-size: 15px; line-height: 1.3; }
 /* Confirm step (onboarding089): setupScreen.css stacks the nomination card above the brief, which overflowed short wizard bodies.
    Measured in CI before this change: 1280x720 en/tr +30px, es +42px, zh +10px, ru +94px (its h1 wraps, so the header is 35px taller); 1440x900 ru +22px.
    Compact the stack on shorter desktop viewports only; the 390px layout has its own rules. */
@@ -21,8 +19,6 @@
   :root .campaign-wizard-backdrop .confirm-message { margin-top: 6px; padding: 6px 10px; }
 }
 @media (max-width: 760px) {
-  /* 1.25 (not 1.3): Turkish quotes overflowed the 650px-tall wizard body by 2px once Noto Serif metrics applied; font-size stays 14px. */
-  :root .campaign-wizard-backdrop .campaign-wizard[data-step="1"] .wizard-leadership-quote blockquote { font-size: 14px; line-height: 1.25; }
 }
 
 :root[data-theme="light"] :is(.floating-command-window, .command-window, .executive-workspace, .command-panel, #country-section-window) :is(

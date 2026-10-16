@@ -126,12 +126,6 @@
 }
 .campaign-wizard-backdrop .wizard-avatar-grid button>span{max-width:100%;overflow-wrap:anywhere;text-align:center}
 .campaign-wizard-backdrop .wizard-avatar-preview .portrait-generated{outline:none;box-shadow:0 3px 10px rgba(0,0,0,.2)}
-.campaign-wizard-backdrop .wizard-leadership-quote{margin:24px 12px 0;text-align:center;border:0;background:none;padding:0;color:#ead7a8}
-.campaign-wizard-backdrop .wizard-leadership-quote>span{display:block;font:400 42px/.65 Georgia,serif;color:#e8c570;opacity:.65}
-.campaign-wizard-backdrop .wizard-leadership-quote blockquote{margin:12px 0;font:italic 400 clamp(18px,1.7vw,22px)/1.5 Georgia,serif;text-wrap:balance}
-.campaign-wizard-backdrop .wizard-leadership-quote figcaption{margin-top:10px;font-size:11px;letter-spacing:.05em;color:#b9b49c}
 @media(max-width:760px){
  .campaign-wizard-backdrop .wizard-avatar-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
- .campaign-wizard-backdrop .wizard-leadership-quote{margin:18px 4px 0}
- .campaign-wizard-backdrop .wizard-leadership-quote blockquote{font-size:18px}
 }
