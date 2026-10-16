@@ -35,7 +35,7 @@
 
 /* Root and cartographic backdrop ------------------------------------------------------------------------------- */
 .landing094,.landing094 *,.landing094 *::before,.landing094 *::after,.l94-drawer,.l94-drawer *,.lw,.lw *{box-sizing:border-box}
-.landing094{position:fixed;inset:0;z-index:30;display:grid;grid-template-rows:auto 1fr auto;min-height:100dvh;overflow:auto;color:var(--ink);
+.landing094{position:fixed;inset:0;z-index:var(--layer-entry,10000);display:grid;grid-template-rows:auto 1fr auto;min-height:100dvh;overflow:auto;color:var(--ink);
  background:var(--surface-inset);isolation:isolate}
 /* Backdrop layers (LandingBackdrop): cover art, colour wash, cartographic graticule, vignette */
 .l94-backdrop{position:absolute;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
@@ -103,34 +103,27 @@
 
 /* Footer and drawer ---------------------------------------------------------------------------------------------- */
 .l94-footer{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 24px;padding:0 clamp(20px,4vw,48px) 22px;color:var(--ink-muted);font:400 12px/1.4 var(--l94-sans)}
-.l94-drawer-scrim{position:fixed;inset:0;z-index:40;background:var(--overlay)}
-.l94-drawer{position:fixed;top:0;right:0;bottom:0;z-index:41;display:grid;grid-template-rows:auto 1fr;width:min(420px,100%);border-left:1px solid var(--l94-border);background:var(--surface);color:var(--ink);box-shadow:var(--l94-shadow);animation:l94-drawer-in .22s ease-out}
+.l94-drawer-layer{position:fixed;inset:0}
+.l94-drawer-scrim{position:absolute;inset:0;background:var(--overlay)}
+.l94-drawer{position:absolute;top:0;right:0;bottom:0;display:grid;grid-template-rows:auto auto 1fr;width:clamp(320px,32vw,440px);border-left:1px solid var(--l94-border);background:var(--surface);color:var(--ink);box-shadow:var(--l94-shadow);animation:l94-drawer-in .22s ease-out}
 .l94-drawer header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 20px;border-bottom:1px solid var(--l94-gold-line)}
 .l94-drawer h2{margin:0;font:700 18px/1.2 Georgia,serif}
+.l94-tabs{display:flex;gap:4px;padding:0 20px;border-bottom:1px solid var(--l94-border)}
+.l94-tab{min-height:44px;padding:8px 12px;border:0;border-bottom:3px solid transparent;background:none;color:var(--ink-muted);font:600 14px/1.2 var(--l94-sans);cursor:pointer}
+.l94-tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--l94-gold)}
 .l94-drawer-body{overflow:auto;padding:20px;display:grid;gap:14px;align-content:start}
 .l94-drawer-body p,.l94-drawer-body li{color:var(--ink-muted);font:400 14px/1.55 var(--l94-sans)}
-
-/* Components (T11) ------------------------------------------------------------------------------------------------ */
-.l94-hero-brand{display:grid;gap:18px;justify-items:start}
-.l94-emblem{display:inline-grid;place-items:center;min-width:34px;height:22px;margin-right:12px;padding:0 6px;border:1px solid var(--l94-gold);border-radius:4px;color:var(--l94-gold-text);font:800 11px/1 var(--l94-sans);letter-spacing:.12em}
-.l94-version{margin:0;color:var(--ink-muted);font:400 12px/1.4 var(--l94-sans);letter-spacing:.04em}
-.l94-menu{display:grid;gap:14px;justify-items:start;width:100%}
-.l94-menu-list{display:flex;flex-wrap:wrap;gap:4px 20px;margin:0;padding:0;list-style:none}
-.l94-menu .l94-link[aria-disabled="true"]{color:var(--ink-muted);text-decoration-style:dotted;cursor:not-allowed}
-.l94-segmented{display:inline-flex;gap:0;border:1px solid var(--l94-border);border-radius:10px;overflow:hidden}
-.l94-seg-btn{min-width:44px;border:0;border-radius:0;background:var(--l94-card-bg)}
-.l94-seg-btn+.l94-seg-btn{border-left:1px solid var(--l94-border)}
-.l94-seg-btn[aria-pressed="true"]{background:var(--accent-surface);color:var(--accent-ink)}
-.l94-chip{max-width:240px}
-.l94-chip .l94-dock-label{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.l94-cta--card{min-height:48px;box-shadow:none}
-.l94-cta--card[aria-disabled="true"]{background:transparent;border-color:var(--l94-border);color:var(--ink-muted);cursor:not-allowed;filter:none}
-.l94-card-error{margin:0;color:var(--l94-warn);font:600 14px/1.4 var(--l94-sans)}
-.l94-flag-emoji{font-size:1.2em;line-height:1}
-.l94-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.l94-drawer-body p.l94-card-title{color:var(--ink);font:700 22px/1.2 Georgia,serif}
+.l94-form{display:grid;gap:14px}
+.l94-field{display:grid;gap:6px;color:var(--ink);font:600 13px/1.3 var(--l94-sans)}
+.l94-field input{min-height:44px;padding:8px 12px;border:1px solid var(--l94-border);border-radius:8px;background:var(--surface);color:var(--ink);font:400 15px/1.3 var(--l94-sans)}
+.l94-math{color:var(--l94-gold-text);font:700 18px/1.2 var(--l94-sans)}
+.l94-error{margin:0;color:var(--l94-warn)}
+.l94-drawer-body p.l94-error{color:var(--l94-warn);font-weight:600}
+.l94-note{margin:0}
 
 /* Focus ---------------------------------------------------------------------------------------------------------- */
-.landing094 :is(button,a,[tabindex]):focus-visible,.l94-drawer :is(button,a,[tabindex]):focus-visible{outline:3px solid var(--focus);outline-offset:3px;border-radius:10px}
+.landing094 :is(button,a,[tabindex],input):focus-visible,.l94-drawer :is(button,a,[tabindex],input):focus-visible{outline:3px solid var(--focus);outline-offset:3px;border-radius:10px}
 
 /* Leadership wisdom widget (also used on setup, loading and the outcome screens) ----------------------------------- */
 .lw{position:relative;display:grid;gap:12px;margin:0;color:var(--ink)}
@@ -169,6 +162,9 @@
 @media (max-width:1023px){
  .l94-stage{grid-template-columns:minmax(0,1fr);align-content:start;width:min(720px,100%)}
  .l94-side{align-content:start}
+}
+@media (max-width:767px){
+ .l94-drawer{width:100%;border-left:0}
 }
 @media (max-width:719px){
  .landing094::after{inset:8px}
