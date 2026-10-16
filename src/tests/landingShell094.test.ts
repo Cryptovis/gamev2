@@ -7,28 +7,36 @@ import {LandingShell} from '../ui/panels/landing/LandingShell';
 import type {LandingShellDeps,LandingSession} from '../ui/panels/landing/landingDeps';
 import type {SaveSummaryState} from '../persistence/saveSummary';
 import {useGameStore} from '../store/gameStore';
+import {buildPreloadStages,type PreloadServices} from '../ui/loading/preloadStages';
 
 Object.assign(globalThis,{IS_REACT_ACT_ENVIRONMENT:true});
 let host:HTMLDivElement,root:Root;
 const READY:SaveSummaryState={status:'ready',summary:{slotId:'slot-1',countryId:'USA',countryName:'United States',iso2:'US',leaderName:'A. Leader',campaignDay:42,campaignDateIso:'2031-04-09',savedAt:1_700_000_000_000}};
 const EMPTY:SaveSummaryState={status:'none'};
 
+const services=(loadLatest:()=>Promise<boolean>):PreloadServices=>({
+  loadLatest,inspectState:()=>({ok:true}),assets:[],decodeAsset:async()=>{},languages:['en'],translate:(_l,key)=>key,countryCount:()=>1,
+  fontsReady:async()=>{},audioState:()=>'ready',yieldToBrowser:async()=>{},
+});
 const makeDeps=(over:Partial<LandingShellDeps>={}):LandingShellDeps&{calls:string[]}=>{
   const calls:string[]=[];
   let session:LandingSession=null;
-  return {calls,
+  const deps:LandingShellDeps&{calls:string[]}={calls,
     readSession:()=>session,
     ensureGuest:()=>{calls.push('ensureGuest');session={kind:'guest',username:'guest'};},
     peekSummary:async()=>EMPTY,
     resetCampaign:()=>{calls.push('reset');useGameStore.setState(s=>({playerProfile:{...s.playerProfile,setupComplete:false}}));},
     loadLatest:async()=>true,
+    buildPreloadStages:intent=>buildPreloadStages(intent,services(()=>deps.loadLatest())),
+    handoffMs:0,
     setLanguage:next=>{calls.push(`lang:${next}`);useGameStore.setState(s=>({playerProfile:{...s.playerProfile,language:next}}));},
     ...over};
+  return deps;
 };
 const Setup=({onReturnToMenu}:{onReturnToMenu():void})=>createElement('div',{'data-testid':'fake-setup'},createElement('button',{'data-testid':'fake-setup-back',onClick:onReturnToMenu}),createElement('button',{'data-testid':'fake-setup-commit',onClick:()=>useGameStore.setState(s=>({playerProfile:{...s.playerProfile,setupComplete:true}}))}));
 
 const lastCall=(fn:ReturnType<typeof vi.fn>)=>fn.mock.calls[fn.mock.calls.length-1];
-const flush=async()=>{await act(async()=>{await new Promise(r=>setTimeout(r,0));});};
+const flush=async()=>{for(let i=0;i<4;i++)await act(async()=>{await new Promise(r=>setTimeout(r,0));});};
 const byId=(id:string)=>host.querySelector(`[data-testid="${id}"]`) as HTMLElement|null;
 const click=async(id:string)=>{await act(async()=>{byId(id)!.click();});await flush();};
 const mount=async(deps:LandingShellDeps,onPlaying=vi.fn())=>{await act(async()=>{root.render(createElement(LandingShell,{deps,onPlaying,Setup}));});await flush();return onPlaying;};
@@ -111,6 +119,36 @@ describe('LandingShell flow',()=>{
     await mount(makeDeps({peekSummary:async()=>READY,loadLatest:async()=>{throw new Error('boom');}}));
     await click('landing-hero');
     expect(host.querySelector('[role="alert"]')).not.toBeNull();
+  });
+});
+
+describe('LandingShell loading screen',()=>{
+  it('shows 100% and the hand-off label before the game appears',async()=>{
+    await mount(makeDeps({handoffMs:150}));
+    await click('landing-hero');
+    await click('fake-setup-commit');
+    expect(byId('loading-progress-percentage')?.textContent).toBe('100%');
+    expect(byId('loading-stage-label')?.textContent).toBe('Handing over command…');
+    await act(async()=>{await new Promise(r=>setTimeout(r,250));});
+    expect(byId('loading-progress-percentage')).toBeNull();
+    expect(byId('landing-root')).toBeNull();
+  });
+  it('names the cause when the loaded campaign does not look sound',async()=>{
+    const deps=makeDeps({peekSummary:async()=>READY});
+    deps.buildPreloadStages=intent=>buildPreloadStages(intent,{...services(async()=>true),inspectState:()=>({ok:false,reason:'corrupt'})});
+    await mount(deps);
+    await click('landing-hero');
+    expect(byId('loading-error')).not.toBeNull();
+    expect(byId('game-loading')?.textContent).toContain('This save could not be read');
+  });
+  it('runs the stages once per load, not once per render',async()=>{
+    let calls=0;
+    const deps=makeDeps({peekSummary:async()=>READY,loadLatest:async()=>{calls++;return true;},handoffMs:200});
+    await mount(deps);
+    await click('landing-hero');
+    expect(calls).toBe(1);
+    await act(async()=>{await new Promise(r=>setTimeout(r,300));});
+    expect(calls).toBe(1);
   });
 });
 

@@ -3,6 +3,8 @@ import {useGameStore} from '../../../store/gameStore';
 import {ensureGuestSession,demoOwner,hasDemoSession} from '../../../session/demoAccounts';
 import {peekMostRecentSaveSummary,type SaveSummaryState} from '../../../persistence/saveSummary';
 import type {HeroSession} from '../../landing/heroAction';
+import type {PreloadStage} from '../../loading/preloadPipeline';
+import {buildPreloadStages,defaultPreloadServices} from '../../loading/preloadStages';
 
 /** What the demo session looks like to the landing screen. */
 export type LandingSession=(NonNullable<HeroSession>&{username:string})|null;
@@ -18,6 +20,10 @@ export interface LandingShellDeps {
   /** Clears any campaign in memory and keeps the chosen language, as the old "Start a new game" button did. */
   resetCampaign(language:GameLanguage):void;
   loadLatest():Promise<boolean>;
+  /** The loading screen's stages for a new or a continued campaign. */
+  buildPreloadStages(intent:'new'|'continue'):PreloadStage[];
+  /** How long the finished 100% stays on screen before the game appears. */
+  handoffMs:number;
   setLanguage(next:GameLanguage):void;
 }
 
@@ -34,5 +40,7 @@ export const defaultLandingDeps:LandingShellDeps={
     useGameStore.setState(s=>({playerProfile:{...s.playerProfile,language}}));
   },
   loadLatest:()=>useGameStore.getState().loadLatest(),
+  buildPreloadStages:intent=>buildPreloadStages(intent,defaultPreloadServices(()=>useGameStore.getState().loadLatest())),
+  handoffMs:320,
   setLanguage:next=>useGameStore.setState(s=>({playerProfile:{...s.playerProfile,language:next}})),
 };

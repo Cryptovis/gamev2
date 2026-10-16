@@ -35,7 +35,7 @@
 
 /* Root and cartographic backdrop ------------------------------------------------------------------------------- */
 .landing094,.landing094 *,.landing094 *::before,.landing094 *::after,.l94-drawer,.l94-drawer *,.l94-modal,.l94-modal *,.lw,.lw *{box-sizing:border-box}
-.landing094{position:fixed;inset:0;z-index:var(--layer-entry,10000);display:grid;grid-template-rows:auto 1fr auto;min-height:100dvh;overflow:auto;color:var(--ink);
+.landing094{position:fixed;inset:0;z-index:10000;/* the entry layer, same as --layer-entry in windowLayers.css */display:grid;grid-template-rows:auto 1fr auto;min-height:100dvh;overflow:auto;color:var(--ink);
  background:var(--surface-inset);isolation:isolate}
 /* Backdrop layers (LandingBackdrop): cover art, colour wash, cartographic graticule, vignette */
 .l94-backdrop{position:absolute;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
@@ -83,6 +83,20 @@
 .l94-cta-note{margin:0;color:var(--ink-muted);font:400 13px/1.4 var(--l94-sans)}
 .l94-secondary{display:flex;flex-wrap:wrap;gap:10px}
 .l94-link{min-height:44px;padding:8px 4px;border:0;background:none;color:var(--l94-gold-text);font:600 14px/1.2 var(--l94-sans);text-decoration:underline;text-underline-offset:4px;cursor:pointer}
+/* Markup that had no rule of its own: brand block, menu list, segmented language control, chip, card helpers */
+.l94-hero-brand{display:grid;gap:14px;justify-items:start}
+.l94-emblem{display:inline-block;margin-right:12px;padding:4px 7px;border:1px solid var(--l94-gold);border-radius:4px;color:var(--l94-gold-text);font:800 11px/1 var(--l94-sans);letter-spacing:.14em;vertical-align:1px}
+.l94-version{margin:0;color:var(--ink-muted);font:400 12px/1.4 var(--l94-sans);letter-spacing:.06em}
+.l94-menu{display:grid;gap:12px;justify-items:start}
+.l94-menu-list{display:flex;flex-wrap:wrap;align-items:center;gap:2px 20px;margin:0;padding:0;list-style:none}
+.l94-menu-list li{display:inline-flex;align-items:center;gap:8px}
+.l94-segmented{display:flex;flex-wrap:wrap;gap:4px}
+.l94-seg-btn{min-width:44px;justify-content:center}
+.l94-chip{max-width:min(260px,52vw)}
+.l94-card-error{margin:0;color:var(--l94-warn);font:600 14px/1.4 var(--l94-sans)}
+.l94-cta--card{width:100%;min-width:0}
+.l94-flag-emoji{font-size:1.1em}
+.l94-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
 /* Cards: last campaign, dossier, scenarios ----------------------------------------------------------------------- */
 .l94-side{display:grid;gap:16px;align-content:center}
@@ -102,7 +116,9 @@
 .l94-badge{padding:2px 8px;border:1px solid var(--l94-gold-line);border-radius:999px;color:var(--l94-gold-text);font:700 11px/1.4 var(--l94-sans);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
 
 /* Footer and drawer ---------------------------------------------------------------------------------------------- */
-.l94-footer{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 24px;padding:0 clamp(20px,4vw,48px) 22px;color:var(--ink-muted);font:400 12px/1.4 var(--l94-sans)}
+.l94-footer{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 24px;padding:0 clamp(20px,4vw,48px) 36px;color:var(--ink-muted);font:400 12px/1.4 var(--l94-sans)}
+/* The frame line can cross the note when the page scrolls; a near-opaque chip keeps the text readable over it. */
+.l94-footer>span{padding:3px 8px;border-radius:6px;background:color-mix(in srgb,var(--surface-inset) 92%,transparent)}
 .l94-drawer-layer{position:fixed;inset:0}
 .l94-drawer-scrim{position:absolute;inset:0;background:var(--overlay)}
 .l94-drawer{position:absolute;top:0;right:0;bottom:0;display:grid;grid-template-rows:auto auto 1fr;width:clamp(320px,32vw,440px);border-left:1px solid var(--l94-border);background:var(--surface);color:var(--ink);box-shadow:var(--l94-shadow);animation:l94-drawer-in .22s ease-out}
@@ -119,6 +135,20 @@
 .l94-field input{min-height:44px;padding:8px 12px;border:1px solid var(--l94-border);border-radius:8px;background:var(--surface);color:var(--ink);font:400 15px/1.3 var(--l94-sans)}
 .l94-math{color:var(--l94-gold-text);font:700 18px/1.2 var(--l94-sans)}
 .l94-error{margin:0;color:var(--l94-warn)}
+/* Loading screen (GameLoadingScreen) ------------------------------------------------------------------------------ */
+.landing094 .l94-stage--center{align-content:center;grid-row:2;display:grid;grid-template-columns:minmax(0,1fr);place-items:center;padding:24px clamp(20px,4vw,48px)}
+.l94-loading{display:grid;gap:14px;justify-items:center;text-align:center;width:min(560px,100%)}
+.l94-loading-kicker{margin:0;color:var(--l94-gold-text);font:700 12px/1.2 var(--l94-sans);letter-spacing:.18em;text-transform:uppercase}
+.l94-loading-percent{font:300 clamp(56px,9vw,88px)/1 var(--l94-sans);font-variant-numeric:tabular-nums;color:var(--ink)}
+.l94-gauge{width:100%;height:8px;border-radius:999px;overflow:hidden;background:color-mix(in srgb,var(--ink) 16%,transparent);border:1px solid var(--l94-gold-line)}
+.l94-gauge-fill{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--l94-gold),var(--l94-gold-text));transition:width .25s ease-out}
+.l94-loading-stage{margin:0;min-height:1.5em;color:var(--ink);font:500 15px/1.5 var(--l94-sans)}
+.l94-loading-reason{margin:0;color:var(--ink-muted);font:400 14px/1.5 var(--l94-sans)}
+.l94-loading-steps{display:flex;gap:8px;margin:0;padding:0;list-style:none}
+.l94-loading-steps li{width:28px;height:4px;border-radius:2px;background:color-mix(in srgb,var(--ink) 22%,transparent)}
+.l94-loading-steps li[data-state="done"]{background:var(--l94-gold)}
+.l94-loading-steps li[data-state="active"]{background:var(--l94-gold-text)}
+.l94-loading .lw{margin-top:18px}
 .l94-drawer-body p.l94-error{color:var(--l94-warn);font-weight:600}
 .l94-note{margin:0}
 
@@ -165,7 +195,7 @@
 @media (prefers-reduced-motion:reduce){
  .lw-body,.l94-drawer{animation:none}
  .l94-card[data-state="loading"] .l94-card-title{animation:none}
- .l94-cta,.l94-dock-btn{transition:none}
+ .l94-cta,.l94-dock-btn,.l94-gauge-fill{transition:none}
 }
 
 /* Breakpoints ---------------------------------------------------------------------------------------------------- */
@@ -204,4 +234,9 @@
  .l94-eyebrow,.l94-link,.lw-name,.l94-badge,.l94-card h2,.l94-card h3{color:LinkText}
  .l94-card-meta,.lw-role,.lw-year,.l94-lede,.l94-cta-note,.l94-footer{color:CanvasText}
  .landing094 :is(button,a,[tabindex]):focus-visible,.lw :is(button):focus-visible{outline:3px solid Highlight}
+ .l94-gauge{border:1px solid CanvasText;background:Canvas}
+ .l94-gauge-fill{background:Highlight}
+ .l94-loading-percent,.l94-loading-stage,.l94-loading-kicker,.l94-loading-reason{color:CanvasText}
+ .l94-loading-steps li{background:GrayText}
+ .l94-loading-steps li[data-state="done"],.l94-loading-steps li[data-state="active"]{background:Highlight}
 }

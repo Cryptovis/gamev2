@@ -33,6 +33,12 @@ export const UI_CATALOG_LANDING:Record<string,[string,string,string,string]>={
  'Playing as guest':['Misafir olarak oynuyorsunuz','Jugando como invitado','以访客身份游戏','Гостевой режим'],
  'Sign out':['Çıkış yap','Cerrar sesión','退出登录','Выйти'],
  'Saves are stored per profile on this device':['Kayıtlar bu cihazda profil bazında saklanır','Las partidas se guardan por perfil en este dispositivo','存档按档案保存在本设备上','Сохранения хранятся отдельно для каждого профиля на этом устройстве'],
+ 'Hydrating simulation and save state…':['Simülasyon ve kayıt durumu yükleniyor…','Cargando la simulación y el estado guardado…','正在载入模拟与存档状态…','Загрузка симуляции и состояния сохранения…'],
+ 'Pre-decoding vector graphics…':['Vektör grafikler önceden çözülüyor…','Decodificando gráficos vectoriales…','正在预解码矢量图形…','Предварительная обработка векторной графики…'],
+ 'Verifying intelligence indexes and dictionaries…':['İstihbarat dizinleri ve sözlükler doğrulanıyor…','Verificando índices de inteligencia y diccionarios…','正在校验情报索引与词典…','Проверка разведывательных индексов и словарей…'],
+ 'Preparing executive workspace and audio…':['Yürütme çalışma alanı ve ses hazırlanıyor…','Preparando el espacio ejecutivo y el audio…','正在准备执行工作区与音频…','Подготовка рабочего пространства и звука…'],
+ 'Handing over command…':['Komuta devrediliyor…','Entregando el mando…','正在移交指挥权…','Передача командования…'],
+ 'Loading progress':['Yükleme ilerlemesi','Progreso de carga','加载进度','Ход загрузки'],
 };
 
 /**

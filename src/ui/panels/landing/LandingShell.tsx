@@ -7,10 +7,12 @@ import {SAVE_SUMMARY_LOADING,type SaveSummaryState} from '../../../persistence/s
 import {LeadershipWisdomWidget} from '../../components/LeadershipWisdomWidget';
 import {useAmbiencePreference} from '../../hooks/useAmbiencePreference';
 import {useDocumentTheme} from '../../hooks/useDocumentTheme';
+import {useGamePreloader} from '../../hooks/useGamePreloader';
 import {resolveHeroAction,sessionKindOf} from '../../landing/heroAction';
 import {INITIAL_LANDING_STATE,landingReducer,type LoadFailureReason} from '../../landing/landingMachine';
 import {CampaignSetup} from '../CampaignSetup';
 import {CommandMenu} from './CommandMenu';
+import {GameLoadingScreen} from './GameLoadingScreen';
 import {HeroBrand} from './HeroBrand';
 import {LandingBackdrop} from './LandingBackdrop';
 import {defaultLandingDeps,type LandingSession,type LandingShellDeps} from './landingDeps';
@@ -19,7 +21,7 @@ import {ReleaseNotesModal} from './ReleaseNotesModal';
 import {SaveGameCard} from './SaveGameCard';
 import {UtilityDock} from './UtilityDock';
 
-export interface SetupSlotProps {onReturnToMenu():void;}
+export interface SetupSlotProps {onReturnToMenu():void;/** The shell shows its own loading screen, so the wizard starts the campaign as soon as it is confirmed. */startImmediately:boolean;}
 export interface LandingShellProps {
   /** Told whether the game itself (not the entry flow) is on screen, so the app can start or stop its clock. */
   onPlaying(playing:boolean):void;
@@ -84,16 +86,22 @@ export function LandingShell({onPlaying,deps=defaultLandingDeps,Setup=CampaignSe
   useEffect(()=>{onPlaying(state.screen==='game');},[state.screen,onPlaying]);
   useEffect(()=>{if(state.screen!=='game')useGameStore.getState().setSpeed(0);},[state.screen]);
 
-  // Loading. A continued campaign is read from the save; a freshly created one is already in memory.
+  // Loading. The preloader does the real work; the percentage on screen is whatever it has reached.
+  const [handoff,setHandoff]=useState(false);
+  const loading=state.screen==='loading'&&!state.error;
+  const {stage}=useGamePreloader({
+    enabled:loading&&!handoff,runKey:state.intent??'new',
+    buildStages:()=>deps.buildPreloadStages(state.intent==='continue'?'continue':'new'),
+    onProgress:percent=>dispatch({type:'PRELOAD_PROGRESS',percent}),
+    onComplete:()=>setHandoff(true),
+    onFail:reason=>dispatch({type:'LOAD_FAILED',reason}),
+  });
   useEffect(()=>{
-    if(state.screen!=='loading'||state.error)return;
-    if(state.intent==='new'){dispatch({type:'LOAD_OK'});return;}
-    let live=true;
-    deps.loadLatest()
-      .then(ok=>{if(live)dispatch(ok?{type:'LOAD_OK'}:{type:'LOAD_FAILED',reason:'missing'});})
-      .catch(()=>{if(live)dispatch({type:'LOAD_FAILED',reason:'unknown'});});
-    return ()=>{live=false;};
-  },[state.screen,state.intent,state.error,deps]);
+    if(!handoff)return;
+    if(!loading){setHandoff(false);return;}
+    const timer=setTimeout(()=>{setHandoff(false);dispatch({type:'LOAD_OK'});},deps.handoffMs);
+    return ()=>clearTimeout(timer);
+  },[handoff,loading,deps.handoffMs]);
   useEffect(()=>{if(state.error)setLoadError(state.error);},[state.error]);
   useEffect(()=>{if(state.screen==='game')setLoadError(null);},[state.screen]);
 
@@ -113,22 +121,11 @@ export function LandingShell({onPlaying,deps=defaultLandingDeps,Setup=CampaignSe
 
   if(state.screen==='booting')return <div className="landing094" data-testid="landing-root" data-screen="booting" lang={language} aria-busy="true"><LandingBackdrop/></div>;
   if(state.screen==='game')return null;
-  if(state.screen==='setup')return <Setup onReturnToMenu={()=>dispatch({type:'SETUP_CANCELLED'})}/>;
+  if(state.screen==='setup')return <Setup onReturnToMenu={()=>dispatch({type:'SETUP_CANCELLED'})} startImmediately/>;
 
-  if(state.screen==='loading')return <div className="landing094" data-testid="landing-root" data-screen="loading" lang={language}>
-    <LandingBackdrop/>
-    <main className="l94-stage l94-stage--center">
-      <div className="l94-loading">
-        {state.error
-          ?<>
-            <p className="l94-error" role="alert">{t('The campaign could not be loaded')}</p>
-            <button type="button" className="l94-cta" data-testid="loading-return" onClick={()=>dispatch({type:'RETURN_TO_MENU'})}>{t('Main menu')}</button>
-          </>
-          :<p role="status">{t('Loading command…')}</p>}
-        <LeadershipWisdomWidget variant="loading" context={{screen:'loading'}}/>
-      </div>
-    </main>
-  </div>;
+  if(state.screen==='loading')return <GameLoadingScreen
+    language={language} percent={handoff?100:state.progress} stage={handoff?'handoff':stage} error={state.error}
+    onReturnToMenu={()=>dispatch({type:'RETURN_TO_MENU'})}/>;
 
   return <div className="landing094" data-testid="landing-root" data-screen="landing" lang={language}>
     <LandingBackdrop/>

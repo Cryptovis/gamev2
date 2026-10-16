@@ -26,7 +26,7 @@ function countryDifficulty(capability:number,gdp:number){
  return 'CHALLENGING';
 }
 
-export function CampaignSetup({onReturnToMenu}:{onReturnToMenu?:()=>void}={}){
+export function CampaignSetup({onReturnToMenu,startImmediately=false}:{onReturnToMenu?:()=>void;startImmediately?:boolean}={}){
  const profile=useGameStore(s=>s.playerProfile);
  const countries=useGameStore(s=>s.countries);
  const start=useGameStore(s=>s.startCampaign);
@@ -55,6 +55,7 @@ export function CampaignSetup({onReturnToMenu}:{onReturnToMenu?:()=>void}={}){
 
  useEffect(()=>{
   if(step!=='loading')return;
+  if(startImmediately){start({commanderName:name,countryId:selected.id,avatarId:avatar,language,nationalityCountryId:nationality,birthDate:birthDate||null});return;}
   const timers=[
    window.setTimeout(()=>setLoadingStep(1),450),
    window.setTimeout(()=>setLoadingStep(2),1150),
@@ -63,7 +64,7 @@ export function CampaignSetup({onReturnToMenu}:{onReturnToMenu?:()=>void}={}){
    window.setTimeout(()=>start({commanderName:name,countryId:selected.id,avatarId:avatar,language,nationalityCountryId:nationality,birthDate:birthDate||null}),3350),
   ];
   return ()=>timers.forEach(window.clearTimeout);
- },[step,start,name,selected.id,avatar,language,nationality,birthDate]);
+ },[step,start,startImmediately,name,selected.id,avatar,language,nationality,birthDate]);
 
  if(profile.setupComplete)return null;
 
@@ -74,6 +75,7 @@ export function CampaignSetup({onReturnToMenu}:{onReturnToMenu?:()=>void}={}){
   tr(language,'loading_4','Final strategic briefing ready.'),
  ];
 
+ if(step==='loading'&&startImmediately)return null;
  if(step==='loading')return <div className="campaign-loading" style={{'--setup-primary':theme.primary,'--setup-accent':theme.accent} as CSSProperties}>
   <div className="loading-world-orbit"><i/><i/><i/></div>
   <section className="loading-command-card">
