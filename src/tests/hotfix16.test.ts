@@ -6,10 +6,16 @@ import {translateText} from '../i18n/localeText';
 import {daysInOffice} from '../ui/hud/daysInOffice';
 import {quoteSizeBucket} from '../ui/components/LeadershipWisdomWidget';
 
-const css=import.meta.glob<string>(['../ui/styles/hotfix16.css','../ui/styles/landing094.css'],{query:'?raw',import:'default',eager:true});
-const sources=import.meta.glob<string>(['../ui/panels/DiplomaticPost.tsx','../ui/panels/ReviewDialog.tsx','../ui/panels/TargetCountryModal.tsx','../ui/hud/TopBar.tsx','../ui/panels/landing/ProfileDrawer.tsx','../main.tsx'],{query:'?raw',import:'default',eager:true});
-const hotfix=css['../ui/styles/hotfix16.css'],landing=css['../ui/styles/landing094.css'];
-const source=(name:string)=>sources[`../ui/panels/${name}`]??sources[`../ui/hud/${name}`]??sources[`../${name}`];
+import {readFileSync} from 'node:fs';
+
+const read=(rel:string)=>readFileSync(new URL(rel,import.meta.url),'utf8');
+const hotfix=read('../ui/styles/hotfix16.css');
+const landing=read('../ui/styles/landing094.css');
+const source=(name:string)=>{
+  if(name==='TopBar.tsx') return read(`../ui/hud/${name}`);
+  if(name==='main.tsx') return read(`../${name}`);
+  return read(`../ui/panels/${name}`);
+};
 const LANGUAGES=['tr','es','zh','ru'] as const;
 
 const channel=(v:number)=>{v/=255;return v<=0.03928?v/12.92:Math.pow((v+0.055)/1.055,2.4);};

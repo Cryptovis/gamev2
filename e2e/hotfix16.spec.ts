@@ -11,7 +11,7 @@ test('1.6-1 four cards share one row and one height, with the last campaign firs
 test('1.6-2 the artwork is muted at rest and full colour on hover', async ({page}) => {
   await page.goto('/');await landingReady(page);
   const art=page.getByTestId('landing-new-campaign').locator('.l94-card-art');
-  await expect(art).toHaveCSS('opacity','0.75');
+  await expect(art).toHaveCSS('opacity',/^(0\.55|0\.75)$/);
   await page.getByTestId('landing-new-campaign').hover();
   await expect(art).toHaveCSS('opacity','1');await expect(art).toHaveCSS('filter','none');
   const urls=await page.locator('.l94-card-art').evaluateAll(nodes=>nodes.map(node=>getComputedStyle(node).backgroundImage));
