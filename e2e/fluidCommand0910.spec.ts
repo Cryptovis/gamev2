@@ -64,7 +64,7 @@ test('country panel returns from National power with its tab, scroll and focus',
 for(const language of LANGUAGES)test(`${language} shows Rule of Nations untranslated in the title, header and help`,async({page})=>{
  const s=campaignFixture(language);s.selectedCountryId=null;await resumeFixture(page,s);
  await expect(page).toHaveTitle('Rule of Nations');
- await expect(page.locator('.brand-block .eyebrow')).toHaveText('Rule of Nations');
+ await expect(page.locator('.brand-watermark')).toHaveText('Rule of Nations');
  await page.locator('[data-guide="rail-help"]').click();await expect(page.locator('#help-window .game-notes h3')).toHaveText('Rule of Nations');
  expect(await page.locator('body').innerText()).not.toMatch(/Real President|Gerçek Başkan|Gerçekten O'nun|AlpyX/i);
  await expect(page.locator('.studio-footer')).toHaveText('RON Interactive');

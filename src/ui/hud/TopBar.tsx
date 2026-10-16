@@ -61,10 +61,10 @@ export function TopBar(){
 
  const flows=simulateResources(player,1,undefined,perks.consumer).net,deltas=liveDeltas({dailyBalance:strategicDailyBalance,net:flows}),byId=Object.fromEntries(deltas.map(d=>[d.id,d])) as Record<LiveDelta['id'],LiveDelta>;
 
- return <header className="topbar">
+ return <><div className="brand-watermark" translate="no">{BRAND_NAME}</div><header className="topbar">
   <div className="command-overview-island"><LeaderCapsule>
    <button className="leader-avatar-button" data-mood={mood} onClick={()=>{useGameStore.getState().openTool(null,false);setOptionsOpen(true)}} title={translateLive("Open commander options")}><AvatarPortrait id={profile.avatarId} size={52}/><span><LocaleText value={"⋯"}/></span>{mood!=='calm'&&<b className="mood-note"><LocaleText value={mood==='alarm'?'Crisis alert':'Prosperity'}/></b>}</button>
-   <div className="brand-block"><div className="eyebrow" translate="no">{BRAND_NAME}</div><div className="brand-line"><strong><LocaleText value={profile.commanderName}/></strong><span className="day-chip"><LocaleText value={tr(lang,'day')}/> <LocaleText value={day}/></span></div></div>
+   <div className="brand-block"><div className="brand-line"><strong><LocaleText value={profile.commanderName}/></strong><span className="day-chip"><LocaleText value={tr(lang,'day')}/> <LocaleText value={day}/></span></div></div>
   </LeaderCapsule>
 
   <MetricsIsland label={translateLive("National command indicators")}>
@@ -84,5 +84,5 @@ export function TopBar(){
    <button data-guide="nation" className="national-flag-card" aria-pressed={selectedCountryId===playerCountryId} title={translateLive("Open your nation")} aria-label={translateLive("Open your nation")} onClick={()=>{setOptionsOpen(false);useGameStore.getState().selectCountry(selectedCountryId===playerCountryId?null:playerCountryId)}}><b>{flagEmoji(player.iso2)}</b><span><strong><LocaleText value={player.name}/></strong><small><LocaleText value={player.politics.regime}/></small><em><LocaleText value={"Open your nation"}/></em></span></button>
   </div>
   {optionsOpen&&<PlayerOptionsMenu onClose={()=>setOptionsOpen(false)}/>}
- </header>;
+ </header></>;
 }

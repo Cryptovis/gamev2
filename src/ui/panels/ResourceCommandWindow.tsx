@@ -7,20 +7,22 @@ import { useState } from 'react';
 import { MARKET_RESOURCES, resourceReserveDays, resourceSelfSufficiency, resourceStrategicStatus } from '../../store/marketSelectors';
 import {RESOURCES_SHORTAGE_HINT} from '../hints/registry';
 import {NavigationArt} from '../icons/NavigationArt';
-import { ResourceIcon } from '../icons/GameIcons';
+import { ResourceIcon, FuelIcon, SteelIcon, PowerIcon } from '../icons/GameIcons';
+import { AssetThumbnail } from '../icons/AssetThumbnail';
+import { energyFor } from '../../engine/systems/energy';
 import { DraggableWindow } from '../windows/DraggableWindow';
 import { SupplierRanking } from './TradeDesk';
 
 export function ResourceCommandWindow({onClose,resource:initialResource}:{onClose:()=>void;resource?:TradeResource}){
  const state=useWorldView();
  const [selectedResource,setSelectedResource]=useState<TradeResource|null>(initialResource??null);
- const player=state.countries[state.playerCountryId];
+ const player=state.countries[state.playerCountryId],grid=energyFor(state,player.id);
  return <DraggableWindow expanded id="resource-command-window" kicker="NATIONAL ECONOMY" title={translateLive("Strategic Resources")} initialX={92} initialY={150} width={1100} onClose={onClose} hint={RESOURCES_SHORTAGE_HINT}>
   <div className="resource-command-summary">
-   <span><small><LocaleText value={"FUEL"}/></small><strong><LocaleText value={player.processedResources.fuel.toFixed(1)}/></strong></span>
-   <span><small><LocaleText value={"STEEL"}/></small><strong><LocaleText value={player.processedResources.steel.toFixed(1)}/></strong></span>
-   <span><small><LocaleText value={"POWER"}/></small><strong><LocaleText value={player.processedResources.electricity.toFixed(1)}/></strong></span>
-   <span><small><LocaleText value={"ACTIVE TRADE"}/></small><strong><LocaleText value={Object.values(state.tradeDeals).filter(d=>d.active&&(d.buyerId===player.id||d.sellerId===player.id)).length}/></strong></span>
+   <span><FuelIcon size={32}/><i><small><LocaleText value={"FUEL"}/></small><strong><LocaleText value={player.processedResources.fuel.toFixed(1)}/></strong></i></span>
+   <span><SteelIcon size={32}/><i><small><LocaleText value={"STEEL"}/></small><strong><LocaleText value={player.processedResources.steel.toFixed(1)}/></strong></i></span>
+   <span className="electricity-tile"><PowerIcon size={32}/><i><small><LocaleText value={"ELECTRICITY"}/></small><strong><LocaleText value={player.processedResources.electricity.toFixed(1)}/></strong><em className="grid-status"><LocaleText value="Generation"/> {grid.lastGeneration.toFixed(1)} · <LocaleText value="Demand"/> {grid.lastDemand.toFixed(1)} · <LocaleText value="Grid balance"/> {grid.lastGeneration-grid.lastDemand>=0?"+":""}{(grid.lastGeneration-grid.lastDemand).toFixed(1)} · <LocaleText value="Grid coverage"/> {Math.round(grid.lastCoverage)}%</em></i></span>
+   <span><AssetThumbnail asset="logistics" size={32}/><i><small><LocaleText value={"ACTIVE TRADE"}/></small><strong><LocaleText value={Object.values(state.tradeDeals).filter(d=>d.active&&(d.buyerId===player.id||d.sellerId===player.id)).length}/></strong></i></span>
   </div>
   <nav className="resource-filter"><button className={!selectedResource?'active':''} onClick={()=>setSelectedResource(null)}><NavigationArt kind="alerts" size={24}/><LocaleText value="All resources"/></button>{MARKET_RESOURCES.map(r=><button key={r} className={selectedResource===r?'active':''} onClick={()=>setSelectedResource(r)}><ResourceIcon resource={r} size={20}/>{naturalCase(translateLive(r[0].toUpperCase()+r.slice(1)),state.playerProfile.language)}</button>)}</nav>
   <div className="resource-command-grid">

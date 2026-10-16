@@ -39,5 +39,9 @@ export const UI_CATALOG_110:Record<string,[string,string,string,string]>={
   "Lending":["Borç verme","Préstamos concedidos","放贷","Кредитование"],
   "Current applications":["Güncel başvurular","Solicitudes actuales","当前申请","Текущие заявки"],
   "Diplomatic network overview":["Diplomatik ağ özeti","Resumen de la red diplomática","外交网络概览","Обзор дипломатической сети"],
+  "ELECTRICITY":["ELEKTRİK","ELECTRICIDAD","电力","ЭЛЕКТРИЧЕСТВО"],
+  "Generation":["Üretim","Generación","发电量","Выработка"],
+  "Demand":["Talep","Demanda","需求","Спрос"],
+  "Grid balance":["Şebeke dengesi","Balance de red","电网平衡","Баланс сети"],
   "Relations & proposal assessment":["İlişkiler ve teklif değerlendirmesi","Relaciones y evaluación de propuestas","关系与提案评估","Отношения и оценка предложений"],
 };
