@@ -62,15 +62,24 @@ describe('landingReducer',()=>{
   expect(landingReducer(landing,{type:'CLOSE_OVERLAY'})).toBe(landing);
   expect(landingReducer(loading,{type:'OPEN_PROFILE'})).toBe(loading);
  });
+ it('opens the release notes overlay on the landing screen, one overlay at a time',()=>{
+  const open=run([{type:'OPEN_RELEASE_NOTES'}],landing);expect(open.overlay).toBe('releaseNotes');
+  expect(landingReducer(open,{type:'OPEN_PROFILE'})).toBe(open);
+  expect(landingReducer(open,{type:'OPEN_RELEASE_NOTES'})).toBe(open);
+  expect(landingReducer(open,{type:'CLOSE_OVERLAY'}).overlay).toBeNull();
+  const profile=run([{type:'OPEN_PROFILE'}],landing);expect(landingReducer(profile,{type:'OPEN_RELEASE_NOTES'})).toBe(profile);
+  expect(landingReducer(loading,{type:'OPEN_RELEASE_NOTES'})).toBe(loading);
+ });
  it('drops the overlay when leaving the landing screen',()=>{
   expect(run([{type:'OPEN_PROFILE'},{type:'PLAY_NOW'}],landing).overlay).toBeNull();
+  expect(run([{type:'OPEN_RELEASE_NOTES'},{type:'CONTINUE'}],landing).overlay).toBeNull();
  });
  it('ignores events that do not apply to the current screen',()=>{
   const setup=run([{type:'PLAY_NOW'}],landing);
   const cases:[LandingState,LandingEvent[]][]=[
    [INITIAL_LANDING_STATE,[{type:'PLAY_NOW'},{type:'CONTINUE'},{type:'RETURN_TO_MENU'},{type:'LOAD_OK'},{type:'SETUP_COMMITTED'}]],
    [landing,[{type:'BOOT_RESOLVED'},{type:'LOAD_OK'},{type:'LOAD_FAILED'},{type:'SETUP_COMMITTED'},{type:'SETUP_CANCELLED'},{type:'START_PRELOAD'},{type:'PRELOAD_PROGRESS',percent:5},{type:'RETURN_TO_MENU'}]],
-   [setup,[{type:'PLAY_NOW'},{type:'CONTINUE'},{type:'LOAD_OK'},{type:'PRELOAD_PROGRESS',percent:5},{type:'OPEN_PROFILE'}]],
+   [setup,[{type:'PLAY_NOW'},{type:'CONTINUE'},{type:'LOAD_OK'},{type:'PRELOAD_PROGRESS',percent:5},{type:'OPEN_PROFILE'},{type:'OPEN_RELEASE_NOTES'}]],
    [loading,[{type:'PLAY_NOW'},{type:'CONTINUE'},{type:'SETUP_COMMITTED'},{type:'SETUP_CANCELLED'},{type:'BOOT_RESOLVED'}]],
   ];
   for(const [state,events] of cases)for(const event of events)expect(landingReducer(state,event),`${state.screen} ${event.type}`).toBe(state);

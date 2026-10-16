@@ -34,7 +34,7 @@
 }
 
 /* Root and cartographic backdrop ------------------------------------------------------------------------------- */
-.landing094,.landing094 *,.landing094 *::before,.landing094 *::after,.l94-drawer,.l94-drawer *,.lw,.lw *{box-sizing:border-box}
+.landing094,.landing094 *,.landing094 *::before,.landing094 *::after,.l94-drawer,.l94-drawer *,.l94-modal,.l94-modal *,.lw,.lw *{box-sizing:border-box}
 .landing094{position:fixed;inset:0;z-index:var(--layer-entry,10000);display:grid;grid-template-rows:auto 1fr auto;min-height:100dvh;overflow:auto;color:var(--ink);
  background:var(--surface-inset);isolation:isolate}
 /* Backdrop layers (LandingBackdrop): cover art, colour wash, cartographic graticule, vignette */
@@ -122,8 +122,18 @@
 .l94-drawer-body p.l94-error{color:var(--l94-warn);font-weight:600}
 .l94-note{margin:0}
 
+/* Release notes modal ---------------------------------------------------------------------------------------------- */
+.l94-modal-layer{position:fixed;inset:0;display:grid;place-items:center;padding:16px;background:var(--overlay)}
+.l94-modal{display:grid;grid-template-rows:auto 1fr;width:min(560px,100%);max-height:min(80dvh,720px);border:1px solid var(--l94-border);border-top:2px solid var(--l94-gold);border-radius:14px;background:var(--surface);color:var(--ink);box-shadow:var(--l94-shadow)}
+.l94-modal header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 20px;border-bottom:1px solid var(--l94-gold-line)}
+.l94-modal h2{margin:0;font:700 18px/1.2 Georgia,serif}
+.l94-modal-body{display:grid;gap:18px;overflow:auto;padding:20px}
+.l94-release h3{margin:0 0 8px;color:var(--l94-gold-text);font:700 14px/1.2 var(--l94-sans);letter-spacing:.08em}
+.l94-release h3 small{color:var(--ink-muted);font-weight:400;letter-spacing:0}
+.l94-release ul{display:grid;gap:8px;margin:0;padding-left:20px;color:var(--ink-muted);font:400 14px/1.55 var(--l94-sans)}
+
 /* Focus ---------------------------------------------------------------------------------------------------------- */
-.landing094 :is(button,a,[tabindex],input):focus-visible,.l94-drawer :is(button,a,[tabindex],input):focus-visible{outline:3px solid var(--focus);outline-offset:3px;border-radius:10px}
+.landing094 :is(button,a,[tabindex],input):focus-visible,.l94-drawer :is(button,a,[tabindex],input):focus-visible,.l94-modal :is(button,a,[tabindex]):focus-visible{outline:3px solid var(--focus);outline-offset:3px;border-radius:10px}
 
 /* Leadership wisdom widget (also used on setup, loading and the outcome screens) ----------------------------------- */
 .lw{position:relative;display:grid;gap:12px;margin:0;color:var(--ink)}

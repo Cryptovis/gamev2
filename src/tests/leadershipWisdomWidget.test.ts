@@ -4,6 +4,7 @@ import {afterEach,beforeEach,describe,expect,it,vi} from 'vitest';
 import {act,createElement} from 'react';
 import {createRoot,type Root} from 'react-dom/client';
 import {LEADERSHIP_QUOTES,QUOTE_GLYPHS,quoteAuthor} from '../data/leadershipQuotes';
+import {formatQuoteYear} from '../data/leadershipQuoteYear';
 import {useGameStore} from '../store/gameStore';
 import {makeInitialState} from '../data/initialState';
 import {UI_CATALOG_LANDING} from '../i18n/uiCatalogLanding';
@@ -32,7 +33,7 @@ describe('LeadershipWisdomWidget',()=>{
    expect(text('.lw-text'),language).toBe(glyphs.open+quote.text[language]+glyphs.close);
    expect(text('.lw-name'),language).toBe(author.name[language]);
    expect(text('.lw-role'),language).toBe(author.role[language]);
-   expect(text('.lw-year'),language).toBe(quote.year);
+   expect(text('.lw-year'),language).toBe(formatQuoteYear(quote.year,language));
    expect(figure().getAttribute('lang'),language).toBe(language);
   }
  });

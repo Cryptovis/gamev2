@@ -1,4 +1,5 @@
 import {QUOTE_GLYPHS,quoteAuthor,type LeadershipQuote} from '../../data/leadershipQuotes';
+import {formatQuoteYear} from '../../data/leadershipQuoteYear';
 import type {QuoteContext,QuoteScreen} from '../../data/leadershipQuoteSelection';
 import {translateText} from '../../i18n/localeText';
 import {useGameStore} from '../../store/gameStore';
@@ -37,7 +38,7 @@ export function LeadershipWisdomWidget({variant,context,intervalMs=DEFAULT_QUOTE
    <figcaption className="lw-caption">
     <span className="lw-name">{author.name[language]}</span>
     {variant!=='compact'&&<span className="lw-role">{author.role[language]}</span>}
-    <span className="lw-year">{quote.year}</span>
+    <span className="lw-year">{formatQuoteYear(quote.year,language)}</span>
    </figcaption>
   </div>
   {controls&&<div className="lw-controls">

@@ -3,7 +3,7 @@
 // so a subscriber can skip the re-render.
 
 export type LandingScreen='booting'|'landing'|'setup'|'loading'|'game';
-export type LandingOverlay='profile'|null;
+export type LandingOverlay='profile'|'releaseNotes'|null;
 export type LoadIntent='new'|'continue';
 export type LoadFailureReason='missing'|'corrupt'|'incompatible_version'|'unknown';
 
@@ -30,6 +30,7 @@ export type LandingEvent=
   |{type:'SETUP_COMMITTED'}
   |{type:'RETURN_TO_MENU'}
   |{type:'OPEN_PROFILE'}
+  |{type:'OPEN_RELEASE_NOTES'}
   |{type:'CLOSE_OVERLAY'};
 
 export const INITIAL_LANDING_STATE:LandingState={screen:'booting',overlay:null,intent:null,progress:0,error:null};
@@ -67,6 +68,8 @@ export function landingReducer(state:LandingState,event:LandingEvent):LandingSta
       return state.screen==='landing'||state.screen==='booting'?state:at('landing');
     case 'OPEN_PROFILE':
       return state.screen==='landing'&&state.overlay===null?{...state,overlay:'profile'}:state;
+    case 'OPEN_RELEASE_NOTES':
+      return state.screen==='landing'&&state.overlay===null?{...state,overlay:'releaseNotes'}:state;
     case 'CLOSE_OVERLAY':
       return state.overlay===null?state:{...state,overlay:null};
   }
