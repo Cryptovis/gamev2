@@ -13,4 +13,5 @@ export const UI_CATALOG_094:Record<string,[string,string,string,string]>={
  'Starting treasury +20%; daily debt interest −15%.':['Başlangıç hazinesi +%20; günlük borç faizi −%15.','Tesorería inicial +20%; intereses diarios de deuda −15%.','初始国库 +20%；每日债务利息 −15%。','Начальная казна +20%; ежедневные проценты по долгу −15%.'],
  'Per-capita food and consumer water consumption −15%.':['Kişi başına gıda ve tüketim suyu kullanımı −%15.','Consumo por habitante de alimentos y agua doméstica −15%.','人均食品和生活用水消耗 −15%。','Потребление продовольствия и бытовой воды на душу населения −15%.'],
  'Campaign perk is fixed at start; later portrait changes are cosmetic.':['Kampanya bonusu başlangıçta sabitlenir; sonraki portre değişiklikleri yalnızca görseldir.','La ventaja se fija al iniciar; los cambios de retrato posteriores son cosméticos.','战役加成在开始时固定；之后更换肖像仅影响外观。','Бонус фиксируется в начале кампании; последующая смена портрета влияет только на внешний вид.'],
+ 'Campaign':['Kampanya','Campaña','战役','Кампания'],
 };

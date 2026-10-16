@@ -80,6 +80,7 @@ const rows: Record<string, string> = {
     "Bu bilgi penceresini vurgulanan çarpıyla kapat.",
   "Preparing the next highlighted control…": "Sıradaki kontrol hazırlanıyor…",
   "Campaign history": "Yönetim geçmişi",
+  Campaign: "Kampanya",
   Profile: "Profil",
   Session: "Oturum",
   "Recent decisions": "Son kararlar",
