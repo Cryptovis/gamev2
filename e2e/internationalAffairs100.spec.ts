@@ -10,7 +10,7 @@ for(const width of [1440,390])for(const theme of ['light','dark'])test(`1.0 inte
  await resumeFixture(page,proposed);await page.locator('[data-guide="rail-alliances"]').click();
  const hub=page.locator('.international-affairs');await expect(hub.locator('.ia-organization-grid>.ia-card')).toHaveCount(14);
  const fits=async()=>expect(await hub.evaluate(el=>el.scrollWidth<=el.clientWidth+1)).toBe(true);await fits();
- for(const label of ['Resolutions & voting','Financial facilities','Commodities & swaps','Sanctions & enforcement','Overview & roster']){
+ for(const label of ['Resolutions & Voting','Financial Facilities','Commodities & Swaps','Sanctions & Enforcement','Overview & Roster']){
   await hub.getByRole('tab',{name:label,exact:true}).click();await expect(hub.getByRole('tabpanel')).toHaveAttribute('aria-labelledby',await hub.getByRole('tab',{name:label,exact:true}).getAttribute('id')??'');await fits();
  }
  await page.screenshot({path:`test-results/international100-${theme}-${width}.png`});

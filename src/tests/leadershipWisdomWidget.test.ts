@@ -45,27 +45,21 @@ describe('LeadershipWisdomWidget',()=>{
    expect(host.querySelector('.lw-role')!==null,variant).toBe(variant!=='compact');
   }
  });
- it('offers the pause and next controls on the hero only, labelled in the current language',async()=>{
-  for(const variant of ['compact','loading','outcome'] as const){await render({variant});expect(host.querySelector('.lw-controls'),variant).toBeNull();}
-  setLanguage('tr');await render({variant:'hero'});
-  expect(text('[data-testid="wisdom-pause"]')).toBe(UI_CATALOG_LANDING['Pause quotes'][0]);
-  expect(text('[data-testid="wisdom-next"]')).toBe(UI_CATALOG_LANDING['Next quote'][0]);
+ it('is an aphorism, not a media player: no buttons on any variant, in any language',async()=>{
+  for(const language of ['en','tr','es','zh','ru'] as const){
+   setLanguage(language);
+   for(const variant of ['hero','compact','loading','outcome'] as const){
+    await render({variant});
+    expect(host.querySelectorAll('button').length,`${language} ${variant}`).toBe(0);
+    expect(host.querySelector('.lw-controls'),`${language} ${variant}`).toBeNull();
+    expect(host.querySelector('[data-testid="wisdom-pause"],[data-testid="wisdom-next"]')).toBeNull();
+   }
+  }
  });
- it('toggles between Pause and Resume, with aria-pressed, and holds the quote while paused',async()=>{
-  await render({variant:'hero',roll:()=>0.3});
-  const pause=host.querySelector('[data-testid="wisdom-pause"]') as HTMLButtonElement;const first=figure().getAttribute('data-quote-id');
-  expect(pause.textContent).toBe('Pause quotes');expect(pause.getAttribute('aria-pressed')).toBe('false');
-  await act(async()=>{pause.click();});
-  expect(pause.textContent).toBe('Resume quotes');expect(pause.getAttribute('aria-pressed')).toBe('true');expect(figure().getAttribute('data-paused')).toBe('true');
+ it('still holds the quote while the pointer rests on it',async()=>{
+  await render({variant:'hero',roll:()=>0.3});const first=figure().getAttribute('data-quote-id');
+  await act(async()=>{figure().dispatchEvent(new Event('pointerover',{bubbles:true}));});
   await tick(60000);expect(figure().getAttribute('data-quote-id')).toBe(first);
-  await act(async()=>{pause.click();});
-  expect(pause.textContent).toBe('Pause quotes');
- });
- it('moves to a different quote when Next is pressed',async()=>{
-  let n=0;await render({variant:'hero',roll:()=>[0.05,0.4,0.7][n++%3]});
-  const first=figure().getAttribute('data-quote-id');
-  await act(async()=>{(host.querySelector('[data-testid="wisdom-next"]') as HTMLButtonElement).click();});
-  expect(figure().getAttribute('data-quote-id')).not.toBe(first);
  });
  it('rotates on its own for the hero, compact and loading variants',async()=>{
   for(const variant of ['hero','compact','loading'] as const){

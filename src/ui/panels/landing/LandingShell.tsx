@@ -141,7 +141,7 @@ export function LandingShell({onPlaying,deps=defaultLandingDeps,Setup=CampaignSe
         <CommandMenu
           language={language} heroAction={heroAction} busy={false}
           onPlayNow={()=>startNew('PLAY_NOW')} onNewCampaign={()=>startNew('NEW_CAMPAIGN')}
-          onContinue={()=>{deps.ensureGuest();setLoadError(null);dispatch({type:'CONTINUE'});}} onOpenDossier={openProfile}/>
+          onOpenDossier={openProfile}/>
         <LeadershipWisdomWidget variant="hero" context={{screen:'landing'}}/>
       </section>
       <aside className="l94-side">

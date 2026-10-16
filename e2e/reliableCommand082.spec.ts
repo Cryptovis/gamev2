@@ -1,5 +1,3 @@
-import {readFileSync} from 'node:fs';
-const {version}=JSON.parse(readFileSync(new URL('../package.json',import.meta.url),'utf8'));
 import {test,expect,type Page} from '@playwright/test';
 import {enterAsGuest,continueCampaign} from './helpers/enterAsGuest';
 async function start(page:Page){
@@ -67,7 +65,7 @@ test(`${viewport.width}px all ten tutorial lessons including funded construction
 for(const viewport of [{width:1440,height:900},{width:1280,height:720},{width:390,height:844}]){
  test(`${viewport.width}px stable setup and readable nation selection`,async({page})=>{
   await page.setViewportSize(viewport);await page.goto('/');await enterAsGuest(page);
-  await expect(page.locator('.wizard-release')).toHaveText(version);
+  await expect(page.getByTestId('wizard-brand')).toHaveText('Rule of Nations');await expect(page.locator('.wizard-release')).toHaveCount(0);
   const nextButton=page.locator('.wizard-next');
   const nextBounds=await nextButton.boundingBox(),footerBounds=await page.locator('.wizard-footer').boundingBox();
   expect(nextBounds!.y).toBeGreaterThanOrEqual(footerBounds!.y);

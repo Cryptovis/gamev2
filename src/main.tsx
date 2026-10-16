@@ -72,3 +72,4 @@ import "./ui/hints/TacticalHint.css";
 import "./ui/styles/playtest110.css";
 import "./ui/styles/playtest130.css";
 import "./ui/styles/landing094.css";
+import "./ui/styles/hotfix15.css";

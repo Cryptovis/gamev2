@@ -9,6 +9,8 @@ import {SaveGameCard,type SaveGameCardProps} from '../ui/panels/landing/SaveGame
 import {UtilityDock,type UtilityDockProps} from '../ui/panels/landing/UtilityDock';
 import {LandingBackdrop} from '../ui/panels/landing/LandingBackdrop';
 import {UI_CATALOG_LANDING} from '../i18n/uiCatalogLanding';
+import {translateText} from '../i18n/localeText';
+import {LANDING_BACKDROP_URL} from '../ui/panels/landing/LandingBackdrop';
 import type {SaveSummary,SaveSummaryState} from '../persistence/saveSummary';
 import type {GameLanguage} from '../domain/game';
 import type {HeroAction} from '../ui/landing/heroAction';
@@ -46,33 +48,39 @@ describe('HeroBrand',()=>{
 });
 
 describe('CommandMenu',()=>{
- const spies=()=>({onPlayNow:vi.fn(),onNewCampaign:vi.fn(),onContinue:vi.fn(),onOpenDossier:vi.fn()});
+ const spies=()=>({onPlayNow:vi.fn(),onNewCampaign:vi.fn(),onOpenDossier:vi.fn()});
  const props=(heroAction:HeroAction,extra:Partial<CommandMenuProps>={}):CommandMenuProps=>({language:'en',heroAction,busy:false,...spies(),...extra});
- it('labels the hero button for each action and marks it for tests',async()=>{
-  const labels:Record<HeroAction,string>={play_now:'Play now',continue:'Continue campaign',new_campaign:'New campaign'};
-  for(const action of Object.keys(labels) as HeroAction[]){
+ it('draws the hero button only for Play now and never a second Continue button',async()=>{
+  await show(createElement(CommandMenu,props('play_now')));
+  expect(byId('landing-hero')!.textContent).toBe('Play now');expect(byId('landing-hero')!.getAttribute('data-action')).toBe('play_now');
+  for(const action of ['continue','new_campaign'] as const){
    await show(createElement(CommandMenu,props(action)));
-   expect(byId('landing-hero')!.textContent,action).toBe(labels[action]);
-   expect(byId('landing-hero')!.getAttribute('data-action')).toBe(action);
+   expect(byId('landing-hero'),action).toBeNull();expect(byId('landing-menu')!.getAttribute('data-action')).toBe(action);
+   expect(host.textContent,action).not.toContain('Continue campaign');
   }
  });
- it('runs the callback that matches the hero action',async()=>{
+ it('runs the callback that matches the action',async()=>{
   const p=props('play_now');await show(createElement(CommandMenu,p));await click('landing-hero');expect(p.onPlayNow).toHaveBeenCalledTimes(1);
-  const c=props('continue');await show(createElement(CommandMenu,c));await click('landing-hero');expect(c.onContinue).toHaveBeenCalledTimes(1);
-  const n=props('new_campaign');await show(createElement(CommandMenu,n));await click('landing-hero');expect(n.onNewCampaign).toHaveBeenCalledTimes(1);
+  const n=props('new_campaign');await show(createElement(CommandMenu,n));await click('landing-new-campaign');expect(n.onNewCampaign).toHaveBeenCalledTimes(1);
  });
  it('shows the no-account note only for Play now',async()=>{
   await show(createElement(CommandMenu,props('play_now')));expect(q('.l94-cta-note')!.textContent).toBe('No account needed');
   await show(createElement(CommandMenu,props('continue')));expect(q('.l94-cta-note')).toBeNull();
  });
- it('lists New campaign beside Play now and Continue but not when the hero already is New campaign',async()=>{
-  for(const action of ['play_now','continue'] as const){await show(createElement(CommandMenu,props(action)));expect(byId('landing-new-campaign'),action).not.toBeNull();}
-  await show(createElement(CommandMenu,props('new_campaign')));expect(byId('landing-new-campaign')).toBeNull();
+ it('offers New campaign as an action card beside a save, and marks it primary when there is no save to continue',async()=>{
+  await show(createElement(CommandMenu,props('play_now')));expect(byId('landing-new-campaign')).toBeNull();
+  await show(createElement(CommandMenu,props('continue')));expect(byId('landing-new-campaign')).not.toBeNull();expect(byId('landing-new-campaign')!.getAttribute('data-primary')).toBeNull();
+  await show(createElement(CommandMenu,props('new_campaign')));expect(byId('landing-new-campaign')!.getAttribute('data-primary')).toBe('true');
  });
- it('starts a new campaign and opens the dossier from the list',async()=>{
-  const p=props('play_now');await show(createElement(CommandMenu,p));
+ it('starts a new campaign and opens the dossier from the cards',async()=>{
+  const p=props('continue');await show(createElement(CommandMenu,p));
   await click('landing-new-campaign');await click('landing-dossier');
   expect(p.onNewCampaign).toHaveBeenCalledTimes(1);expect(p.onOpenDossier).toHaveBeenCalledTimes(1);
+ });
+ it('uses action cards, not text links, for every menu entry',async()=>{
+  await show(createElement(CommandMenu,props('continue')));
+  expect(host.querySelectorAll('a').length).toBe(0);
+  expect(host.querySelectorAll('.l94-action-cards .l94-action-card').length).toBe(3);
  });
  it('keeps Historical scenarios focusable but inert, with a Coming soon badge',async()=>{
   const onOpenScenarios=vi.fn();await show(createElement(CommandMenu,props('play_now',{onOpenScenarios})));
@@ -86,71 +94,20 @@ describe('CommandMenu',()=>{
   expect(byId('landing-scenarios')!.getAttribute('aria-disabled')).toBeNull();expect(q('.l94-badge')).toBeNull();
   await click('landing-scenarios');expect(onOpenScenarios).toHaveBeenCalledTimes(1);
  });
- it('holds the hero button while busy so a second click cannot start a second load',async()=>{
-  const c=props('continue',{busy:true});await show(createElement(CommandMenu,c));
+ it('holds the action buttons while busy so a second click cannot start a second load',async()=>{
+  const p=props('play_now',{busy:true});await show(createElement(CommandMenu,p));
   expect((byId('landing-hero') as HTMLButtonElement).disabled).toBe(true);expect(byId('landing-hero')!.getAttribute('aria-busy')).toBe('true');
-  await click('landing-hero');expect(c.onContinue).not.toHaveBeenCalled();
+  await click('landing-hero');expect(p.onPlayNow).not.toHaveBeenCalled();
+  const n=props('continue',{busy:true});await show(createElement(CommandMenu,n));
+  expect((byId('landing-new-campaign') as HTMLButtonElement).disabled).toBe(true);await click('landing-new-campaign');expect(n.onNewCampaign).not.toHaveBeenCalled();
  });
  it('uses the menu label and wording of the current language',async()=>{
   await show(createElement(CommandMenu,props('play_now',{language:'tr'})));
   expect(q('nav')!.getAttribute('aria-label')).toBe(TR('Main menu'));
   expect(byId('landing-hero')!.textContent).toBe(TR('Play now'));
-  expect(byId('landing-dossier')!.textContent).toBe(TR('Commander dossier'));
- });
-});
-
-const SUMMARY:SaveSummary={slotId:'manual-1',countryId:'TUR',countryName:'Turkey',iso2:'TR',leaderName:'Ada Lovelace',campaignDay:45,campaignDateIso:'2026-02-14',savedAt:Date.UTC(2026,5,12,12)};
-const NOW=Date.UTC(2026,5,15,12);
-describe('SaveGameCard',()=>{
- const card=(state:SaveSummaryState,extra:Partial<SaveGameCardProps>={}):SaveGameCardProps=>({language:'en',state,loadError:null,busy:false,onContinue:vi.fn(),now:NOW,...extra});
- it('marks its state for tests',async()=>{
-  const states:SaveSummaryState[]=[{status:'loading'},{status:'none'},{status:'ready',summary:SUMMARY},{status:'unreadable',reason:'corrupt'}];
-  for(const state of states){await show(createElement(SaveGameCard,card(state)));expect(byId('save-card')!.getAttribute('data-state')).toBe(state.status);}
- });
- it('hides Continue while loading and announces nothing alarming',async()=>{
-  await show(createElement(SaveGameCard,card({status:'loading'})));
-  expect(byId('save-card-continue')).toBeNull();expect(byId('save-card')!.getAttribute('aria-busy')).toBe('true');
- });
- it('shows flag, country, leader, date, day and saved time for a readable save',async()=>{
-  await show(createElement(SaveGameCard,card({status:'ready',summary:SUMMARY})));
-  const text=byId('save-card')!.textContent!;
-  expect(text).toContain('Turkey');expect(text).toContain('🇹🇷');expect(text).toContain('Ada Lovelace');
-  expect(text).toContain('14 February 2026');expect(text).toContain('Day 45');expect(text).toContain('Last saved: 3 days ago');
-  expect(q('[role="img"]')!.getAttribute('aria-label')).toBe('Turkey');
- });
- it('omits the leader line when the save has no commander name',async()=>{
-  await show(createElement(SaveGameCard,card({status:'ready',summary:{...SUMMARY,leaderName:''}})));
-  expect(q('.l94-card-meta strong')).toBeNull();
- });
- it('continues from a readable save and holds the button while busy',async()=>{
-  const ready:SaveSummaryState={status:'ready',summary:SUMMARY};
-  const free=card(ready);await show(createElement(SaveGameCard,free));await click('save-card-continue');expect(free.onContinue).toHaveBeenCalledTimes(1);
-  const busy=card(ready,{busy:true});await show(createElement(SaveGameCard,busy));
-  expect((byId('save-card-continue') as HTMLButtonElement).disabled).toBe(true);await click('save-card-continue');expect(busy.onContinue).not.toHaveBeenCalled();
- });
- it('explains an empty card and keeps Continue inert',async()=>{
-  const props=card({status:'none'});await show(createElement(SaveGameCard,props));
-  expect(byId('save-card')!.textContent).toContain('No saved campaign yet');
-  expect(byId('save-card-continue')!.getAttribute('aria-disabled')).toBe('true');
-  await click('save-card-continue');expect(props.onContinue).not.toHaveBeenCalled();
- });
- it('names the reason an unreadable save cannot be used',async()=>{
-  await show(createElement(SaveGameCard,card({status:'unreadable',reason:'corrupt'})));expect(byId('save-card')!.textContent).toContain('This save could not be read');
-  await show(createElement(SaveGameCard,card({status:'unreadable',reason:'incompatible_version'})));expect(byId('save-card')!.textContent).toContain('This save is from an incompatible version');
-  const props=card({status:'unreadable',reason:'corrupt'});await show(createElement(SaveGameCard,props));await click('save-card-continue');expect(props.onContinue).not.toHaveBeenCalled();
- });
- it('shows a load failure as an alert, together with whatever the summary said',async()=>{
-  await show(createElement(SaveGameCard,card({status:'ready',summary:SUMMARY},{loadError:'corrupt'})));
-  const alert=byId('save-card-error')!;expect(alert.getAttribute('role')).toBe('alert');expect(alert.textContent).toBe('The campaign could not be loaded');
-  await show(createElement(SaveGameCard,card({status:'ready',summary:SUMMARY})));expect(byId('save-card-error')).toBeNull();
- });
- it('writes date, day and saved time in every language',async()=>{
-  const seen=new Set<string>();
-  for(const language of ['en','tr','es','zh','ru'] as GameLanguage[]){
-   await show(createElement(SaveGameCard,card({status:'ready',summary:SUMMARY},{language})));
-   const meta=q('.l94-card-meta')!.textContent!;seen.add(meta);expect(meta.length,language).toBeGreaterThan(20);
-  }
-  expect(seen.size).toBe(5);
+  expect(byId('landing-dossier')!.textContent).toContain(TR('Commander dossier'));
+  await show(createElement(CommandMenu,props('continue',{language:'tr'})));
+  expect(byId('landing-new-campaign')!.textContent).toContain(translateText('tr','New campaign'));
  });
 });
 
@@ -163,7 +120,7 @@ describe('UtilityDock',()=>{
  });
  it('offers all five languages, marks the current one and switches on click',async()=>{
   const p=dock({language:'es'});await show(createElement(UtilityDock,p));
-  const buttons=[...host.querySelectorAll('[data-testid^="dock-language-"]')] as HTMLElement[];
+  const buttons=[...host.querySelectorAll('[data-testid^="dock-language-"]:not([data-testid="dock-language-bar"])')] as HTMLElement[];
   expect(buttons.map(b=>b.getAttribute('aria-label'))).toEqual(['English','Türkçe','Español','中文','Русский']);
   expect(buttons.map(b=>b.getAttribute('aria-pressed'))).toEqual(['false','false','true','false','false']);
   await click('dock-language-zh');expect(p.onLanguageChange).toHaveBeenCalledWith('zh');
@@ -201,6 +158,21 @@ describe('UtilityDock',()=>{
  it('falls back to the guest wording for a profile without a name',async()=>{
   await show(createElement(UtilityDock,dock({sessionKind:'profile'})));expect(byId('dock-dossier-chip')!.textContent).toBe('Playing as guest');
  });
+ it('labels the language group in each language and shows a national flag on every button',async()=>{
+  const labels={en:'Language',tr:'Dil',es:'Idioma',zh:'语言',ru:'Язык'} as const;
+  for(const language of Object.keys(labels) as (keyof typeof labels)[]){
+   await show(createElement(UtilityDock,dock({language})));
+   expect(q('#dock-language-label')!.textContent,language).toBe(labels[language]);
+   expect(byId('dock-language')!.getAttribute('aria-labelledby')).toBe('dock-language-label');
+  }
+  const flags=[...host.querySelectorAll('[data-testid^="dock-language-"] [aria-hidden="true"]')].map(n=>n.textContent);
+  expect(flags).toEqual(['🇬🇧','🇹🇷','🇪🇸','🇨🇳','🇷🇺']);
+ });
+ it('sits the language bar between the tools and the account chip',async()=>{
+  await show(createElement(UtilityDock,dock()));
+  const bar=byId('dock-language-bar')!;expect(bar.classList.contains('l94-dock-language')).toBe(true);
+  expect(bar.contains(byId('dock-language'))).toBe(true);expect(bar.contains(byId('dock-theme'))).toBe(false);
+ });
  it('translates its labels',async()=>{
   await show(createElement(UtilityDock,dock({language:'tr'})));
   expect(q('[role="toolbar"]')!.getAttribute('aria-label')).toBe('Ayarlar');
@@ -210,10 +182,10 @@ describe('UtilityDock',()=>{
 });
 
 describe('LandingBackdrop',()=>{
- it('is decorative: hidden from assistive technology, with an empty-alt cover image and four layers',async()=>{
+ it('is decorative: hidden from assistive technology, with four CSS layers and no image element',async()=>{
   await show(createElement(LandingBackdrop));
   expect(q('.l94-backdrop')!.getAttribute('aria-hidden')).toBe('true');
-  expect(q('img')!.getAttribute('alt')).toBe('');expect(q('img')!.getAttribute('src')).toBe('/assets/command/campaign-cover.webp');
+  expect(q('img')).toBeNull();expect(LANDING_BACKDROP_URL).toBe('/assets/command/landing-backdrop.jpg');
   for(const layer of ['.l94-art','.l94-wash','.l94-graticule','.l94-vignette'])expect(q(layer),layer).not.toBeNull();
   expect(host.textContent).toBe('');
  });

@@ -1,11 +1,9 @@
 import {campaignFixture,resumeFixture,openNation} from './seedCampaign';
 import {withWarFuel} from '../src/tests/warFixture';
-import {readFileSync} from 'node:fs';
-const {version}=JSON.parse(readFileSync(new URL('../package.json',import.meta.url),'utf8'));
 import {test,expect,type Page} from '@playwright/test';
 import {enterAsGuest,continueCampaign} from './helpers/enterAsGuest';
 async function start(page:Page){
- await page.goto('/');await page.getByRole('button',{name:'Türkçe',exact:true}).click();await enterAsGuest(page);await expect(page.locator('.wizard-release')).toHaveText(version);
+ await page.goto('/');await page.getByRole('button',{name:'Türkçe',exact:true}).click();await enterAsGuest(page);await expect(page.getByTestId('wizard-brand')).toHaveText('Rule of Nations');await expect(page.locator('.wizard-release')).toHaveCount(0);
  await page.locator('.wizard-name-field input').fill('Tactical playtest');
  for(let i=0;i<4;i++)await page.locator('.wizard-footer .wizard-next').click();
  await page.locator('.guided-card footer button').first().click();

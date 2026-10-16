@@ -1,0 +1,46 @@
+/* Phase 9.4 Playtest Hotfix 1.5: wizard header, nation identity, Executive Desk width, alliance grid, Title Case notes, HUD docks.
+   Loaded last. Every colour is a token or a literal that has a dark (Navy) and a light (Ivory) value. */
+
+/* Item 5: gold Rule of Nations title above the step title; no poster badge and no version string */
+:root .campaign-wizard-backdrop .wizard-brand{margin:0 0 2px;font:700 clamp(22px,2.6vw,34px)/1.1 Georgia,'Times New Roman',serif;letter-spacing:.04em;color:#f0cf72;text-shadow:0 1px 10px rgba(0,0,0,.35)}
+:root[data-theme="light"] .campaign-wizard-backdrop .wizard-brand{color:#6f5207;text-shadow:none}
+:root .campaign-wizard-backdrop .setup-cover>.brand-mark{display:none}
+
+/* Item 6: leader portrait beside the flag, and opening profile chips */
+.wizard-country-preview .nation-identity{display:flex;align-items:center;justify-content:center;gap:14px}
+.wizard-country-preview .nation-leader{display:inline-flex;border:2px solid #d4af37;border-radius:50%;overflow:hidden;line-height:0;box-shadow:0 0 0 3px rgba(212,175,55,.18)}
+:root[data-theme="light"] .wizard-country-preview .nation-leader{border-color:#8a6508;box-shadow:0 0 0 3px rgba(138,101,8,.16)}
+.opening-chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 8px;padding:0;list-style:none}
+.opening-chips li{display:grid;gap:1px;min-width:0;padding:5px 10px;border:1px solid rgba(212,175,55,.45);border-radius:999px;background:color-mix(in srgb,var(--surface-raised) 80%,transparent)}
+.opening-chips li small{font:600 9px/1.2 system-ui,sans-serif;letter-spacing:.08em;color:var(--ink-muted)}
+.opening-chips li b{font:700 12px/1.25 system-ui,sans-serif;color:var(--ink);text-transform:capitalize;overflow-wrap:anywhere}
+:root[data-theme="light"] .opening-chips li{border-color:rgba(138,101,8,.5)}
+
+/* Item 7: Executive Desk at executive-desk proportions */
+:root #desk-window.executive-workspace{width:min(780px,calc(100vw - 32px));max-width:780px;margin-inline:auto}
+:root #desk-window .executive-desk{padding-inline:clamp(12px,3vw,28px);padding-block:8px 20px}
+:root #desk-window .desk-empty{display:grid;place-items:center;min-height:132px;margin:8px auto;padding:24px 28px;max-width:560px;width:100%;text-align:center;border:1px solid var(--border);border-radius:14px;background:color-mix(in srgb,var(--surface-raised) 70%,transparent);color:var(--ink-muted);font:500 15px/1.5 Georgia,'Times New Roman',serif}
+
+/* Item 8: uniform alliance cards, aligned metrics, pinned buttons */
+:root .ia-organization-grid{grid-template-columns:repeat(auto-fill,minmax(240px,1fr));grid-auto-rows:1fr;align-items:stretch}
+:root .ia-organization-grid>.ia-card{display:flex;flex-direction:column;align-content:normal;gap:12px;height:100%}
+:root .ia-organization-grid .ia-org-title{min-height:calc(2 * 1.25em + 8px);align-items:center}
+:root .ia-organization-grid .ia-org-title h3{font-size:15px;line-height:1.25}
+:root .ia-organization-grid .ia-metrics{margin:0}
+:root .ia-organization-grid .ia-buttons{margin-top:auto;padding-top:4px}
+:root .ia-organization-grid .ia-buttons button{flex:1 1 120px}
+.org-emblem[data-colored]{filter:drop-shadow(0 1px 2px rgba(0,0,0,.35))}
+
+/* Item 9: arms transfer subheader */
+.ia-section-note{margin:0;color:var(--ink-muted);font:400 13px/1.5 system-ui,sans-serif;max-width:68ch}
+
+/* Item 10: cream-tinted luminous slate behind the atlas icons */
+:root{--dock-bg-top:#e4dcc7;--dock-bg-bottom:#bdb7a6;--dock-border:#e8d9a8;--dock-ink:#1d2631;--dock-active-top:#f3e8c4;--dock-active-bottom:#d3c590}
+:root[data-theme="light"]{--dock-bg-top:#fffaf0;--dock-bg-bottom:#efe5cb;--dock-border:#b58e1c;--dock-ink:#1d2631;--dock-active-top:#fff1c4;--dock-active-bottom:#ecd88f}
+:root .command-rail .rail-button{background:linear-gradient(150deg,var(--dock-bg-top),var(--dock-bg-bottom))!important;border:1px solid var(--dock-border)!important;color:var(--dock-ink)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 4px 12px rgba(5,12,20,.28)}
+:root .command-rail .rail-button small,:root .command-rail .rail-button>span+small{color:var(--dock-ink)!important;text-shadow:none!important}
+:root .command-rail .rail-button:hover{background:linear-gradient(150deg,#f4ecd6,#cfc9b6)!important;border-color:#d4af37!important;color:var(--dock-ink)!important}
+:root[data-theme="light"] .command-rail .rail-button:hover{background:linear-gradient(150deg,#fffdf6,#f4ead0)!important}
+:root .command-rail .rail-button.active,:root[data-theme="light"] .map-help-cluster .rail-button.active{background:linear-gradient(150deg,var(--dock-active-top),var(--dock-active-bottom))!important;border-color:#b8860b!important;box-shadow:inset 0 -3px 0 #b8860b,0 0 12px rgba(212,175,55,.35)!important;color:var(--dock-ink)!important}
+:root[data-theme="light"] .map-help-cluster .rail-button{background:linear-gradient(150deg,var(--dock-bg-top),var(--dock-bg-bottom))!important;color:var(--dock-ink)!important;border:1px solid var(--dock-border)!important}
+@media (forced-colors:active){:root .command-rail .rail-button{background:ButtonFace!important;color:ButtonText!important;border-color:ButtonText!important}}

@@ -14,7 +14,7 @@ import {INTERNATIONAL_HINTS} from './international/hints';
 import {TacticalHint} from '../hints/TacticalHint';
 import {createPortal} from 'react-dom';
 import {useWindowHintSlot} from '../hints/HintSlot';
-export const INTERNATIONAL_TABS=[{id:'overview',label:'Overview & roster'},{id:'resolutions',label:'Resolutions & voting'},{id:'finance',label:'Financial facilities'},{id:'markets',label:'Commodities & swaps'},{id:'sanctions',label:'Sanctions & enforcement'}] as const;
+export const INTERNATIONAL_TABS=[{id:'overview',label:'Overview & Roster'},{id:'resolutions',label:'Resolutions & Voting'},{id:'finance',label:'Financial Facilities'},{id:'markets',label:'Commodities & Swaps'},{id:'sanctions',label:'Sanctions & Enforcement'}] as const;
 type Tab=typeof INTERNATIONAL_TABS[number]['id'];
 const reviewTitle=(command:OrganizationCommand)=>command.type==='organization/proposeResolution'?'Review proposal':command.type==='organization/castBallot'?'Review ballot':command.type==='organization/repayOrganizationFinancing'?'Review repayment':command.type==='organization/setOilQuotaDeviation'?'Review deviation':command.type==='organization/transferMilitaryHardware'?'Review hardware transfer':'Review cancellation';
 export function InternationalAffairsWorkspace(){

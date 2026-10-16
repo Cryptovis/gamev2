@@ -141,10 +141,10 @@ export const UI_CATALOG: Record<string, string[]> = {
     "НАЗНАЧЕНИЕ РУКОВОДСТВА",
   ],
   "OPENING PROFILE": [
-    "BAŞLANGIÇ PROFİLİ",
-    "PERFIL INICIAL",
+    "Başlangıç Profili",
+    "Perfil Inicial",
     "初始概况",
-    "НАЧАЛЬНЫЙ ПРОФИЛЬ",
+    "Начальный Профиль",
   ],
   "Strongest production:": [
     "En güçlü üretim:",

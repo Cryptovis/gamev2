@@ -34,3 +34,15 @@ The e2e specs that used `data-entry`, `.load-previous`, `.entry-*` and `.wizard-
 ## What could not be run here
 
 The sandbox has no node_modules and the npm registry is blocked, so vitest, `tsc` with the real dependency types, `vite build` and Playwright were not run. Tests were run through a small stand-in for vitest in headless Chromium, bundling the real source with esbuild; the store, IndexedDB, zod-heavy modules and the setup wizard were stubbed for the shell tests. Antigravity's local run is the first real one for these tasks.
+
+## Playtest hotfix 1.5
+
+Ten UI items from the live playtest, applied on top of T18 (`src/ui/styles/hotfix15.css` is loaded last and carries items 5 to 10; items 1 to 4 live in `landing094.css`).
+
+- The landing menu draws the hero button only for Play now. With a save the Continue button lives on the save card alone, and New campaign, Historical scenarios and Commander dossier are action cards. Historical scenarios is still Coming soon: there is no scenario selection screen in the game yet, so the card is focusable but inert until `scenariosEnabled` is set.
+- The wisdom widget has no Pause or Next buttons. Hover and focus still hold the quote. The `Next quote`, `Pause quotes` and `Resume quotes` catalog rows were removed.
+- The wallpaper is `public/assets/command/landing-backdrop.jpg`, a CSS background, so it is not in the JS bundle. Non-emoji landing text was measured at 7:1 or better on Navy; a handful of small Ivory labels over the busiest part of the picture measure 6.5 to 6.9:1 (AA, not AAA). Large text is above 4.5:1 everywhere.
+- Setup step 1 drops the poster BrandMark and the version string. `.wizard-release` is gone, so the two specs that asserted it now assert `wizard-brand`.
+- Organization emblems are filled colour discs with a per-organization palette (`ORGANIZATION_PALETTE`). The palette is fixed in both themes because each emblem carries its own background.
+- Title Case is applied to the five International Affairs tabs and to the section headings. Catalog lookup ignores case, so the existing translations still apply. The `OPENING PROFILE` row was changed to Title Case values; all-caps uses still upper-case it at render time.
+- Not run here: vitest, real `tsc`, `vite build`, Playwright and the determinism replay. No file under `src/engine` or `src/simulation` was touched.

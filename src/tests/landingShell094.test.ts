@@ -104,20 +104,27 @@ describe('LandingShell flow',()=>{
   it('Continue loads the latest save and enters the game',async()=>{
     const loadLatest=vi.fn(async()=>{useGameStore.setState(s=>({playerProfile:{...s.playerProfile,setupComplete:true}}));return true;});
     const onPlaying=await mount(makeDeps({peekSummary:async()=>READY,loadLatest}));
-    await click('landing-hero');
+    await click('save-card-continue');
     expect(loadLatest).toHaveBeenCalledTimes(1);
     expect(lastCall(onPlaying)).toEqual([true]);
   });
+  it('with a save, Continue lives only on the save card and the menu offers New campaign instead',async()=>{
+    await mount(makeDeps({peekSummary:async()=>READY}));
+    expect(byId('landing-hero')).toBeNull();
+    expect(byId('landing-menu')!.getAttribute('data-action')).toBe('continue');
+    expect(host.textContent!.match(/Continue campaign/g)?.length).toBe(1);
+    expect(byId('landing-new-campaign')).not.toBeNull();
+  });
   it('a failed load shows the error with a way back, and the way back works',async()=>{
     await mount(makeDeps({peekSummary:async()=>READY,loadLatest:async()=>false}));
-    await click('landing-hero');
+    await click('save-card-continue');
     expect(host.querySelector('[role="alert"]')).not.toBeNull();
     await click('loading-return');
     expect(byId('landing-root')?.getAttribute('data-screen')).toBe('landing');
   });
   it('a load that throws is treated as a failure, not left spinning',async()=>{
     await mount(makeDeps({peekSummary:async()=>READY,loadLatest:async()=>{throw new Error('boom');}}));
-    await click('landing-hero');
+    await click('save-card-continue');
     expect(host.querySelector('[role="alert"]')).not.toBeNull();
   });
 });
@@ -137,7 +144,7 @@ describe('LandingShell loading screen',()=>{
     const deps=makeDeps({peekSummary:async()=>READY});
     deps.buildPreloadStages=intent=>buildPreloadStages(intent,{...services(async()=>true),inspectState:()=>({ok:false,reason:'corrupt'})});
     await mount(deps);
-    await click('landing-hero');
+    await click('save-card-continue');
     expect(byId('loading-error')).not.toBeNull();
     expect(byId('game-loading')?.textContent).toContain('This save could not be read');
   });
@@ -145,7 +152,7 @@ describe('LandingShell loading screen',()=>{
     let calls=0;
     const deps=makeDeps({peekSummary:async()=>READY,loadLatest:async()=>{calls++;return true;},handoffMs:200});
     await mount(deps);
-    await click('landing-hero');
+    await click('save-card-continue');
     expect(calls).toBe(1);
     await act(async()=>{await new Promise(r=>setTimeout(r,300));});
     expect(calls).toBe(1);

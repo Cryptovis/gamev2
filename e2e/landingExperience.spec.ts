@@ -8,6 +8,7 @@ import {chooseLanguage,continueCampaign,enterAsGuest,landingReady} from './helpe
 // Phase 9.4 landing experience (blueprint section 7.2). Each test starts on a clean browser context.
 
 const hero=(page:Page)=>page.getByTestId('landing-hero');
+const menu=(page:Page)=>page.getByTestId('landing-menu');
 const card=(page:Page)=>page.getByTestId('save-card');
 const quote=(page:Page)=>page.getByTestId('wisdom-widget').first();
 const drawer=(page:Page)=>page.getByTestId('profile-drawer');
@@ -34,10 +35,10 @@ test('2 Play now opens setup at once with no credentials and a guest session in 
 test('3 Continue shows the leader and day, runs the loader and enters the game',async({page})=>{
  const state=campaignFixture('en');state.day=7;state.playerProfile.commanderName='Ada Lovelace';
  await seedSave(page,state);await landingReady(page);
- await expect(hero(page)).toHaveAttribute('data-action','continue');
+ await expect(menu(page)).toHaveAttribute('data-action','continue');await expect(hero(page)).toHaveCount(0);
  await expect(card(page)).toHaveAttribute('data-state','ready');
  await expect(card(page)).toContainText('Ada Lovelace');await expect(card(page)).toContainText('Day 7');
- await hero(page).click();
+ await page.getByTestId('save-card-continue').click();
  await expect(page.getByTestId('landing-root')).toHaveCount(0,{timeout:15_000});
  await expect(page.locator('.brand-line')).toBeVisible();
 });
@@ -114,38 +115,27 @@ test('7 the theme toggle switches between the Navy and Ivory backgrounds',async(
  await expect.poll(async()=>(await colors()).actual).toBe(tokens[first]);
 });
 
-test('8 the wisdom widget changes on Next, rotates on a timer and holds while paused or hovered',async({page})=>{
+test('8 the wisdom widget has no controls, rotates on a timer and holds while hovered',async({page})=>{
  await page.clock.install();
  await page.goto('/');await landingReady(page);
+ await expect(page.getByTestId('wisdom-next')).toHaveCount(0);await expect(page.getByTestId('wisdom-pause')).toHaveCount(0);
+ await expect(quote(page).locator('button')).toHaveCount(0);
  const id=()=>quote(page).getAttribute('data-quote-id');
  await page.mouse.move(2,2);
- const first=await id();expect(first).toBeTruthy();
- await page.getByTestId('wisdom-next').click();
- await expect.poll(id).not.toBe(first);
- // Next leaves focus inside the widget, which holds rotation; move focus and the pointer away to let the timer run.
- await page.getByTestId('landing-root').click({position:{x:4,y:400}});await page.mouse.move(2,2);
  await expect(quote(page)).toHaveAttribute('data-paused','false');
- const second=await id();
+ const first=await id();expect(first).toBeTruthy();
  await page.clock.runFor(18_500);
- await expect.poll(id).not.toBe(second);
- // Manual pause: time passes, the quote stays.
- await page.getByTestId('wisdom-pause').click();
- await expect(quote(page)).toHaveAttribute('data-paused','true');
- const third=await id();
- await page.clock.runFor(40_000);
- expect(await id()).toBe(third);
- await page.getByTestId('wisdom-pause').click();
- // Hover holds it as well.
- await page.getByTestId('landing-root').click({position:{x:4,y:400}});
+ await expect.poll(id).not.toBe(first);
+ // Hover holds it.
+ const second=await id();
  await quote(page).hover();
  await expect(quote(page)).toHaveAttribute('data-paused','true');
- const fourth=await id();
  await page.clock.runFor(40_000);
- expect(await id()).toBe(fourth);
+ expect(await id()).toBe(second);
  await page.mouse.move(2,2);
  await expect(quote(page)).toHaveAttribute('data-paused','false');
  await page.clock.runFor(18_500);
- await expect.poll(id).not.toBe(fourth);
+ await expect.poll(id).not.toBe(second);
 });
 
 test('9 the release notes open on the current version and close with Escape',async({page})=>{
@@ -159,12 +149,12 @@ test('9 the release notes open on the current version and close with Escape',asy
 });
 
 test('10 reduced motion keeps the quotes rotating with nothing animating',async({page})=>{
- await page.emulateMedia({reducedMotion:'reduce'});
+ await page.emulateMedia({reducedMotion:'reduce'});await page.clock.install();
  await page.goto('/');await landingReady(page);await page.waitForTimeout(300);
  const running=()=>page.evaluate(()=>document.querySelector('.landing094')!.getAnimations({subtree:true}).filter(a=>a.playState==='running').length);
  expect(await running()).toBe(0);
  const first=await quote(page).getAttribute('data-quote-id');
- await page.getByTestId('wisdom-next').click();
+ await page.mouse.move(2,2);await page.clock.runFor(18_500);
  await expect.poll(()=>quote(page).getAttribute('data-quote-id')).not.toBe(first);
  expect(await running()).toBe(0);
 });
@@ -173,7 +163,7 @@ test('11 the layout is one column on a tablet and the drawer fills a phone',asyn
  await page.setViewportSize({width:820,height:1180});await page.goto('/');await landingReady(page);
  const columns=await page.locator('.l94-stage').evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length);
  expect(columns).toBe(1);
- const heroBox=(await hero(page).boundingBox())!,cardBox=(await card(page).boundingBox())!;
+ const heroBox=(await menu(page).boundingBox())!,cardBox=(await card(page).boundingBox())!;
  expect(cardBox.y).toBeGreaterThanOrEqual(heroBox.y+heroBox.height);
  await page.setViewportSize({width:390,height:844});
  await page.getByTestId('dock-dossier-chip').click();
@@ -190,13 +180,13 @@ test('12 leaving a campaign from the game returns to the landing screen with Con
  await page.locator('.campaign-option-actions button').last().click();
  await page.getByRole('button',{name:'START NEW CAMPAIGN',exact:true}).click();
  await landingReady(page);
- await expect(hero(page)).toHaveAttribute('data-action','continue');
+ await expect(menu(page)).toHaveAttribute('data-action','continue');
  await expect(card(page)).toContainText('Grace Hopper');await expect(card(page)).toContainText('Day 10');
  await continueCampaign(page);
  await expect(page.locator('.brand-line')).toBeVisible();
 });
 
-test('13 the setup wizard shows the compact quote and its Next control works',async({page})=>{
+test('13 the setup wizard shows the compact quote',async({page})=>{
  await page.goto('/');await enterAsGuest(page);
  const widget=page.getByTestId('wisdom-widget');
  await expect(widget).toBeVisible();await expect(widget).toHaveAttribute('data-variant','compact');

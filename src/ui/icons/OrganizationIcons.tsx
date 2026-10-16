@@ -6,7 +6,6 @@ import type {OrganizationId} from '../../domain/organizations';
  * game, not copies of any registered logo, so they carry no trademark or copyright claims. All strokes use
  * currentColor so the emblem stays crisp in both themes.
  */
-const ring=<circle cx="18" cy="18" r="16" fill="none" stroke="currentColor" strokeWidth="1.6"/>;
 const dots=(n:number,r:number,size:number)=>Array.from({length:n},(_,i)=>{const a=i/n*Math.PI*2-Math.PI/2;return <circle key={i} cx={18+Math.cos(a)*r} cy={18+Math.sin(a)*r} r={size} fill="currentColor"/>;});
 const GLYPHS:Record<OrganizationId,ReactNode>={
  un:<><circle cx="18" cy="16" r="8" fill="none" stroke="currentColor" strokeWidth="1.5"/><path d="M10 16h16M18 8v16M13 10.5c3 3 7 3 10 0M13 21.5c3-3 7-3 10 0" fill="none" stroke="currentColor" strokeWidth="1.2"/><path d="M7 25c4 5 18 5 22 0" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></>,
@@ -24,6 +23,27 @@ const GLYPHS:Record<OrganizationId,ReactNode>={
  oic:<><path d="M23 7a11 11 0 1 0 0 22 9 9 0 1 1 0-22z" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"/><path d="M26 14l1.1 2.4 2.6.3-1.9 1.8.5 2.6-2.3-1.3-2.3 1.3.5-2.6-1.9-1.8 2.6-.3z" fill="currentColor"/></>,
  bricsPlus:<><path d="M8 28V20M14 28V15M20 28V11M26 28V7" stroke="currentColor" strokeWidth="3.6" strokeLinecap="round"/><circle cx="18" cy="18" r="16" fill="none" stroke="none"/></>,
 };
+/**
+ * Identity colours per organization: disc fill, glyph and rim. They are fixed in both themes because the emblem is a
+ * self-contained badge with its own background, so it keeps its contrast on Navy and on Ivory.
+ */
+export const ORGANIZATION_PALETTE:Record<OrganizationId,{disc:string;glyph:string;rim:string}>={
+ nato:{disc:'#0b2a5e',glyph:'#e8c766',rim:'#e8c766'},
+ csto:{disc:'#8c1230',glyph:'#f0cf72',rim:'#f0cf72'},
+ sco:{disc:'#0b6b4c',glyph:'#f0cf72',rim:'#f0cf72'},
+ un:{disc:'#1f8fc4',glyph:'#ffffff',rim:'#ffffff'},
+ imf:{disc:'#1f46b4',glyph:'#f0cf72',rim:'#f0cf72'},
+ worldBank:{disc:'#14305c',glyph:'#dcc16a',rim:'#dcc16a'},
+ opecPlus:{disc:'#d9a91e',glyph:'#0d0d0d',rim:'#0d0d0d'},
+ g20:{disc:'#dfe3e8',glyph:'#7d5c06',rim:'#b8921f'},
+ wto:{disc:'#0d7c80',glyph:'#ffffff',rim:'#bff0ee'},
+ eu:{disc:'#173f9c',glyph:'#ffd84a',rim:'#ffd84a'},
+ wef:{disc:'#3a2e86',glyph:'#ffffff',rim:'#c7c0f5'},
+ asean:{disc:'#1b4fb8',glyph:'#ffd84a',rim:'#d6283c'},
+ oic:{disc:'#0f6a3a',glyph:'#ffffff',rim:'#bfe8cf'},
+ bricsPlus:{disc:'#a14a12',glyph:'#fff3d6',rim:'#f0b45a'},
+};
 export function OrganizationEmblem({id,size=36}:{id:OrganizationId;size?:number}){
- return <svg className="org-emblem" width={size} height={size} viewBox="0 0 36 36" role="img" aria-hidden="true" focusable="false" data-emblem={id}>{id==='eu'?null:ring}{GLYPHS[id]}</svg>;
+ const c=ORGANIZATION_PALETTE[id];
+ return <svg className="org-emblem" width={size} height={size} viewBox="0 0 36 36" role="img" aria-hidden="true" focusable="false" data-emblem={id} data-colored="true" style={{color:c.glyph}}><circle cx="18" cy="18" r="17" fill={c.disc} stroke={c.rim} strokeWidth="1.4"/><g transform="translate(18 18) scale(.74) translate(-18 -18)">{GLYPHS[id]}</g></svg>;
 }

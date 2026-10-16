@@ -56,6 +56,6 @@ describe('landing094.css responsive and accessibility rules',()=>{
   for(const query of ['(max-width:1023px)','(max-width:719px)','(max-width:479px)','(prefers-reduced-motion:reduce)','(forced-colors:active)'])expect(landing.includes(query),query).toBe(true);
  });
  it('keeps controls at least 44px tall',()=>{
-  for(const selector of ['.l94-dock-btn{','.l94-cta{','.lw-btn{','.l94-link{'])expect(landing.slice(landing.indexOf(selector)).split('}')[0],selector).toMatch(/min-height:(44|56)px/);
+  for(const selector of ['.l94-dock-btn{','.l94-cta{','.l94-action-card{'])expect(landing.slice(landing.indexOf(selector)).split('}')[0],selector).toMatch(/min-height:(44|56|120)px/);
  });
 });

@@ -10,7 +10,7 @@ export function ProposalComposer({state,draft,setDraft,onReview}:{state:GameStat
  const organization=state.world.organizations.byId[draft.organizationId],command=organizationProposalCommand(state,draft);
  const gate=command.type==='organization/proposeResolution'&&command.payload.kind==='finance'?financeGateView(state,draft.organizationId,command.payload):null;
  const selectCountry=(label:string,key:'targetId'|'partnerId')=><Field label={label}><select aria-label={translateLive(label)} value={draft[key]} onChange={e=>set(key,e.target.value)}>{countries.map(c=><option key={c.id} value={c.id}><LocaleText value={c.name}/></option>)}</select></Field>;
- return <section className="ia-card ia-composer" aria-label={translateLive('Create resolution')}><h3><LocaleText value="Create resolution"/></h3>
+ return <section className="ia-card ia-composer" aria-label={translateLive('Create resolution')}><h3><LocaleText value="Create Resolution"/></h3>
   <div className="ia-form-grid">
    <Field label="Organization"><select aria-label={translateLive('Organization')} value={draft.organizationId} onChange={e=>{const id=e.target.value as OrganizationId;setDraft({...draft,organizationId:id,kind:proposalKinds(id)[0],bodyId:'plenary',fiscalAdjustmentB:0});}}>{ORGANIZATION_IDS.map(id=><option key={id} value={id}><LocaleText value={ORGANIZATION_LABELS[id]}/></option>)}</select></Field>
    <Field label="Proposal type"><select aria-label={translateLive('Proposal type')} value={draft.kind} onChange={e=>set('kind',e.target.value as OrganizationProposalDraft['kind'])}>{proposalKinds(draft.organizationId).map(kind=><option key={kind} value={kind}><LocaleText value={PAYLOAD_LABELS[kind]}/></option>)}</select></Field>
