@@ -6,9 +6,9 @@ const LANGUAGES=['tr','es','zh','ru'] as const;
 const keysOf=(hint:(typeof ALL_HINTS)[number])=>[hint.titleKey,hint.bodyKey,...(hint.extraKeys??[]),...(hint.learnMoreKey?[hint.learnMoreKey]:[])];
 
 describe('hint registry',()=>{
-  it('lists the five hub hints and the ten migrated window hints',()=>{
+  it('lists the five hub hints and the eleven migrated window hints',()=>{
     expect(ALL_HINTS.map(h=>h.id).sort()).toEqual([
-      'desk.proposals','diplomacy.rules','intl.finance','intl.markets','intl.overview','intl.resolutions','intl.sanctions',
+      'credit.rules','desk.proposals','diplomacy.rules','intl.finance','intl.markets','intl.overview','intl.resolutions','intl.sanctions',
       'production.doctrine','rankings.diplomacy','rankings.financial','rankings.military','resources.shortage','supply.investment','war.taskGroups','war.tactical',
     ].sort());
   });
