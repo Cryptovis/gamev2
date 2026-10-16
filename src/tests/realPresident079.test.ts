@@ -358,7 +358,7 @@ describe("retained diplomatic correspondence", () => {
     );
     const done = processLetters({ ...n, day: 4, simulationSeed: 1 });
     expect(living(done).letters[0].status).toBe("accepted");
-    expect(done.countries.TUR.economy.treasury).toBe(before - 3);
+    expect(done.countries.TUR.economy.treasury).toBeCloseTo(before - AGREEMENT_BASE_COST.embassy);
     expect(embassyFor(done, "TUR", "BRA")).not.toBeNull();
     expect(processLetters(done).countries.TUR.economy.treasury).toBe(
       done.countries.TUR.economy.treasury,
