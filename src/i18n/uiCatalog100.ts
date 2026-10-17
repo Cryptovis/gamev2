@@ -1,5 +1,11 @@
 /** Grand launch International Affairs copy: tr, es, zh, ru; English keys remain canonical. */
 export const UI_CATALOG_100:Record<string,[string,string,string,string]>={
+  "Information is not available": [
+    "Bilgi mevcut değil",
+    "Información no disponible",
+    "信息不可用",
+    "Информация недоступна"
+  ],
   "Overview & roster": [
     "Genel bakış ve üyeler",
     "Resumen y miembros",

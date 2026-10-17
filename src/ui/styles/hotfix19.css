@@ -64,7 +64,6 @@
 :root :is(
   .target-hub,
   .command-window,
-  .executive-workspace,
   .floating-command-window,
   .player-options-modal,
   .review-dialog,
@@ -259,11 +258,14 @@
   }
 }
 
+/* Topbar HUD layer priority: ensure commander avatar and top controls are never occluded by rails on short viewports */
+:root .topbar {
+  z-index: calc(var(--layer-hud, 100) + 15) !important;
+}
+
 /* Modal top stability: anchor to top so windows/tabs do not jump when content height changes */
 :root :is(
-  .executive-backdrop,
   .command-window-backdrop,
-  .player-options-backdrop,
   .target-hub-backdrop
 ) {
   display: grid !important;
@@ -276,9 +278,7 @@
 
 @media (max-width: 760px) {
   :root :is(
-    .executive-backdrop,
     .command-window-backdrop,
-    .player-options-backdrop,
     .target-hub-backdrop
   ) {
     padding-top: 64px !important;
@@ -294,7 +294,6 @@
 
 /* Ensure hidden modal backdrops never display or leak through */
 :root :is(
-  .executive-backdrop,
   .command-window-backdrop,
   .player-options-backdrop,
   .target-hub-backdrop
@@ -583,5 +582,231 @@
   pointer-events: none !important;
 }
 
+/* Country Panel Close Button Alignment Fix (ss5) */
+:root .command-panel > .national-panel-heading > [data-guide="close-workspace"] {
+  position: absolute !important;
+  top: 0 !important;
+  right: 0 !important;
+}
 
+/* Diplomatic Hub locked cards & stats contrast (ss2) */
+:root:not([data-theme="light"]) .hub-card.status-locked {
+  background: rgba(18, 30, 44, 0.88) !important;
+  border-color: rgba(142, 178, 204, 0.22) !important;
+  color: #dce7ee !important;
+}
+:root:not([data-theme="light"]) .hub-card.status-locked .hub-card-copy strong {
+  color: #f0f6fa !important;
+}
+:root:not([data-theme="light"]) .hub-card.status-locked .hub-card-copy p {
+  color: #9cb3c5 !important;
+}
+:root:not([data-theme="light"]) .hub-card.status-locked .hub-card-lock {
+  background: rgba(28, 44, 62, 0.95) !important;
+  color: #e5b95a !important;
+  border: 1px solid rgba(229, 185, 90, 0.4) !important;
+}
+:root:not([data-theme="light"]) .target-hub-stats > div {
+  background: rgba(15, 26, 38, 0.85) !important;
+  border-color: rgba(142, 178, 204, 0.28) !important;
+  padding: 11px 14px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
+}
+:root:not([data-theme="light"]) .target-hub-stats dt {
+  color: #8da6ba !important;
+  font-size: 10px !important;
+  letter-spacing: 0.12em !important;
+  font-weight: 700 !important;
+}
+:root:not([data-theme="light"]) .target-hub-stats dd {
+  color: #f1f7fc !important;
+  font-size: 19px !important;
+  font-family: Inter, system-ui, sans-serif !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.01em !important;
+}
+:root:not([data-theme="light"]) .target-hub-stats dd small {
+  color: #a4bece !important;
+  font-weight: 500 !important;
+}
 
+/* Compact and High-Contrast Advisor Modal (ss1) */
+:root .advisor-modal {
+  width: min(580px, 94vw) !important;
+  background: linear-gradient(180deg, #102436, #071520) !important;
+  border: 1px solid rgba(135, 185, 220, 0.45) !important;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.75) !important;
+}
+:root .advisor-supplier span {
+  background: rgba(14, 28, 42, 0.9) !important;
+  border: 1px solid rgba(135, 185, 220, 0.25) !important;
+}
+:root .advisor-supplier strong {
+  color: #f2f7fb !important;
+  font-size: 15px !important;
+}
+:root .contract-years button {
+  background: rgba(14, 28, 42, 0.85) !important;
+  border: 1.5px solid rgba(135, 185, 220, 0.25) !important;
+}
+:root .contract-years button:hover {
+  border-color: #ffd16d !important;
+  background: rgba(26, 48, 68, 0.95) !important;
+}
+:root .contract-years strong {
+  color: #ffd16d !important;
+  font-size: 24px !important;
+}
+:root .contract-years span {
+  color: #f0f6fa !important;
+  font-weight: 700 !important;
+}
+:root .advisor-bottom-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin-top: 16px !important;
+  gap: 12px !important;
+}
+:root .advisor-footer-note {
+  display: flex !important;
+  justify-content: flex-end !important;
+  margin-top: 10px !important;
+}
+:root .advisor-dismiss,
+:root .advisor-dismiss-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  background: rgba(22, 38, 54, 0.9) !important;
+  border: 1px solid rgba(135, 185, 220, 0.35) !important;
+  color: #d0e2ee !important;
+  border-radius: 9px !important;
+  padding: 9px 16px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  width: auto !important;
+  margin: 0 !important;
+}
+:root .advisor-dismiss:hover,
+:root .advisor-dismiss-btn:hover {
+  background: rgba(35, 58, 80, 0.95) !important;
+  border-color: #87b9dc !important;
+  color: #ffffff !important;
+}
+:root .warning-preference {
+  background: transparent !important;
+  border: none !important;
+  color: #e5b95a !important;
+  font-size: 11.5px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  text-decoration: underline !important;
+  text-underline-offset: 3px !important;
+  opacity: 0.88 !important;
+  padding: 6px 4px !important;
+}
+:root .warning-preference:hover {
+  opacity: 1 !important;
+  color: #ffd16d !important;
+}
+
+/* Resources Rail Button Font Size (ss4) */
+:root .rail-button[data-guide="supply"] small {
+  font-size: 8.5px !important;
+  letter-spacing: -0.02em !important;
+  white-space: nowrap !important;
+}
+
+/* Hide Studio Footer during gameplay (ss4) */
+:root .studio-footer {
+  display: none !important;
+}
+
+/* Transparent Brand Logo Watermark (ss4) */
+:root .brand-watermark {
+  position: fixed !important;
+  bottom: 12px !important;
+  left: 16px !important;
+  pointer-events: none !important;
+  z-index: 10 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+}
+:root .brand-watermark-logo {
+  width: 105px !important;
+  height: auto !important;
+  opacity: 0.38 !important;
+  display: block !important;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.5)) !important;
+}
+:root[data-theme="light"] .brand-watermark-logo {
+  opacity: 0.3 !important;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.15)) !important;
+}
+
+/* Floating command windows header hidden styling (ss4) */
+:root .floating-command-window:has(> .floating-command-header.header-hidden) {
+  padding-top: 0 !important;
+}
+:root .floating-command-header.header-hidden {
+  height: 0 !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  background: transparent !important;
+}
+:root .floating-command-window:has(> .floating-command-header.header-hidden) > .floating-command-body {
+  border-top-left-radius: inherit !important;
+  border-top-right-radius: inherit !important;
+}
+
+:root .executive-header.header-hidden {
+  background: transparent !important;
+  border-bottom: none !important;
+  min-height: 0 !important;
+  padding: 8px 14px 0 !important;
+}
+
+:root .executive-header [data-guide="close-workspace"] {
+  position: absolute !important;
+  top: 8px !important;
+  right: 8px !important;
+}
+:root .executive-header .tactical-hint-beacon {
+  position: absolute !important;
+  top: 8px !important;
+  right: 48px !important;
+}
+
+:root .command-window-header > [data-guide="close-workspace"] {
+  position: absolute !important;
+  top: 8px !important;
+  right: 8px !important;
+}
+:root .command-window-header .tactical-hint-beacon {
+  position: absolute !important;
+  top: 8px !important;
+  right: 48px !important;
+}
+:root .topbar .command-overview-island .governance-metrics {
+  gap: 4px !important;
+}
+:root .topbar .command-overview-island .governance-metrics .top-metric {
+  padding: 3px 6px !important;
+}
+
+:root :is(.command-window, .national-supply-window, #country-section-window, .executive-workspace) :is(.command-window-header, .executive-header) > [data-guide="close-workspace"],
+:root :is(.command-window, .national-supply-window, #country-section-window, .executive-workspace) :is(.command-window-header, .executive-header) [data-guide="close-workspace"] {
+  position: absolute !important;
+  top: 0 !important;
+  right: 0 !important;
+}
+
+:root :is(.command-window, .national-supply-window, #country-section-window, .executive-workspace) :is(.command-window-header, .executive-header) .tactical-hint-beacon {
+  position: absolute !important;
+  top: 0 !important;
+  right: 40px !important;
+}

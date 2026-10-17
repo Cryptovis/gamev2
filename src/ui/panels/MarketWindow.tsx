@@ -29,7 +29,7 @@ export function MarketWindow() {
  const content=useRef<HTMLDivElement>(null);
  useEffect(()=>{content.current?.scrollTo({top:0,left:0});},[selected]);
  const select=(id:string)=>{setSection(id);s.openTool(id==='exchange'?'exchange':id==='credit'?'credit':'market');};
- return <DraggableWindow expanded id="market-window" kicker="GLOBAL ECONOMY" title={translateLive('Global Commodity & Industrial Market')} initialX={96} initialY={110} width={1120} onClose={s.closeWorkspace}>
+ return <DraggableWindow expanded hideHeader id="market-window" kicker="GLOBAL ECONOMY" title={translateLive('Global Commodity & Industrial Market')} initialX={96} initialY={110} width={1120} onClose={s.closeWorkspace}>
   <SectionMenu items={items} selected={selected} onSelect={select} contentId="market-section-content"/>
   <div ref={content} id="market-section-content" className="market-section-content" data-section={selected} role="region" aria-label={translateLive(items.find(i=>i.id===selected)!.label)}>
    {selected==='open'&&<OpenExchange/>}

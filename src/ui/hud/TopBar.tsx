@@ -62,7 +62,7 @@ export function TopBar(){
 
  const flows=simulateResources(player,1,undefined,perks.consumer).net,deltas=liveDeltas({dailyBalance:strategicDailyBalance,net:flows}),byId=Object.fromEntries(deltas.map(d=>[d.id,d])) as Record<LiveDelta['id'],LiveDelta>;
 
- return <><div className="brand-watermark" translate="no">{BRAND_NAME}</div><header className="topbar">
+ return <><div className="brand-watermark" translate="no"><img src="/assets/command/brand-logo.png" alt="Rule of Nations" className="brand-watermark-logo" /></div><header className="topbar">
   <div className="command-overview-island"><LeaderCapsule>
    <button className="leader-avatar-button" data-mood={mood} onClick={()=>{useGameStore.getState().openTool(null,false);setOptionsOpen(true)}} title={translateLive("Open commander options")}><AvatarPortrait id={profile.avatarId} size={52}/><span><LocaleText value={"⋯"}/></span>{mood!=='calm'&&<b className="mood-note"><LocaleText value={mood==='alarm'?'Crisis alert':'Prosperity'}/></b>}</button>
    <div className="brand-block"><div className="brand-line"><strong title={profile.commanderName} data-testid="commander-name"><LocaleText value={capCommanderName(profile.commanderName)}/></strong></div></div>

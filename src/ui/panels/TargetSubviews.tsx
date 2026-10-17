@@ -9,13 +9,13 @@ import {FORCE_KEYS,type ForceKey} from '../../engine/systems/operationalVisibili
 import type {CountryState} from '../../domain/game';
 import type {DossierView,WarPlanningView} from './targetBriefing';
 import {estimateText} from './estimateText';
-const OUTLOOK_LABEL={favourable:'Favourable odds',balanced:'Balanced odds',unfavourable:'Unfavourable odds',unknown:'Unknown'} as const;
+const OUTLOOK_LABEL={favourable:'Favourable odds',balanced:'Balanced odds',unfavourable:'Unfavourable odds',unknown:'Information is not available'} as const;
 const AIR_LABEL={superiority:'Air superiority',contested:'Air contested',inferiority:'Air inferiority',unknown:'Unknown'} as const;
 const FORCE_LABEL:Record<ForceKey,string>={personnel:'Personnel',tanks:'Tanks',artillery:'Artillery',fighters:'Fighters',bombers:'Bombers',warships:'Warships'};
 type PublicCountry=Pick<CountryState,'id'|'name'|'iso2'>;
 
 export function WarPlanningBrief({view,country,player,avatarId,day,language,onDeclare,onOpenWar,onFuelHelp}:{view:WarPlanningView;country:PublicCountry;player:PublicCountry;avatarId:string;day:number;language:string;onDeclare:()=>void;onOpenWar:()=>void;onFuelHelp:()=>void}){
- const ratioLabel=view.outlook==='unknown'?'Unknown':view.outlook==='favourable'?'At least 1.25×':view.outlook==='balanced'?'0.8–1.25×':'Below 0.8×';
+ const ratioLabel=view.outlook==='unknown'?'Information is not available':view.outlook==='favourable'?'At least 1.25×':view.outlook==='balanced'?'0.8–1.25×':'Below 0.8×';
  const wing=(own:boolean)=><section className={`force-wing ${own?'own-wing':'opposing-wing'}`} aria-label={formatText(language,own?'Own forces':'Opposing forces',[])}>
   <header><span className="force-flag" aria-hidden="true">{flagEmoji((own?player:country).iso2)}</span><div className="force-portrait">{own?<AvatarPortrait id={avatarId} size={72}/>:<CommandArt kind="military" size={72}/>}</div>
    <small><LocaleText value={own?'Own forces':'Opposing forces'}/></small><h3><LocaleText value={(own?player:country).name}/></h3><p><LocaleText value={own?'National inventory':'Estimated inventory'}/></p>

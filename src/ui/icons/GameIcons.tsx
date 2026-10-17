@@ -53,9 +53,7 @@ export function ReligionGlyph({ religion, size = 18 }: { religion: ReligionType;
 export function FuelIcon({size=18}:IconProps) {return <AssetThumbnail asset="fuel" size={size>=18?Math.max(size,32):size}/>;}
 export function SteelIcon({size=18}:IconProps) {return <AssetThumbnail asset="steel" size={size>=18?Math.max(size,32):size}/>;}
 export function PowerIcon({size=18}:IconProps) {return <AssetThumbnail asset="electricity" size={size>=18?Math.max(size,32):size}/>;}
-export function ResearchIcon(props: IconProps) {
-  return <Svg {...props}><circle cx="10" cy="10" r="5" stroke="currentColor" strokeWidth="1.6"/><path d="m14 14 5 5M8 10h4M10 8v4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></Svg>;
-}
+export function ResearchIcon({size=18}:IconProps) {return <AssetThumbnail asset="electronics" size={size>=18?Math.max(size,32):size}/>;}
 export function CabinetIcon(props: IconProps) {
   return <Svg {...props}><path d="M4 20h16M6 17V9h12v8M8 9V6h8v3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/><path d="M9 12h2v3H9zM13 12h2v3h-2z" stroke="currentColor" strokeWidth="1.4"/></Svg>;
 }

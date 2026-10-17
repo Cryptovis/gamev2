@@ -17,23 +17,15 @@ export function ExecutiveWorkspaceShell({id,title,kicker='EXECUTIVE OFFICE',tabs
  useScrollMemory(ref,visible);
  const node=<div className="executive-backdrop" hidden={!visible} onMouseDown={event=>{if(ownsWindowDismissal(ref.current)){event.preventDefault();onClose();}}}>
   <section id={id} ref={ref} tabIndex={-1} role="dialog" aria-modal="true" aria-label={translateLive(title??'')} className="executive-workspace" onMouseDown={e=>e.stopPropagation()}>
-   {!hideHeader && (
-    <header className="floating-command-header executive-header" onMouseDown={e=>e.stopPropagation()}>
-     <span><small><LocaleText value={kicker}/></small><strong><LocaleText value={title??''}/></strong></span>
-     <div className="header-actions">
-      <span className="window-hint-slot" ref={setHintSlot}/>
-      {hint&&<TacticalHint spec={hint}/>}
-      <button data-guide="close-workspace" onClick={onClose} aria-label={translateLive('Close command window')}><LocaleText value="×"/></button>
-     </div>
-    </header>
-   )}
-   {hideHeader && (
-    <>
+   <header className={`floating-command-header executive-header${hideHeader?' header-hidden':''}`} onMouseDown={e=>e.stopPropagation()}>
+    {!hideHeader&&<span><small><LocaleText value={kicker}/></small><strong><LocaleText value={title??''}/></strong></span>}
+    {hideHeader&&<span/>}
+    <div className="header-actions">
      <span className="window-hint-slot" ref={setHintSlot}/>
      {hint&&<TacticalHint spec={hint}/>}
      <button data-guide="close-workspace" onClick={onClose} aria-label={translateLive('Close command window')}><LocaleText value="×"/></button>
-    </>
-   )}
+    </div>
+   </header>
    {tabs&&<div className="executive-tabs" onKeyDown={event=>{
     if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;
     const tabs=[...event.currentTarget.querySelectorAll<HTMLButtonElement>('[role="tab"]:not(:disabled)')],index=tabs.indexOf(document.activeElement as HTMLButtonElement);

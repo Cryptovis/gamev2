@@ -17,7 +17,7 @@ export function ResourceCommandWindow({onClose,resource:initialResource}:{onClos
  const state=useWorldView();
  const [selectedResource,setSelectedResource]=useState<TradeResource|null>(initialResource??null);
  const player=state.countries[state.playerCountryId],grid=energyFor(state,player.id);
- return <DraggableWindow expanded id="resource-command-window" kicker="NATIONAL ECONOMY" title={translateLive("Strategic Resources")} initialX={92} initialY={150} width={1100} onClose={onClose} hint={RESOURCES_SHORTAGE_HINT}>
+ return <DraggableWindow expanded hideHeader id="resource-command-window" kicker="NATIONAL ECONOMY" title={translateLive("Strategic Resources")} initialX={92} initialY={150} width={1100} onClose={onClose} hint={RESOURCES_SHORTAGE_HINT}>
   <div className="resource-command-summary">
    <span><FuelIcon size={32}/><i><small><LocaleText value={"FUEL"}/></small><strong><LocaleText value={player.processedResources.fuel.toFixed(1)}/></strong></i></span>
    <span><SteelIcon size={32}/><i><small><LocaleText value={"STEEL"}/></small><strong><LocaleText value={player.processedResources.steel.toFixed(1)}/></strong></i></span>
