@@ -53,19 +53,18 @@
 :root .ia-hardware-card .ia-section-context{margin:0;padding:10px 12px;border-left:3px solid var(--h18-cred-line);border-radius:0 8px 8px 0;background:var(--h18-cred-bg);color:var(--ink);font:400 13px/1.5 system-ui,sans-serif}
 @media (forced-colors:active){:root .ia-organization-grid .ia-badge{border:1px solid ButtonText;background:Canvas;color:CanvasText}}
 
-/* Sovereign Emblem Rail Buttons with Dynamic Text Overlay */
+/* Modern 3D HUD Rail Buttons (Option A: Sleek Glassmorphic Squircle) */
 :root .command-rail .rail-button,
-:root[data-theme="light"] .command-rail .rail-button,
 :root[data-theme="dark"] .command-rail .rail-button,
 :root .map-help-cluster .rail-button,
-:root[data-theme="light"] .map-help-cluster .rail-button,
 :root[data-theme="dark"] .map-help-cluster .rail-button {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  padding: 3px 0 !important;
-  width: 78px !important;
-  min-width: 78px !important;
+  background: linear-gradient(165deg, rgba(20, 36, 62, 0.88) 0%, rgba(10, 19, 34, 0.96) 100%) !important;
+  border: 1px solid rgba(130, 185, 240, 0.22) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+  padding: 5px 2px !important;
+  width: 72px !important;
+  min-width: 72px !important;
   min-height: 74px !important;
   height: auto !important;
   display: flex !important;
@@ -75,7 +74,16 @@
   gap: 2px !important;
   position: relative !important;
   cursor: pointer !important;
-  transition: transform 0.16s ease, filter 0.16s ease !important;
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease !important;
+  backdrop-filter: blur(10px) !important;
+}
+:root[data-theme="light"] .command-rail .rail-button,
+:root[data-theme="light"] .map-help-cluster .rail-button {
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.95) 0%, rgba(240, 245, 252, 0.95) 100%) !important;
+  border: 1px solid rgba(160, 180, 205, 0.45) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 16px rgba(15, 30, 55, 0.1), inset 0 1px 0 rgba(255, 255, 255, 1) !important;
+  backdrop-filter: blur(10px) !important;
 }
 :root .command-rail .rail-button::before,
 :root .command-rail .rail-button::after,
@@ -86,25 +94,36 @@
 }
 :root .command-rail .rail-button:hover,
 :root .map-help-cluster .rail-button:hover {
-  transform: translateY(-2px) scale(1.05) !important;
-  filter: drop-shadow(0 6px 14px rgba(212, 175, 55, 0.45)) !important;
+  transform: translateY(-2px) !important;
+  border-color: #38bdf8 !important;
+  box-shadow: 0 6px 20px rgba(56, 189, 248, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+}
+:root[data-theme="light"] .command-rail .rail-button:hover,
+:root[data-theme="light"] .map-help-cluster .rail-button:hover {
+  transform: translateY(-2px) !important;
+  border-color: #0284c7 !important;
+  box-shadow: 0 6px 18px rgba(2, 132, 199, 0.25), inset 0 1px 0 rgba(255, 255, 255, 1) !important;
 }
 :root .command-rail .rail-button.active,
-:root[data-theme="light"] .command-rail .rail-button.active,
 :root[data-theme="dark"] .command-rail .rail-button.active,
 :root .map-help-cluster .rail-button.active,
-:root[data-theme="light"] .map-help-cluster .rail-button.active,
 :root[data-theme="dark"] .map-help-cluster .rail-button.active {
-  transform: scale(1.06) !important;
-  filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.7)) brightness(1.08) !important;
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
+  transform: scale(1.02) !important;
+  border-color: #38bdf8 !important;
+  background: linear-gradient(165deg, rgba(30, 54, 90, 0.96) 0%, rgba(14, 28, 50, 0.98) 100%) !important;
+  box-shadow: 0 0 20px rgba(56, 189, 248, 0.45), inset 0 0 12px rgba(56, 189, 248, 0.25) !important;
+}
+:root[data-theme="light"] .command-rail .rail-button.active,
+:root[data-theme="light"] .map-help-cluster .rail-button.active {
+  transform: scale(1.02) !important;
+  border-color: #0284c7 !important;
+  background: linear-gradient(165deg, rgba(235, 245, 255, 0.98) 0%, rgba(215, 235, 252, 0.98) 100%) !important;
+  box-shadow: 0 0 16px rgba(2, 132, 199, 0.3), inset 0 0 8px rgba(2, 132, 199, 0.15) !important;
 }
 :root .command-rail .rail-button .rail-emblem-wrap {
   position: relative !important;
-  width: 54px !important;
-  height: 54px !important;
+  width: 44px !important;
+  height: 44px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -114,7 +133,7 @@
   height: 100% !important;
   object-fit: contain !important;
   display: block !important;
-  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.45)) !important;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.5)) !important;
 }
 :root .command-rail .rail-button .rail-emblem-text {
   position: static !important;
@@ -122,28 +141,41 @@
   width: 100% !important;
   text-align: center !important;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
-  font-size: 10px !important;
+  font-size: 9.5px !important;
   font-weight: 700 !important;
-  letter-spacing: 0.04em !important;
+  letter-spacing: 0.02em !important;
   text-transform: uppercase !important;
-  color: #f5e8c8 !important;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95), 0 0 6px rgba(0, 0, 0, 0.85) !important;
+  color: #e2e8f0 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8) !important;
   white-space: nowrap !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
   pointer-events: none !important;
   user-select: none !important;
   line-height: 1.2 !important;
+  padding: 0 2px !important;
 }
 :root[data-theme="light"] .command-rail .rail-button .rail-emblem-text,
 :root[data-theme="light"] .map-help-cluster .rail-button .rail-emblem-text {
-  color: #142c46 !important;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.95), 0 0 4px rgba(255, 255, 255, 0.7) !important;
+  color: #0f2744 !important;
+  text-shadow: none !important;
 }
 :root .command-rail .rail-button > b {
   position: absolute !important;
-  top: 0px !important;
-  right: 6px !important;
+  top: -4px !important;
+  right: -4px !important;
+  background: #38bdf8 !important;
+  color: #04101e !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  padding: 1px 6px !important;
+  border-radius: 10px !important;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.5) !important;
   z-index: 5 !important;
+}
+:root[data-theme="light"] .command-rail .rail-button > b {
+  background: #0284c7 !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2) !important;
 }
 
