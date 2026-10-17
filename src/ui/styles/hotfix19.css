@@ -58,10 +58,52 @@
   z-index: 60 !important;
   pointer-events: none !important;
 }
-:root .command-panel > .national-panel-heading > [data-guide="close-workspace"] {
+
+/* Universal Modal Container setup for corner close buttons */
+:root :is(
+  .target-hub,
+  .command-window,
+  .executive-workspace,
+  .floating-command-window,
+  .player-options-modal,
+  .review-dialog,
+  .war-theatre
+) {
+  position: relative !important;
+  overflow: visible !important;
+}
+
+:root :is(
+  .target-hub-header,
+  .command-window-header,
+  .executive-header,
+  .floating-command-header,
+  .player-options-header,
+  .review-dialog > header,
+  .war-theatre > header
+) {
+  border-top-left-radius: inherit !important;
+  border-top-right-radius: inherit !important;
+  padding-right: 38px !important;
+}
+
+/* Unified floating corner close button styling */
+:root :is(
+  .command-panel > .national-panel-heading > [data-guide="close-workspace"],
+  .target-hub-close,
+  .command-window-header > [data-guide="close-workspace"],
+  .executive-header [data-guide="close-workspace"],
+  .floating-command-header [data-guide="close-workspace"],
+  .war-theatre > header > button[data-guide="close-workspace"],
+  .war-theatre > header > button[aria-label*="Close"],
+  .player-options-close,
+  .review-dialog > header > [data-guide="review-dismiss"]
+) {
   pointer-events: auto !important;
   position: absolute !important;
-  inset: 0 !important;
+  top: -12px !important;
+  right: -12px !important;
+  margin: 0 !important;
   width: 34px !important;
   height: 34px !important;
   min-width: 34px !important;
@@ -81,36 +123,102 @@
   cursor: pointer !important;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
   transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease, color 0.16s ease, box-shadow 0.16s ease !important;
+  z-index: 60 !important;
 }
-:root .command-panel > .national-panel-heading > [data-guide="close-workspace"]:hover {
+
+:root :is(
+  .command-panel > .national-panel-heading > [data-guide="close-workspace"],
+  .target-hub-close,
+  .command-window-header > [data-guide="close-workspace"],
+  .executive-header [data-guide="close-workspace"],
+  .floating-command-header [data-guide="close-workspace"],
+  .war-theatre > header > button[data-guide="close-workspace"],
+  .war-theatre > header > button[aria-label*="Close"],
+  .player-options-close,
+  .review-dialog > header > [data-guide="review-dismiss"]
+):hover {
   transform: scale(1.08) !important;
   background: rgba(22, 42, 64, 0.98) !important;
   border-color: rgba(255, 215, 120, 0.9) !important;
   color: #ffd778 !important;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.65), 0 0 10px rgba(255, 215, 120, 0.4) !important;
 }
-:root .command-panel > .national-panel-heading > [data-guide="close-workspace"]:active {
+
+:root :is(
+  .command-panel > .national-panel-heading > [data-guide="close-workspace"],
+  .target-hub-close,
+  .command-window-header > [data-guide="close-workspace"],
+  .executive-header [data-guide="close-workspace"],
+  .floating-command-header [data-guide="close-workspace"],
+  .war-theatre > header > button[data-guide="close-workspace"],
+  .war-theatre > header > button[aria-label*="Close"],
+  .player-options-close,
+  .review-dialog > header > [data-guide="review-dismiss"]
+):active {
   transform: scale(0.95) !important;
 }
-:root .command-panel > .national-panel-heading > [data-guide="close-workspace"]:focus-visible {
+
+:root :is(
+  .command-panel > .national-panel-heading > [data-guide="close-workspace"],
+  .target-hub-close,
+  .command-window-header > [data-guide="close-workspace"],
+  .executive-header [data-guide="close-workspace"],
+  .floating-command-header [data-guide="close-workspace"],
+  .war-theatre > header > button[data-guide="close-workspace"],
+  .war-theatre > header > button[aria-label*="Close"],
+  .player-options-close,
+  .review-dialog > header > [data-guide="review-dismiss"]
+):focus-visible {
   outline: 2px solid #6cd2ff !important;
   outline-offset: 2px !important;
 }
 
 /* Light / Ivory theme */
-:root[data-theme="light"] .command-panel > .national-panel-heading > [data-guide="close-workspace"] {
+:root[data-theme="light"] :is(
+  .command-panel > .national-panel-heading > [data-guide="close-workspace"],
+  .target-hub-close,
+  .command-window-header > [data-guide="close-workspace"],
+  .executive-header [data-guide="close-workspace"],
+  .floating-command-header [data-guide="close-workspace"],
+  .war-theatre > header > button[data-guide="close-workspace"],
+  .war-theatre > header > button[aria-label*="Close"],
+  .player-options-close,
+  .review-dialog > header > [data-guide="review-dismiss"]
+) {
   background: rgba(252, 249, 242, 0.98) !important;
   border: 1.5px solid rgba(160, 130, 90, 0.55) !important;
   color: #2b2118 !important;
   box-shadow: 0 4px 14px rgba(40, 25, 10, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
 }
-:root[data-theme="light"] .command-panel > .national-panel-heading > [data-guide="close-workspace"]:hover {
+
+:root[data-theme="light"] :is(
+  .command-panel > .national-panel-heading > [data-guide="close-workspace"],
+  .target-hub-close,
+  .command-window-header > [data-guide="close-workspace"],
+  .executive-header [data-guide="close-workspace"],
+  .floating-command-header [data-guide="close-workspace"],
+  .war-theatre > header > button[data-guide="close-workspace"],
+  .war-theatre > header > button[aria-label*="Close"],
+  .player-options-close,
+  .review-dialog > header > [data-guide="review-dismiss"]
+):hover {
   background: #ffffff !important;
   border-color: #a8322a !important;
   color: #8c2219 !important;
   box-shadow: 0 6px 18px rgba(168, 50, 42, 0.28) !important;
 }
-:root[data-theme="light"] .command-panel > .national-panel-heading > [data-guide="close-workspace"]:focus-visible {
+
+:root[data-theme="light"] :is(
+  .command-panel > .national-panel-heading > [data-guide="close-workspace"],
+  .target-hub-close,
+  .command-window-header > [data-guide="close-workspace"],
+  .executive-header [data-guide="close-workspace"],
+  .floating-command-header [data-guide="close-workspace"],
+  .war-theatre > header > button[data-guide="close-workspace"],
+  .war-theatre > header > button[aria-label*="Close"],
+  .player-options-close,
+  .review-dialog > header > [data-guide="review-dismiss"]
+):focus-visible {
   outline: 2px solid #8c2219 !important;
   outline-offset: 2px !important;
 }

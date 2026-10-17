@@ -77,6 +77,7 @@ function WarCommand() {
           {(()=>{const hint=tacticalView&&w.tactical?WAR_TACTICAL_HINT:mine&&taskGroupSummary(s,w.id,s.playerCountryId)?WAR_TASK_GROUPS_HINT:null;return hint&&<TacticalHint spec={hint}/>;})()}
           <button
             autoFocus
+            data-guide="close-workspace"
             aria-label={translateLive("Close war command")}
             onClick={() => s.openWarWindow(null)}
           >

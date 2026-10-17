@@ -35,7 +35,7 @@ body:has(.strategic-decision-backdrop,.review-backdrop) .target-hub-backdrop{vis
 .target-hub-title h2{margin:2px 0 0;font:700 clamp(22px,3vw,30px)/1.1 Georgia,'Times New Roman',serif;letter-spacing:-.01em;color:var(--hub-ink)}
 .target-hub-capital{font-weight:400;color:var(--hub-ink-2)}
 .target-hub-close{width:38px;height:38px;border-radius:50%;border:1px solid var(--hub-line);background:var(--hub-card);color:var(--hub-ink);font-size:22px;line-height:1;cursor:pointer}
-.target-hub-close:hover{background:#fff;border-color:var(--hub-ink-2)}
+.target-hub-close:hover{background:var(--surface-raised, rgba(255,255,255,0.12));border-color:var(--hub-gold)}
 
 .target-hub-war{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px;border-radius:10px;background:var(--hub-danger-bg);border:1px solid #e3a99c;color:var(--hub-danger)}
 .target-hub-war button{padding:7px 12px;border-radius:8px;border:1px solid var(--hub-danger);background:var(--hub-danger);color:#fff;font-weight:700;cursor:pointer}
@@ -74,9 +74,11 @@ div.hub-card-main{cursor:default}
 .hub-card.status-locked .hub-card-art{filter:grayscale(.85);opacity:.7}
 .hub-card-main:disabled{cursor:not-allowed}
 .hub-card-variants{display:flex;gap:6px;padding:0 10px 12px}
-.hub-card-variants button{flex:1;padding:7px 0;border-radius:8px;border:1px solid var(--hub-gold);background:#fff;color:var(--hub-ink);font-weight:700;font-size:12px;cursor:pointer}
-.hub-card-variants button:hover:not(:disabled){background:var(--hub-gold);color:#fff}
-.hub-card-variants button:disabled{border-color:var(--hub-line);color:#7d8790;cursor:not-allowed}
+.hub-card-variants button{flex:1;padding:7px 0;border-radius:8px;border:1px solid var(--hub-line);background:var(--surface-raised, rgba(255,255,255,0.08));color:var(--hub-ink);font-weight:700;font-size:12px;cursor:pointer;transition:all 0.15s ease}
+.hub-card-variants button:hover:not(:disabled){background:var(--accent,#e5b95a);border-color:var(--accent,#e5b95a);color:#0d1e2e;box-shadow:0 2px 8px rgba(0,0,0,0.35)}
+.hub-card-variants button:disabled{border-color:var(--hub-line);color:var(--hub-ink-2,#7d8790);opacity:0.5;cursor:not-allowed}
+:root[data-theme="light"] .hub-card-variants button{background:#ffffff;border:1px solid var(--hub-line);color:var(--hub-ink)}
+:root[data-theme="light"] .hub-card-variants button:hover:not(:disabled){background:var(--hub-gold,#7a520c);border-color:var(--hub-gold,#7a520c);color:#ffffff}
 
 .target-hub-footer{display:flex;align-items:center;justify-content:space-between;gap:14px;padding-top:12px;border-top:1px solid var(--hub-line)}
 .target-hub-footer p{margin:0;font-size:11px;color:var(--hub-ink-2)}
