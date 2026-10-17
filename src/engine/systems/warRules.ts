@@ -12,6 +12,7 @@ import { coalitionSupportFrom, emptyLosses, getWarPreview } from './warfare';
 import { settleWarOutcome } from './warOutcome';
 import { withDefaultTaskGroups } from './taskGroups';
 import { dmzBars } from './peaceTreaty';
+import { shieldedByDeterrence } from './nuclear';
 
 /**
  * War rules shared by the player's commands and the AI (audit E1, B9, E5). The player's 'military/declareWar' and
@@ -21,7 +22,7 @@ import { dmzBars } from './peaceTreaty';
 const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v));
 const note = (state: GameState, message: string): GameState => ({ ...state, sitrep: [message, ...state.sitrep].slice(0, 12) });
 
-export type WarBlock = 'invalid' | 'attacker_not_independent' | 'target_not_independent' | 'active' | 'dmz' | 'fuel';
+export type WarBlock = 'invalid' | 'attacker_not_independent' | 'target_not_independent' | 'active' | 'dmz' | 'deterrence' | 'fuel';
 export interface WarEligibility { allowed: boolean; block?: WarBlock }
 
 export const inActiveWar = (state: GameState, id: string) =>
@@ -50,6 +51,7 @@ export function warDeclarationReason(status: WarEligibility): string | undefined
   case 'fuel': return WAR_FUEL_MESSAGE;
   case 'active': return 'You are already at war with this country.';
   case 'dmz': return 'A signed peace treaty forbids this country from attacking its neighbour.';
+  case 'deterrence': return 'This country holds a credible nuclear second strike. Only a nuclear power can attack it.';
   case 'attacker_not_independent': return 'Your country must be independent to declare war.';
   case 'target_not_independent': return 'This country is under foreign control. Choose an independent country.';
   default: return 'Choose another independent country as the target.';
@@ -63,6 +65,7 @@ export function warDeclarationStatus(state: GameState, attackerId: string, defen
   if (defender.annexedBy || defender.controllerCountryId != null) return { allowed: false, block: 'target_not_independent' };
   if (activeWarBetween(state, attacker.id, defender.id)) return { allowed: false, block: 'active' };
   if (dmzBars(state, attacker.id, defender.id)) return { allowed: false, block: 'dmz' };
+  if (shieldedByDeterrence(state, attacker.id, defender.id)) return { allowed: false, block: 'deterrence' };
   if (!warFuelReadiness(state, attackerId).allowed) return { allowed: false, block: 'fuel' };
   return { allowed: true };
 }

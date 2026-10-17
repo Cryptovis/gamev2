@@ -48,6 +48,8 @@ export interface WorldState {
  commodities?:import('./commodityExchange').CommodityExchangeState;
  /** 9.6 peace conferences, signed treaties and standing clauses (peaceTreaty.ts); absent in older saves. */
  peace?:import('./peace').PeaceState;
+ /** 9.7 enrichment programmes, strategic forces and IAEA records (nuclear.ts); absent in older saves. */
+ nuclear?:import('./nuclear').NuclearState;
   members: Record<InstitutionId, string[]>;
   ballots: WorldBallot[];
   missions: OutreachMission[];

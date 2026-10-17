@@ -1,5 +1,6 @@
 import {applyOrganizationCommand} from './systems/organizations/commands';
 import {acceptArmistice,declineArmistice} from './systems/peaceArmistice';
+import {applyNuclearCommand} from './systems/nuclear';
 import {acknowledgeTreaty,concludePeace,playerOwnsTable,togglePeaceDemand,waivePeace} from './systems/peaceTreaty';
 import { assignTaskGroup, taskGroupPreview } from './systems/taskGroups';
 import {affairsPreview} from './affairsPreview';
@@ -146,6 +147,7 @@ function executeGameCommand(state: GameState, command: GameCommand): GameState {
     case 'peace/acknowledge': return acknowledgeTreaty(state,command.treatyId);
     case 'peace/acceptArmistice': return acceptArmistice(state,command.warId);
     case 'peace/declineArmistice': return declineArmistice(state,command.warId);
+    case 'nuclear/buildSite': case 'nuclear/expandSite': case 'nuclear/configureSite': case 'nuclear/dismantleSite': case 'nuclear/declareSite': case 'nuclear/buildAssembly': case 'nuclear/assembleWarheads': case 'nuclear/buildDelivery': case 'nuclear/setPatrol': case 'nuclear/setProtocol': case 'nuclear/withdrawTreaty': return applyNuclearCommand(state,command);
     case 'politics/concession': return grantConcession(state,command.faction);
     case 'politics/crisisResponse': return respondToCrisis(state,command.option);
     case 'politics/acknowledgeCrisis': return acknowledgeCrisis(state);
@@ -251,6 +253,7 @@ function executeGameCommand(state: GameState, command: GameCommand): GameState {
       if (eligibility.block === 'target_not_independent') return note(state, `WAR // ${defender.name} is not an independent state and cannot be targeted.`);
       if (eligibility.block === 'active') return note(state, `WAR // Conflict with ${defender.name} is already active.`);
       if (eligibility.block === 'dmz') return note(state, `WAR // A peace treaty bars an attack on ${defender.name}.`);
+      if (eligibility.block === 'deterrence') return note(state, `WAR // ${defender.name} holds a credible nuclear second strike.`);
       if (eligibility.block === 'fuel') return note(state, WAR_FUEL_MESSAGE);
       return openWar(state, state.playerCountryId, command.targetCountryId).state;
     }

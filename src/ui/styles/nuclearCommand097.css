@@ -1,0 +1,127 @@
+/* Phase 9.7: Nuclear Command. Navy is the default; Ivory re-tints every token. The window is an instrument room: dark panels
+   with amber for material in the cascade, teal for what is safe and red for what the agency could find. */
+:root {
+  --nuc-panel: #0d2233; --nuc-panel-2: #132f45; --nuc-ink: #e9f0f6; --nuc-muted: #9fb5c5; --nuc-line: rgba(159, 189, 212, .26);
+  --nuc-amber: #e2a93b; --nuc-amber-soft: rgba(226, 169, 59, .16); --nuc-safe: #5fc7b2; --nuc-risk: #e4574d; --nuc-risk-soft: rgba(228, 87, 77, .15);
+  --nuc-cool: #6aa8d8; --nuc-track: rgba(159, 189, 212, .18); --nuc-button: #1a4260; --nuc-button-ink: #f1f6fa;
+}
+:root[data-theme="light"] {
+  --nuc-panel: #fffdf7; --nuc-panel-2: #f3efe5; --nuc-ink: #142c46; --nuc-muted: #465b70; --nuc-line: rgba(20, 44, 70, .24);
+  --nuc-amber: #9a6a10; --nuc-amber-soft: rgba(154, 106, 16, .12); --nuc-safe: #17663d; --nuc-risk: #9a251d; --nuc-risk-soft: rgba(154, 37, 29, .1);
+  --nuc-cool: #2a5f8f; --nuc-track: rgba(20, 44, 70, .14); --nuc-button: #17395b; --nuc-button-ink: #f7fafc;
+}
+
+:root .nuclear-window { width: min(1280px, 96vw); }
+:root .nuclear-window [data-testid="nuclear-window"] { color: var(--nuc-ink); background: var(--nuc-panel-2); border-radius: 8px; }
+:root .nuclear-grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr) minmax(0, .9fr); gap: 16px; align-items: start; }
+:root .nuclear-column { display: grid; gap: 14px; padding: 16px; background: var(--nuc-panel); border: 1px solid var(--nuc-line); border-radius: 10px; min-width: 0; }
+:root .nuclear-column h3 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: 20px; font-weight: 600; color: var(--nuc-ink); }
+:root .nuclear-column h4 { margin: 0; font-size: 16px; color: var(--nuc-ink); }
+:root .nuclear-column small { color: var(--nuc-muted); font-size: 12.5px; line-height: 1.4; }
+:root .nuclear-column button { font: inherit; min-height: 40px; padding: 8px 12px; color: var(--nuc-button-ink); background: var(--nuc-button); border: 1px solid var(--nuc-line); border-radius: 8px; cursor: pointer; text-align: left; }
+:root .nuclear-column button b { color: var(--nuc-amber); margin-left: 6px; }
+:root[data-theme="light"] .nuclear-column button b { color: #f2cf86; }
+:root .nuclear-column button:disabled { opacity: .5; cursor: not-allowed; }
+:root .nuclear-column button:focus-visible, :root .nuclear-column input:focus-visible { outline: 3px solid var(--focus, #89c6ff); outline-offset: 2px; }
+:root .nuclear-column button.quiet { background: transparent; color: var(--nuc-ink); }
+:root .nuclear-column button.danger { background: var(--nuc-risk); color: #fff7f2; border-color: transparent; }
+:root .nuclear-column .chip-row { display: flex; flex-wrap: wrap; gap: 6px; }
+:root .nuclear-column .chip { min-height: 36px; padding: 5px 10px; font-size: 13px; background: transparent; color: var(--nuc-ink); }
+:root .nuclear-column .chip[aria-pressed="true"] { background: var(--nuc-amber-soft); border-color: var(--nuc-amber); color: var(--nuc-ink); font-weight: 600; }
+:root .nuclear-locked, :root .nuclear-empty { margin: 0; padding: 18px; color: var(--nuc-muted); background: var(--nuc-panel); border: 1px dashed var(--nuc-line); border-radius: 10px; }
+
+/* The assay ladder: four rungs joined by a rail that runs from cool to hot. */
+:root .assay-ladder { list-style: none; margin: 0; padding: 0 0 0 22px; display: grid; gap: 10px; position: relative; }
+:root .assay-ladder::before { content: ""; position: absolute; left: 6px; top: 8px; bottom: 8px; width: 4px; border-radius: 2px; background: linear-gradient(180deg, var(--nuc-cool), var(--nuc-amber) 60%, var(--nuc-risk)); }
+:root .assay-ladder li { position: relative; display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; gap: 2px 10px; align-items: baseline; padding: 8px 10px; background: var(--nuc-panel-2); border: 1px solid transparent; border-radius: 8px; }
+:root .assay-ladder li::before { content: ""; position: absolute; left: -21px; top: 14px; width: 12px; height: 12px; border-radius: 50%; background: var(--nuc-panel); border: 3px solid var(--nuc-line); }
+:root .assay-ladder li.is-aimed { border-color: var(--nuc-amber); }
+:root .assay-ladder li.is-aimed::before { border-color: var(--nuc-amber); background: var(--nuc-amber); }
+:root .assay-ladder .stage-assay { font-family: Georgia, serif; font-size: 20px; color: var(--nuc-amber); font-variant-numeric: tabular-nums; }
+:root .assay-ladder .stage-amount { text-align: right; font-variant-numeric: tabular-nums; }
+:root .assay-ladder small, :root .assay-ladder .stage-sites { grid-column: 2 / -1; }
+:root .assay-ladder .stage-sites { display: flex; gap: 4px; }
+:root .assay-ladder .stage-sites i { font-style: normal; font-size: 11px; padding: 1px 6px; border-radius: 9px; background: var(--nuc-amber-soft); border: 1px solid var(--nuc-amber); }
+
+:root .site-list { display: grid; gap: 12px; }
+:root .nuclear-site { display: grid; gap: 10px; padding: 12px; background: var(--nuc-panel-2); border: 1px solid var(--nuc-line); border-radius: 10px; }
+:root .nuclear-site.is-hidden { border-left: 4px solid var(--nuc-risk); }
+:root .nuclear-site.is-exposed { background: var(--nuc-risk-soft); border-color: var(--nuc-risk); }
+:root .nuclear-site > header { display: flex; align-items: center; gap: 12px; }
+:root .site-badge { display: inline-block; margin-top: 4px; padding: 2px 9px; font-size: 12px; border-radius: 10px; border: 1px solid var(--nuc-line); }
+:root .site-badge.badge-hidden, :root .site-badge.badge-exposed { color: var(--nuc-risk); border-color: var(--nuc-risk); }
+:root .site-badge.badge-declared { color: var(--nuc-safe); border-color: var(--nuc-safe); }
+:root .cascade-dial { width: 76px; height: 76px; flex: none; }
+:root .cascade-dial circle { fill: none; stroke-width: 7; }
+:root .cascade-dial .dial-track { stroke: var(--nuc-track); }
+:root .cascade-dial .dial-queued { stroke: var(--nuc-amber-soft); stroke: color-mix(in srgb, var(--nuc-amber) 40%, transparent); }
+:root .cascade-dial .dial-run { stroke: var(--nuc-amber); }
+:root .cascade-dial text { fill: var(--nuc-ink); }
+:root .cascade-dial .dial-number { font-size: 10.5px; font-weight: 700; }
+:root .cascade-dial .dial-unit { font-size: 6.5px; fill: var(--nuc-muted); }
+:root .site-figures { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 14px; margin: 0; }
+:root .site-figures dt { font-size: 12px; color: var(--nuc-muted); }
+:root .site-figures dd { margin: 0; font-size: 16px; font-variant-numeric: tabular-nums; }
+:root .site-figures dd small { font-size: 12px; }
+:root .site-actions, :root .build-row { display: flex; flex-wrap: wrap; gap: 8px; }
+:root .build-row button { flex: 1 1 160px; }
+:root .build-row button.hidden-site { border-color: var(--nuc-risk); }
+:root .build-note { margin-top: -4px; }
+
+:root .warhead-counter { display: flex; align-items: baseline; gap: 10px; }
+:root .warhead-counter b { font-family: Georgia, serif; font-size: 56px; line-height: 1; color: var(--nuc-amber); font-variant-numeric: tabular-nums; }
+:root .warhead-counter span { color: var(--nuc-muted); }
+:root .nuclear-column .meter { position: relative; height: 12px; border-radius: 6px; background: var(--nuc-track); overflow: hidden; }
+:root .nuclear-column .meter i { display: block; height: 100%; background: var(--nuc-safe); border-radius: 6px; }
+:root .nuclear-column .meter u { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--nuc-ink); opacity: .55; }
+:root .nuclear-column .gauge, :root .nuclear-column .deterrence { display: grid; gap: 5px; }
+:root .nuclear-column .gauge header, :root .nuclear-column .deterrence header { display: flex; justify-content: space-between; align-items: baseline; }
+:root .nuclear-column .gauge header b, :root .nuclear-column .deterrence header b { font-size: 22px; font-family: Georgia, serif; font-variant-numeric: tabular-nums; }
+:root .nuclear-column .gauge.risk .meter i { background: var(--nuc-risk); }
+:root .triad { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+:root .triad li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 3px 10px; align-items: baseline; padding: 10px; background: var(--nuc-panel-2); border-radius: 8px; }
+:root .triad .leg-count { font-family: Georgia, serif; font-size: 24px; font-variant-numeric: tabular-nums; }
+:root .triad .leg-meter { grid-column: 1 / -1; height: 5px; border-radius: 3px; background: var(--nuc-track); overflow: hidden; }
+:root .triad .leg-meter i { display: block; height: 100%; background: var(--nuc-safe); }
+:root .triad small { grid-column: 1 / -1; }
+:root .patrol { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; }
+:root .patrol button { min-height: 32px; min-width: 36px; text-align: center; }
+:root .assembly { display: grid; gap: 10px; padding: 12px; border: 1px solid var(--nuc-line); border-radius: 10px; }
+:root .assembly > header { display: flex; justify-content: space-between; align-items: center; }
+:root .assembly .pips { display: inline-flex; gap: 5px; }
+:root .assembly .pips i { width: 16px; height: 16px; border-radius: 4px; border: 2px solid var(--nuc-line); }
+:root .assembly .pips i.on { background: var(--nuc-amber); border-color: var(--nuc-amber); }
+:root .assemble-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: end; }
+:root .assemble-row label { display: grid; gap: 3px; font-size: 12.5px; color: var(--nuc-muted); }
+:root .assemble-row input { width: 84px; min-height: 40px; padding: 6px 8px; color: var(--nuc-ink); background: var(--nuc-panel); border: 1px solid var(--nuc-line); border-radius: 8px; font: inherit; }
+:root .upkeep { margin: 0; font-size: 13px; color: var(--nuc-muted); }
+
+:root .iaea-status { margin: 0; font-family: Georgia, serif; font-size: 20px; }
+:root .iaea-status.status-compliant { color: var(--nuc-safe); }
+:root .iaea-status.status-queried { color: var(--nuc-amber); }
+:root .iaea-status.status-noncompliant, :root .iaea-status.status-referred, :root .iaea-status.status-sanctioned { color: var(--nuc-risk); }
+:root .iaea-status.status-withdrawn { color: var(--nuc-muted); }
+:root .iaea-alert { margin: 0; padding: 10px 12px; font-size: 13.5px; border-radius: 8px; background: var(--nuc-risk-soft); border: 1px solid var(--nuc-risk); }
+:root .iaea-facts { display: grid; gap: 6px; margin: 0; }
+:root .iaea-facts div { display: flex; justify-content: space-between; gap: 10px; }
+:root .iaea-facts dt { color: var(--nuc-muted); font-size: 13px; }
+:root .iaea-facts dd { margin: 0; font-variant-numeric: tabular-nums; }
+:root .case-timeline { list-style: none; margin: 0; padding: 0 0 0 16px; display: grid; gap: 8px; border-left: 3px solid var(--nuc-line); }
+:root .case-timeline li { display: grid; opacity: .6; }
+:root .case-timeline li.done { opacity: 1; border-left: 0; }
+:root .case-timeline li.done span::before { content: "\2713\00a0"; color: var(--nuc-safe); }
+:root .case-timeline .outcome { opacity: 1; font-weight: 600; }
+:root .case-timeline .outcome-sanctions { color: var(--nuc-risk); }
+:root .findings { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; font-size: 13px; }
+:root .iaea-actions { display: grid; gap: 8px; }
+:root .iaea-actions button[aria-pressed="true"] { border-color: var(--nuc-safe); }
+:root .nuclear-icon { vertical-align: middle; }
+
+@media (max-width: 1100px) { :root .nuclear-grid { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 560px) {
+  :root .nuclear-column { padding: 12px; }
+  :root .site-figures { grid-template-columns: minmax(0, 1fr); }
+  :root .assay-ladder li { grid-template-columns: 56px minmax(0, 1fr) auto; }
+  :root .warhead-counter b { font-size: 46px; }
+}
+@media (prefers-reduced-motion: reduce) { :root .nuclear-column * { animation: none !important; transition: none !important; } }

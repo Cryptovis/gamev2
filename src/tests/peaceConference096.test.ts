@@ -499,8 +499,8 @@ describe('9.6 text', () => {
     }
   });
   it('is not shadowed by a later catalogue entry', () => {
-    const last = MERGED_CATALOG_GROUP[MERGED_CATALOG_GROUP.length - 1];
-    expect(last).toBe(UI_CATALOG_096P);
+    const later = MERGED_CATALOG_GROUP.slice(MERGED_CATALOG_GROUP.indexOf(UI_CATALOG_096P) + 1);
+    for (const catalog of later) for (const key of Object.keys(UI_CATALOG_096P)) expect(key in catalog).toBe(false);
   });
 });
 

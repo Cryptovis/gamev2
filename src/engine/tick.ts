@@ -44,6 +44,7 @@ import {processIndustrialContracts,processIndustrialMarketAI} from './systems/in
 import {processLeadership} from './systems/leadership';
 import { processInfrastructure, processInfrastructureAI } from './systems/infrastructure';
 import { processAiWars } from './systems/aiWar';
+import { processNuclear } from './systems/nuclear';
 import { processPeaceConferences, processPeaceObligations } from './systems/peaceTreaty';
 import { processArmisticeRequests } from './systems/peaceArmistice';
 
@@ -110,6 +111,7 @@ export function tickGame(state: GameState): GameState {
   next = processPactStrain(next);
   next = processTradeDeals(next);
   next = processInfrastructure(next);
+  next = processNuclear(next);
   next = processEnergy(next);
   next = processIndustrialEconomy(next);
   next = processIndustrialContracts(next);
