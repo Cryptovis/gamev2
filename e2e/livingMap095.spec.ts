@@ -46,7 +46,7 @@ test('9.5-3 Ivory night lights are ink-toned',async({page})=>{
  await openGeographicMap(page,'light','flat',3);
  const core=page.locator('.night-light-core').first();
  await expect(core).toBeAttached();
- expect(await core.evaluate(el=>getComputedStyle(el).fill)).toBe('rgb(106, 66, 32)');
+ expect(await core.evaluate(el=>getComputedStyle(el).fill)).toBe('rgb(232, 196, 140)');
 });
 
 test('9.5-3 Navy night lights are warm gold',async({page})=>{

@@ -12,15 +12,16 @@
   --night-light-ring: rgba(255, 201, 94, 0.55);
 }
 :root[data-theme="light"] {
-  --shelf-wide: rgba(18, 128, 140, 0.12);
-  --shelf-mid: rgba(22, 142, 150, 0.17);
-  --shelf-near: rgba(40, 170, 172, 0.27);
-  --river-line: #1d6aa8;
-  --river-glow: rgba(29, 106, 168, 0.3);
+  /* The Blue Marble surface stays dark in Ivory (only the chrome around it turns parchment), so these stay light enough to read on it. */
+  --shelf-wide: rgba(64, 196, 186, 0.11);
+  --shelf-mid: rgba(84, 210, 198, 0.16);
+  --shelf-near: rgba(150, 232, 218, 0.27);
+  --river-line: #5fb6e6;
+  --river-glow: rgba(95, 182, 230, 0.32);
   --night-shade: 74, 48, 22;
-  --night-light-core: #6a4220;
-  --night-light-glow: #8a5a2b;
-  --night-light-ring: rgba(106, 66, 32, 0.4);
+  --night-light-core: #e8c48c;
+  --night-light-glow: #c8914a;
+  --night-light-ring: rgba(232, 196, 140, 0.45);
 }
 
 :root .shelf-halo { fill: none; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }

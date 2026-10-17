@@ -6,6 +6,12 @@ import {sovereignId} from '../domain/sovereignty';
 import {LocaleText,translateLive} from '../i18n/localeText';
 import {boundPan,clampZoom,wheelZoomFactor,zoomAtPoint} from './cameraControls';
 import {GeographicSurface} from './GeographicSurface';
+import {CombatFx,FrontlineLayer,MountainRelief,TradeLayer} from './LivingWorldLayers';
+import {tradeRoutes} from './tradeRoutes';
+import {COUNTRY_POSITIONS} from '../data/countryPositions';
+import {warFronts} from './frontlinesView';
+import {outerRings,type Ring} from './frontlines';
+import {LandmarkSymbols,landmarkSymbolId} from './landmarkIcons';
 import {NightLayer,RiverLayer,ShelfHalo,useSunHour} from './LivingMapLayers';
 import {gameDate} from '../engine/systems/leadership';
 import {useMapDesk} from '../presentation/mapDeskSettings';
@@ -29,6 +35,7 @@ import { connectionIndex } from './connectionIndex';
 
 const W = 1200;
 const H = 700;
+const TRADE_ANCHORS={...COUNTRY_POSITIONS,...CAPITAL_POSITIONS} as Record<string,[number,number]>;
 const RELIEF_SRC = '/assets/geography/hillshade-2048.webp';
 // The relief layer must never delay the Blue Marble surface's own ready flag.
 const noop = () => {};
@@ -211,6 +218,10 @@ function WorldMapView() {
   const embassyPartners=useMemo(()=>connectionIndex(playerCountryId,{},{},embassies).embassyPartners,[playerCountryId,embassies]);
   const pins=useMemo(()=>pinsOn?capitalPins({countries,playerCountryId,selectedCountryId,hovered,project:flightProjector,zoom:mapZoom,flat:projectionMode==='flat',embassyPartners}):[],[pinsOn,countries,playerCountryId,selectedCountryId,hovered,flightProjector,mapZoom,projectionMode,embassyPartners]);
   // Event pins (playtest.19): crossed swords on active wars, a megaphone on domestic unrest. Click handling goes through the same nearest-marker path as microstates, so pointer capture never swallows it.
+  // Phase 9.5 stage 2: war fronts from the shared borders of the belligerents (geometry is static, so the rings are built once per load).
+  const countryRings=useMemo(()=>{const out:Record<string,Ring[]>={};for(const f of geojson?.features??[]){const id=String(f.properties?.iso_a3??'');if(id)out[id]=outerRings(f.geometry);}return out;},[geojson]);
+  const fronts=useMemo(()=>warFronts({wars,countries,playerCountryId,day:campaignDay,rings:countryRings,project:flightProjector,anchors:CAPITAL_POSITIONS}),[wars,countries,playerCountryId,campaignDay,countryRings,flightProjector]);
+  const tradeLanes=useMemo(()=>tradeRoutes({tradeDeals,contracts,countries,playerCountryId,anchors:TRADE_ANCHORS,project:flightProjector,jump:projectionMode==='flat'?500*flatZoom:undefined}),[tradeDeals,contracts,countries,playerCountryId,flightProjector,projectionMode,flatZoom]);
   const eventMarkers=useMemo(()=>eventPins({wars,countries,playerCountryId,capitals:CAPITAL_POSITIONS,project:flightProjector,width:W,height:H}),[wars,countries,playerCountryId,flightProjector]);
   const visibleMarkers=Object.entries(MICROSTATE_POINTS).flatMap(([id,position])=>{
     if(!countries[id]||countries[id].annexedBy||!microstateVisible(mapZoom,projectionMode==='flat',id===selectedCountryId,id===hovered,id===playerCountryId))return [];
@@ -483,6 +494,8 @@ function WorldMapView() {
           <path d="M7 .8v1.5" stroke="#1b2a33" strokeWidth=".8"/>
         </symbol>
         <clipPath id="capital-flag-clip"><circle r="7" cy="-22"/></clipPath>
+        <clipPath id="capital-flag-clip-landmark"><circle r="7" cy="-34"/></clipPath>
+        <LandmarkSymbols/>
       </defs>
       {projectionMode === 'flat' ? (
         <>
@@ -503,16 +516,22 @@ function WorldMapView() {
         <g className="country-layer">{shapeLayer}</g>
       </g>
       {reliefOn&&<g className={`relief-layer ${photographic?'over-surface':''}`} pointerEvents="none"><GeographicSurface variant="relief" src={RELIEF_SRC} projection={projection} flat={projectionMode==='flat'} pan={flatPan} zoom={flatZoom} onReady={noop}/></g>}
+      {reliefOn&&<MountainRelief project={flightProjector} pixelsPerDegree={projectionMode==='flat'?3.14*flatZoom:5*globeZoom} globeCenter={projectionMode==='globe'?globeCenter:undefined}/>}
       {photographic&&surfaceReady&&<>
         <RiverLayer path={path} transform={livingTransform}/>
         <NightLayer path={path} projection={projection} project={flightProjector} date={sunDate} hour={sunHour} transform={livingTransform}/>
       </>}
       {projectionMode === 'globe' && <circle cx={W/2} cy={H/2+8} r={286*globeZoom} fill="url(#globe-shade)" className="globe-shade" pointerEvents="none"/>}
+      <TradeLayer routes={tradeLanes}/>
+      <FrontlineLayer fronts={fronts}/>
+      <CombatFx fronts={fronts}/>
       {pinsOn&&<g className="capital-pin-layer" pointerEvents="none" aria-hidden="true">
         {pins.map(pin=>{const iso2=countries[pin.id]?.iso2??'';return <g key={pin.id} className={`capital-pin role-${pin.role}`} transform={`translate(${pin.x},${pin.y}) scale(${pin.scale})`} data-capital={pin.id}>
-          <use href="#capital-building" x={-7} y={-14} width={14} height={14}/>
-          <circle className="capital-flag-ring" cy={-22} r={8}/>
-          {iso2.length===2&&<text className="capital-flag" y={-18.5} textAnchor="middle" clipPath="url(#capital-flag-clip)">{flagEmoji(iso2)}</text>}
+          {landmarkSymbolId(pin.id)
+            ?<><ellipse className="landmark-shadow" cx={0} cy={-.6} rx={10} ry={1.9}/><use className="capital-landmark" href={`#${landmarkSymbolId(pin.id)}`} x={-13} y={-25} width={26} height={26} data-landmark={landmarkSymbolId(pin.id)}/></>
+            :<use href="#capital-building" x={-7} y={-14} width={14} height={14}/>}
+          <circle className="capital-flag-ring" cy={landmarkSymbolId(pin.id)?-34:-22} r={8}/>
+          {iso2.length===2&&<text className="capital-flag" y={landmarkSymbolId(pin.id)?-30.5:-18.5} textAnchor="middle" clipPath={landmarkSymbolId(pin.id)?'url(#capital-flag-clip-landmark)':'url(#capital-flag-clip)'}>{flagEmoji(iso2)}</text>}
         </g>;})}
       </g>}
       {eventMarkers.length>0&&<g className="event-pin-layer" pointerEvents="none" aria-hidden="true">

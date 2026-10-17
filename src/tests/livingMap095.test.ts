@@ -130,9 +130,9 @@ describe('phase 9.5 map wiring and styling',()=>{
     expect(names.length).toBeGreaterThanOrEqual(9);
     for(const name of names)expect(ivory,name).toContain(name+':');
   });
-  it('turns the Ivory lights into ink dots without a bright glow',()=>{
+  it('turns the Ivory lights into warm sepia dots with a faint glow',()=>{
     const ivory=block(css,':root[data-theme="light"]');
-    expect(ivory).toContain('--night-light-core: #6a4220');
+    expect(ivory).toContain('--night-light-core: #e8c48c');
     expect(css).toMatch(/:root\[data-theme="light"\] \.night-light-glow \{ opacity: 0\.55/);
   });
   it('loads the sheet before the hotfix sheets so they keep the last word',()=>{
