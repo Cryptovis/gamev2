@@ -18,6 +18,16 @@ const kinds = [
   "fuel",
   "tanks",
 ];
+const MODERN_BADGES: Record<string, string> = {
+  food: "/assets/command/res-food.png",
+  oil: "/assets/command/res-oil.png",
+  iron: "/assets/command/res-iron.png",
+  uranium: "/assets/command/res-uranium.png",
+  water: "/assets/command/res-water.png",
+  gold: "/assets/command/res-gold.png",
+  silver: "/assets/command/res-silver.png",
+};
+
 export function ResourceMapBadge({
   resource,
   x,
@@ -29,6 +39,7 @@ export function ResourceMapBadge({
 }) {
   const i = kinds.indexOf(resource),
     cell = 1254 / 5;
+  const modernSrc = MODERN_BADGES[resource];
   return (
     <g data-resource-badge={resource} transform={`translate(${x},${y})`}>
       <title>{translateLive(resource)}</title>
@@ -40,7 +51,16 @@ export function ResourceMapBadge({
         stroke="#e0c47b"
         strokeWidth=".6"
       />
-      {i >= 0 ? (
+      {modernSrc ? (
+        <image
+          href={modernSrc}
+          x="1"
+          y="1"
+          width="20"
+          height="20"
+          preserveAspectRatio="xMidYMid meet"
+        />
+      ) : i >= 0 ? (
         <svg
           x="1"
           y="1"

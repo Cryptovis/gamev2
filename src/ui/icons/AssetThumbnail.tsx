@@ -28,6 +28,16 @@ const assets = [
   "electricity",
   "embassy",
 ];
+const MODERN_RES_ICONS: Record<string, string> = {
+  food: "/assets/command/res-food.png",
+  oil: "/assets/command/res-oil.png",
+  iron: "/assets/command/res-iron.png",
+  uranium: "/assets/command/res-uranium.png",
+  water: "/assets/command/res-water.png",
+  gold: "/assets/command/res-gold.png",
+  silver: "/assets/command/res-silver.png",
+};
+
 export function AssetThumbnail({
   asset,
   size = 48,
@@ -35,7 +45,36 @@ export function AssetThumbnail({
   asset: string;
   size?: number;
 }) {
-  if(asset==='gold'||asset==='silver')return <CivicArt kind={asset} size={size}/>;
+  const modernSrc = MODERN_RES_ICONS[asset];
+  if (modernSrc) {
+    return (
+      <span
+        className="asset-thumbnail asset-thumbnail-modern"
+        role="img"
+        aria-label={translateLive(asset.replaceAll("_", " "))}
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexShrink: 0,
+          width: size,
+          height: size,
+        }}
+      >
+        <img
+          src={modernSrc}
+          alt=""
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "contain",
+            filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.4))",
+          }}
+        />
+      </span>
+    );
+  }
+  if (asset === "gold" || asset === "silver") return <CivicArt kind={asset} size={size} />;
   const i = Math.max(0, assets.indexOf(asset === "armor" ? "tanks" : asset));
   return (
     <span
