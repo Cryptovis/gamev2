@@ -71,6 +71,7 @@ import "./ui/styles/internationalAffairs100.css";
 import "./ui/hints/TacticalHint.css";
 import "./ui/styles/playtest110.css";
 import "./ui/styles/playtest130.css";
+import "./ui/styles/livingMap095.css";
 import "./ui/styles/landing094.css";
 import "./ui/styles/hotfix15.css";
 import "./ui/styles/hotfix16.css";

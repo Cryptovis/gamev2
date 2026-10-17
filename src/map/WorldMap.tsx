@@ -6,6 +6,8 @@ import {sovereignId} from '../domain/sovereignty';
 import {LocaleText,translateLive} from '../i18n/localeText';
 import {boundPan,clampZoom,wheelZoomFactor,zoomAtPoint} from './cameraControls';
 import {GeographicSurface} from './GeographicSurface';
+import {NightLayer,RiverLayer,ShelfHalo,useSunHour} from './LivingMapLayers';
+import {gameDate} from '../engine/systems/leadership';
 import {useMapDesk} from '../presentation/mapDeskSettings';
 import {toViewBox,untilt} from './deskTilt';
 import {capitalPins,capitalPinScale} from './capitalPins';
@@ -199,6 +201,11 @@ function WorldMapView() {
     return projectionMode==='flat'?[flatPan.x+W/2+flatZoom*(p[0]-W/2),flatPan.y+H/2+flatZoom*(p[1]-H/2)]:[p[0],p[1]];
   },[projection,projectionMode,rotation,flatPan,flatZoom]);
   const mapZoom=projectionMode==='globe'?globeZoom:flatZoom;
+  // Phase 9.5 living map: the campaign calendar drives the sun's declination, the viewer's UTC clock its hour angle.
+  const campaignDay=useGameStore(s=>s.day),campaignStart=useGameStore(s=>s.leadership.campaignStartDate),sunHour=useSunHour();
+  const sunDate=useMemo(()=>gameDate({day:campaignDay,leadership:{campaignStartDate:campaignStart}} as any),[campaignDay,campaignStart]);
+  const landPath=useMemo(()=>photographic?featureMetrics.map(m=>m.d).filter(Boolean).join(''):'',[photographic,featureMetrics]);
+  const livingTransform=projectionMode==='flat'?flatTransform:undefined;
   const globeCenter:MapPoint=[-rotation[0],-rotation[1]];
   // Capital pins (playtest.17): which pins to draw is decided by the pure capitalPins(); the layer below only renders them.
   const embassyPartners=useMemo(()=>connectionIndex(playerCountryId,{},{},embassies).embassyPartners,[playerCountryId,embassies]);
@@ -491,10 +498,15 @@ function WorldMapView() {
         <path d={path(graticule as any) ?? ''} className="globe-graticule"/>
       </>}
       {photographic&&<GeographicSurface projection={projection} flat={projectionMode==='flat'} pan={flatPan} zoom={flatZoom} onReady={()=>setSurfaceReady(true)}/>}
+      {photographic&&surfaceReady&&<ShelfHalo landPath={landPath} transform={livingTransform}/>}
       <g className="map-viewport" transform={projectionMode === 'flat' ? flatTransform : undefined}>
         <g className="country-layer">{shapeLayer}</g>
       </g>
       {reliefOn&&<g className={`relief-layer ${photographic?'over-surface':''}`} pointerEvents="none"><GeographicSurface variant="relief" src={RELIEF_SRC} projection={projection} flat={projectionMode==='flat'} pan={flatPan} zoom={flatZoom} onReady={noop}/></g>}
+      {photographic&&surfaceReady&&<>
+        <RiverLayer path={path} transform={livingTransform}/>
+        <NightLayer path={path} projection={projection} project={flightProjector} date={sunDate} hour={sunHour} transform={livingTransform}/>
+      </>}
       {projectionMode === 'globe' && <circle cx={W/2} cy={H/2+8} r={286*globeZoom} fill="url(#globe-shade)" className="globe-shade" pointerEvents="none"/>}
       {pinsOn&&<g className="capital-pin-layer" pointerEvents="none" aria-hidden="true">
         {pins.map(pin=>{const iso2=countries[pin.id]?.iso2??'';return <g key={pin.id} className={`capital-pin role-${pin.role}`} transform={`translate(${pin.x},${pin.y}) scale(${pin.scale})`} data-capital={pin.id}>

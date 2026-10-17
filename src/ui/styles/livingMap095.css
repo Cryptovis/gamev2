@@ -1,0 +1,47 @@
+/* Phase 9.5 stage 1: the living geographic map (shelf halo, rivers, day/night with city lights).
+   Navy is the default; Ivory re-tints every layer so the parchment map keeps ink-like tones. */
+:root {
+  --shelf-wide: rgba(46, 214, 205, 0.1);
+  --shelf-mid: rgba(70, 228, 218, 0.15);
+  --shelf-near: rgba(150, 246, 236, 0.26);
+  --river-line: #62ccff;
+  --river-glow: rgba(98, 204, 255, 0.34);
+  --night-shade: 2, 8, 26;
+  --night-light-core: #ffdf9a;
+  --night-light-glow: #ffc95e;
+  --night-light-ring: rgba(255, 201, 94, 0.55);
+}
+:root[data-theme="light"] {
+  --shelf-wide: rgba(18, 128, 140, 0.12);
+  --shelf-mid: rgba(22, 142, 150, 0.17);
+  --shelf-near: rgba(40, 170, 172, 0.27);
+  --river-line: #1d6aa8;
+  --river-glow: rgba(29, 106, 168, 0.3);
+  --night-shade: 74, 48, 22;
+  --night-light-core: #6a4220;
+  --night-light-glow: #8a5a2b;
+  --night-light-ring: rgba(106, 66, 32, 0.4);
+}
+
+:root .shelf-halo { fill: none; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+:root .shelf-halo-wide { stroke: var(--shelf-wide); stroke-width: 8px; }
+:root .shelf-halo-mid { stroke: var(--shelf-mid); stroke-width: 5.5px; }
+:root .shelf-halo-near { stroke: var(--shelf-near); stroke-width: 3px; }
+
+:root .river-line, :root .river-glow { fill: none; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+:root .river-line { stroke: var(--river-line); stroke-width: 1.35px; }
+:root .river-glow { stroke: var(--river-glow); stroke-width: 4px; }
+
+:root .night-band { stroke: none; }
+:root .night-band-penumbra { fill: rgba(var(--night-shade), 0.06); }
+:root .night-band-terminator { fill: rgba(var(--night-shade), 0.1); }
+:root .night-band-civil { fill: rgba(var(--night-shade), 0.1); }
+:root .night-band-deep { fill: rgba(var(--night-shade), 0.09); }
+
+:root .night-glow-stop-core { stop-color: var(--night-light-glow); stop-opacity: 0.85; }
+:root .night-glow-stop-mid { stop-color: var(--night-light-glow); stop-opacity: 0.3; }
+:root .night-glow-stop-edge { stop-color: var(--night-light-glow); stop-opacity: 0; }
+:root .night-light-core { fill: var(--night-light-core); }
+/* Ivory: ink dots, no luminous glow (a glow on parchment would read as a stain). */
+:root[data-theme="light"] .night-light-glow { opacity: 0.55; }
+:root[data-theme="light"] .night-light-core { stroke: var(--night-light-ring); stroke-width: 0.6px; }
