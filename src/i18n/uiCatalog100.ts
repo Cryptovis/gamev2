@@ -36,11 +36,35 @@ export const UI_CATALOG_100:Record<string,[string,string,string,string]>={
     "国际事务分区",
     "Разделы международных отношений"
   ],
+  "Fourteen organizations. One command hub.": [
+    "On dört kuruluş, tek komuta merkezi.",
+    "Catorce organizaciones, un centro de mando.",
+    "十四个组织，一个指挥中心。",
+    "Четырнадцать организаций, единый центр управления."
+  ],
   "Fourteen organizations. One command hub. Every action follows the same engine rules.": [
     "On dört kuruluş, tek komuta merkezi. Her eylem aynı motor kurallarına tabidir.",
     "Catorce organizaciones, un centro de mando. Todas las acciones siguen las mismas reglas.",
     "十四个组织，一个指挥中心。所有行动遵循相同的引擎规则。",
     "Четырнадцать организаций, единый центр управления. Для всех действий действуют общие правила."
+  ],
+  "Members": [
+    "Üyeler",
+    "Miembros",
+    "成员",
+    "Участники"
+  ],
+  "Proposal": [
+    "Teklif",
+    "Propuesta",
+    "提案",
+    "Предложение"
+  ],
+  "Bilateral Defense Aid & Export": [
+    "Müttefik Askeri Destek ve Teçhizat İhracatı",
+    "Ayuda y exportación bilateral de defensa",
+    "双边防务援助与出口",
+    "Двусторонняя военная помощь и экспорт"
   ],
   "United Nations (UN)": [
     "Birleşmiş Milletler (BM)",

@@ -24,7 +24,7 @@ export function InternationalAffairsWorkspace(){
  const onPropose=(id:OrganizationId)=>{setDraft(initialProposalDraft(state,id));setTab('resolutions');};
  const slot=useWindowHintSlot();
  return <section className="international-affairs" aria-label={translateLive('International Affairs (Alliances)')}>
-  <header className="ia-header ia-header-hinted"><div><h2><LocaleText value="International Affairs (Alliances)"/></h2><p><LocaleText value="Fourteen organizations. One command hub. Every action follows the same engine rules."/></p></div>
+  <header className="ia-header ia-header-hinted"><div><h2><LocaleText value="International Affairs (Alliances)"/></h2><p><LocaleText value="Fourteen organizations. One command hub."/></p></div>
    <div className="ia-influence"><span><LocaleText value="Diplomatic influence"/></span><strong>{(state.council.influenceByCountry[state.playerCountryId]??0).toFixed(1)}</strong><small><LocaleText value="Campaign day"/> {state.day}</small></div>
    {!slot&&<TacticalHint spec={INTERNATIONAL_HINTS[tab]}/>}
   </header>

@@ -28,7 +28,11 @@ export function ExecutiveWorkspaceShell({id,title,kicker='EXECUTIVE OFFICE',tabs
     </header>
    )}
    {hideHeader && (
-    <button data-guide="close-workspace" onClick={onClose} aria-label={translateLive('Close command window')}><LocaleText value="×"/></button>
+    <>
+     <span className="window-hint-slot" ref={setHintSlot}/>
+     {hint&&<TacticalHint spec={hint}/>}
+     <button data-guide="close-workspace" onClick={onClose} aria-label={translateLive('Close command window')}><LocaleText value="×"/></button>
+    </>
    )}
    {tabs&&<div className="executive-tabs" onKeyDown={event=>{
     if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;
