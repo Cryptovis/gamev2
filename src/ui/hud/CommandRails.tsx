@@ -36,7 +36,7 @@ import {InternationalAffairsWorkspace} from '../panels/InternationalAffairsWorks
 type ToolId='objectives'|'market'|'pulse'|'map'|'resources'|'sitrep'|'alerts'|'diplomacy'|'desk'|'alliances';
 
 function RailButton({active,badge,label,children,onClick,guide,emblem}:{active:boolean;badge?:number|string;label:string;children?:ReactNode;onClick:()=>void;guide?:string;emblem?:string}){
- const iconSrc = emblem === 'market' ? '/assets/command/modern-market.png' : `/assets/command/emblem-${emblem}.png`;
+ const iconSrc = `/assets/command/modern-${emblem}.png`;
  return <button data-guide={'rail-'+(guide??(label==='DIPLOMACY'?'diplo':label.toLowerCase()))} className={active?'rail-button active':'rail-button'} onClick={onClick} aria-pressed={active} title={translateLive(`${label} · ${active?'Open — click to close':'Closed — click to open'}`)}>{emblem?<><span className="rail-emblem-wrap"><img className="rail-emblem-art" src={iconSrc} alt="" aria-hidden="true"/></span><small className="rail-emblem-text"><LocaleText value={label}/></small></>:(<><span><LocaleText value={children}/></span><small><LocaleText value={label}/></small></>)}{badge!==undefined&&badge!==0&&<b><LocaleText value={badge}/></b>}</button>;
 }
 
