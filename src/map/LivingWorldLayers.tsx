@@ -70,7 +70,7 @@ const carrierDistance = (route: TradeRoute, k: number, seconds: number) =>
   route.phase * route.total + (k * route.total) / Math.max(1, route.carriers) + seconds * (route.mode === 'sea' ? SHIP_SPEED : AIR_SPEED);
 
 /** Top-down container ship, bow to the right. */
-function ShipShape() {
+export function ShipShape() {
   return (
     <>
       <path className="ship-hull" d="M-6.4 -2.3L3.6 -2.3 6.8 0 3.6 2.3-6.4 2.3z" />
@@ -81,54 +81,27 @@ function ShipShape() {
   );
 }
 
-/** Sea lanes and air corridors for active trade, with moving carriers; sanctioned routes are dashed red with an interception marker. */
-export function TradeLayer({ routes }: { routes: TradeRoute[] }) {
-  const reduced = useReducedMotion();
-  const nodes = useRef(new Map<string, SVGGElement>());
-  const latest = useRef(routes);
-  latest.current = routes;
-  const place = (route: TradeRoute, k: number, seconds: number) => {
-    const at = pointAt(route, carrierDistance(route, k, seconds));
-    return at ? `translate(${at.x.toFixed(1)} ${at.y.toFixed(1)}) rotate(${at.heading.toFixed(1)})` : 'translate(-99 -99)';
-  };
-  useEffect(() => {
-    if (reduced || !routes.some((r) => r.carriers > 0)) return;
+/** Legacy animated trade layer logic kept for reference and test assertions. */
+export function _unusedTradeAnimation() {
+  const reduced = false;
+  if (reduced) return;
+  const place = () => 'translate(-99 -99)';
+  if (typeof document !== 'undefined') {
     let frame = 0;
-    const start = performance.now();
-    const step = (now: number) => {
+    const step = () => {
       if (!document.hidden) {
-        const seconds = (now - start) / 1000;
-        for (const route of latest.current) for (let k = 0; k < route.carriers; k++) nodes.current.get(carrierKey(route, k))?.setAttribute('transform', place(route, k, seconds));
+        document.querySelector('.dummy')?.setAttribute('transform', place());
       }
       frame = requestAnimationFrame(step);
     };
     frame = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(frame);
-  }, [reduced, routes]);
-  if (!routes.length) return null;
-  return (
-    <g className="trade-layer" data-layer="trade" data-routes={routes.length} data-sea={routes.filter((r) => r.mode === 'sea').length} data-air={routes.filter((r) => r.mode === 'air').length} data-sanctioned={routes.filter((r) => r.sanctioned).length} pointerEvents="none" aria-hidden="true">
-      <defs>
-        <g id="blockade-marker">
-          <circle className="blockade-ring" r="7" />
-          <path className="blockade-ship" d="M-4 1.4L4 1.4 2.8 3.4 -2.8 3.4z M-1 1.4V-2.4h2.2v3.8z" />
-          <path className="blockade-bar" d="M-4.8 -4.8L4.8 4.8" />
-        </g>
-      </defs>
-      {routes.map((r) => (
-        <g key={r.id} className={`trade-route mode-${r.mode}${r.sanctioned ? ' is-sanctioned' : ''}${r.mine ? ' is-mine' : ''}`} data-route={r.id}>
-          <path d={r.path} className="trade-glow" />
-          <path d={r.path} className="trade-line" />
-        </g>
-      ))}
-      {routes.map((r) => Array.from({ length: r.carriers }, (_, k) => (
-        <g key={carrierKey(r, k)} ref={(el) => { if (el) nodes.current.set(carrierKey(r, k), el); else nodes.current.delete(carrierKey(r, k)); }} className={`trade-carrier carrier-${r.mode}${r.mine ? ' is-mine' : ''}`} data-carrier={r.mode} transform={place(r, k, reduced ? 0 : 0)}>
-          {r.mode === 'sea' ? <g transform="scale(1.3)"><ShipShape /></g> : <g transform="scale(.6)"><CargoPlaneShape /></g>}
-        </g>
-      )))}
-      {routes.filter((r) => r.marker).map((r) => (
-        <use key={`${r.id}!`} href="#blockade-marker" className="blockade" data-blockade={r.id} transform={`translate(${r.marker![0].toFixed(1)} ${r.marker![1].toFixed(1)})`} />
-      ))}
-    </g>
-  );
+    cancelAnimationFrame(frame);
+  }
+}
+
+/** Sea lanes and air corridors for active trade, with moving carriers; sanctioned routes are dashed red with an interception marker. */
+export function TradeLayer(_props: { routes: TradeRoute[] }) {
+  // Disabled: removed trade routes, sea lanes, and animated cargo carriers for visual clarity and performance.
+  // pointerEvents="none" aria-hidden="true"
+  return null;
 }

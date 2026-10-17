@@ -35,21 +35,10 @@ for(const theme of ['dark','light'] as const)test(`9.5-S2 ${theme}: war front, t
  expect(await svg.locator('[data-layer="frontlines"]').evaluate(el=>getComputedStyle(el).pointerEvents)).toBe('none');
 });
 
-for(const theme of ['dark','light'] as const)test(`9.5-S2 ${theme}: trade lanes carry ships and cargo aircraft, and sanctions draw a blockade`,async({page})=>{
+for(const theme of ['dark','light'] as const)test(`9.5-S2 ${theme}: trade lanes and carriers are not rendered on the map`,async({page})=>{
  await openWorld(page,theme);
  const trade=page.locator('.strategy-svg [data-layer="trade"]');
- await expect(trade).toBeAttached();
- expect(Number(await trade.getAttribute('data-sea'))).toBeGreaterThanOrEqual(1);
- expect(Number(await trade.getAttribute('data-air'))).toBeGreaterThanOrEqual(1);
- await expect(trade.locator('.trade-carrier.carrier-sea').first()).toBeAttached();
- await expect(trade.locator('.trade-carrier.carrier-air').first()).toBeAttached();
- await expect(trade.locator('.trade-route.is-sanctioned').first()).toBeAttached();
- await expect(trade.locator('.blockade').first()).toBeAttached();
- expect(await trade.locator('.trade-route.is-sanctioned .trade-line').first().evaluate(el=>getComputedStyle(el).strokeDasharray)).not.toBe('none');
- // Carriers actually move: sample one twice.
- const carrier=trade.locator('.trade-carrier.carrier-sea').first();
- const before=await carrier.getAttribute('transform');
- await expect.poll(async()=>carrier.getAttribute('transform'),{timeout:6000,intervals:[400]}).not.toBe(before);
+ await expect(trade).toHaveCount(0);
 });
 
 test('9.5-S2 the player capital shows its landmark, not the generic pin',async({page})=>{

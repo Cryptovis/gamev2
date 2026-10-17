@@ -69,8 +69,18 @@
   .review-dialog,
   .war-theatre
 ) {
-  position: relative !important;
   overflow: visible !important;
+}
+
+:root :is(
+  .target-hub,
+  .command-window,
+  .executive-workspace,
+  .player-options-modal,
+  .review-dialog,
+  .war-theatre
+) {
+  position: relative;
 }
 
 :root :is(
