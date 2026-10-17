@@ -1476,6 +1476,12 @@ export const UI_CATALOG_100:Record<string,[string,string,string,string]>={
     "国际事务",
     "Международные дела"
   ],
+  "International Affairs (Alliances)": [
+    "Uluslararası İlişkiler (İttifaklar)",
+    "Asuntos internacionales (Alianzas)",
+    "国际事务 (联盟)",
+    "Международные дела (Альянсы)"
+  ],
   "Maturity day": [
     "Vade günü",
     "Fin del plazo",

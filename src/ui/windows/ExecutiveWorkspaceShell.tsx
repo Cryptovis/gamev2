@@ -10,21 +10,26 @@ import type {TacticalHintSpec} from '../hints/types';
 import {WindowHintSlot} from '../hints/HintSlot';
 
 /** A centered primary workspace: fixed heading/tabs, one scrolling body, suspended ownership while a child is active. */
-export function ExecutiveWorkspaceShell({id,title,kicker='EXECUTIVE OFFICE',tabs,children,onClose,scrollKey='body',active,hint}:{id:string;title:string;kicker?:string;tabs?:ReactNode;children:ReactNode;onClose:()=>void;scrollKey?:string;active?:boolean;hint?:TacticalHintSpec}){
+export function ExecutiveWorkspaceShell({id,title,kicker='EXECUTIVE OFFICE',tabs,children,onClose,scrollKey='body',active,hint,hideHeader}:{id:string;title?:string;kicker?:string;tabs?:ReactNode;children:ReactNode;onClose:()=>void;scrollKey?:string;active?:boolean;hint?:TacticalHintSpec;hideHeader?:boolean}){
  const [hintSlot,setHintSlot]=useState<HTMLElement|null>(null),owned=useWorkspaceVisibility(),visible=active??owned,ref=useRef<HTMLElement>(null),body=useRef<HTMLDivElement>(null),positions=useRef(new Map<string,number>());
  useLayoutEffect(()=>{if(visible&&body.current)body.current.scrollTop=positions.current.get(scrollKey)??0;},[scrollKey,visible]);
  useWindowLifecycle(ref,{onClose,layer:WINDOW_LAYERS.workspace,enabled:visible});
  useScrollMemory(ref,visible);
  const node=<div className="executive-backdrop" hidden={!visible} onMouseDown={event=>{if(ownsWindowDismissal(ref.current)){event.preventDefault();onClose();}}}>
-  <section id={id} ref={ref} tabIndex={-1} role="dialog" aria-modal="true" aria-label={translateLive(title)} className="executive-workspace" onMouseDown={e=>e.stopPropagation()}>
-   <header className="floating-command-header executive-header" onMouseDown={e=>e.stopPropagation()}>
-    <span><small><LocaleText value={kicker}/></small><strong><LocaleText value={title}/></strong></span>
-    <div className="header-actions">
-     <span className="window-hint-slot" ref={setHintSlot}/>
-     {hint&&<TacticalHint spec={hint}/>}
-     <button data-guide="close-workspace" onClick={onClose} aria-label={translateLive('Close command window')}><LocaleText value="×"/></button>
-    </div>
-   </header>
+  <section id={id} ref={ref} tabIndex={-1} role="dialog" aria-modal="true" aria-label={translateLive(title??'')} className="executive-workspace" onMouseDown={e=>e.stopPropagation()}>
+   {!hideHeader && (
+    <header className="floating-command-header executive-header" onMouseDown={e=>e.stopPropagation()}>
+     <span><small><LocaleText value={kicker}/></small><strong><LocaleText value={title??''}/></strong></span>
+     <div className="header-actions">
+      <span className="window-hint-slot" ref={setHintSlot}/>
+      {hint&&<TacticalHint spec={hint}/>}
+      <button data-guide="close-workspace" onClick={onClose} aria-label={translateLive('Close command window')}><LocaleText value="×"/></button>
+     </div>
+    </header>
+   )}
+   {hideHeader && (
+    <button data-guide="close-workspace" onClick={onClose} aria-label={translateLive('Close command window')}><LocaleText value="×"/></button>
+   )}
    {tabs&&<div className="executive-tabs" onKeyDown={event=>{
     if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;
     const tabs=[...event.currentTarget.querySelectorAll<HTMLButtonElement>('[role="tab"]:not(:disabled)')],index=tabs.indexOf(document.activeElement as HTMLButtonElement);

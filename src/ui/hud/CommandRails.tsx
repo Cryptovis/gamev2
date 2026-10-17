@@ -90,7 +90,7 @@ export function CommandRails(){
    <CampaignVictoryProgress/>
   </DraggableWindow>}
 
-  {mounted.has('alliances')&&<ExecutiveWorkspaceShell id="alliances-window" kicker="WORLD COMMAND" title={translateLive("Alliances")} onClose={()=>close('alliances')}><InternationalAffairsWorkspace/></ExecutiveWorkspaceShell>}
+  {mounted.has('alliances')&&<ExecutiveWorkspaceShell id="alliances-window" hideHeader title={translateLive("Alliances")} onClose={()=>close('alliances')}><InternationalAffairsWorkspace/></ExecutiveWorkspaceShell>}
   {mounted.has('pulse')&&<WorldRankingsWindow/>}
   {mounted.has('desk')&&<ExecutiveDesk onClose={()=>close('desk')}/>}
 

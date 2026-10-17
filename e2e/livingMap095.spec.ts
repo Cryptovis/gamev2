@@ -21,14 +21,13 @@ for(const theme of ['dark','light'] as const)for(const projection of ['globe','f
  await openGeographicMap(page,theme,projection);
  const svg=page.locator('.strategy-svg');
  await expect(svg.locator('[data-layer="shelf-halo"] .shelf-halo')).toHaveCount(3);
- await expect(svg.locator('[data-layer="rivers"]')).toHaveAttribute('data-river-count','9');
- await expect(svg.locator('[data-layer="rivers"] .river-line')).toHaveAttribute('d',/^M/);
+ await expect(svg.locator('[data-layer="rivers"]')).toHaveCount(0);
  await expect(svg.locator('[data-layer="night"] .night-band')).toHaveCount(4);
  const sun=await svg.locator('[data-layer="night"]').evaluate(el=>[Number(el.getAttribute('data-sun-lon')),Number(el.getAttribute('data-sun-lat'))]);
  // 03:00 UTC: the sun is over 135 degrees east, and mid-October declination is about 9 degrees south.
  expect(Math.abs(sun[0]-135)).toBeLessThan(6);expect(sun[1]).toBeLessThan(-5);expect(sun[1]).toBeGreaterThan(-13);
  // The layers never take pointer events, so country selection and dragging keep working.
- for(const layer of ['shelf-halo','rivers','night','night-lights'])expect(await svg.locator(`[data-layer="${layer}"]`).evaluate(el=>getComputedStyle(el).pointerEvents)).toBe('none');
+ for(const layer of ['shelf-halo','night','night-lights'])expect(await svg.locator(`[data-layer="${layer}"]`).evaluate(el=>getComputedStyle(el).pointerEvents)).toBe('none');
 });
 
 test('9.5-3 flat map at 03:00 UTC lights London and New York and leaves Tokyo, in daylight, dark',async({page})=>{

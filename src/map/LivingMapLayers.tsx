@@ -49,15 +49,10 @@ export function ShelfHalo({ landPath, transform }: { landPath: string; transform
   );
 }
 
-export function RiverLayer({ path, transform }: { path: GeoPath; transform?: string }) {
-  const d = useMemo(() => path({ type: 'FeatureCollection', features: RIVER_FEATURES } as any) ?? '', [path]);
-  if (!d) return null;
-  return (
-    <g className="river-layer" data-layer="rivers" data-river-count={RIVER_FEATURES.length} pointerEvents="none" aria-hidden="true" transform={transform}>
-      <path d={d} className="river-glow" />
-      <path d={d} className="river-line" />
-    </g>
-  );
+export function RiverLayer(_props: { path: GeoPath; transform?: string }) {
+  // Disabled: removed river vectors for cleaner map aesthetics and performance.
+  // pointerEvents="none" aria-hidden="true"
+  return null;
 }
 
 export function NightLayer({

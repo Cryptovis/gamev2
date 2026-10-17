@@ -8,7 +8,7 @@
 .international-affairs h4 { font-size:14px; }
 .ia-header { display:flex; align-items:start; justify-content:space-between; gap:20px; border-bottom:1px solid var(--border); padding-bottom:16px; }
 .ia-header small { font-size:11px; letter-spacing:.08em; }
-.ia-header p { max-width:60ch; color:var(--ink-muted); }
+.ia-header p { max-width:none; white-space:nowrap; color:var(--ink-muted); }
 .ia-influence { flex:0 0 auto; display:grid; text-align:right; gap:2px; }
 .ia-influence strong { font-size:30px; color:var(--ink); font-variant-numeric:tabular-nums; }
 .ia-influence span { font-size:12px; color:var(--ink-muted); }
@@ -60,6 +60,7 @@
  .ia-organization-grid,.ia-form-grid { grid-template-columns:minmax(0,1fr); }
  .ia-card { padding:14px; }
  .ia-header { flex-direction:column; gap:12px; }
+ .ia-header p { white-space:normal; }
  .ia-influence { grid-template-columns:1fr auto; align-items:center; text-align:left; width:100%; }
  .ia-influence small { grid-column:1/-1; }
  #country-section-window:has(.international-affairs) .executive-body { padding:12px; }

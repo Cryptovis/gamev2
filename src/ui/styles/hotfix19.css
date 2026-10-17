@@ -103,6 +103,7 @@
   .target-hub-close,
   .command-window-header > [data-guide="close-workspace"],
   .executive-header [data-guide="close-workspace"],
+  .executive-workspace > [data-guide="close-workspace"],
   .floating-command-header [data-guide="close-workspace"],
   .war-theatre > header > button[data-guide="close-workspace"],
   .war-theatre > header > button[aria-label*="Close"],
@@ -141,6 +142,7 @@
   .target-hub-close,
   .command-window-header > [data-guide="close-workspace"],
   .executive-header [data-guide="close-workspace"],
+  .executive-workspace > [data-guide="close-workspace"],
   .floating-command-header [data-guide="close-workspace"],
   .war-theatre > header > button[data-guide="close-workspace"],
   .war-theatre > header > button[aria-label*="Close"],
@@ -159,6 +161,7 @@
   .target-hub-close,
   .command-window-header > [data-guide="close-workspace"],
   .executive-header [data-guide="close-workspace"],
+  .executive-workspace > [data-guide="close-workspace"],
   .floating-command-header [data-guide="close-workspace"],
   .war-theatre > header > button[data-guide="close-workspace"],
   .war-theatre > header > button[aria-label*="Close"],
@@ -173,6 +176,7 @@
   .target-hub-close,
   .command-window-header > [data-guide="close-workspace"],
   .executive-header [data-guide="close-workspace"],
+  .executive-workspace > [data-guide="close-workspace"],
   .floating-command-header [data-guide="close-workspace"],
   .war-theatre > header > button[data-guide="close-workspace"],
   .war-theatre > header > button[aria-label*="Close"],
@@ -189,6 +193,7 @@
   .target-hub-close,
   .command-window-header > [data-guide="close-workspace"],
   .executive-header [data-guide="close-workspace"],
+  .executive-workspace > [data-guide="close-workspace"],
   .floating-command-header [data-guide="close-workspace"],
   .war-theatre > header > button[data-guide="close-workspace"],
   .war-theatre > header > button[aria-label*="Close"],
@@ -206,6 +211,7 @@
   .target-hub-close,
   .command-window-header > [data-guide="close-workspace"],
   .executive-header [data-guide="close-workspace"],
+  .executive-workspace > [data-guide="close-workspace"],
   .floating-command-header [data-guide="close-workspace"],
   .war-theatre > header > button[data-guide="close-workspace"],
   .war-theatre > header > button[aria-label*="Close"],
@@ -223,6 +229,7 @@
   .target-hub-close,
   .command-window-header > [data-guide="close-workspace"],
   .executive-header [data-guide="close-workspace"],
+  .executive-workspace > [data-guide="close-workspace"],
   .floating-command-header [data-guide="close-workspace"],
   .war-theatre > header > button[data-guide="close-workspace"],
   .war-theatre > header > button[aria-label*="Close"],
@@ -232,4 +239,38 @@
   outline: 2px solid #8c2219 !important;
   outline-offset: 2px !important;
 }
+
+/* Modal top stability: anchor to top so windows/tabs do not jump when content height changes */
+:root :is(
+  .executive-backdrop,
+  .command-window-backdrop,
+  .player-options-backdrop,
+  .target-hub-backdrop
+) {
+  display: grid !important;
+  place-items: start center !important;
+  align-items: start !important;
+  justify-items: center !important;
+  padding-top: 80px !important;
+  padding-bottom: 24px !important;
+}
+
+@media (max-width: 760px) {
+  :root :is(
+    .executive-backdrop,
+    .command-window-backdrop,
+    .player-options-backdrop,
+    .target-hub-backdrop
+  ) {
+    padding-top: 64px !important;
+  }
+}
+
+/* Headerless executive workspace: body inherits top rounded corners and provides top padding */
+:root .executive-workspace:not(:has(> .executive-header)) > .executive-body {
+  border-top-left-radius: inherit !important;
+  border-top-right-radius: inherit !important;
+  padding-top: 24px !important;
+}
+
 

@@ -14,7 +14,7 @@ for(const width of [1440,390])for(const theme of ['light','dark'])test(`1.0 inte
   await hub.getByRole('tab',{name:label,exact:true}).click();await expect(hub.getByRole('tabpanel')).toHaveAttribute('aria-labelledby',await hub.getByRole('tab',{name:label,exact:true}).getAttribute('id')??'');await fits();
  }
  await page.screenshot({path:`test-results/international100-${theme}-${width}.png`});
- await hub.getByRole('tab',{name:'Resolutions & voting',exact:true}).click();
+ await hub.getByRole('tab',{name:'Resolutions & Voting',exact:true}).click();
  const resolution=hub.locator('[data-resolution="ORG-1"]');await expect(resolution).toContainText('Greece');await resolution.getByRole('button',{name:'Yes',exact:true}).click();
  const review=page.getByRole('dialog',{name:'Review ballot',exact:true});await expect(review).toContainText('Greece');await expect(review.getByRole('button',{name:'CONFIRM',exact:true})).toBeInViewport();
  await page.screenshot({path:`test-results/international100-review-${theme}-${width}.png`});await review.getByRole('button',{name:'CONFIRM',exact:true}).click();
@@ -24,9 +24,9 @@ for(const width of [1440,390])for(const theme of ['light','dark'])test(`1.0 inte
 for(const width of [1440,390])test(`1.0 hint beacon pulse stays inside the hub ${width}px`,async({page})=>{
  await page.setViewportSize({width,height:900});
  await resumeFixture(page,campaignFixture('en'));await page.locator('[data-guide="rail-alliances"]').click();
- const hub=page.locator('.international-affairs'),beacon=page.locator('#alliances-window .executive-header .tactical-hint-beacon');
- await expect(page.locator('#alliances-window .executive-header [data-guide="close-workspace"]')).toBeVisible();
- await expect(hub.locator('.tactical-hint-beacon')).toHaveCount(0);
+ const hub=page.locator('.international-affairs'),beacon=page.locator('#alliances-window .tactical-hint-beacon');
+ await expect(page.locator('#alliances-window [data-guide="close-workspace"]')).toBeVisible();
+ await expect(beacon).toBeVisible();
  await expect(beacon).toHaveAttribute('data-state','unseen');await expect(beacon).toHaveAttribute('data-motion','full');
  await page.addStyleTag({content:'.tactical-hint-beacon,.tactical-hint-beacon::after{animation:none !important}.tactical-hint-beacon[data-state="unseen"]::after{transform:scale(1.55) !important}'});
  expect(await hub.evaluate(el=>el.scrollWidth<=el.clientWidth+1)).toBe(true);
