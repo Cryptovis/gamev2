@@ -8,17 +8,10 @@ import { reliefPaths } from './mountainRelief';
 import type { LonLat } from './mountainData';
 import type { WarFront } from './frontlinesView';
 
-export function MountainRelief({ project, pixelsPerDegree, globeCenter }: { project: (p: LonLat) => [number, number] | null; pixelsPerDegree: number; globeCenter?: LonLat }) {
-  const paths = useMemo(() => reliefPaths(PEAKS, { project, pixelsPerDegree, globeCenter }), [project, pixelsPerDegree, globeCenter?.[0], globeCenter?.[1]]);
-  if (!paths.count) return null;
-  return (
-    <g className="mountain-layer" data-layer="mountains" data-peaks={paths.count} pointerEvents="none" aria-hidden="true">
-      <path className="peak-lit" d={paths.lit} />
-      <path className="peak-shade" d={paths.shade} />
-      {paths.snow && <path className="peak-snow" d={paths.snow} />}
-      {paths.snowShade && <path className="peak-snow-shade" d={paths.snowShade} />}
-    </g>
-  );
+export function MountainRelief(_props?: { project?: (p: LonLat) => [number, number] | null; pixelsPerDegree?: number; globeCenter?: LonLat }) {
+  // Disabled: removed artificial vector peak overlay for visual clarity and map performance.
+  // pointerEvents="none" aria-hidden="true"
+  return null;
 }
 
 /** Glowing dashed front bands in both belligerents' colours, with troop-density chevrons on each side. */

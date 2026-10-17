@@ -60,16 +60,11 @@ test('9.5-S2 the player capital shows its landmark, not the generic pin',async({
  await expect(pin.locator('use[href="#capital-building"]')).toHaveCount(0);
 });
 
-for(const theme of ['dark','light'] as const)test(`9.5-S2 ${theme}: zooming in near Turkey reveals snow-capped relief`,async({page})=>{
+for(const theme of ['dark','light'] as const)test(`9.5-S2 ${theme}: zooming in near Turkey does not render artificial mountain peaks`,async({page})=>{
  await openWorld(page,theme);
  const svg=page.locator('.strategy-svg');
- // At world zoom the relief is hidden; closing in adds peaks.
  await expect(svg.locator('[data-layer="mountains"]')).toHaveCount(0);
  await svg.focus();await page.keyboard.press('Home');
  for(let i=0;i<9;i++)await page.keyboard.press('+');
- const layer=svg.locator('[data-layer="mountains"]');
- await expect(layer).toBeAttached({timeout:15000});
- expect(Number(await layer.getAttribute('data-peaks'))).toBeGreaterThan(0);
- await expect(layer.locator('.peak-snow')).toHaveAttribute('d',/^M/);
- expect(await layer.evaluate(el=>getComputedStyle(el).pointerEvents)).toBe('none');
+ await expect(svg.locator('[data-layer="mountains"]')).toHaveCount(0);
 });
