@@ -23,3 +23,78 @@
 :root .ia-hardware-card :is(.ia-section-note,.ia-section-context,h3){overflow-wrap:anywhere;min-width:0}
 :root .ia-hardware-card .ia-form-grid{min-width:0}
 :root .ia-hardware-card :is(select,input){max-width:100%;min-width:0}
+
+/* Country Panel floating corner close button & clean header (Phase 9.5 UX) */
+:root .command-panel > .national-panel-heading {
+  position: absolute !important;
+  top: -12px !important;
+  right: -24px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 34px !important;
+  height: 34px !important;
+  min-height: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  z-index: 50 !important;
+  pointer-events: none !important;
+}
+:root .command-panel > .national-panel-heading > [data-guide="close-workspace"] {
+  pointer-events: auto !important;
+  position: absolute !important;
+  inset: 0 !important;
+  width: 34px !important;
+  height: 34px !important;
+  min-width: 34px !important;
+  min-height: 34px !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 50% !important;
+  background: rgba(14, 28, 42, 0.96) !important;
+  border: 1.5px solid rgba(135, 185, 220, 0.5) !important;
+  color: #e0f0ff !important;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  font-size: 20px !important;
+  font-weight: 400 !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+  transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease, color 0.16s ease, box-shadow 0.16s ease !important;
+}
+:root .command-panel > .national-panel-heading > [data-guide="close-workspace"]:hover {
+  transform: scale(1.08) !important;
+  background: rgba(22, 42, 64, 0.98) !important;
+  border-color: rgba(255, 215, 120, 0.9) !important;
+  color: #ffd778 !important;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.65), 0 0 10px rgba(255, 215, 120, 0.4) !important;
+}
+:root .command-panel > .national-panel-heading > [data-guide="close-workspace"]:active {
+  transform: scale(0.95) !important;
+}
+:root .command-panel > .national-panel-heading > [data-guide="close-workspace"]:focus-visible {
+  outline: 2px solid #6cd2ff !important;
+  outline-offset: 2px !important;
+}
+
+/* Light / Ivory theme */
+:root[data-theme="light"] .command-panel > .national-panel-heading > [data-guide="close-workspace"] {
+  background: rgba(252, 249, 242, 0.98) !important;
+  border: 1.5px solid rgba(160, 130, 90, 0.55) !important;
+  color: #2b2118 !important;
+  box-shadow: 0 4px 14px rgba(40, 25, 10, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+}
+:root[data-theme="light"] .command-panel > .national-panel-heading > [data-guide="close-workspace"]:hover {
+  background: #ffffff !important;
+  border-color: #a8322a !important;
+  color: #8c2219 !important;
+  box-shadow: 0 6px 18px rgba(168, 50, 42, 0.28) !important;
+}
+:root[data-theme="light"] .command-panel > .national-panel-heading > [data-guide="close-workspace"]:focus-visible {
+  outline: 2px solid #8c2219 !important;
+  outline-offset: 2px !important;
+}
