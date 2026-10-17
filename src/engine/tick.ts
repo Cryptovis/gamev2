@@ -45,6 +45,7 @@ import {processLeadership} from './systems/leadership';
 import { processInfrastructure, processInfrastructureAI } from './systems/infrastructure';
 import { processAiWars } from './systems/aiWar';
 import { processNuclear } from './systems/nuclear';
+import { processParliament, strikeLogistics, strikePerks } from './systems/parliament';
 import { processPeaceConferences, processPeaceObligations } from './systems/peaceTreaty';
 import { processArmisticeRequests } from './systems/peaceArmistice';
 
@@ -69,8 +70,10 @@ function contractedTradeInflow(state: GameState): Record<string, TradeInflow> {
   for (const deal of Object.values(state.tradeDeals)) {
     if (!deal.active || organizationSanctionsBlock(state,deal.sellerId,deal.buyerId,'trade',deal.resource) || (deal.resource !== 'food' && deal.resource !== 'oil')) continue;
     const buyer = (inflow[deal.buyerId] ??= {}), seller = (inflow[deal.sellerId] ??= {});
-    buyer[deal.resource] = (buyer[deal.resource] ?? 0) + deal.quantityPerDay;
-    seller[deal.resource] = (seller[deal.resource] ?? 0) - deal.quantityPerDay;
+    // 9.8: strikes slow the ports and the railways at either end of the contract.
+    const moved = deal.quantityPerDay * strikeLogistics(state, deal.buyerId, deal.sellerId);
+    buyer[deal.resource] = (buyer[deal.resource] ?? 0) + moved;
+    seller[deal.resource] = (seller[deal.resource] ?? 0) - moved;
   }
   return inflow;
 }
@@ -86,7 +89,7 @@ export function tickGame(state: GameState): GameState {
   const financing=organizationCountryAccounts(dated);
   const boostActive=dated.day<dated.leadership.celebrationUntilDay;
   const inflow = contractedTradeInflow(state);
-  const countries = distributeMigration(Object.fromEntries(Object.entries(dated.countries).map(([id, country]) => [id, country.annexedBy?country:tickCountry(country,(id===state.playerCountryId&&boostActive?1.12:1)*((occupationFor(dated,id)?.unrest??0)>=80?.7:1),true,inflow[id],leaderModifiers(state,id),financing[id]?.debtB??0,financing[id]?.fiscalAdjustmentB??0,constrainedOilOutput(dated,id))])));
+  const countries = distributeMigration(Object.fromEntries(Object.entries(dated.countries).map(([id, country]) => [id, country.annexedBy?country:tickCountry(country,(id===state.playerCountryId&&boostActive?1.12:1)*((occupationFor(dated,id)?.unrest??0)>=80?.7:1),true,inflow[id],strikePerks(state,id,leaderModifiers(state,id)),financing[id]?.debtB??0,financing[id]?.fiscalAdjustmentB??0,constrainedOilOutput(dated,id))])));
   const nextDay = state.day + 1;
   const player = countries[state.playerCountryId];
   const notices: string[] = [];
@@ -119,6 +122,7 @@ export function tickGame(state: GameState): GameState {
   next = processAutoWars(next);
   next = processAutoTacticalWars(next);
   next = processElection(next);
+  next = processParliament(next);
   next = processIntelOperations(next);
   next = processInfluence(next);
   next = processStrategicGoals(next);

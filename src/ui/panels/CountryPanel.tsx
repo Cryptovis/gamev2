@@ -25,6 +25,7 @@ import { Suspense, useEffect, useMemo, useRef, useState, type ReactNode } from '
 import { CountryDossierWindow } from './CountryDossierWindow';
 import { ReviewDialog } from './ReviewDialog';
 import { NuclearCommandWindow, NuclearIcon } from './NuclearCommandWindow';
+import { ParliamentIcon, ParliamentWindow } from './ParliamentWindow';
 import {ResourceCommandWindow} from './ResourceCommandWindow';
 import { SupplyCommandWindow } from './SupplyCommandWindow';
 import { DiplomacyPanel } from './DiplomacyPanel';
@@ -71,7 +72,7 @@ export function CountryPanel({onBrowse,suspended=false,countryId,navigationFrame
   const wideSection=['technology','world','war','production','policies','military','economy'].includes(tab);
   const chooseTab=(id:PanelTab)=>{if(id==='war'&&selected.id!==state.playerCountryId){state.routeWorkspace({kind:'operational-assessment',targetCountryId:selected.id});return;}setTab(id);setExpanded(['technology','world','war','production','policies','military','economy'].includes(id));};
   const [militarySection,setMilitarySection]=useState('overview');
-  const [commandWindow,setCommandWindow]=useState<'dossier'|'supply'|'nuclear'|null>(null);
+  const [commandWindow,setCommandWindow]=useState<'dossier'|'supply'|'nuclear'|'parliament'|null>(null);
   const [pendingDecision,setPendingDecision]=useState<{spec:StrategicDecisionSpec;execute:()=>void}|null>(null);
   const state=useGameStore(useShallow(s=>{const {actionReceipt,saveMessage,mapControlCommand,mapZoomSensitivity,mapLabelScale,...view}=s;return view;}));
   const navigation=navigationFrame===undefined?state.navigation:navigationFrame;
@@ -108,6 +109,7 @@ export function CountryPanel({onBrowse,suspended=false,countryId,navigationFrame
       <button data-guide="tab-power" onClick={()=>setCommandWindow('dossier')}><PowerChartIcon/><span><LocaleText value="National power"/></span></button>
       <button data-guide="tab-supply-command" onClick={()=>setCommandWindow('supply')}><CommandArt kind="production"/><span><LocaleText value="Supply command"/></span></button>
       {isPlayer&&<button data-guide="tab-nuclear" onClick={()=>setCommandWindow('nuclear')}><NuclearIcon size={22}/><span><LocaleText value="Nuclear command"/></span></button>}
+      {isPlayer&&<button data-guide="tab-parliament" onClick={()=>setCommandWindow('parliament')}><ParliamentIcon size={22}/><span><LocaleText value="Parliament"/></span></button>}
     </div>
     <GuideBriefing/>
     <div className="panel-tabs country-navigation-group" data-menu-group="management">
@@ -162,6 +164,7 @@ export function CountryPanel({onBrowse,suspended=false,countryId,navigationFrame
     </div>
     {commandWindow==='dossier'&&<CountryDossierWindow country={selected} onClose={()=>setCommandWindow(null)}/>} 
     {commandWindow==='nuclear'&&<NuclearCommandWindow onClose={()=>setCommandWindow(null)}/>}
+    {commandWindow==='parliament'&&<ParliamentWindow onClose={()=>setCommandWindow(null)}/>}
     {commandWindow==='supply'&&<SupplyCommandWindow country={selected} war={activeWar} onClose={()=>setCommandWindow(null)}/>} 
     {confirmConcede&&activeWar&&<ReviewDialog title="Withdraw from the battlefield" summary="Withdrawing as the defender concedes control of the country to the attacker. Losing your home country ends the campaign." onCancel={()=>setConfirmConcede(false)} onConfirm={()=>{state.withdraw(activeWar.id);setConfirmConcede(false);}}/>}
     {pendingDecision&&<StrategicDecisionModal spec={pendingDecision.spec} onCancel={()=>setPendingDecision(null)} onConfirm={()=>{pendingDecision.execute();setPendingDecision(null);}}/>}

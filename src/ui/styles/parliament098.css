@@ -1,0 +1,110 @@
+/* Phase 9.8: Parliament. Navy is the default; Ivory re-tints every token. The chamber is drawn as a seating chart: a filled
+   seat belongs to the cabinet, a half-filled one backs it from outside, a ring sits in opposition. Each bloc keeps one
+   colour everywhere (seat, legend, card) and the shape of the seat repeats the meaning so colour is never the only cue. */
+:root {
+  --par-panel: #0d2233; --par-panel-2: #132f45; --par-ink: #e9f0f6; --par-muted: #9fb5c5; --par-line: rgba(159, 189, 212, .26);
+  --par-track: rgba(159, 189, 212, .18); --par-button: #1a4260; --par-button-ink: #f1f6fa; --par-tick: #e9f0f6;
+  --par-safe: #5fc7b2; --par-risk: #ef6a5e; --par-risk-soft: rgba(239, 106, 94, .14); --par-warn: #e8b64a; --par-accent: #e8b64a;
+  --par-business: #e0aa3e; --par-labour: #ee6f63; --par-security: #8d9cf0; --par-traditional: #6cc58f; --par-liberal: #5cc0dd;
+}
+:root[data-theme="light"] {
+  --par-panel: #fffdf7; --par-panel-2: #f3efe5; --par-ink: #142c46; --par-muted: #465b70; --par-line: rgba(20, 44, 70, .24);
+  --par-track: rgba(20, 44, 70, .14); --par-button: #17395b; --par-button-ink: #f7fafc; --par-tick: #142c46;
+  --par-safe: #17663d; --par-risk: #a52a21; --par-risk-soft: rgba(165, 42, 33, .1); --par-warn: #8a5a08; --par-accent: #8a5a08;
+  --par-business: #9a6a10; --par-labour: #b6342c; --par-security: #3f4fb0; --par-traditional: #1d7a46; --par-liberal: #12708f;
+}
+
+:root .parliament-window { width: min(1280px, 96vw); }
+:root .parliament-window [data-testid="parliament-window"] { color: var(--par-ink); background: var(--par-panel-2); border-radius: 8px; }
+:root .par-grid { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+:root .par-col { display: grid; gap: 16px; min-width: 0; }
+:root .par-panel { display: grid; gap: 12px; padding: 16px; background: var(--par-panel); border: 1px solid var(--par-line); border-radius: 10px; min-width: 0; }
+:root .par-panel h3 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: 20px; font-weight: 600; color: var(--par-ink); }
+:root .par-panel small, :root .par-bloc small { color: var(--par-muted); font-size: 12.5px; line-height: 1.4; }
+:root .par-empty { margin: 0; padding: 18px; color: var(--par-muted); background: var(--par-panel); border: 1px dashed var(--par-line); border-radius: 10px; }
+:root .par-note { margin: 0; color: var(--par-muted); font-size: 13px; }
+:root .par-alert { margin: 0; padding: 9px 12px; border-radius: 8px; border: 1px solid var(--par-risk); background: var(--par-risk-soft); color: var(--par-ink); font-size: 14px; }
+
+:root .parliament-window button { font: inherit; min-height: 40px; padding: 8px 12px; color: var(--par-button-ink); background: var(--par-button); border: 1px solid var(--par-line); border-radius: 8px; cursor: pointer; text-align: left; }
+:root .parliament-window button b { color: #f0c670; margin-left: 6px; }
+:root .parliament-window button:disabled { opacity: .5; cursor: not-allowed; }
+:root .parliament-window button:focus-visible { outline: 3px solid var(--focus, #89c6ff); outline-offset: 2px; }
+:root .parliament-window button.quiet { background: transparent; color: var(--par-ink); }
+:root .parliament-window button.quiet b { color: var(--par-accent); }
+:root .parliament-window button.par-primary { background: var(--par-accent); color: #10202e; border-color: transparent; font-weight: 600; text-align: center; }
+:root[data-theme="light"] .parliament-window button.par-primary { color: #fff9ec; }
+
+/* The chamber */
+:root .hemicycle { width: 100%; max-height: 300px; }
+:root .hemicycle .seat { stroke-width: 2; transition: fill-opacity .2s; }
+:root .bloc-business { --bloc: var(--par-business); } :root .bloc-labour { --bloc: var(--par-labour); }
+:root .bloc-security { --bloc: var(--par-security); } :root .bloc-traditional { --bloc: var(--par-traditional); }
+:root .bloc-liberal { --bloc: var(--par-liberal); }
+:root .hemicycle .seat { stroke: var(--bloc); fill: var(--bloc); }
+:root .hemicycle .seat.is-support { fill-opacity: .4; }
+:root .hemicycle .seat.is-opposition { fill: transparent; }
+:root .par-legend { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 16px; }
+:root .par-legend li { display: flex; align-items: center; gap: 6px; font-size: 13px; }
+:root .swatch { width: 12px; height: 12px; border-radius: 50%; background: var(--bloc, var(--par-muted)); flex: none; }
+:root .par-legend b { font-variant-numeric: tabular-nums; }
+
+:root .par-majority { display: grid; gap: 6px; }
+:root .par-majority-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-size: 14px; }
+:root .par-majority-head b { font-size: 18px; font-variant-numeric: tabular-nums; }
+:root .par-majority-head b.is-short { color: var(--par-risk); }
+:root .par-meter { position: relative; height: 10px; background: var(--par-track); border-radius: 5px; overflow: visible; }
+:root .par-meter .par-fill { display: block; height: 100%; background: var(--par-safe); border-radius: 5px; }
+:root .par-meter .par-tick { position: absolute; top: -4px; width: 2px; height: 18px; background: var(--par-tick); border-radius: 1px; opacity: .75; }
+:root .par-mandate { margin: 0; padding: 9px 12px; border-radius: 8px; font-size: 14px; border: 1px solid var(--par-line); }
+:root .par-mandate.is-ok { border-color: var(--par-safe); }
+:root .par-mandate.is-blocked { border-color: var(--par-risk); background: var(--par-risk-soft); }
+:root .par-election { display: grid; gap: 6px; justify-items: start; }
+
+/* Blocs */
+:root .par-blocs { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+:root .par-bloc { display: grid; gap: 8px; align-content: start; padding: 12px; background: var(--par-panel); border: 1px solid var(--par-line); border-top: 4px solid var(--bloc); border-radius: 10px; color: var(--par-ink); }
+:root .par-bloc[data-cabinet="false"] { border-top-style: dashed; }
+:root .par-bloc > header { display: flex; align-items: center; gap: 8px; }
+:root .par-bloc h4 { margin: 0; font-size: 15px; flex: 1; min-width: 0; }
+:root .par-seats b { font-family: Georgia, serif; font-size: 24px; font-variant-numeric: tabular-nums; }
+:root .par-badges { display: flex; flex-wrap: wrap; gap: 4px; min-height: 0; }
+:root .par-badge { padding: 1px 8px; font-size: 12px; border: 1px solid var(--par-line); border-radius: 10px; }
+:root .par-badge.is-lead { border-color: var(--par-accent); color: var(--par-accent); font-weight: 600; }
+:root .par-badge.is-cabinet { border-color: var(--par-safe); color: var(--par-safe); }
+:root .par-satisfaction { display: grid; grid-template-columns: 1fr auto; gap: 4px 8px; align-items: baseline; font-size: 13px; }
+:root .par-satisfaction .par-meter { grid-column: 1 / -1; }
+:root .par-warn { color: var(--par-risk); }
+:root .par-actions { display: grid; gap: 6px; }
+
+/* Strikes */
+:root .par-risk { margin: 0; display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+:root .par-risk b { font-family: Georgia, serif; font-size: 20px; }
+:root .par-strikes.risk-calm .par-risk b { color: var(--par-safe); }
+:root .par-strikes.risk-rising .par-risk b { color: var(--par-warn); }
+:root .par-strikes.risk-danger .par-risk b, :root .par-strikes.risk-striking .par-risk b { color: var(--par-risk); }
+:root .par-unrest { display: grid; gap: 6px; }
+:root .strike-meter .par-fill { background: linear-gradient(90deg, var(--par-safe), var(--par-warn) 55%, var(--par-risk)); }
+:root .par-effects { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 0; }
+:root .par-effects div { padding: 8px 10px; background: var(--par-panel-2); border-radius: 8px; }
+:root .par-effects dt { font-size: 12px; color: var(--par-muted); }
+:root .par-effects dd { margin: 2px 0 0; font-size: 20px; font-weight: 600; font-variant-numeric: tabular-nums; }
+:root .par-drivers { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+:root .par-drivers li { display: grid; gap: 3px; font-size: 13px; }
+:root .par-drivers i { display: block; height: 4px; border-radius: 2px; background: var(--par-risk); }
+:root .par-history ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+:root .par-history li { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 8px; font-size: 13px; }
+
+/* Talks dialog */
+:root .par-talks { display: grid; gap: 8px; margin: 10px 0; }
+:root .par-offer { display: grid; gap: 4px; text-align: left; padding: 10px 12px; font: inherit; background: transparent; color: inherit; border: 1px solid var(--par-line, rgba(128, 128, 128, .4)); border-radius: 8px; cursor: pointer; }
+:root .par-offer.is-chosen { border-color: var(--par-accent); box-shadow: inset 0 0 0 1px var(--par-accent); }
+:root .par-offer:disabled { opacity: .5; cursor: not-allowed; }
+:root .par-offer:focus-visible { outline: 3px solid var(--focus, #89c6ff); outline-offset: 2px; }
+
+@media (max-width: 1100px) { :root .par-grid { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 560px) {
+  :root .par-panel { padding: 12px; }
+  :root .par-blocs { grid-template-columns: minmax(0, 1fr); }
+  :root .par-effects { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (prefers-reduced-motion: reduce) { :root .hemicycle .seat { transition: none; } }

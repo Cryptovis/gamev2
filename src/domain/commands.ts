@@ -89,6 +89,8 @@ export type ReliableCommand =
  | {type:'peace/declineArmistice';warId:string}
  // Phase 9.7: the nuclear system (nuclear.ts).
  | import('./nuclear').NuclearCommand
+ // Phase 9.8: parliament, coalitions and strikes (parliament.ts).
+ | import('./parliament').ParliamentCommand
  // 0.88 track E: factions and regime crises (audit E2).
  | {type:'politics/concession';faction:import('./politics').FactionKey}
  | {type:'politics/crisisResponse';option:import('./politics').CrisisOption}

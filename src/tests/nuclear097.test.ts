@@ -458,8 +458,9 @@ describe('9.7 text and war shield', () => {
       }
     }
   });
-  it('is the last catalogue in the group so nothing shadows it', () => {
-    expect(MERGED_CATALOG_GROUP[MERGED_CATALOG_GROUP.length - 1]).toBe(UI_CATALOG_097N);
+  it('is not shadowed by a later catalogue entry', () => {
+    const later = MERGED_CATALOG_GROUP.slice(MERGED_CATALOG_GROUP.indexOf(UI_CATALOG_097N) + 1);
+    for (const catalog of later) for (const key of Object.keys(UI_CATALOG_097N)) expect(key in catalog).toBe(false);
   });
   it('gives a readable reason when a nuclear power cannot be attacked', () => {
     expect(warDeclarationReason({ allowed: false, block: 'deterrence' } as never)).toContain('nuclear');

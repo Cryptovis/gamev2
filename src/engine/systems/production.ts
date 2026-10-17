@@ -1,6 +1,7 @@
 // Raw extraction is applied in tickCountry/simulateResources, before equipment production.
 export {constrainedOilOutput as oilExtractionOutput} from './organizations/quotas';
 import {leaderModifiers} from './leaderPerks';
+import {strikePerks} from './parliament';
 import {activeCountries} from '../../domain/sovereignty';
 import type { CountryState, EquipmentStockpile, EquipmentType, GameState, NationalProductionState, ProductionLine } from '../../domain/game';
 import type {NationalIndustrialEconomy} from '../../domain/industrial';
@@ -160,7 +161,7 @@ export function processProduction(state:GameState):GameState{
   const industrialEconomy={...state.industrialEconomy};
   for(const country of activeCountries(state.countries)){
     const current=production[country.id]??createInitialProduction(country);
-    const result=processNationalProduction(countries[country.id],current,industrialEconomy[country.id],(country.id===state.playerCountryId&&state.day<state.leadership.celebrationUntilDay?1.12:1)*leaderModifiers(state,country.id).factory);
+    const result=processNationalProduction(countries[country.id],current,industrialEconomy[country.id],(country.id===state.playerCountryId&&state.day<state.leadership.celebrationUntilDay?1.12:1)*strikePerks(state,country.id,leaderModifiers(state,country.id)).factory);
     countries[country.id]=result.country;
     production[country.id]=result.production;
     if(result.industrial)industrialEconomy[country.id]=result.industrial;

@@ -50,6 +50,8 @@ export interface WorldState {
  peace?:import('./peace').PeaceState;
  /** 9.7 enrichment programmes, strategic forces and IAEA records (nuclear.ts); absent in older saves. */
  nuclear?:import('./nuclear').NuclearState;
+ /** 9.8 parliament seats, coalitions and strikes (parliament.ts); absent in older saves and created on the next tick. */
+ parliament?:import('./parliament').ParliamentState;
   members: Record<InstitutionId, string[]>;
   ballots: WorldBallot[];
   missions: OutreachMission[];
