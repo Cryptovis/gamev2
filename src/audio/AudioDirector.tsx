@@ -3,6 +3,8 @@ import { useGameStore } from '../store/gameStore';
 import { CAMPAIGN_SUMMARY_SPEED, roundReportCue, warAlarmCue, type AmbientTrack } from '../presentation/battleEffects';
 import { audio } from './audioService';
 import { useAudioSettings } from './audioSettings';
+import { chimes, moodBed, unlockAdaptiveAudio, useAdaptiveAudio } from './adaptiveAudio';
+import { moodFor, moodRank, type AmbientMood, type MoodInput, type Pressure } from './ambientMood';
 
 /** Rounds of an auto-resolved war that share one radio report at the 5× clock (effects summarised). */
 export const AUTO_REPORT_EVERY = 5;
@@ -18,18 +20,27 @@ export function AudioDirector() {
   const speed = useGameStore((s) => s.speed);
   const playing = useGameStore((s) => s.campaignStatus === 'active' && s.playerProfile.setupComplete);
   const settings = useAudioSettings();
+  const adaptive = useAdaptiveAudio((s) => s.adaptive);
+  // Narrow figures about the player's own country; the mood is worked out from these and nothing else.
+  const inflation = useGameStore((s) => s.countries[s.playerCountryId]?.economy.inflation ?? 0);
+  const stability = useGameStore((s) => s.countries[s.playerCountryId]?.politics.stability ?? 70);
+  const unrest = useGameStore((s) => s.world.parliament?.countries[s.playerCountryId]?.unrest ?? 0);
+  const strike = useGameStore((s) => s.world.parliament?.countries[s.playerCountryId]?.strike.level ?? 'none');
+  const iaea = useGameStore((s) => s.world.nuclear?.iaea[s.playerCountryId]?.status ?? 'compliant');
+  const eventId = useGameStore((s) => s.activeEvent?.id ?? null);
   const seen = useRef<Map<string, { rounds: number; status: string }> | null>(null);
 
   // Autoplay rule: the audio library loads on the first gesture. UI clicks and confirmations sound from then on.
   useEffect(() => {
     let last = 0;
-    const unlock = () => { void audio.unlock(); };
+    const unlock = () => { void audio.unlock(); void unlockAdaptiveAudio().then(() => moodBed.applySettings()); };
     const click = (e: Event) => {
       const el = (e.target as Element | null)?.closest?.('button,[role="tab"],summary,select');
       if (!el || (el as HTMLButtonElement).disabled) return;
       const now = e.timeStamp;
       if (now - last < CLICK_GAP_MS) return;
       last = now;
+      if (el.getAttribute('role') === 'tab' && useAdaptiveAudio.getState().adaptive && chimes.play('tab')) return;
       audio.play(el.closest('.confirm,[data-guide="review-confirm"],.tactical-commit') ? 'ui-confirm' : 'ui-click');
     };
     window.addEventListener('pointerdown', unlock, { capture: true });
@@ -38,13 +49,34 @@ export function AudioDirector() {
     return () => { window.removeEventListener('pointerdown', unlock, { capture: true }); window.removeEventListener('keydown', unlock, { capture: true }); window.removeEventListener('click', click, { capture: true }); };
   }, []);
 
-  useEffect(() => { audio.applySettings(); }, [settings.muted, settings.master, settings.channels]);
+  useEffect(() => { audio.applySettings(); moodBed.applySettings(); }, [settings.muted, settings.master, settings.channels]);
 
   const atWar = playerWars.split(';').some((row) => row.split('|')[2] === 'active');
   useEffect(() => {
     const track: AmbientTrack | null = !playing ? null : atWar ? 'ambient-war' : 'ambient-command';
     audio.setAmbient(track);
   }, [playing, atWar]);
+
+  // Phase 10.0: the adaptive bed follows the mood; a darkening mood is announced once, never at load.
+  const lastMood = useRef<AmbientMood | null>(null), held = useRef<Pressure[]>([]);
+  useEffect(() => {
+    const input: MoodInput = { atWar, inflation, stability, parliamentUnrest: unrest, strike, iaea };
+    const { mood, pressures } = moodFor(input, held.current);
+    held.current = pressures;
+    useAdaptiveAudio.getState().publish(mood, pressures);
+    moodBed.setMood(mood);
+    moodBed.setActive(playing && adaptive);
+    const before = lastMood.current;
+    lastMood.current = mood;
+    if (adaptive && playing && before !== null && moodRank(mood) > moodRank(before) && mood !== 'war') chimes.play('crisis');
+  }, [atWar, inflation, stability, unrest, strike, iaea, playing, adaptive]);
+
+  const seenEvent = useRef<string | null | undefined>(undefined);
+  useEffect(() => {
+    if (seenEvent.current === undefined) { seenEvent.current = eventId; return; }
+    if (eventId && eventId !== seenEvent.current && adaptive) chimes.play('event');
+    seenEvent.current = eventId;
+  }, [eventId, adaptive]);
 
   useEffect(() => {
     const rows = playerWars ? playerWars.split(';').map((row) => { const [id, rounds, status, side] = row.split('|'); return { id, rounds: Number(rounds), status, attacker: side === 'a' }; }) : [];

@@ -1,3 +1,6 @@
+import type {ScenarioId} from '../../../domain/scenario';
+import {ScenarioPicker} from './ScenarioPicker';
+import {clearPendingScenario,setPendingScenario} from '../../../scenarios/scenarioSelection';
 import {useCallback,useEffect,useReducer,useRef,useState,type ComponentType} from 'react';
 import {version} from '../../../../package.json';
 import {useGameStore} from '../../../store/gameStore';
@@ -106,7 +109,9 @@ export function LandingShell({onPlaying,deps=defaultLandingDeps,Setup=CampaignSe
   useEffect(()=>{if(state.error)setLoadError(state.error);},[state.error]);
   useEffect(()=>{if(state.screen==='game')setLoadError(null);},[state.screen]);
 
-  const startNew=(event:'PLAY_NOW'|'NEW_CAMPAIGN')=>{
+  const [scenariosOpen,setScenariosOpen]=useState(false);
+  const startNew=(event:'PLAY_NOW'|'NEW_CAMPAIGN',scenario?:{scenarioId:ScenarioId;countryId:string|null})=>{
+    setPendingScenario(scenario??null);
     deps.ensureGuest();
     setSession(deps.readSession());
     setLoadError(null);
@@ -122,11 +127,11 @@ export function LandingShell({onPlaying,deps=defaultLandingDeps,Setup=CampaignSe
 
   if(state.screen==='booting')return <div className="landing094" data-testid="landing-root" data-screen="booting" lang={language} aria-busy="true"><LandingBackdrop/></div>;
   if(state.screen==='game')return null;
-  if(state.screen==='setup')return <Setup onReturnToMenu={()=>dispatch({type:'SETUP_CANCELLED'})} startImmediately/>;
+  if(state.screen==='setup')return <Setup onReturnToMenu={()=>{clearPendingScenario();dispatch({type:'SETUP_CANCELLED'});}} startImmediately/>;
 
   if(state.screen==='loading')return <GameLoadingScreen
     language={language} percent={handoff?100:state.progress} stage={handoff?'handoff':stage} error={state.error}
-    onReturnToMenu={()=>dispatch({type:'RETURN_TO_MENU'})}/>;
+    onReturnToMenu={()=>{clearPendingScenario();dispatch({type:'RETURN_TO_MENU'});}}/>;
 
   return <div className="landing094" data-testid="landing-root" data-screen="landing" lang={language}>
     <LandingBackdrop/>
@@ -141,6 +146,7 @@ export function LandingShell({onPlaying,deps=defaultLandingDeps,Setup=CampaignSe
         <CommandMenu
           language={language} heroAction={heroAction} busy={false}
           onPlayNow={()=>startNew('PLAY_NOW')} onNewCampaign={()=>startNew('NEW_CAMPAIGN')}
+          scenariosEnabled onOpenScenarios={()=>setScenariosOpen(true)}
           onOpenDossier={openProfile} profileName={profileName}
           lead={<SaveGameCard language={language} state={summary} loadError={loadError} busy={false} onContinue={()=>{deps.ensureGuest();setLoadError(null);dispatch({type:'CONTINUE'});}}/>}/>
       </section>
@@ -154,6 +160,7 @@ export function LandingShell({onPlaying,deps=defaultLandingDeps,Setup=CampaignSe
       language={language} open={state.overlay==='profile'} tab={profileTab} sessionKind={kind} profileName={profileName}
       onTabChange={setProfileTab} onSignedIn={()=>afterSessionChange('account')} onSignedOut={()=>afterSessionChange('signIn')}
       onClose={()=>dispatch({type:'CLOSE_OVERLAY'})}/>
+    <ScenarioPicker language={language} open={scenariosOpen} onClose={()=>setScenariosOpen(false)} onBegin={(scenarioId,countryId)=>{setScenariosOpen(false);startNew('NEW_CAMPAIGN',{scenarioId,countryId});}}/>
     <ReleaseNotesModal language={language} open={state.overlay==='releaseNotes'} onClose={()=>dispatch({type:'CLOSE_OVERLAY'})}/>
   </div>;
 }

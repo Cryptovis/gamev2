@@ -4,6 +4,7 @@ import {UI_CATALOG_096P} from './uiCatalog096Peace';
 import {UI_CATALOG_097N} from './uiCatalog097Nuclear';
 import {UI_CATALOG_098P} from './uiCatalog098Parliament';
 import {UI_CATALOG_099S} from './uiCatalog099System';
+import {UI_CATALOG_100S} from './uiCatalog100Scenarios';
 import {UI_CATALOG_HINTS} from './uiCatalogHints';
 import {UI_CATALOG_1B3,UI_CATALOG_1B4} from './uiCatalog1b3';
 import {UI_CATALOG_098} from './uiCatalog098';
@@ -61,7 +62,7 @@ import { useGameStore } from "../store/gameStore";
 
 const languages = ["tr", "es", "zh", "ru"];
 /** The catalogs merged (later wins) in one pass by buildCatalog; exported so a test can detect shadowed keys. */
-export const MERGED_CATALOG_GROUP:readonly Record<string,readonly string[]>[]=[UI_CATALOG_090,UI_CATALOG_0903,UI_CATALOG_0904,UI_CATALOG_0905,UI_CATALOG_0907,UI_CATALOG_0908,UI_CATALOG_0910,UI_CATALOG_0912,UI_CATALOG_0913,UI_CATALOG_0914,UI_CATALOG_0915,UI_CATALOG_0916,UI_CATALOG_0917,UI_CATALOG_0918,UI_CATALOG_0919,UI_CATALOG_0920,UI_CATALOG_PHASE7,UI_CATALOG_SPRINT3,UI_CATALOG_094,UI_CATALOG_096,UI_CATALOG_097,UI_CATALOG_098,UI_CATALOG_100,UI_CATALOG_HINTS,UI_CATALOG_1B3,UI_CATALOG_1B4,UI_CATALOG_110,UI_CATALOG_LANDING,UI_CATALOG_096P,UI_CATALOG_097N,UI_CATALOG_098P,UI_CATALOG_099S];
+export const MERGED_CATALOG_GROUP:readonly Record<string,readonly string[]>[]=[UI_CATALOG_090,UI_CATALOG_0903,UI_CATALOG_0904,UI_CATALOG_0905,UI_CATALOG_0907,UI_CATALOG_0908,UI_CATALOG_0910,UI_CATALOG_0912,UI_CATALOG_0913,UI_CATALOG_0914,UI_CATALOG_0915,UI_CATALOG_0916,UI_CATALOG_0917,UI_CATALOG_0918,UI_CATALOG_0919,UI_CATALOG_0920,UI_CATALOG_PHASE7,UI_CATALOG_SPRINT3,UI_CATALOG_094,UI_CATALOG_096,UI_CATALOG_097,UI_CATALOG_098,UI_CATALOG_100,UI_CATALOG_HINTS,UI_CATALOG_1B3,UI_CATALOG_1B4,UI_CATALOG_110,UI_CATALOG_LANDING,UI_CATALOG_096P,UI_CATALOG_097N,UI_CATALOG_098P,UI_CATALOG_099S,UI_CATALOG_100S];
 const catalogKey=(text:string)=>text.trim().replace(/\s+/g," ").toLowerCase().replaceAll("_"," ");
 const templates = new Map<string, {pattern:RegExp;value:string;slots:number[]}[]>();
 const catalogs = new Map<string, Map<string, string>>();

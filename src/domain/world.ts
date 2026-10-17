@@ -54,6 +54,8 @@ export interface WorldState {
  parliament?:import('./parliament').ParliamentState;
  /** 9.9 the cloud revision this save descends from (lineage.ts); absent until the campaign is synced. */
  lineage?:import('./lineage').SaveLineage;
+ /** 10.0 the scenario this campaign started from (scenario.ts); absent on campaigns that began before scenarios. */
+ scenario?:import('./scenario').WorldScenario;
   members: Record<InstitutionId, string[]>;
   ballots: WorldBallot[];
   missions: OutreachMission[];

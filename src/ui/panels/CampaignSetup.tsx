@@ -4,7 +4,7 @@ import {leaderOpeningValues} from '../../engine/systems/leaderPerks';
 import {AppearanceOptions} from './AppearanceOptions';
 import {BRAND_NAME} from '../BrandMark';
 import {LocaleText,translateLive,translateText} from '../../i18n/localeText';
-import { useEffect, useMemo, useState, type CSSProperties } from 'react';
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { LeaderStyleFilter } from '../profile/LeaderStyleFilter';
 import { AVATAR_PRESETS, type LeaderStyle } from '../../data/avatarPresets';
 import { countryThemeFor, flagEmoji } from '../../data/countryThemes';
@@ -14,6 +14,8 @@ import {validBirthDate,CAMPAIGN_START_DATE} from '../../engine/systems/leadershi
 import { AvatarPortrait } from '../profile/AvatarPortrait';
 import { compactMoney } from '../formatMoney';
 import {LeadershipWisdomWidget} from '../components/LeadershipWisdomWidget';
+import {clearPendingScenario,usePendingScenario} from '../../scenarios/scenarioSelection';
+import {scenarioById} from '../../scenarios/scenarios';
 
 type SetupStep=1|2|3|4|'loading';
 
@@ -30,12 +32,16 @@ export function CampaignSetup({onReturnToMenu,startImmediately=false}:{onReturnT
  const countries=useGameStore(s=>s.countries);
  const start=useGameStore(s=>s.startCampaign);
  const load=useGameStore(s=>s.loadLatest),saveMessage=useGameStore(s=>s.saveMessage);
+ const pendingScenario=usePendingScenario();
+ const scenario=pendingScenario?scenarioById(pendingScenario.scenarioId):null;
+ /** Read once at mount: starting the campaign clears the hand-off, which must not restart this effect. */
+ const scenarioIdRef=useRef(scenario?.id);
  const [step,setStep]=useState<SetupStep>(1);
  const language=profile.language;
  const [name,setName]=useState(profile.commanderName==='Commander'?'':profile.commanderName);
- const [avatar,setAvatar]=useState(profile.avatarId);
+ const [avatar,setAvatar]=useState(scenario&&profile.avatarId==='avatar-01'?scenario.suggestedAvatar:profile.avatarId);
  const [portraitStyle,setPortraitStyle]=useState<LeaderStyle|'all'>('all');
- const [countryId,setCountryId]=useState('TUR');
+ const [countryId,setCountryId]=useState(pendingScenario?.countryId??'TUR');
  const [nationality,setNationality]=useState(profile.nationalityCountryId??'TUR');
  const [birthDate,setBirthDate]=useState(profile.birthDate??'');
  const [query,setQuery]=useState('');
@@ -54,13 +60,13 @@ export function CampaignSetup({onReturnToMenu,startImmediately=false}:{onReturnT
 
  useEffect(()=>{
   if(step!=='loading')return;
-  if(startImmediately){start({commanderName:name,countryId:selected.id,avatarId:avatar,language,nationalityCountryId:nationality,birthDate:birthDate||null});return;}
+  if(startImmediately){start({commanderName:name,countryId:selected.id,avatarId:avatar,language,nationalityCountryId:nationality,birthDate:birthDate||null,scenarioId:scenarioIdRef.current});clearPendingScenario();return;}
   const timers=[
    window.setTimeout(()=>setLoadingStep(1),450),
    window.setTimeout(()=>setLoadingStep(2),1150),
    window.setTimeout(()=>setLoadingStep(3),1900),
    window.setTimeout(()=>setLoadingStep(4),2600),
-   window.setTimeout(()=>start({commanderName:name,countryId:selected.id,avatarId:avatar,language,nationalityCountryId:nationality,birthDate:birthDate||null}),3350),
+   window.setTimeout(()=>{start({commanderName:name,countryId:selected.id,avatarId:avatar,language,nationalityCountryId:nationality,birthDate:birthDate||null,scenarioId:scenarioIdRef.current});clearPendingScenario();},3350),
   ];
   return ()=>timers.forEach(window.clearTimeout);
  },[step,start,startImmediately,name,selected.id,avatar,language,nationality,birthDate]);
@@ -93,6 +99,7 @@ export function CampaignSetup({onReturnToMenu,startImmediately=false}:{onReturnT
  return <div className="campaign-setup-backdrop campaign-wizard-backdrop" style={{'--setup-primary':theme.primary,'--setup-accent':theme.accent} as CSSProperties}>
   <section className="campaign-wizard" data-step={step}><aside className="setup-cover"><img src="/assets/command/campaign-cover.webp" alt=""/><span className="entry-tagline"><LocaleText value="Be the president you have always dreamed of."/></span></aside>
    <header className="wizard-header"><div><div className="wizard-brand" data-testid="wizard-brand" translate="no">{BRAND_NAME}</div><h1><LocaleText value={stepTitle}/></h1></div><div className="wizard-stepper">{[1,2,3,4].map(n=><span key={n} className={typeof step==='number'&&step>=n?'active':''}><b><LocaleText value={n}/></b><small><LocaleText value={n===1?'IDENTITY':n===2?'PORTRAIT':n===3?'NATION':'CONFIRM'}/></small></span>)}</div></header>
+   {scenario&&<p className="wizard-scenario" data-testid="wizard-scenario" data-scenario={scenario.id}><span aria-hidden="true">◆</span> <LocaleText value="Scenario"/>: <LocaleText value={scenario.title}/></p>}
 
    <div className="wizard-body">
     {step===1&&<div className="wizard-single-column"><AppearanceOptions/>

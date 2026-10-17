@@ -450,7 +450,7 @@ export const WORLD_NEWS: NewsItem[] = [
   { weight: 0.7, headline: 'Reactor restarts lift uranium demand', moves: [{ good: 'uranium', lo: 0.1, hi: 0.2, halfLife: 60 }] },
 ];
 
-function addShock(ex: CommodityExchangeState, shock: Omit<CommodityShock, 'id'>): CommodityExchangeState {
+export function addShock(ex: CommodityExchangeState, shock: Omit<CommodityShock, 'id'>): CommodityExchangeState {
   const market = ex.markets[shock.good];
   const id = `SHK-${shock.day}-${shock.good}-${ex.shocks.filter((x) => x.day === shock.day).length}`;
   return {
