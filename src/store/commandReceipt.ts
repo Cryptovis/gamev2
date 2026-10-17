@@ -3,7 +3,7 @@ import type {GameCommand} from '../domain/commands';
 import type {CommandResult} from '../engine/commands';
 import {expansion,repaymentPreview} from '../engine/systems/sovereignCredit';
 import {commodityExchange,COMMODITY_SPECS} from '../engine/systems/commodityExchange';
-import {exchangeStock} from '../engine/systems/livingEconomy';
+import {exchangeStock, living} from '../engine/systems/livingEconomy';
 import type {ReviewContent} from '../ui/panels/ReviewDialog';
 import {longTermContractPreview} from '../engine/systems/trade';
 import {money} from '../ui/formatMoney';
@@ -64,6 +64,47 @@ export function commandReceipt(before:GameState,command:GameCommand,result:Comma
  const treasury=after.countries[id].economy.treasury;
  const receipt:ReviewContent={title:result.status==='applied'?'Command completed':result.status==='duplicate'?'Command already applied':'Command unavailable',summary:result.message,metrics:[['Treasury',money(treasury,language)]]};
  if(result.status==='applied'&&command.type==='intelligence/launch'){const briefing=intelBriefing(before,command,after,receipt);if(briefing)return briefing;}
+ if(result.status==='applied'&&command.type==='diplomacy/resolveLetter'){
+  const letter=living(before).letters.find(l=>l.id===command.id);
+  const home=before.countries[id],sender=letter?before.countries[letter.senderId]:undefined;
+  if(letter&&home&&sender){
+   if(command.accept){
+    const isEmbassy=letter.kind==='embassy';
+    const title=isEmbassy?'Embassy Exchange Ratified':'Trade Framework Ratified';
+    const summary=isEmbassy
+     ?`Bilateral embassy agreement ratified between ${home.name} and ${sender.name}. Permanent diplomatic missions are now established.`
+     :`Bilateral trade framework ratified between ${home.name} and ${sender.name}. Trade frictions and tariffs are lowered.`;
+    const nextSteps=isEmbassy
+     ?'Diplomatic trust and communication channels are now open. Review bilateral standing in Diplomacy.'
+     :'Bilateral commercial exchange is now active. Review trade deals and agreements in Diplomacy.';
+    const fee=before.countries[id].economy.treasury-treasury;
+    return {
+     ...receipt,
+     title,
+     summary,
+     visual:'diplomacy',
+     asset:isEmbassy?'embassy':'trade',
+     outcome:'success',
+     parties:{left:{iso2:home.iso2,name:home.name},right:{iso2:sender.iso2,name:sender.name}},
+     metrics:[
+      ['Agreement',isEmbassy?'Embassy Exchange':'Trade Framework'],
+      ['Setup fee',fee>0?money(fee,language):money(0,language)],
+      ['Treasury now',money(treasury,language)],
+     ],
+     nextSteps,
+    };
+   }else{
+    return {
+     ...receipt,
+     title:'Diplomatic Proposal Declined',
+     summary:`The diplomatic proposal from ${sender.name} was officially declined.`,
+     visual:'diplomacy',
+     parties:{left:{iso2:home.iso2,name:home.name},right:{iso2:sender.iso2,name:sender.name}},
+     metrics:[['Proposal status','Declined'],['Treasury now',money(treasury,language)]],
+    };
+   }
+  }
+ }
  const copy=result.status==='applied'?actionCopy(command):null,partnerId=partnerOf(command),home=before.countries[id],partner=partnerId?before.countries[partnerId]:undefined;
  if(copy&&home&&partner)return {...receipt,...(command.type==='trade/createLongTermContract'?supplyContractChips(before,command,money,language):{}),title:copy.title,visual:command.type.startsWith('diplomacy')?'diplomacy':'economy',outcome:'success',parties:{left:{iso2:home.iso2,name:home.name},right:{iso2:partner.iso2,name:partner.name}},nextSteps:copy.next};
  if(result.status==='applied'&&command.type==='credit/accept'){const application=expansion(after).creditApplications?.find(a=>a.offerId===command.id&&a.actorId===id&&a.status==='pending');if(application)return {...receipt,title:'Credit application submitted',summary:'Applications are assessed after three game days. Funds arrive only on approval; relations, rating and lender cash are checked again.',metrics:[['Principal',money(application.principal,language)],['Annual interest',`${application.apr}%`],['Decision day',String(application.decisionDay)],['Treasury now',money(treasury,language)]]};}

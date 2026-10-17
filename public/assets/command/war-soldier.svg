@@ -1,0 +1,153 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- Background atmospheric glow -->
+    <radialGradient id="battleGlow" cx="50%" cy="65%" r="60%">
+      <stop offset="0%" stop-color="#c87a32" stop-opacity="0.35"/>
+      <stop offset="45%" stop-color="#5a2e18" stop-opacity="0.18"/>
+      <stop offset="85%" stop-color="#141c24" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#0a1017" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Tactical rim light gradients -->
+    <linearGradient id="tacticalAmber" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffd580"/>
+      <stop offset="50%" stop-color="#d9822b"/>
+      <stop offset="100%" stop-color="#803810"/>
+    </linearGradient>
+
+    <linearGradient id="bodyArmor" x1="20%" y1="0%" x2="80%" y2="100%">
+      <stop offset="0%" stop-color="#3c474d"/>
+      <stop offset="40%" stop-color="#252f36"/>
+      <stop offset="100%" stop-color="#13191f"/>
+    </linearGradient>
+
+    <linearGradient id="combatFatigue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#46524a"/>
+      <stop offset="50%" stop-color="#2a3630"/>
+      <stop offset="100%" stop-color="#161f1b"/>
+    </linearGradient>
+
+    <linearGradient id="rifleMetal" x1="0%" y1="0%" x2="100%" y2="50%">
+      <stop offset="0%" stop-color="#556066"/>
+      <stop offset="35%" stop-color="#262c30"/>
+      <stop offset="100%" stop-color="#111518"/>
+    </linearGradient>
+
+    <linearGradient id="dustGradient" x1="50%" y1="100%" x2="50%" y2="0%">
+      <stop offset="0%" stop-color="#a67144" stop-opacity="0.45"/>
+      <stop offset="60%" stop-color="#734926" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#3d2614" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- Subtle rim highlight filter -->
+    <filter id="rimGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- Ambient battlefield atmosphere -->
+  <circle cx="256" cy="300" r="210" fill="url(#battleGlow)"/>
+
+  <!-- Battlefield dust & rising smoke layers -->
+  <ellipse cx="256" cy="460" rx="220" ry="35" fill="url(#dustGradient)"/>
+  <path d="M 60 480 Q 160 410 260 440 T 460 470 L 512 512 L 0 512 Z" fill="#141c22" opacity="0.85"/>
+
+  <!-- Kneeling soldier group -->
+  <g id="kneelingSoldier">
+    <!-- Right leg / boot on ground (supporting kneeling posture) -->
+    <!-- Back foot/boot planted on toe -->
+    <path d="M 120 445 C 110 445 95 455 90 465 C 88 472 94 480 105 480 L 165 480 C 172 480 178 474 175 466 C 170 452 155 445 140 445 Z" fill="#181e22" stroke="#4a555c" stroke-width="1.5"/>
+    <!-- Right lower leg & knee on ground -->
+    <path d="M 140 450 L 220 450 C 235 450 248 442 245 425 L 230 380 C 226 368 212 360 198 362 L 155 372 C 142 375 135 388 138 402 L 140 450 Z" fill="url(#combatFatigue)"/>
+    <!-- Heavy tactical knee pad (worn, scratched) -->
+    <path d="M 215 422 C 225 422 248 424 246 440 C 244 452 230 454 218 454 C 206 454 200 442 202 432 Z" fill="#20272b" stroke="#8a673c" stroke-width="2"/>
+
+    <!-- Left leg (forward, knee bent at ~90 degrees) -->
+    <!-- Left boot planted flat -->
+    <path d="M 330 445 L 400 445 C 412 445 420 452 422 462 C 425 474 416 480 402 480 L 315 480 C 305 480 298 472 302 462 L 312 448 C 316 445 324 445 330 445 Z" fill="#14181b" stroke="#48535a" stroke-width="1.5"/>
+    <!-- Left shin / combat trousers -->
+    <path d="M 320 450 L 340 375 C 342 365 350 358 362 358 L 380 358 C 392 358 398 368 396 380 L 385 450 Z" fill="url(#combatFatigue)"/>
+    <!-- Left knee pad -->
+    <path d="M 345 355 C 345 342 360 338 375 338 C 390 338 402 345 400 360 C 398 372 385 376 370 376 C 355 376 345 368 345 355 Z" fill="#222a2e" stroke="#c48a3f" stroke-width="1.8"/>
+
+    <!-- Left thigh (horizontal / angled back to pelvis) -->
+    <path d="M 230 345 L 365 342 C 378 342 388 355 382 368 L 345 385 L 225 375 Z" fill="url(#combatFatigue)"/>
+
+    <!-- Torso / Tactical Plate Carrier Vest -->
+    <!-- Under-shirt / Combat uniform torso -->
+    <path d="M 205 355 L 210 240 C 210 225 220 215 235 212 L 295 212 C 310 215 320 225 322 240 L 330 350 C 330 362 315 370 295 370 L 225 370 C 212 370 205 362 205 355 Z" fill="url(#combatFatigue)"/>
+    <!-- Heavy Ballistic Plate Carrier -->
+    <path d="M 220 232 C 220 225 230 220 245 218 L 285 218 C 300 220 310 225 310 232 L 315 335 C 315 342 305 348 290 348 L 240 348 C 225 348 215 342 215 335 Z" fill="url(#bodyArmor)" stroke="#53646e" stroke-width="1.5"/>
+
+    <!-- Molle webbing & magazine pouches on vest -->
+    <rect x="232" y="275" width="18" height="42" rx="3" fill="#1b2226" stroke="#36424a" stroke-width="1"/>
+    <rect x="254" y="275" width="18" height="42" rx="3" fill="#1f272c" stroke="#36424a" stroke-width="1"/>
+    <rect x="276" y="275" width="18" height="42" rx="3" fill="#1b2226" stroke="#36424a" stroke-width="1"/>
+    <!-- PTT radio unit / communications wire -->
+    <rect x="226" y="238" width="14" height="20" rx="2" fill="#121619" stroke="#d99b43" stroke-width="1"/>
+    <path d="M 233 238 Q 228 215 242 195" fill="none" stroke="#222" stroke-width="2"/>
+
+    <!-- Head, Neck & Tactical Ballistic Helmet -->
+    <!-- Neck / balaclava -->
+    <path d="M 248 215 L 248 185 L 278 185 L 278 215 Z" fill="#1d2327"/>
+    <!-- Tactical High-Cut Helmet (FAST / Ops-Core style) -->
+    <!-- Head silhouette tilted slightly forward, focused downrange -->
+    <path d="M 235 158 C 235 130 252 118 275 118 C 298 118 316 132 316 158 C 316 172 308 182 295 186 L 248 186 C 238 180 235 170 235 158 Z" fill="#2a3338" stroke="#d49b42" stroke-width="1.5"/>
+    <!-- Helmet NVG shroud / mount on front -->
+    <path d="M 308 142 L 318 142 L 316 158 L 306 158 Z" fill="#111518" stroke="#d49b42" stroke-width="1"/>
+    <!-- Tactical headset / ear pro over ears -->
+    <path d="M 252 152 C 248 152 244 158 244 168 C 244 178 248 182 254 182 C 260 182 264 176 264 168 C 264 158 258 152 252 152 Z" fill="#121619" stroke="#52646e" stroke-width="1.2"/>
+    <path d="M 254 152 Q 270 142 290 148" fill="none" stroke="#121619" stroke-width="3"/>
+    <!-- Goggles on helmet brim -->
+    <path d="M 285 146 L 314 148 C 318 148 320 154 316 158 L 285 158 Z" fill="#182024" stroke="#e09f3e" stroke-width="1.2"/>
+
+    <!-- Left Arm & Hand (Forward handguard grip on rifle) -->
+    <path d="M 305 225 L 355 258 C 362 264 365 275 360 285 L 345 315 L 325 305 L 340 275 L 305 245 Z" fill="url(#combatFatigue)"/>
+    <!-- Tactical glove gripping handguard -->
+    <path d="M 345 310 C 352 308 360 314 358 322 C 355 330 345 334 338 328 Z" fill="#1c2428" stroke="#8a6336" stroke-width="1.5"/>
+
+    <!-- Modern Tactical Assault Rifle (Held at ready, angled across body) -->
+    <!-- Stock resting against right shoulder/chest -->
+    <g id="carbineRifle" transform="rotate(-18 290 280)">
+      <!-- Buttstock -->
+      <path d="M 185 272 L 225 272 L 230 286 L 190 292 Z" fill="#1e2529" stroke="#3c474e" stroke-width="1.2"/>
+      <rect x="225" y="275" width="30" height="8" rx="2" fill="#2b343a"/>
+      <!-- Lower/Upper Receiver -->
+      <rect x="255" y="268" width="55" height="24" rx="2" fill="url(#rifleMetal)" stroke="#556269" stroke-width="1.2"/>
+      <!-- Pistol grip -->
+      <path d="M 258 292 L 248 322 C 246 328 252 332 258 330 L 268 326 L 272 292 Z" fill="#181d20" stroke="#3c474e" stroke-width="1"/>
+      <!-- Curved 30-round STANAG magazine -->
+      <path d="M 285 292 L 292 342 C 293 348 300 350 305 346 L 314 340 L 306 292 Z" fill="#14181b" stroke="#7e5d32" stroke-width="1.2"/>
+      <!-- Holographic Combat Optic sight (EOTech style) on top rail -->
+      <path d="M 270 268 L 272 254 L 298 254 L 302 268 Z" fill="#1e262b" stroke="#d49b42" stroke-width="1.2"/>
+      <circle cx="285" cy="260" r="3" fill="#ff4d4d" opacity="0.85"/>
+      <!-- Free-float Handguard / barrel shroud -->
+      <rect x="310" y="271" width="85" height="16" rx="2" fill="url(#rifleMetal)" stroke="#4d5a61" stroke-width="1.2"/>
+      <!-- Barrel & Flash hider / muzzle brake -->
+      <rect x="395" y="276" width="35" height="6" fill="#121618"/>
+      <rect x="428" y="274" width="14" height="10" rx="1" fill="#242c30" stroke="#8a5f33" stroke-width="1"/>
+      <!-- Weapon mounted light / laser module -->
+      <rect x="365" y="265" width="24" height="7" rx="1" fill="#181f24" stroke="#3f4d54" stroke-width="1"/>
+    </g>
+
+    <!-- Right Arm & Hand (Gripping pistol grip & trigger) -->
+    <path d="M 225 225 L 205 270 C 200 280 205 292 215 296 L 245 305 L 255 285 L 235 275 L 245 240 Z" fill="url(#combatFatigue)"/>
+    <!-- Right tactical glove -->
+    <path d="M 242 298 C 248 296 256 302 254 310 C 252 318 244 322 238 316 Z" fill="#1c2428" stroke="#8a6336" stroke-width="1.5"/>
+  </g>
+
+  <!-- Dramatic ember particles floating upward -->
+  <circle cx="160" cy="380" r="2.5" fill="#ffaa33" opacity="0.8"/>
+  <circle cx="185" cy="320" r="1.8" fill="#ff7722" opacity="0.75"/>
+  <circle cx="380" cy="310" r="2.2" fill="#ffbb44" opacity="0.85"/>
+  <circle cx="410" cy="260" r="1.5" fill="#ff6611" opacity="0.6"/>
+  <circle cx="340" cy="220" r="2" fill="#ffd566" opacity="0.7"/>
+  <circle cx="290" cy="180" r="1.4" fill="#ff8833" opacity="0.65"/>
+  <circle cx="215" cy="160" r="2" fill="#ffaa44" opacity="0.75"/>
+
+  <!-- Tactical edge backlight / rim highlights -->
+  <path d="M 235 158 C 235 130 252 118 275 118 C 298 118 316 132 316 158" fill="none" stroke="url(#tacticalAmber)" stroke-width="3" filter="url(#rimGlow)" opacity="0.65"/>
+  <path d="M 315 235 L 322 340 L 305 348" fill="none" stroke="url(#tacticalAmber)" stroke-width="2" opacity="0.5"/>
+  <path d="M 390 355 L 398 378 L 388 450" fill="none" stroke="url(#tacticalAmber)" stroke-width="2.5" opacity="0.55"/>
+</svg>

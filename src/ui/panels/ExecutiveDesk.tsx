@@ -53,7 +53,7 @@ export function ExecutiveDesk({ onClose }: { onClose: () => void }) {
         </button>)}
       </div>;
   const tabEmpty = (tab === 'diplomacy' && !offers.length) || (tab === 'war' && !wars.length) || (tab === 'intel' && !operations.length);
-  return <ExecutiveWorkspaceShell id="desk-window" kicker="EXECUTIVE OFFICE" title={translateLive('Executive Desk')} tabs={tabs} scrollKey={tab} onClose={onClose} hint={player?DESK_PROPOSALS_HINT:undefined}>
+  return <ExecutiveWorkspaceShell id="desk-window" kicker="EXECUTIVE OFFICE" title={translateLive('Executive Desk')} tabs={tabs} scrollKey={tab} onClose={onClose} hint={player?DESK_PROPOSALS_HINT:undefined} hideHeader={true}>
     <div className="executive-desk">
 
 
@@ -72,7 +72,7 @@ export function ExecutiveDesk({ onClose }: { onClose: () => void }) {
         </article>)}
 
         {tab === 'war' && wars.map((war) => <article key={war.id} className="desk-card tone-war" data-war-id={war.id}>
-          <div className="desk-card-art"><CommandArt kind="war" size={72} /></div>
+          <div className="desk-card-art"><img src="/assets/command/war-soldier.svg" alt="" className="desk-war-soldier-art" width="72" height="72" /></div>
           <div className="desk-card-body">
             <header><span className="desk-flag" aria-hidden="true">{flag(war.enemyId)}</span><div><small><LocaleText value={war.defending ? 'DEFENDING' : 'ATTACKING'} /></small><h4><LocaleText value={name(war.enemyId)} /></h4></div></header>
             <div className="desk-front"><span><LocaleText value="FRONT PROGRESS" /></span><strong className={war.front >= 0 ? 'positive' : 'negative'}>{war.front >= 0 ? '+' : ''}{war.front.toFixed(1)}</strong><i aria-hidden="true"><b style={{ width: `${(war.front + 100) / 2}%` }} /></i></div>
@@ -88,7 +88,10 @@ export function ExecutiveDesk({ onClose }: { onClose: () => void }) {
           </div>
         </article>)}
 
-        {tabEmpty && <p className="desk-empty"><LocaleText value={TAB_META[tab].empty} /></p>}
+        {tabEmpty && <p className={`desk-empty${tab === 'war' ? ' desk-empty-peace' : ''}`}>
+          {tab === 'war' && <img src="/assets/command/peace-dove.png" alt="" className="desk-peace-dove" aria-hidden="true" />}
+          <LocaleText value={TAB_META[tab].empty} />
+        </p>}
 
         <section className="desk-news" aria-label={translateLive('Latest reports')}>
           <h4><LocaleText value="Latest reports" /></h4>
@@ -98,8 +101,11 @@ export function ExecutiveDesk({ onClose }: { onClose: () => void }) {
       </div>
     </div>
     {review && <ReviewDialog title="Accept shared proposal" summary="Both countries pay half of the diplomatic setup fee. This opens the agreement; goods still require separate priced shipments."
+      parties={{ left: { iso2: player?.iso2 ?? '', name: player?.name ?? '' }, right: { iso2: state.countries[review.senderId]?.iso2 ?? '', name: state.countries[review.senderId]?.name ?? review.senderId } }}
+      visual="diplomacy"
       metrics={[['Your share', money(review.playerShareB, language)], ['Partner share', money(review.partnerShareB, language)], ['Treasury after', money((player?.economy.treasury ?? 0) - review.playerShareB, language)]]}
       allowed={review.affordable} onCancel={() => setReview(null)}
       onConfirm={(commandId) => { state.dispatchWithReceipt({ ...review.accept, commandId }); setReview(null); }} />}
   </ExecutiveWorkspaceShell>;
 }
+

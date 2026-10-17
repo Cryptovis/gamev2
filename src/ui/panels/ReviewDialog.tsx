@@ -68,7 +68,6 @@ export function ReviewDialog({
         className={`review-dialog ${onConfirm?'review-confirmation':'review-result'} ${outcome?'receipt-success':''} ${parties&&!onConfirm?'receipt-compact':''} ${briefing?'review-briefing':''} ${className}`}
       >
         <header>
-          <small><LocaleText value={"COMMAND REVIEW"}/></small>
           <button data-guide="review-dismiss" aria-label={translateLive("Close review")} onClick={onCancel}><LocaleText value={"×"}/></button>
         </header>
         {image?<div className="review-photo" data-testid="review-photo" aria-hidden="true"><img src={image} alt="" decoding="async"/></div>:asset?<div className="review-visual receipt-art" aria-hidden="true"><AssetThumbnail asset={asset} size={72}/><span className="receipt-check">✓</span></div>:<ReviewVisual kind={visual??reviewVisualKind(title+' '+summary)} signed={!onConfirm&&/signed|agreed/i.test(title)}/>}

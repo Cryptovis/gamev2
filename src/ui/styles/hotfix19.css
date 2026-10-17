@@ -810,3 +810,221 @@
   top: 0 !important;
   right: 40px !important;
 }
+
+/* Executive Desk action buttons: dark red decline, dark green accept across both themes */
+:root :is(.desk-decline, button.desk-decline),
+:root[data-theme="light"] :is(.desk-decline, button.desk-decline),
+:root[data-theme="dark"] :is(.desk-decline, button.desk-decline) {
+  background: #872220 !important;
+  color: #ffffff !important;
+  border: 1px solid #a82e2c !important;
+  font-weight: 600 !important;
+}
+
+:root :is(.desk-decline, button.desk-decline):hover:not(:disabled),
+:root[data-theme="light"] :is(.desk-decline, button.desk-decline):hover:not(:disabled),
+:root[data-theme="dark"] :is(.desk-decline, button.desk-decline):hover:not(:disabled) {
+  background: #a32a27 !important;
+  border-color: #c43835 !important;
+  color: #ffffff !important;
+}
+
+:root :is(.desk-accept, button.desk-accept),
+:root[data-theme="light"] :is(.desk-accept, button.desk-accept),
+:root[data-theme="dark"] :is(.desk-accept, button.desk-accept) {
+  background: #1b633b !important;
+  color: #ffffff !important;
+  border: 1px solid #247d4b !important;
+  font-weight: 600 !important;
+}
+
+:root :is(.desk-accept, button.desk-accept):hover:not(:disabled),
+:root[data-theme="light"] :is(.desk-accept, button.desk-accept):hover:not(:disabled),
+:root[data-theme="dark"] :is(.desk-accept, button.desk-accept):hover:not(:disabled) {
+  background: #237b4a !important;
+  border-color: #2da161 !important;
+  color: #ffffff !important;
+}
+
+:root :is(.desk-accept, button.desk-accept):disabled,
+:root[data-theme="light"] :is(.desk-accept, button.desk-accept):disabled,
+:root[data-theme="dark"] :is(.desk-accept, button.desk-accept):disabled {
+  background: #2f4339 !important;
+  color: #7d9688 !important;
+  border-color: #3b5247 !important;
+  opacity: 0.65 !important;
+  cursor: not-allowed !important;
+}
+
+/* Wars tab peace state art and war card soldier art */
+:root #desk-window .desk-empty.desk-empty-peace {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 16px !important;
+  min-height: 220px !important;
+  padding: 32px 28px !important;
+  background: radial-gradient(circle at center, rgba(35, 75, 110, 0.22) 0%, rgba(14, 25, 38, 0.6) 70%, transparent 100%), color-mix(in srgb, var(--surface-raised) 60%, transparent) !important;
+  border: 1px solid rgba(135, 185, 220, 0.25) !important;
+}
+
+:root #desk-window .desk-peace-dove {
+  width: 140px !important;
+  height: 140px !important;
+  object-fit: contain !important;
+  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.45)) drop-shadow(0 2px 10px rgba(135, 195, 255, 0.25)) !important;
+  opacity: 0.95 !important;
+  user-select: none !important;
+  pointer-events: none !important;
+}
+
+:root #desk-window .desk-empty-peace span {
+  font-family: Georgia, 'Times New Roman', serif !important;
+  font-size: 16px !important;
+  letter-spacing: 0.5px !important;
+  color: var(--ink, #e0effa) !important;
+  opacity: 0.9 !important;
+}
+
+:root #desk-window .desk-war-soldier-art {
+  width: 72px !important;
+  height: 72px !important;
+  object-fit: contain !important;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.6)) !important;
+  border-radius: 8px !important;
+}
+
+/* Compact review and receipt modal */
+:root .review-dialog {
+  width: min(520px, calc(100vw - 28px)) !important;
+  max-width: 520px !important;
+  border-radius: 18px !important;
+  padding: 22px 24px !important;
+}
+
+:root .review-dialog > header {
+  display: flex !important;
+  justify-content: flex-end !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin-bottom: 2px !important;
+}
+
+:root .review-dialog h2 {
+  font-size: 22px !important;
+  margin: 10px 0 8px !important;
+  text-align: center !important;
+}
+
+:root .review-dialog p {
+  text-align: center !important;
+  font-size: 13.5px !important;
+  line-height: 1.5 !important;
+  margin: 0 auto 14px !important;
+  max-width: 460px !important;
+}
+
+:root .review-dialog .review-parties {
+  justify-content: center !important;
+  margin: 12px 0 16px !important;
+}
+
+:root .review-dialog .review-next-steps {
+  text-align: left !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 8px !important;
+  padding: 10px 14px !important;
+  font-size: 13px !important;
+  margin: 14px 0 !important;
+}
+
+body:has(.review-backdrop) :is(.executive-backdrop, .command-window-backdrop, .floating-command-window, .command-panel) {
+  visibility: hidden;
+}
+
+:root .review-backdrop {
+  background: rgba(8, 20, 32, 0.72) !important;
+  backdrop-filter: blur(8px) !important;
+}
+
+:root[data-theme="dark"] .review-dialog {
+  background: linear-gradient(145deg, #1e3342, #11202b) !important;
+  border: 1px solid #48697d !important;
+  color: #e8f3f8 !important;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6) !important;
+}
+
+:root[data-theme="dark"] .review-dialog h2 {
+  color: #f5f9fc !important;
+}
+
+:root[data-theme="dark"] .review-dialog p {
+  color: #c4d9e5 !important;
+}
+
+:root[data-theme="dark"] .review-dialog .review-metrics > div {
+  background: #172834 !important;
+  border: 1px solid #365163 !important;
+}
+
+:root[data-theme="dark"] .review-dialog .review-metrics small {
+  color: #8dafc3 !important;
+}
+
+:root[data-theme="dark"] .review-dialog .review-metrics strong {
+  color: #ffffff !important;
+}
+
+:root[data-theme="light"] .review-dialog {
+  background: #fdfbf7 !important;
+  border: 1px solid #c4d3dc !important;
+  color: #172b38 !important;
+  box-shadow: 0 24px 80px rgba(10, 25, 40, 0.35) !important;
+}
+
+:root[data-theme="light"] .review-dialog h2 {
+  color: #12222d !important;
+}
+
+:root[data-theme="light"] .review-dialog p {
+  color: #3b5262 !important;
+}
+
+:root[data-theme="light"] .review-dialog .review-metrics > div {
+  background: #f0f4f7 !important;
+  border: 1px solid #cad8e1 !important;
+}
+
+:root[data-theme="light"] .review-dialog .review-metrics small {
+  color: #557082 !important;
+}
+
+:root[data-theme="light"] .review-dialog .review-metrics strong {
+  color: #102432 !important;
+}
+
+:root[data-theme="light"] .review-dialog .review-parties {
+  color: #172b38 !important;
+}
+
+:root[data-theme="light"] .review-dialog .review-next-steps {
+  background: rgba(20, 60, 90, 0.06) !important;
+  border: 1px solid rgba(20, 60, 90, 0.12) !important;
+  color: #213c4e !important;
+}
+
+:root[data-theme="light"] .review-dialog footer button:not(.primary) {
+  background: #eaeff2 !important;
+  color: #1a3242 !important;
+  border: 1px solid #b8ccd8 !important;
+}
+
+:root[data-theme="light"] .review-dialog footer button.primary {
+  background: #1b633b !important;
+  color: #ffffff !important;
+  border: 1px solid #247d4b !important;
+}
+
+
