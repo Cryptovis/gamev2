@@ -2,6 +2,7 @@ import {SitrepToasts} from '../ui/hud/SitrepToasts';
 import {AudioDirector} from '../audio/AudioDirector';
 import {STUDIO_NAME} from '../ui/BrandMark';
 import {VictoryScroll} from '../ui/panels/VictoryScroll';
+import {PeaceConference} from '../ui/panels/PeaceConference';
 import {EconomicAdvice} from '../ui/panels/EconomicAdvice';
 import {LocaleText} from '../i18n/localeText';
 import {WarTheatreModal} from '../ui/panels/WarTheatreModal';
@@ -32,5 +33,5 @@ export function App(){
   useEffect(()=>{document.documentElement.lang=language;},[language]);
   const selectedCountryId=useGameStore((s)=>s.selectedCountryId??[...s.workspaceTrail].reverse().find(f=>f.selectedCountryId)?.selectedCountryId);
   const theme=countryThemeFor(playerIso2);
-  return <><Suspense fallback={<div className="loading-popup"><LocaleText value="Loading command…"/></div>}><CampaignEntry onPlaying={onPlaying}/></Suspense>{!entryBlocked&&<main className="game-shell" style={{'--accent':'#f5d58a','--accent-2':'#c9e0e9','--nation-primary':theme.primary,'--nation-secondary':theme.secondary} as CSSProperties}><WorldMap/><TopBar/><Suspense fallback={<div className="loading-popup"><LocaleText value="Loading command…"/></div>}>{selectedCountryId&&<CountryWorkspace selectedCountryId={selectedCountryId}/>}<CommandRails/><SitrepToasts/><EventModal/><RegimeCrisisModal/><AdvisorModal/><EconomicAdvice/><CampaignOverlay/><CampaignTutorial/><ActionReceipt/><WarTheatreModal/><VictoryScroll/></Suspense><AudioDirector/><footer className="studio-footer" translate="no">{STUDIO_NAME}</footer></main>}</>;
+  return <><Suspense fallback={<div className="loading-popup"><LocaleText value="Loading command…"/></div>}><CampaignEntry onPlaying={onPlaying}/></Suspense>{!entryBlocked&&<main className="game-shell" style={{'--accent':'#f5d58a','--accent-2':'#c9e0e9','--nation-primary':theme.primary,'--nation-secondary':theme.secondary} as CSSProperties}><WorldMap/><TopBar/><Suspense fallback={<div className="loading-popup"><LocaleText value="Loading command…"/></div>}>{selectedCountryId&&<CountryWorkspace selectedCountryId={selectedCountryId}/>}<CommandRails/><SitrepToasts/><EventModal/><RegimeCrisisModal/><AdvisorModal/><EconomicAdvice/><CampaignOverlay/><CampaignTutorial/><ActionReceipt/><WarTheatreModal/><VictoryScroll/><PeaceConference/></Suspense><AudioDirector/><footer className="studio-footer" translate="no">{STUDIO_NAME}</footer></main>}</>;
 }

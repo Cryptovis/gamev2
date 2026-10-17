@@ -1,0 +1,165 @@
+/* Phase 9.6: the peace table (Barış Masası) and the war score. Navy is the default; Ivory re-tints every token.
+   The window is a conference room: dark felt for the delegations, a parchment strip for the treaty being written. */
+:root {
+  --peace-felt: #0f2a36; --peace-felt-2: #16384a; --peace-ink: #eef3f8; --peace-muted: #a9bfcc;
+  --peace-brass: #d8b25f; --peace-brass-soft: rgba(216, 178, 95, .16); --peace-line: rgba(216, 178, 95, .34);
+  --peace-open: #6cc5ac; --peace-lock: #7f929e; --peace-seal: #a63a2f; --peace-seal-ink: #fff3ee;
+  --peace-paper: #f3ead2; --peace-paper-2: #e6d9b8; --peace-paper-ink: #2e2412; --peace-paper-muted: #6a5835;
+  --peace-shadow: rgba(2, 8, 14, .7); --peace-backdrop: rgba(4, 12, 20, .82);
+}
+:root[data-theme="light"] {
+  --peace-felt: #fffdf7; --peace-felt-2: #f3efe5; --peace-ink: #142c46; --peace-muted: #465b70;
+  --peace-brass: #8a6417; --peace-brass-soft: rgba(138, 100, 23, .12); --peace-line: rgba(138, 100, 23, .42);
+  --peace-open: #17663d; --peace-lock: #6d7f8f; --peace-seal: #9a251d; --peace-seal-ink: #fff7f2;
+  --peace-paper: #fbf3dc; --peace-paper-2: #efe2bd; --peace-paper-ink: #3a2a18; --peace-paper-muted: #6a5835;
+  --peace-shadow: rgba(40, 30, 14, .35); --peace-backdrop: rgba(30, 40, 52, .55);
+}
+
+:root .peace-backdrop { position: fixed; inset: 0; z-index: 3850; display: grid; place-items: center; padding: 18px; background: var(--peace-backdrop); backdrop-filter: blur(6px); animation: peace-fade .35s ease-out both; }
+@keyframes peace-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes peace-settle { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+
+:root .peace-table {
+  width: min(1260px, 100%); max-height: min(94vh, 900px); display: grid; grid-template-rows: auto minmax(0, 1fr); overflow: hidden;
+  color: var(--peace-ink); background: linear-gradient(180deg, var(--peace-felt-2), var(--peace-felt)); border: 1px solid var(--peace-line); border-radius: 14px;
+  box-shadow: 0 0 0 6px var(--peace-brass-soft), 0 30px 80px var(--peace-shadow); animation: peace-settle .4s .05s cubic-bezier(.2, .8, .2, 1) both;
+}
+:root .peace-table.is-notice { width: min(560px, 100%); }
+:root .peace-table h1, :root .peace-table h2, :root .peace-table h3 { font-family: Georgia, "Times New Roman", serif; font-weight: 600; margin: 0; color: var(--peace-ink); }
+:root .peace-table button { font: inherit; }
+:root .peace-table :focus-visible { outline: 3px solid var(--focus, #89c6ff); outline-offset: 2px; }
+
+:root .peace-head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 10px 24px; padding: 18px 26px 14px; border-bottom: 1px solid var(--peace-line); }
+:root .peace-head small { display: block; font-size: 12px; letter-spacing: .04em; color: var(--peace-brass); margin-bottom: 4px; }
+:root .peace-head h1 { font-size: 30px; line-height: 1.1; }
+:root .peace-subtitle { margin: 2px 0 0; font-family: Georgia, serif; font-style: italic; color: var(--peace-muted); font-size: 15px; }
+:root .peace-parties { margin: 0; font-size: 18px; font-family: Georgia, serif; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+:root .peace-parties b { font-size: 24px; }
+
+:root .peace-body { display: grid; grid-template-columns: 270px minmax(0, 1fr) 330px; min-height: 0; }
+:root .peace-body > * { min-height: 0; overflow: auto; padding: 18px 20px; }
+:root .peace-victors { border-right: 1px solid var(--peace-line); display: grid; align-content: start; gap: 14px; }
+:root .peace-victors h2, :root .peace-ledger h2 { font-size: 20px; }
+
+:root .delegation { display: grid; gap: 4px; }
+:root .delegation-flag { font-size: 40px; line-height: 1; }
+:root .delegation h3 { font-size: 20px; }
+:root .delegation.is-lead { padding: 12px 14px; border: 1px solid var(--peace-line); border-radius: 10px; background: var(--peace-brass-soft); }
+:root .delegation-score { margin: 4px 0 0; display: flex; align-items: baseline; gap: 8px; }
+:root .delegation-score b { font-family: Georgia, serif; font-size: 52px; line-height: 1; color: var(--peace-brass); font-variant-numeric: tabular-nums; }
+:root .delegation-score small { color: var(--peace-muted); font-size: 13px; }
+:root .delegation-turn { margin: 0; font-size: 13px; color: var(--peace-muted); }
+:root .delegation.is-loser { grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 4px 14px; padding: 12px 14px; border: 1px solid var(--peace-line); border-radius: 10px; }
+:root .delegation.is-loser p { margin: 0; color: var(--peace-muted); font-size: 13px; }
+:root .delegation.is-loser dl { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px 12px; margin: 8px 0 0; }
+:root .delegation.is-loser dt { font-size: 12px; color: var(--peace-muted); }
+:root .delegation.is-loser dd { margin: 0; font-weight: 600; font-variant-numeric: tabular-nums; }
+:root .delegation-allies ul { list-style: none; margin: 6px 0 0; padding: 0; display: grid; gap: 4px; }
+:root .delegation-allies h3 { font-size: 15px; }
+
+/* War score lines: label, value and a bar. The same markup is used in the war command window. */
+:root .score-lines { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+:root .score-lines li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 8px; font-size: 13px; opacity: .72; }
+:root .score-lines li.has-points { opacity: 1; }
+:root .score-lines b { font-variant-numeric: tabular-nums; }
+:root .score-lines i { grid-column: 1 / -1; height: 5px; border-radius: 3px; background: var(--peace-brass-soft, rgba(216, 178, 95, .16)); overflow: hidden; }
+:root .score-lines em { display: block; height: 100%; background: var(--peace-brass, #d8b25f); border-radius: 3px; }
+
+:root .peace-demands { display: grid; align-content: start; gap: 14px; }
+:root .demand-group { margin: 0; padding: 12px 14px 14px; border: 1px solid var(--peace-line); border-radius: 10px; min-width: 0; display: grid; gap: 10px; }
+:root .demand-group legend { padding: 0 8px; font-family: Georgia, serif; font-size: 16px; color: var(--peace-brass); }
+:root .region-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+:root .region-grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+:root .demand-tile {
+  position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 10px; align-items: start; text-align: left; min-height: 64px; padding: 10px 12px;
+  color: var(--peace-ink); background: transparent; border: 1px solid var(--peace-line); border-radius: 8px; cursor: pointer; transition: background .15s, border-color .15s;
+}
+:root .demand-tile.is-wide { grid-column: 1 / -1; }
+:root .demand-tile .tile-title { font-weight: 600; }
+:root .demand-tile .tile-note { grid-column: 1; font-size: 12px; color: var(--peace-muted); }
+:root .demand-tile .tile-cost { grid-row: 1 / span 2; grid-column: 2; align-self: center; min-width: 38px; padding: 4px 8px; text-align: center; font-family: Georgia, serif; font-size: 17px; color: var(--peace-brass); border: 1px solid var(--peace-line); border-radius: 999px; font-variant-numeric: tabular-nums; }
+:root .demand-tile.state-open:hover { background: var(--peace-brass-soft); border-color: var(--peace-brass); }
+:root .demand-tile.state-selected { background: var(--peace-brass-soft); border-color: var(--peace-brass); box-shadow: inset 4px 0 0 var(--peace-seal); }
+:root .demand-tile.state-selected .tile-title::after { content: " \2713"; color: var(--peace-open); }
+:root .demand-tile.state-locked { color: var(--peace-lock); border-style: dashed; background: repeating-linear-gradient(135deg, transparent 0 7px, var(--peace-brass-soft) 7px 8px); }
+:root .demand-tile.state-blocked { opacity: .55; cursor: not-allowed; }
+:root .demand-tile.state-taken { opacity: .5; text-decoration: line-through; cursor: default; }
+:root .demand-tile:disabled { cursor: not-allowed; }
+
+:root .reparation-row, :root .cap-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+:root .reparation-row small { color: var(--peace-muted); }
+:root .cap-rows { display: grid; gap: 10px; }
+:root .cap-row > span { min-width: 150px; font-size: 14px; }
+:root .chip { min-width: 44px; min-height: 40px; padding: 6px 12px; color: var(--peace-ink); background: transparent; border: 1px solid var(--peace-line); border-radius: 999px; cursor: pointer; display: inline-flex; gap: 8px; align-items: center; justify-content: center; }
+:root .chip.wide { padding-inline: 18px; }
+:root .chip[aria-pressed="true"] { background: var(--peace-brass); color: var(--peace-felt); border-color: var(--peace-brass); font-weight: 700; }
+:root .chip b { font-family: Georgia, serif; font-size: 13px; opacity: .85; }
+:root .chip:disabled { opacity: .5; cursor: not-allowed; }
+
+/* Ivory: the shared pressed-button rule paints selected controls navy; the table keeps its own brass highlight. */
+:root[data-theme="light"] .peace-table .demand-tile[aria-pressed="true"] { background: var(--peace-brass-soft); color: var(--peace-ink); border-color: var(--peace-brass); }
+:root[data-theme="light"] .peace-table .demand-tile[aria-pressed="true"] :is(span, b) { color: inherit; }
+:root[data-theme="light"] .peace-table .demand-tile[aria-pressed="true"] .tile-note { color: var(--peace-muted); }
+:root[data-theme="light"] .peace-table .demand-tile[aria-pressed="true"] .tile-cost { color: var(--peace-brass); }
+
+/* The treaty being written: a parchment strip with a points gauge and a wax seal button. */
+:root .peace-ledger { display: grid; align-content: start; gap: 12px; color: var(--peace-paper-ink); background: linear-gradient(180deg, var(--peace-paper), var(--peace-paper-2)); border-left: 3px double var(--peace-brass); }
+:root .peace-ledger h2 { color: var(--peace-paper-ink); }
+:root .points-gauge { position: relative; height: 34px; border: 1px solid var(--peace-paper-muted); border-radius: 6px; overflow: hidden; background: rgba(255, 255, 255, .35); }
+:root .points-gauge i { position: absolute; inset: 0 auto 0 0; background: repeating-linear-gradient(90deg, var(--peace-seal) 0 7px, transparent 7px 9px); transition: width .25s ease; }
+:root .points-gauge span { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); height: 24px; padding: 0 12px; display: flex; align-items: center; gap: 5px; white-space: nowrap; font-family: Georgia, serif; font-size: 15px; color: var(--peace-paper-ink); background: var(--peace-paper); border: 1px solid var(--peace-paper-muted); border-radius: 12px; }
+:root .points-left { margin: 0; font-size: 14px; color: var(--peace-paper-muted); }
+:root .ledger-empty { margin: 0; font-style: italic; color: var(--peace-paper-muted); }
+:root .ledger-terms { list-style: decimal; margin: 0; padding-left: 22px; display: grid; gap: 6px; }
+:root .ledger-terms li { padding-left: 4px; }
+:root .peace-ledger .ledger-terms li { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 8px; align-items: center; }
+:root .ledger-terms b { font-family: Georgia, serif; color: var(--peace-seal); }
+:root .ledger-terms button { width: 28px; height: 28px; padding: 0; color: var(--peace-paper-ink); background: transparent; border: 1px solid var(--peace-paper-muted); border-radius: 50%; cursor: pointer; }
+:root .ledger-effects { margin: 0; padding: 10px 0 0; list-style: none; display: grid; gap: 4px; border-top: 1px dashed var(--peace-paper-muted); font-size: 13px; color: var(--peace-paper-muted); }
+:root .ledger-actions { display: grid; gap: 8px; margin-top: 4px; }
+:root .peace-ledger .ledger-actions { position: sticky; bottom: -18px; padding: 12px 0 18px; background: linear-gradient(180deg, transparent, var(--peace-paper-2) 22%); }
+:root .ledger-actions small { color: var(--peace-paper-muted); font-size: 12px; }
+:root .seal-button { min-height: 52px; padding: 10px 18px; font-family: Georgia, serif; font-size: 18px; color: var(--peace-seal-ink); background: radial-gradient(circle at 30% 25%, color-mix(in srgb, var(--peace-seal) 82%, #fff), var(--peace-seal)); border: 2px solid color-mix(in srgb, var(--peace-seal) 70%, #000); border-radius: 999px; cursor: pointer; box-shadow: 0 3px 0 color-mix(in srgb, var(--peace-seal) 55%, #000); }
+:root .seal-button:active { transform: translateY(2px); box-shadow: 0 1px 0 color-mix(in srgb, var(--peace-seal) 55%, #000); }
+:root .seal-button:disabled { opacity: .45; cursor: not-allowed; box-shadow: none; }
+:root .plain-button { min-height: 44px; padding: 8px 14px; color: var(--peace-paper-ink); background: transparent; border: 1px solid var(--peace-paper-muted); border-radius: 8px; cursor: pointer; }
+:root .is-notice .notice-body { padding: 18px 26px 24px; display: grid; gap: 14px; background: linear-gradient(180deg, var(--peace-paper), var(--peace-paper-2)); color: var(--peace-paper-ink); }
+:root .is-notice .ledger-terms li { display: list-item; }
+
+/* War score in the war command window. */
+:root .war-score-panel { margin: 12px 0; padding: 12px 14px; border: 1px solid var(--border, #526c86); border-radius: 10px; background: var(--surface-raised, rgba(255, 255, 255, .04)); color: var(--ink, inherit); display: grid; gap: 10px; }
+:root .war-score-panel header { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+:root .war-score-panel h3 { margin: 0; font-size: 16px; }
+:root .war-score-panel .score-versus { margin: 0; display: flex; gap: 10px; align-items: baseline; }
+:root .war-score-panel .score-versus b { font-family: Georgia, serif; font-size: 28px; font-variant-numeric: tabular-nums; }
+:root .war-score-panel .score-versus small { font-size: 12px; color: var(--ink-muted, inherit); }
+:root .war-score-panel footer { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; color: var(--ink-muted, inherit); }
+:root .war-score-panel .score-lines { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 22px; }
+:root .war-score-panel .score-lines i { background: color-mix(in srgb, var(--ink-muted, #888) 25%, transparent); }
+:root .war-score-panel .score-lines em { background: var(--accent-surface, #254a70); }
+:root .armistice-offer { margin: 10px 0; padding: 12px 14px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; border: 1px solid var(--peace-brass); border-left-width: 5px; border-radius: 8px; background: var(--peace-brass-soft); color: var(--ink, inherit); }
+:root .armistice-offer p { margin: 0; flex: 1 1 220px; font-weight: 600; }
+:root .armistice-offer button { min-height: 44px; padding: 8px 16px; color: var(--ink, inherit); background: var(--surface, transparent); border: 1px solid var(--peace-brass); border-radius: 8px; cursor: pointer; }
+
+@media (max-width: 1060px) {
+  :root .peace-table { max-height: 100vh; border-radius: 0; }
+  :root .peace-backdrop { padding: 0; }
+  :root .peace-body { grid-template-columns: minmax(0, 1fr); grid-auto-rows: max-content; overflow: auto; }
+  :root .peace-body > * { overflow: visible; min-height: auto; }
+  :root .peace-victors { border-right: 0; border-bottom: 1px solid var(--peace-line); }
+  :root .peace-ledger { border-left: 0; border-top: 3px double var(--peace-brass); }
+  :root .region-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 560px) {
+  :root .peace-head { padding: 14px 16px 10px; }
+  :root .peace-head h1 { font-size: 24px; }
+  :root .peace-body > * { padding: 14px 16px; }
+  :root .region-grid, :root .region-grid.two { grid-template-columns: minmax(0, 1fr); }
+  :root .delegation.is-loser dl { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  :root .war-score-panel .score-lines { grid-template-columns: minmax(0, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) {
+  :root .peace-backdrop, :root .peace-table { animation: none; }
+  :root .points-gauge i, :root .demand-tile { transition: none; }
+}

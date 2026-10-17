@@ -1,12 +1,14 @@
 import type { GameState, WarState } from '../../domain/game';
 import { endWarRelation, relationFor } from './diplomacy';
 import { queueVictory } from './victory';
+import { openPeaceConference } from './peaceTreaty';
 
 /**
  * End-of-war lifecycle shared by every way a war can end (combat round, withdrawal, concession, AI ceasefire,
  * Global Council ceasefire). Idempotent: calling it again for the same war changes nothing.
  *
  * - A player victory (as attacker or defender) queues the victory scroll and pauses time (queueVictory).
+ * - The winner's demands are settled at the peace conference (openPeaceConference): the loser is no longer handed over at once.
  * - Allies that joined the defender leave the war: their war relation with the attacker becomes hostile.
  * - If the player's home country is no longer independent, the campaign is lost (checkHomeFront).
  */
@@ -15,6 +17,8 @@ export function settleWarOutcome(state: GameState, warId: string): GameState {
   const war = next.wars[warId];
   if (!war || war.status === 'active') return next;
   next = releaseCoalition(next, war);
+  // Phase 9.6: the end of a war is settled at the peace conference; AI winners sign at once, a player winner is seated.
+  next = openPeaceConference(next, warId);
   return checkHomeFront(next);
 }
 

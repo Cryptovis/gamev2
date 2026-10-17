@@ -44,6 +44,8 @@ import {processIndustrialContracts,processIndustrialMarketAI} from './systems/in
 import {processLeadership} from './systems/leadership';
 import { processInfrastructure, processInfrastructureAI } from './systems/infrastructure';
 import { processAiWars } from './systems/aiWar';
+import { processPeaceConferences, processPeaceObligations } from './systems/peaceTreaty';
+import { processArmisticeRequests } from './systems/peaceArmistice';
 
 export function tickCountry(country: CountryState,boost=1,managedEnergy=false,tradeInflow?: TradeInflow,perks:Readonly<LeaderModifiers>=NEUTRAL_LEADER,organizationDebt=0,fiscalAdjustmentB=0,oilOutput=country.resourceProduction.oil): CountryState {
   const administered = processMinistries(country);
@@ -135,6 +137,7 @@ export function tickGame(state: GameState): GameState {
   next = processIntegration(next);
   next = processWellbeing(next);
   next = processAiWars(next);
+  next = processPeaceObligations(processPeaceConferences(processArmisticeRequests(next)));
   if(!next.world.living?.advice.active&&!next.world.living?.notice)next = maybeCreateResourceAdvisor(next);
   next = processTradeFlights(next);
   next = reportFlightArrivals(processFlights(next));

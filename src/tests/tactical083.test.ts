@@ -59,7 +59,9 @@ describe('0.83 tactical orders',()=>{
  it('uses the strategic victory lifecycle after a tactical round finishes the front',()=>{
   const {s,id}=fixture();s.wars[id].progress=99.9;s.wars[id].defenderExhaustion=99.9;
   const n=resolveTacticalRound(s,id,[move],0);
-  expect(n.wars[id].status).toBe('victory');expect(n.countries.GRC.controllerCountryId).toBe('TUR');
+  // Phase 9.6: the victory opens the peace conference instead of handing GRC over at once; installing a puppet is a demand.
+  expect(n.wars[id].status).toBe('victory');expect(n.countries.GRC.controllerCountryId).toBeNull();expect(n.world.peace!.conferences[id].status).toBe('open');
+  const signed=applyGameCommand(applyGameCommand(n,{type:'peace/toggle',warId:id,demand:'puppet'}),{type:'peace/conclude',warId:id});expect(signed.countries.GRC.controllerCountryId).toBe('TUR');
   expect(n.wars[id].tactical!.events).toHaveLength(1);expect(migrateSave(snapshotGame(n))).not.toBeNull();
  });
  it('requires fuel for movement while allowing defensive orders in a fuel crisis',()=>{

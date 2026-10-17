@@ -1,7 +1,7 @@
 import {useWindowLifecycle,WINDOW_LAYERS} from '../windows/useWindowLifecycle';
 import {calculateSupplyNetwork} from '../../engine/systems/supplyNetwork';
 import {pilotCoverage,academyFor} from '../../engine/systems/governance';
-import { LocaleText, translateLive } from "../../i18n/localeText";
+import { LocaleText, formatLive, translateLive } from "../../i18n/localeText";
 import { Suspense, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useGameStore } from "../../store/gameStore";
@@ -16,6 +16,7 @@ import {TacticalBattlefield} from './TacticalBattlefield';
 import {TacticalHint} from '../hints/TacticalHint';
 import {WAR_TACTICAL_HINT,WAR_TASK_GROUPS_HINT} from '../hints/registry';
 import {taskGroupSummary} from '../../engine/systems/taskGroups';
+import {WarScorePanel} from './WarScorePanel';
 // Always mounted: watches the war list to open new player wars, and mounts the
 // full-state command body only while a war window is open.
 export function WarTheatreModal() {
@@ -183,6 +184,18 @@ function WarCommand() {
             </p>
           )}
         </div>
+        <WarScorePanel state={s} war={w} />
+        {(()=>{
+          // Phase 9.6: an AI government that is losing asks the player for an armistice; the player may take a seat at the table.
+          const offer=s.world.peace?.offers?.[w.id];
+          return offer&&offer.status==='open'&&w.status==='active'&&w.attackerId===s.playerCountryId&&(
+            <div className="armistice-offer" role="alert" data-testid="armistice-offer">
+              <p><LocaleText value={formatLive('{0} asks for an armistice.',[s.countries[offer.fromId]?.name??offer.fromId])}/></p>
+              <button data-testid="armistice-accept" onClick={()=>s.dispatch({type:'peace/acceptArmistice',warId:w.id})}><LocaleText value="Open the peace table"/></button>
+              <button data-testid="armistice-decline" onClick={()=>s.dispatch({type:'peace/declineArmistice',warId:w.id})}><LocaleText value="Keep fighting"/></button>
+            </div>
+          );
+        })()}
         {mine && <TaskGroupsPanel warId={w.id} />}
         <footer>
           <button

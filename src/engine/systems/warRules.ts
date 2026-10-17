@@ -11,6 +11,7 @@ import { applyWarCondemnation } from './worldInstitutions';
 import { coalitionSupportFrom, emptyLosses, getWarPreview } from './warfare';
 import { settleWarOutcome } from './warOutcome';
 import { withDefaultTaskGroups } from './taskGroups';
+import { dmzBars } from './peaceTreaty';
 
 /**
  * War rules shared by the player's commands and the AI (audit E1, B9, E5). The player's 'military/declareWar' and
@@ -20,7 +21,7 @@ import { withDefaultTaskGroups } from './taskGroups';
 const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v));
 const note = (state: GameState, message: string): GameState => ({ ...state, sitrep: [message, ...state.sitrep].slice(0, 12) });
 
-export type WarBlock = 'invalid' | 'attacker_not_independent' | 'target_not_independent' | 'active' | 'fuel';
+export type WarBlock = 'invalid' | 'attacker_not_independent' | 'target_not_independent' | 'active' | 'dmz' | 'fuel';
 export interface WarEligibility { allowed: boolean; block?: WarBlock }
 
 export const inActiveWar = (state: GameState, id: string) =>
@@ -48,6 +49,7 @@ export function warDeclarationReason(status: WarEligibility): string | undefined
  switch (status.block) {
   case 'fuel': return WAR_FUEL_MESSAGE;
   case 'active': return 'You are already at war with this country.';
+  case 'dmz': return 'A signed peace treaty forbids this country from attacking its neighbour.';
   case 'attacker_not_independent': return 'Your country must be independent to declare war.';
   case 'target_not_independent': return 'This country is under foreign control. Choose an independent country.';
   default: return 'Choose another independent country as the target.';
@@ -60,6 +62,7 @@ export function warDeclarationStatus(state: GameState, attackerId: string, defen
   if (attacker.annexedBy || (attacker.controllerCountryId != null && attacker.controllerCountryId !== attacker.id)) return { allowed: false, block: 'attacker_not_independent' };
   if (defender.annexedBy || defender.controllerCountryId != null) return { allowed: false, block: 'target_not_independent' };
   if (activeWarBetween(state, attacker.id, defender.id)) return { allowed: false, block: 'active' };
+  if (dmzBars(state, attacker.id, defender.id)) return { allowed: false, block: 'dmz' };
   if (!warFuelReadiness(state, attackerId).allowed) return { allowed: false, block: 'fuel' };
   return { allowed: true };
 }
@@ -203,7 +206,8 @@ export function concedeWar(state: GameState, warId: string, side: 'attacker' | '
   if (!war || war.status !== 'active') return state;
   const defending = side === 'defender';
   let next: GameState = { ...state, wars: { ...state.wars, [war.id]: { ...war, status: defending ? 'victory' : 'withdrawn', autoAssault: false, lastReport: defending ? DEFENDER_CONCEDED_REPORT : ATTACKER_WITHDREW_REPORT } } };
-  if (defending) { const d = next.countries[war.defenderId]; next = { ...next, countries: { ...next.countries, [d.id]: { ...d, controllerCountryId: war.attackerId, politics: { ...d.politics, stability: clamp(d.politics.stability - 15, 0, 100) } } } }; }
+  // The conceding defender is not handed over at once: the surrender opens the peace conference (settleWarOutcome).
+  if (defending) { const d = next.countries[war.defenderId]; next = { ...next, countries: { ...next.countries, [d.id]: { ...d, politics: { ...d.politics, stability: clamp(d.politics.stability - 15, 0, 100) } } } }; }
   next = endWarRelation(next, war.attackerId, war.defenderId);
   next = note(next, message ?? (defending ? 'WAR // Defender withdrew and conceded control to the attacker.' : 'WAR // Forces withdrew. Ceasefire established under hostile relations.'));
   return settleWarOutcome(next, war.id);

@@ -46,6 +46,8 @@ export interface WorldState {
  flights?:import('./flights').Flight[];
  /** 0.89 commodity exchange (commodityExchange.ts); absent in older saves and created on the next tick. */
  commodities?:import('./commodityExchange').CommodityExchangeState;
+ /** 9.6 peace conferences, signed treaties and standing clauses (peaceTreaty.ts); absent in older saves. */
+ peace?:import('./peace').PeaceState;
   members: Record<InstitutionId, string[]>;
   ballots: WorldBallot[];
   missions: OutreachMission[];

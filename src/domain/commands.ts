@@ -80,6 +80,13 @@ export type ReliableCommand =
  | {type:'tutorial/set';step:number;active:boolean}
  | {type:'inbox/read';scope:'letters'|'leadership'}
  | {type:'living/dismissNotice'}
+ // Phase 9.6: the peace conference (peaceTreaty.ts).
+ | {type:'peace/toggle';warId:string;demand:string}
+ | {type:'peace/conclude';warId:string}
+ | {type:'peace/waive';warId:string}
+ | {type:'peace/acknowledge';treatyId:string}
+ | {type:'peace/acceptArmistice';warId:string}
+ | {type:'peace/declineArmistice';warId:string}
  // 0.88 track E: factions and regime crises (audit E2).
  | {type:'politics/concession';faction:import('./politics').FactionKey}
  | {type:'politics/crisisResponse';option:import('./politics').CrisisOption}

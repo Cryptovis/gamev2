@@ -1,4 +1,6 @@
 import {applyOrganizationCommand} from './systems/organizations/commands';
+import {acceptArmistice,declineArmistice} from './systems/peaceArmistice';
+import {acknowledgeTreaty,concludePeace,playerOwnsTable,togglePeaceDemand,waivePeace} from './systems/peaceTreaty';
 import { assignTaskGroup, taskGroupPreview } from './systems/taskGroups';
 import {affairsPreview} from './affairsPreview';
 import {cancelIndustrialContract,dismissLivingNotice,markInboxRead,setTutorialStep,toggleFacility} from './systems/playerRecords';
@@ -138,6 +140,12 @@ function executeGameCommand(state: GameState, command: GameCommand): GameState {
     case 'tutorial/set': return setTutorialStep(state,command.step,command.active);
     case 'inbox/read': return markInboxRead(state,command.scope);
     case 'living/dismissNotice': return dismissLivingNotice(state);
+    case 'peace/toggle': return togglePeaceDemand(state,command.warId,command.demand);
+    case 'peace/conclude': return playerOwnsTable(state,command.warId)?concludePeace(state,command.warId):state;
+    case 'peace/waive': return playerOwnsTable(state,command.warId)?waivePeace(state,command.warId):state;
+    case 'peace/acknowledge': return acknowledgeTreaty(state,command.treatyId);
+    case 'peace/acceptArmistice': return acceptArmistice(state,command.warId);
+    case 'peace/declineArmistice': return declineArmistice(state,command.warId);
     case 'politics/concession': return grantConcession(state,command.faction);
     case 'politics/crisisResponse': return respondToCrisis(state,command.option);
     case 'politics/acknowledgeCrisis': return acknowledgeCrisis(state);
@@ -242,6 +250,7 @@ function executeGameCommand(state: GameState, command: GameCommand): GameState {
       const eligibility = warDeclarationStatus(state, state.playerCountryId, command.targetCountryId);
       if (eligibility.block === 'target_not_independent') return note(state, `WAR // ${defender.name} is not an independent state and cannot be targeted.`);
       if (eligibility.block === 'active') return note(state, `WAR // Conflict with ${defender.name} is already active.`);
+      if (eligibility.block === 'dmz') return note(state, `WAR // A peace treaty bars an attack on ${defender.name}.`);
       if (eligibility.block === 'fuel') return note(state, WAR_FUEL_MESSAGE);
       return openWar(state, state.playerCountryId, command.targetCountryId).state;
     }
