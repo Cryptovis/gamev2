@@ -104,20 +104,13 @@ test('10.0 Regional Conflicts starts with wars burning and the Taiwan Strait hos
   expect(s.world.scenario.id).toBe('regional-conflicts');
 });
 
-test('10.0 the ambience follows the war and the adaptive switch hides and shows the readout', async ({ page }) => {
+test('10.0 sound options stay clean without adaptive ambience drone', async ({ page }) => {
   await startScenario(page, 'regional-conflicts', 'UKR');
   await page.locator('.leader-avatar-button').click();
   await page.locator('.profile-tabs button').filter({ hasText: /Sound/ }).click();
-  const mood = page.getByTestId('audio-mood');
-  await expect(mood).toHaveAttribute('data-mood', 'war');
-  await expect(mood).toContainText('War footing');
-  const toggle = page.getByTestId('audio-adaptive');
-  await expect(toggle).toBeChecked();
-  await toggle.uncheck();
-  await expect(mood).toHaveCount(0);
-  expect(await page.evaluate(() => localStorage.getItem('ron-audio-adaptive-v1'))).toBe('0');
-  await toggle.check();
-  await expect(mood).toBeVisible();
+  await expect(page.getByTestId('audio-options')).toBeVisible();
+  await expect(page.getByTestId('audio-adaptive')).toHaveCount(0);
+  await expect(page.getByTestId('audio-mood')).toHaveCount(0);
 });
 
 test('10.0 the window fits a phone and its buttons can be tapped', async ({ page }) => {

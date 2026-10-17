@@ -65,7 +65,7 @@ export function AudioDirector() {
     held.current = pressures;
     useAdaptiveAudio.getState().publish(mood, pressures);
     moodBed.setMood(mood);
-    moodBed.setActive(playing && adaptive);
+    moodBed.setActive(false);
     const before = lastMood.current;
     lastMood.current = mood;
     if (adaptive && playing && before !== null && moodRank(mood) > moodRank(before) && mood !== 'war') chimes.play('crisis');

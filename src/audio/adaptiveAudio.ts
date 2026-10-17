@@ -11,7 +11,7 @@ import { sharedContext } from './synth';
 export const ADAPTIVE_KEY = 'ron-audio-adaptive-v1';
 
 function readAdaptive(): boolean {
-  try { return localStorage.getItem(ADAPTIVE_KEY) !== '0'; } catch { return true; }
+  return false;
 }
 
 interface AdaptiveStore {
@@ -24,8 +24,8 @@ interface AdaptiveStore {
 }
 
 export const useAdaptiveAudio = create<AdaptiveStore>((set) => ({
-  adaptive: readAdaptive(),
-  setAdaptive(on) { try { localStorage.setItem(ADAPTIVE_KEY, on ? '1' : '0'); } catch { /* private mode: keep in memory */ } set({ adaptive: on }); },
+  adaptive: false,
+  setAdaptive(_on) { set({ adaptive: false }); },
   mood: 'peace',
   pressures: [],
   publish(mood, pressures) { set((s) => (s.mood === mood && s.pressures.join() === pressures.join() ? s : { mood, pressures })); },
