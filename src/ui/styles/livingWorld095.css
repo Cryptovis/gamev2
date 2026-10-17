@@ -8,17 +8,17 @@
   --lm-lit: #fbf3dc; --lm-shade: #c9b68a; --lm-accent: #b98a2e; --lm-roof: #8a3a26; --lm-blue: #3b6a93; --lm-glass: #b7d2de;
   --lm-ground: #8d8a62; --lm-line: #3a2a18; --lm-detail: #5b4a30;
 }
-:root .lm-art { stroke: var(--lm-line); stroke-width: .55; stroke-linejoin: round; stroke-linecap: round; }
-:root .lm-l { fill: var(--lm-lit); }
-:root .lm-s { fill: var(--lm-shade); }
-:root .lm-a { fill: var(--lm-accent); }
-:root .lm-r { fill: var(--lm-roof); }
-:root .lm-b { fill: var(--lm-blue); }
-:root .lm-f { fill: var(--lm-glass); }
-:root .lm-g { fill: var(--lm-ground); }
-:root .lm-d { fill: var(--lm-detail); stroke: var(--lm-line); stroke-width: .45; }
-:root .lm-art path.lm-d:not([d*="z"]):not([d*="Z"]) { fill: none; }
-:root .landmark-shadow { fill: rgba(0,0,0,.28); }
+.lm-art { stroke: var(--lm-line); stroke-width: .55; stroke-linejoin: round; stroke-linecap: round; }
+.lm-l { fill: var(--lm-lit); }
+.lm-s { fill: var(--lm-shade); }
+.lm-a { fill: var(--lm-accent); }
+.lm-r { fill: var(--lm-roof); }
+.lm-b { fill: var(--lm-blue); }
+.lm-f { fill: var(--lm-glass); }
+.lm-g { fill: var(--lm-ground); }
+.lm-d { fill: var(--lm-detail); stroke: var(--lm-line); stroke-width: .45; }
+.lm-art path.lm-d:not([d*="z"]):not([d*="Z"]) { fill: none; }
+.landmark-shadow { fill: rgba(0,0,0,.28); }
 :root[data-theme="light"] .landmark-shadow { fill: rgba(58,42,24,.22); }
 
 /* Alpine relief: four flat tones, no filters, no blending; the hillshade underneath supplies the soft light. */
