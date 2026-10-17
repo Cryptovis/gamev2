@@ -3,10 +3,10 @@ import {ManagedDialog} from '../windows/ManagedDialog';
 import {WINDOW_LAYERS} from '../windows/useWindowLifecycle';
 import {retryFailedImages} from '../icons/reliableImage';
 import {LocaleText,translateLive} from '../../i18n/localeText';
-import {gameDate} from '../../engine/systems/leadership';
 import {LEADER_PERKS} from '../../data/leaderArchetypes';
 import {formatCampaignDate} from '../landing/saveCardFormat';
 import {CREDENTIAL_WORDING} from './leaderCredentials';
+import {MENU_WORDING,type MenuTab} from './playerMenuWording';
 import { useState } from 'react';
 import { AudioOptions } from './AudioOptions';
 import { TacticalHintOptions } from '../hints/TacticalHintOptions';
@@ -25,6 +25,7 @@ export function PlayerOptionsMenu({onClose}:{onClose:()=>void}){
  const profile=useGameStore(s=>s.playerProfile),archetype=useGameStore(s=>s.leadership.archetype);
  const countries=useGameStore(s=>s.countries);
  const wording=CREDENTIAL_WORDING[profile.language]??CREDENTIAL_WORDING.en;
+ const menu=MENU_WORDING[profile.language]??MENU_WORDING.en;
  const player=useGameStore(s=>s.countries[s.playerCountryId]);
  const citizenship=countries[profile.nationalityCountryId??'']??player;
  const day=useGameStore(s=>s.day);
@@ -56,16 +57,16 @@ export function PlayerOptionsMenu({onClose}:{onClose:()=>void}){
       </aside>
 
       <div className="campaign-status-grid commander-status-grid">
-       <span><OverviewIcon size={17}/><i><small><LocaleText value={"CAMPAIGN DAY"}/></small><strong><LocaleText value={day}/><LocaleText value={" · "}/><LocaleText value={gameDate(useGameStore.getState())}/></strong></i></span>
-       <span><WorldIcon size={17}/><i><small><LocaleText value={"SIMULATION"}/></small><strong><LocaleText value={speed===0?'PAUSED':speed+'× SPEED'}/></strong></i></span>
-       <span><TreasuryIcon size={17}/><i><small><LocaleText value={"TREASURY"}/></small><strong><LocaleText value={"$"}/><LocaleText value={player.economy.treasury.toFixed(1)}/><LocaleText value={"B"}/></strong></i></span>
-       <span><EconomyIcon size={17}/><i><small><LocaleText value={"GDP"}/></small><strong><LocaleText value={"$"}/><LocaleText value={player.economy.gdp.toFixed(0)}/><LocaleText value={"B"}/></strong></i></span>
+       <span data-status="day"><OverviewIcon size={17}/><i><small>{menu.day}</small><strong>{day}</strong></i></span>
+       <span data-status="speed"><WorldIcon size={17}/><i><small>{menu.speed}</small><strong>{speed===0?menu.paused:speed+'×'}</strong></i></span>
+       <span data-status="treasury"><TreasuryIcon size={17}/><i><small>{menu.treasury}</small><strong>${player.economy.treasury.toFixed(1)}B</strong></i></span>
+       <span data-status="gdp"><EconomyIcon size={17}/><i><small>{menu.gdp}</small><strong>${player.economy.gdp.toFixed(0)}B</strong></i></span>
       </div>
      </div>
 
      <div className="player-options-main">
-      <nav className="profile-tabs" aria-label={translateLive("Profile sections")}>{(['profile','history','settings','audio','session'] as const).map(tab=><button key={tab} aria-pressed={view===tab} className={view===tab?'active':''} onClick={()=>setView(tab)}><LocaleText value={tab==='profile'?'Profile':tab==='history'?'Campaign':tab==='settings'?'Settings':tab==='audio'?'Sound':'Session'}/></button>)}</nav>
-      {view==='history'&&<section className="campaign-history"><h3><LocaleText value="Campaign"/></h3><div className="campaign-status-grid">{[["Completed victories",world.expansion?.victories.length??0],["Integrated territories",Object.values(world.expansion?.integrations??{}).filter(x=>x.status==='completed').length],["Active loans",world.expansion?.loans.filter(x=>x.status!=='paid'&&[x.lenderId,x.borrowerId].includes(player.id)).length??0],["Active power projects",world.energy?.[player.id]?.projects.length??0]].map(([label,count])=><span key={label}><i><small><LocaleText value={label}/></small><strong>{count}</strong></i></span>)}</div><h4><LocaleText value="Recent decisions"/></h4><ol>{(history??recent.map((message,index)=>({id:String(index),message,day}))).map(entry=><li key={entry.id}><small><LocaleText value="Day"/> {entry.day}</small> · <LocaleText value={entry.message}/></li>)}</ol>{!(history?.length??recent.length)&&<p><LocaleText value="No recent decisions yet."/></p>}</section>}
+      <nav className="profile-tabs" aria-label={translateLive("Profile sections")}>{(['profile','history','settings','audio','session'] as MenuTab[]).map(tab=><button key={tab} aria-pressed={view===tab} className={view===tab?'active':''} data-tab={tab} onClick={()=>setView(tab)}>{menu.tabs[tab]}</button>)}</nav>
+      {view==='history'&&<section className="campaign-history"><h3><LocaleText value="Campaign history"/></h3><div className="campaign-status-grid">{[["Completed victories",world.expansion?.victories.length??0],["Integrated territories",Object.values(world.expansion?.integrations??{}).filter(x=>x.status==='completed').length],["Active loans",world.expansion?.loans.filter(x=>x.status!=='paid'&&[x.lenderId,x.borrowerId].includes(player.id)).length??0],["Active power projects",world.energy?.[player.id]?.projects.length??0]].map(([label,count])=><span key={label}><i><small><LocaleText value={label}/></small><strong>{count}</strong></i></span>)}</div><h4><LocaleText value="Recent decisions"/></h4><ol>{(history??recent.map((message,index)=>({id:String(index),message,day}))).map(entry=><li key={entry.id}><small><LocaleText value="Day"/> {entry.day}</small> · <LocaleText value={entry.message}/></li>)}</ol>{!(history?.length??recent.length)&&<p><LocaleText value="No recent decisions yet."/></p>}</section>}
       {view==='profile'&&<section className="campaign-options-section leader-credentials" data-testid="leader-credentials"><div><small><LocaleText value={"PERSONAL PROFILE"}/></small><h3>{wording.title}</h3></div>
        <dl className="credential-list">
         <div className="credential-row" data-credential="name"><dt>{wording.name}</dt><dd><LocaleText value={profile.commanderName}/></dd></div>

@@ -76,3 +76,4 @@ import "./ui/styles/hotfix15.css";
 import "./ui/styles/hotfix16.css";
 import "./ui/styles/hotfix17.css";
 import "./ui/styles/hotfix18.css";
+import "./ui/styles/hotfix19.css";

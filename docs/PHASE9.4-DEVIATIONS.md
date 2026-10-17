@@ -82,3 +82,11 @@ Five UI items from the fourth live playtest (`src/ui/styles/hotfix18.css` is loa
 - Badge colours: dark uses the requested #4ade80 and #fcd34d. Ivory uses #166534 and #92400e instead of #15803d and #b45309, which measure 4.05 and 3.90 on the tinted badge background. The roster table badges are unchanged.
 - The hardware card keeps the existing one-line note and adds the requested context sentence below it, bounded at 680px.
 - Not run here: vitest itself, real `tsc`, `vite build`, Playwright and the determinism replay. No file under `src/engine` or `src/simulation` was touched.
+
+## Follow-up 1.9
+
+- The Chinese catalog row IDEOLOGY now reads 意识形态. `leaderCredentials.ts` already had the right word.
+- `AvatarPicker.tsx` is deleted. The store action `setPlayerAvatar` stays because `release094.test.ts` covers it, and the `.avatar-picker*` CSS selectors stay because most of them share one rule with live selectors in dense sheets (`styles.css`, `openCommand.css`); they match nothing now.
+- National Command tab and status-box words live in `src/ui/panels/playerMenuWording.ts`. The shared catalogs hold wrong rows for several of these words (TREASURY is "treaty" in Chinese and "sobriety" in Russian; Session is a legislative session in Spanish and Russian), and I did not edit them. The Campaign tab was "Campaign history"; the heading inside that tab keeps the longer name. The status boxes are Days in Office, Simulation Speed, Treasury and GDP; the Days in Office box shows the day number only (the date is in the HUD clock).
+- The brief named baseline d12f042, which is not in this clone. The work sits on top of 062f1b0 (Hotfix 1.8).
+- Not run here: vitest itself, real `tsc`, `vite build`, Playwright and the determinism replay. No file under `src/engine` or `src/simulation` was touched.

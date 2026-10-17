@@ -1,0 +1,25 @@
+/* Playtest hotfix 1.9. Loaded after hotfix18.css. National Command tabs and status boxes, and the hardware card on small screens. */
+:root{--h19-box-bg:#1b3248;--h19-box-line:rgba(212,175,55,.38);--h19-box-ink:#eef3f8;--h19-box-label:#c3d3e0;--h19-box-icon:#f0cf72;}
+:root[data-theme="light"]{--h19-box-bg:#f3efe5;--h19-box-line:rgba(154,116,18,.5);--h19-box-ink:#142c46;--h19-box-label:#465b70;--h19-box-icon:#7a5a08;}
+
+/* Five tabs in one row: Profile, Campaign, Settings, Sound, Session. Equal columns, no wrapping, long words end in an ellipsis. */
+:root .player-options-modal .profile-tabs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin:12px 0}
+:root .player-options-modal .profile-tabs button{min-width:0;padding:9px 4px;font-size:12.5px;line-height:1.2;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* Phones: the tabs may use two rows rather than clip a long word. */
+@media (max-width:560px){:root .player-options-modal .profile-tabs{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+/* Four status boxes: a clean 2 x 2 grid, one height, icon and text on one baseline, the same in both themes. */
+:root .player-options-modal .campaign-status-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:1fr;gap:8px}
+:root .player-options-modal .campaign-status-grid>span{display:flex;align-items:center;gap:10px;min-width:0;min-height:60px;padding:10px 12px;
+ background:var(--h19-box-bg)!important;border:1px solid var(--h19-box-line)!important;border-radius:10px;color:var(--h19-box-ink)}
+:root .player-options-modal .campaign-status-grid>span>svg{flex:none;color:var(--h19-box-icon)}
+:root .player-options-modal .campaign-status-grid>span>i{display:grid;gap:2px;min-width:0;font-style:normal}
+:root .player-options-modal .campaign-status-grid>span small{color:var(--h19-box-label)!important;font:700 10.5px/1.25 system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;overflow-wrap:anywhere}
+:root .player-options-modal .campaign-status-grid>span strong{color:var(--h19-box-ink)!important;font:700 16px/1.25 system-ui,sans-serif;overflow-wrap:anywhere}
+@media (forced-colors:active){:root .player-options-modal .campaign-status-grid>span{background:Canvas!important;border-color:CanvasText!important;color:CanvasText}}
+
+/* The hardware card never causes sideways scrolling, and its notes wrap inside it. */
+:root .ia-hardware-card{box-sizing:border-box;min-width:0;max-width:min(680px,100%)}
+:root .ia-hardware-card :is(.ia-section-note,.ia-section-context,h3){overflow-wrap:anywhere;min-width:0}
+:root .ia-hardware-card .ia-form-grid{min-width:0}
+:root .ia-hardware-card :is(select,input){max-width:100%;min-width:0}

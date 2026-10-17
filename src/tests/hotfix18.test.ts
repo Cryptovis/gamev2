@@ -115,5 +115,5 @@ describe('hotfix 1.8 hardware transfer card (item 5)',()=>{
 });
 
 describe('hotfix 1.8 stylesheet order',()=>{
-  it('loads hotfix18.css last',()=>{expect(source('main.tsx').trimEnd().split('\n').pop()).toContain('hotfix18.css');});
+  it('loads hotfix18.css before hotfix19.css',()=>{expect(source('main.tsx').lastIndexOf('hotfix19.css')).toBeGreaterThan(source('main.tsx').lastIndexOf('hotfix18.css'));});
 });
