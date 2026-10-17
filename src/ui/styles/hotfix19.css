@@ -25,10 +25,26 @@
 :root .ia-hardware-card :is(select,input){max-width:100%;min-width:0}
 
 /* Country Panel floating corner close button & clean header (Phase 9.5 UX) */
+:root .command-panel {
+  overflow: visible !important;
+  padding: 0 !important;
+}
+:root .command-panel-scroll {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 18px;
+  border-radius: inherit;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(115, 213, 255, 0.25) transparent;
+}
 :root .command-panel > .national-panel-heading {
   position: absolute !important;
   top: -12px !important;
-  right: -24px !important;
+  right: -12px !important;
   margin: 0 !important;
   padding: 0 !important;
   width: 34px !important;
@@ -39,7 +55,7 @@
   box-shadow: none !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
-  z-index: 50 !important;
+  z-index: 60 !important;
   pointer-events: none !important;
 }
 :root .command-panel > .national-panel-heading > [data-guide="close-workspace"] {
@@ -98,3 +114,4 @@
   outline: 2px solid #8c2219 !important;
   outline-offset: 2px !important;
 }
+
