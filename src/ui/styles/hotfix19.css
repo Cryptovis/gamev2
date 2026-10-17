@@ -2,6 +2,7 @@
 :root{--h19-box-bg:#1b3248;--h19-box-line:rgba(212,175,55,.38);--h19-box-ink:#eef3f8;--h19-box-label:#c3d3e0;--h19-box-icon:#f0cf72;}
 :root[data-theme="light"]{--h19-box-bg:#f3efe5;--h19-box-line:rgba(154,116,18,.5);--h19-box-ink:#142c46;--h19-box-label:#465b70;--h19-box-icon:#7a5a08;}
 
+
 /* Five tabs in one row: Profile, Campaign, Settings, Sound, Session. Equal columns, no wrapping, long words end in an ellipsis. */
 :root .player-options-modal .profile-tabs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin:12px 0}
 :root .player-options-modal .profile-tabs button{min-width:0;padding:9px 4px;font-size:12.5px;line-height:1.2;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -238,6 +239,24 @@
 ):focus-visible {
   outline: 2px solid #8c2219 !important;
   outline-offset: 2px !important;
+}
+
+@media (max-width: 600px) {
+  :root :is(
+    .command-panel > .national-panel-heading > [data-guide="close-workspace"],
+    .target-hub-close,
+    .command-window-header > [data-guide="close-workspace"],
+    .executive-header [data-guide="close-workspace"],
+    .executive-workspace > [data-guide="close-workspace"],
+    .floating-command-header [data-guide="close-workspace"],
+    .war-theatre > header > button[data-guide="close-workspace"],
+    .war-theatre > header > button[aria-label*="Close"],
+    .player-options-close,
+    .review-dialog > header > [data-guide="review-dismiss"]
+  ) {
+    top: 8px !important;
+    right: 8px !important;
+  }
 }
 
 /* Modal top stability: anchor to top so windows/tabs do not jump when content height changes */

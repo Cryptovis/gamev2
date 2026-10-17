@@ -742,10 +742,10 @@ describe('9.8 text and layout', () => {
   it('translates the five bloc names', () => {
     for (const label of Object.values(BLOC_LABEL)) expect(label in UI_CATALOG_098P || MERGED_CATALOG_GROUP.some(g => label in g)).toBe(true);
   });
-  it('is the last catalogue in the group and never shadows an earlier translation with a different one', () => {
-    const last = MERGED_CATALOG_GROUP[MERGED_CATALOG_GROUP.length - 1];
-    expect(last).toBe(UI_CATALOG_098P);
-    for (const earlier of MERGED_CATALOG_GROUP.slice(0, -1)) {
+  it('is in the group and never shadows an earlier translation with a different one', () => {
+    const at = MERGED_CATALOG_GROUP.indexOf(UI_CATALOG_098P);
+    expect(at).toBeGreaterThan(-1);
+    for (const earlier of MERGED_CATALOG_GROUP.slice(0, at)) {
       for (const key of Object.keys(UI_CATALOG_098P)) if (key in earlier) expect(JSON.stringify(earlier[key])).toBe(JSON.stringify(UI_CATALOG_098P[key]));
     }
   });

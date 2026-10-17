@@ -9,6 +9,8 @@ import {CREDENTIAL_WORDING} from './leaderCredentials';
 import {MENU_WORDING,type MenuTab} from './playerMenuWording';
 import { useState } from 'react';
 import { AudioOptions } from './AudioOptions';
+import { SimulationOptions } from './SimulationOptions';
+import { CloudOptions } from './CloudOptions';
 import { TacticalHintOptions } from '../hints/TacticalHintOptions';
 import { createPortal } from 'react-dom';
 import { flagEmoji } from '../../data/countryThemes';
@@ -76,7 +78,7 @@ export function PlayerOptionsMenu({onClose}:{onClose:()=>void}){
         <div className="credential-row credential-perk" data-credential="perk"><dt>{wording.perk}</dt><dd>{archetype?<><strong><LocaleText value={LEADER_PERKS[archetype].title}/></strong><span><LocaleText value={LEADER_PERKS[archetype].description}/></span></>:wording.notRecorded}</dd></div>
        </dl>
        <p className="credential-note">{wording.permanent}</p></section>}
-      {view==='settings'&&<><AppearanceOptions/><TacticalHintOptions/></>}{view==='audio'&&<AudioOptions/>}
+      {view==='settings'&&<><AppearanceOptions/><TacticalHintOptions/><SimulationOptions/><CloudOptions/></>}{view==='audio'&&<AudioOptions/>}
       {view==='session'&&<section className="campaign-options-section">
        <div><small><LocaleText value={"CAMPAIGN CONTROL"}/></small><h3><LocaleText value={"Save & Session"}/></h3><p><LocaleText value={"Campaign management lives here so the main strategic HUD stays focused on the world."}/></p></div>
        <div className="campaign-option-actions">

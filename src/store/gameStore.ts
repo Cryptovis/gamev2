@@ -30,11 +30,16 @@ import {buildFacility} from '../engine/systems/industrialEconomy';
 import {placeIndustrialOrder} from '../engine/systems/industrialMarket';
 import {createLeadership,validBirthDate,initializeLeaderArchetype} from '../engine/systems/leadership';
 import type { MapMode, MapPresentation } from '../domain/map';
-import {applyGameCommand,executeCommandResult} from '../engine/commands';
+import {applyGameCommand as applyEngineCommand,executeCommandResult as executeEngineCommand} from '../engine/commands';
+import {noteCommand} from '../sim/commandTap';
 import {acceptAdvisorContract,acceptAdvisorTradePact,dismissAdvisor} from '../engine/systems/advisor';
 
 
 import {resolveDiplomaticOffer} from '../engine/systems/diplomaticOffers';
+
+// 9.9: every command the store applies is also reported to the simulation bridge, which queues it for the worker's mirror.
+const applyGameCommand=(state:GameState,command:GameCommand):GameState=>noteCommand(state,applyEngineCommand(state,command),command);
+const executeCommandResult=(state:GameState,command:GameCommand)=>{const result=executeEngineCommand(state,command);noteCommand(state,result.state,command);return result;};
 
 interface GameActions {
  startTactical:(id:string,commandId?:string)=>void;

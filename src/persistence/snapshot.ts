@@ -1,7 +1,8 @@
 import type { GameState } from '../domain/game';
 
-export function snapshotGame(state: GameState): GameState {
-  return structuredClone({
+/** The persisted fields of a game, by reference. snapshotGame clones them; the cloud envelope serialises them directly. */
+export function pickSnapshot(state: GameState): GameState {
+  return {
     schemaVersion: state.schemaVersion,
     simulationSeed: state.simulationSeed,
     day: state.day,
@@ -37,5 +38,9 @@ export function snapshotGame(state: GameState): GameState {
     lastAiDay: state.lastAiDay,
     lastStrategicReviewDay: state.lastStrategicReviewDay,
     sitrep: state.sitrep,
-  });
+  };
+}
+
+export function snapshotGame(state: GameState): GameState {
+  return structuredClone(pickSnapshot(state));
 }

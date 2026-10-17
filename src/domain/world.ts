@@ -52,6 +52,8 @@ export interface WorldState {
  nuclear?:import('./nuclear').NuclearState;
  /** 9.8 parliament seats, coalitions and strikes (parliament.ts); absent in older saves and created on the next tick. */
  parliament?:import('./parliament').ParliamentState;
+ /** 9.9 the cloud revision this save descends from (lineage.ts); absent until the campaign is synced. */
+ lineage?:import('./lineage').SaveLineage;
   members: Record<InstitutionId, string[]>;
   ballots: WorldBallot[];
   missions: OutreachMission[];

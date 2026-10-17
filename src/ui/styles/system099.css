@@ -1,0 +1,73 @@
+/* Phase 9.9: the simulation-thread readout and the cloud save panel in Options. Uses the shared theme tokens, so both themes follow. */
+.system-options{display:grid;gap:10px}
+.system-options>*{margin:0;min-width:0}
+.system-options small{color:var(--ink-muted);font-size:12px;line-height:1.4}
+.system-options button:disabled{opacity:.55;cursor:not-allowed}
+.system-options button.danger{border-color:var(--danger,#c0463c);color:var(--danger-ink,var(--ink))}
+.system-options button.quiet{background:transparent}
+.system-options input[type="text"],.system-options input[type="password"],.system-options input[type="url"],.system-options input:not([type]){width:100%;min-height:44px;padding:8px 12px;box-sizing:border-box;background:var(--surface-inset);color:var(--ink);border:1px solid var(--border);border-radius:8px;font:inherit}
+.system-options :is(button,input,summary):focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+
+/* Status badges: the shape differs per state so colour is never the only signal. */
+.sys-badge{display:inline-block;flex:none;width:12px;height:12px;margin-right:8px;vertical-align:-1px;background:var(--ink-muted)}
+.sys-badge[data-kind="good"]{border-radius:50%;background:var(--ok,#3fa66b)}
+.sys-badge[data-kind="warn"]{background:var(--warn,#d9a21b);clip-path:polygon(50% 0,100% 100%,0 100%)}
+.sys-badge[data-kind="busy"]{border-radius:50%;background:transparent;border:2px dashed var(--focus)}
+.sys-badge[data-kind="plain"]{border-radius:2px;background:transparent;border:2px solid var(--ink-muted)}
+@media (prefers-reduced-motion:no-preference){.sys-badge[data-kind="busy"]{animation:sys-spin 1.6s linear infinite}}
+@keyframes sys-spin{to{transform:rotate(360deg)}}
+
+.sys-status,.sys-health{display:flex;flex-wrap:wrap;align-items:center;gap:4px 0;font-weight:600}
+.sys-status small{flex-basis:100%;font-weight:400}
+.sys-reason{display:block}
+.sys-message{padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--surface-inset);border-left-width:4px}
+.sys-message[data-kind="error"]{border-left-color:var(--danger,#c0463c)}
+.sys-message[data-kind="ok"]{border-left-color:var(--ok,#3fa66b)}
+.sys-health[data-health="busy"]{color:var(--warn-ink,var(--ink))}
+.sys-health[data-health="stalled"]{text-decoration:underline wavy var(--danger,#c0463c);text-underline-offset:3px}
+.sys-host{font-weight:400;color:var(--ink-muted)}
+.sys-row{display:flex;flex-wrap:wrap;gap:8px}
+
+/* Mode switch: one connected control. */
+.sys-modes{display:flex;flex-wrap:nowrap;gap:0}
+.sys-modes button{flex:1 1 0;min-width:0;border-radius:0;margin-left:-1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sys-modes button:first-child{border-radius:8px 0 0 8px;margin-left:0}
+.sys-modes button:last-child{border-radius:0 8px 8px 0}
+.sys-modes button[aria-pressed="true"]{position:relative;z-index:1;font-weight:700}
+
+.sys-metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin:0}
+.sys-metrics>div{padding:8px 10px;border:1px solid var(--border);border-radius:8px;background:var(--surface-inset)}
+.sys-metrics dt{font-size:12px;color:var(--ink-muted)}
+.sys-metrics dd{margin:2px 0 0;font-size:15px;font-weight:700;font-variant-numeric:tabular-nums}
+
+/* Cloud panel. */
+.cloud-project{border:1px solid var(--border);border-radius:8px;padding:8px 12px}
+.cloud-project>summary{cursor:pointer;min-height:32px;font-weight:600}
+.cloud-project[open]>summary{margin-bottom:8px}
+.cloud-form,.cloud-transfer,.cloud-code{display:grid;gap:8px}
+.cloud-field{display:grid;gap:4px}
+.cloud-field>span{font-size:12px;font-weight:600}
+.cloud-check{display:flex;align-items:flex-start;gap:8px;min-height:44px}
+.cloud-check input{width:20px;height:20px;margin-top:2px;flex:none}
+.cloud-empty{padding:12px;border:1px dashed var(--border);border-radius:8px;color:var(--ink-muted)}
+.cloud-campaigns{display:grid;gap:8px;padding:0;margin:0;list-style:none}
+.cloud-campaign{display:grid;gap:6px;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface-inset)}
+.cloud-campaign-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:4px 12px}
+.cloud-campaign-head strong{overflow-wrap:anywhere}
+.cloud-campaign-actions,.cloud-resolve{display:flex;flex-wrap:wrap;gap:8px}
+.cloud-resolve{flex-direction:column;align-items:stretch}
+.cloud-resolve button{display:grid;gap:2px;text-align:left;height:auto}
+.cloud-resolve button small{font-size:12px;font-weight:400;white-space:normal}
+.sys-chip{display:inline-flex;align-items:center;font-size:12px;font-weight:600}
+.system-options textarea{width:100%;box-sizing:border-box;padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface-inset);color:var(--ink);font:inherit;resize:vertical}
+.cloud-code textarea,.cloud-transfer textarea{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;overflow-wrap:anywhere}
+.cloud-code output,.cloud-code code{display:block;padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface-inset);font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;overflow-wrap:anywhere;user-select:all}
+
+@media (max-width:480px){
+  .sys-modes{flex-direction:column}
+  .sys-modes button,.sys-modes button:first-child,.sys-modes button:last-child{border-radius:0;margin:-1px 0 0}
+  .sys-modes button:first-child{margin-top:0;border-radius:8px 8px 0 0}
+  .sys-modes button:last-child{border-radius:0 0 8px 8px}
+  .sys-row>button,.cloud-campaign-actions>button{flex:1 1 100%}
+  .sys-metrics{grid-template-columns:1fr 1fr}
+}

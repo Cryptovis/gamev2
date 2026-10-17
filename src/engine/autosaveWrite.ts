@@ -11,4 +11,6 @@ export const autosaveWrite = (snapshot: GameState, owner: string) => async () =>
   const { saveGame, autosaveId } = await import('../persistence/saveGame');
   if (useGameStore.getState().world.campaignId !== snapshot.world.campaignId) throw new Error('Autosave checkpoint superseded');
   await saveGame(snapshot, autosaveId(snapshot.world.campaignId), `Autosave · Day ${snapshot.day}`, owner);
+  // 9.9: tell the cloud sync (a no-op unless the player turned it on). Loaded lazily so the cloud code stays out of the way.
+  void import('../cloud/autoSync').then(m => m.noteLocalSave(snapshot.world.campaignId)).catch(() => undefined);
 };
