@@ -32,7 +32,8 @@ import { MapModeBar } from './MapModeBar';
 import {ResourceCommandWindow} from '../panels/ResourceCommandWindow';
 import {AssetThumbnail} from '../icons/AssetThumbnail';
 import {InternationalAffairsWorkspace} from '../panels/InternationalAffairsWorkspace';
-import { DIPLOMACY_RULES_HINT, INTERNATIONAL_AFFAIRS_HINT, NATIONAL_ALERTS_HINT, NEWS_ARCHIVE_HINT, OBJECTIVES_GUIDANCE_HINT } from '../hints/registry';
+import { TacticalHint } from '../hints/TacticalHint';
+import { DIPLOMACY_RULES_HINT, INTERNATIONAL_AFFAIRS_HINT, MAP_COMMAND_HINT, NATIONAL_ALERTS_HINT, NEWS_ARCHIVE_HINT, OBJECTIVES_GUIDANCE_HINT } from '../hints/registry';
 
 type ToolId='objectives'|'market'|'pulse'|'map'|'resources'|'sitrep'|'alerts'|'diplomacy'|'desk'|'alliances';
 
@@ -82,7 +83,7 @@ export function CommandRails(){
   </Suspense>
   {mounted.has('society')&&<DomesticWindow/>}
   {(['market','exchange','credit'] as const).some(id=>mounted.has(id))&&<MarketWindow/>}{mounted.has('help')&&![navigation,...state.workspaceTrail.map(f=>f.navigation)].some(n=>n?.intent?.kind==='fuel-help')&&<HelpPanel/>}{(()=>{const intent=[navigation,...[...state.workspaceTrail].reverse().map(f=>f.navigation)].find(n=>n?.intent?.kind==='fuel-help')?.intent;return intent?.kind==='fuel-help'?<FuelHelper targetCountryId={intent.targetCountryId} active={state.activeTool==='help'&&navigation?.intent?.kind==='fuel-help'}/>:null;})()}
-  {open.has('map')&&<div className="left-command-dock map-command-dock"><header className="map-dock-header"><strong><LocaleText value="MAP COMMAND"/></strong><button className="map-close" data-guide="close-workspace" onClick={state.closeWorkspace} aria-label={translateLive("Close map command")}><LocaleText value={"×"}/></button></header><div className="map-dock-body"><GuideBriefing/><MapModeBar/></div></div>}
+  {open.has('map')&&<div className="left-command-dock map-command-dock"><header className="map-dock-header header-hidden"><TacticalHint spec={MAP_COMMAND_HINT}/><button className="map-close" data-guide="close-workspace" onClick={state.closeWorkspace} aria-label={translateLive("Close map command")}><LocaleText value={"×"}/></button></header><div className="map-dock-body"><GuideBriefing/><MapModeBar/></div></div>}
   {mounted.has('resources')&&<ResourceCommandWindow onClose={()=>close('resources')}/>}
 
   {mounted.has('objectives')&&<DraggableWindow id="objectives-window" kicker="CAMPAIGN / GUIDANCE" title={translateLive("Strategic Objectives")} initialX={88} initialY={170} width={470} onClose={()=>close('objectives')} hint={OBJECTIVES_GUIDANCE_HINT}>

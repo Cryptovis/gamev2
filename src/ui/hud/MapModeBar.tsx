@@ -4,6 +4,7 @@ import type { MapMode } from '../../domain/map';
 import { tr } from '../../i18n/gameI18n';
 import { useGameStore } from '../../store/gameStore';
 import { useMapDesk } from '../../presentation/mapDeskSettings';
+import { useMapEventPins } from '../../presentation/mapEventPins';
 
 const modes:Array<{mode:MapMode;key:string}>=[
  {mode:'political',key:'political'},
@@ -31,6 +32,7 @@ export function MapModeBar(){
  const issueMapControl=useGameStore(s=>s.issueMapControl);
  const selectedCountryId=useGameStore(s=>s.selectedCountryId);
  const deskTilt=useMapDesk(s=>s.tilt),deskRelief=useMapDesk(s=>s.relief),deskPins=useMapDesk(s=>s.pins),setDesk=useMapDesk(s=>s.set);
+ const eventPins=useMapEventPins(s=>s.enabled),setEventPins=useMapEventPins(s=>s.setEnabled);
  return <section className="map-mode-bar" aria-label={translateLive("Map modes")}>
   <header className="map-mode-heading"><span><small><LocaleText value={"STRATEGIC VIEW"}/></small><strong><LocaleText value={"MAP COMMAND"}/></strong></span><em><LocaleText value={mapMode.toUpperCase()}/></em></header>
   <div className="map-mode-buttons">{modes.map(({mode,key})=><button key={mode} className={mode===mapMode?'active':''} onClick={()=>setMapMode(mode)}><MapControlIcon kind={mode}/><LocaleText value={mode==='relations'?'RELATIONS':tr(lang,key)}/></button>)}</div>
@@ -46,6 +48,7 @@ export function MapModeBar(){
    <label title={translateLive("Applies to the flat map on wide screens")}><input type="checkbox" checked={deskTilt} onChange={e=>setDesk({tilt:e.target.checked})}/><LocaleText value={"Desk tilt"}/></label>
    <label><input type="checkbox" checked={deskRelief} onChange={e=>setDesk({relief:e.target.checked})}/><LocaleText value={"Relief shading"}/></label>
    <label><input type="checkbox" checked={deskPins} onChange={e=>setDesk({pins:e.target.checked})}/><LocaleText value={"Capital pins"}/></label>
+   <label><input type="checkbox" checked={eventPins} onChange={e=>setEventPins(e.target.checked)}/><LocaleText value={"Event pins"}/></label>
    {deskRelief&&<small className="map-desk-credit"><LocaleText value={"Shaded relief: Natural Earth (public domain)"}/></small>}
   </div>
   <div className="map-notice"><LocaleText value={mapNotice}/></div>

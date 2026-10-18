@@ -766,22 +766,29 @@
 :root :is(
   .executive-workspace,
   .command-window,
-  .floating-command-window,
   .player-options-modal,
   .review-dialog,
   .war-theatre,
   #country-section-window,
   #diplomacy-window,
   #desk-window,
-  #alliances-window,
+  #alliances-window
+) {
+  overflow: visible !important;
+  position: relative !important;
+}
+
+:root :is(
+  .floating-command-window,
   #pulse-window,
   #market-window,
   #resource-command-window,
   #alerts-window,
-  #sitrep-window
+  #sitrep-window,
+  #objectives-window
 ) {
   overflow: visible !important;
-  position: relative !important;
+  position: fixed !important;
 }
 
 :root .executive-header.header-hidden {
@@ -2342,6 +2349,256 @@ body:has(.review-backdrop) :is(.executive-backdrop, .command-window-backdrop, .f
 
 :root[data-theme="light"] .national-flag-card em {
   color: #1e3a8a !important;
+}
+
+/* Map Command dock: remove top bar, place close and hint buttons in top-right corner */
+:root .left-command-dock.map-command-dock {
+  overflow: visible !important;
+  position: fixed !important;
+}
+
+:root .map-dock-header.header-hidden {
+  background: transparent !important;
+  border-bottom: none !important;
+  min-height: 0 !important;
+  height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  position: static !important;
+}
+
+:root .map-dock-header.header-hidden .map-close {
+  position: absolute !important;
+  top: -12px !important;
+  right: -12px !important;
+  width: 34px !important;
+  height: 34px !important;
+  border-radius: 50% !important;
+  background: #ef4444 !important;
+  color: #ffffff !important;
+  border: 2px solid #ffffff !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+  z-index: 100 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 20px !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+}
+
+:root .map-dock-header.header-hidden .tactical-hint-beacon {
+  position: absolute !important;
+  top: -12px !important;
+  right: 28px !important;
+  width: 34px !important;
+  height: 34px !important;
+  border-radius: 50% !important;
+  background: #0284c7 !important;
+  color: #ffffff !important;
+  border: 2px solid #ffffff !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+  z-index: 100 !important;
+}
+
+/* Military tabs sticky header */
+:root .military-panel > .section-menu {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 25 !important;
+  background: var(--surface) !important;
+  padding-bottom: 8px !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+/* Military Produce layout: 3 per row for stocks, 2 per row for lines */
+:root .military-hardware-view .equipment-stock-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+}
+
+:root .military-hardware-view .production-lines {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+}
+
+:root .fuel-mini-help-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 15px !important;
+  height: 15px !important;
+  border-radius: 50% !important;
+  background: #0284c7 !important;
+  color: #ffffff !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  border: 1px solid rgba(255, 255, 255, 0.6) !important;
+  cursor: pointer !important;
+  padding: 0 !important;
+  margin-left: 3px !important;
+  vertical-align: middle !important;
+  transition: transform 0.15s ease, background 0.15s ease !important;
+}
+
+:root .fuel-mini-help-btn:hover {
+  background: #0369a1 !important;
+  transform: scale(1.18) !important;
+}
+
+/* Military Recruit compactness */
+:root .military-recruit-hub {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+}
+
+:root .military-recruit-hub .recruit-sub-section {
+  padding: 12px 14px !important;
+}
+
+:root .military-recruit-hub .recruitment-panel h3 {
+  margin: 0 0 4px !important;
+  font-size: 14px !important;
+}
+
+:root .military-recruit-hub .recruitment-panel p {
+  margin: 0 0 10px !important;
+  font-size: 11px !important;
+  line-height: 1.4 !important;
+  color: var(--ink-muted, #94a3b8) !important;
+}
+
+:root .military-recruit-hub .recruitment-controls {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+:root .military-recruit-hub .recruitment-controls input {
+  width: 140px !important;
+  min-width: 120px !important;
+  padding: 6px 10px !important;
+  font-size: 13px !important;
+}
+
+:root .military-recruit-hub .recruitment-quick {
+  display: flex !important;
+  gap: 4px !important;
+}
+
+:root .military-recruit-hub .recruitment-quick button {
+  padding: 5px 8px !important;
+  font-size: 11px !important;
+  min-height: 28px !important;
+}
+
+:root .military-recruit-hub .recruitment-controls button.primary {
+  padding: 6px 14px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+}
+
+/* Supply Contracts Light theme polish */
+:root[data-theme="light"] .supply-contract-panel .order-summary {
+  background: transparent !important;
+  border: none !important;
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+  padding: 0 !important;
+}
+
+:root[data-theme="light"] .supply-contract-panel .order-summary > span {
+  background: var(--surface-raised, #ffffff) !important;
+  border: 1px solid var(--border, #cbd5e1) !important;
+  border-radius: 8px !important;
+  padding: 10px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+  color: var(--ink, #0f172a) !important;
+}
+
+:root[data-theme="light"] .supply-contract-panel .order-summary > span small {
+  color: var(--ink-muted, #64748b) !important;
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.05em !important;
+}
+
+:root[data-theme="light"] .supply-contract-panel .order-summary > span b {
+  color: var(--ink, #0f172a) !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+}
+
+:root[data-theme="light"] .supply-contract-panel .exchange-order {
+  background: var(--surface-raised, #ffffff) !important;
+  border: 1px solid var(--border, #cbd5e1) !important;
+  border-radius: 8px !important;
+  padding: 12px !important;
+}
+
+:root[data-theme="light"] .supply-contract-panel .exchange-order label {
+  color: var(--ink-muted, #64748b) !important;
+  font-size: 10px !important;
+  font-weight: 600 !important;
+}
+
+:root[data-theme="light"] .supply-contract-panel .exchange-order select,
+:root[data-theme="light"] .supply-contract-panel .exchange-order input {
+  background: var(--surface, #f8fafc) !important;
+  color: var(--ink, #0f172a) !important;
+  border: 1px solid var(--border, #cbd5e1) !important;
+  border-radius: 6px !important;
+  padding: 6px 8px !important;
+}
+
+:root[data-theme="light"] .supply-contract-panel .exchange-review {
+  background: #1e3a8a !important;
+  color: #ffffff !important;
+  border: 1px solid #1d4ed8 !important;
+  border-radius: 8px !important;
+  padding: 10px 16px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.04em !important;
+  box-shadow: 0 2px 8px rgba(30, 58, 138, 0.25) !important;
+  cursor: pointer !important;
+}
+
+:root[data-theme="light"] .supply-contract-panel .exchange-review:hover {
+  background: #1d4ed8 !important;
+  box-shadow: 0 4px 12px rgba(30, 58, 138, 0.35) !important;
+}
+
+:root[data-theme="light"] .supply-contract-panel .legacy-exchange {
+  border: none !important;
+}
+
+:root[data-theme="light"] .supply-contract-panel .industrial-heading {
+  background: var(--surface-raised, #ffffff) !important;
+  border: 1px solid var(--border, #cbd5e1) !important;
+  border-radius: 10px !important;
+  padding: 12px 14px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+:root[data-theme="light"] .supply-contract-panel .industrial-heading h3 {
+  color: var(--ink, #0f172a) !important;
+  margin: 0 !important;
+  font-size: 16px !important;
+}
+
+:root[data-theme="light"] .supply-contract-panel .industrial-heading p {
+  color: var(--ink-muted, #64748b) !important;
+  margin: 2px 0 0 !important;
+  font-size: 11px !important;
 }
 
 

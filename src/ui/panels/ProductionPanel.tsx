@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { fuelGuidance } from '../../engine/systems/fuelGuidance';
 import { useWorldView } from '../../store/useWorldView';
 import { EnergyPanel } from './EnergyPanel';
-import { LocaleText } from '../../i18n/localeText';
+import { LocaleText, translateLive } from '../../i18n/localeText';
 import { IndustrialPanel } from './IndustrialPanel';
 import type { CountryState, EquipmentType } from '../../domain/game';
 import { EQUIPMENT_CATALOG, EQUIPMENT_TYPES } from '../../data/equipmentCatalog';
@@ -45,13 +45,6 @@ export function MilitaryHardwareView({ country, onOpenNuclear }: { country: Coun
 
   return (
     <div className="military-hardware-view">
-      {fuel && (fuel.low || fuel.declining || fuel.oilDeclining) && (
-        <aside className="production-fuel-guidance">
-          <strong><LocaleText value={fuel.low ? 'Refined fuel reserves low' : fuel.declining ? 'Refined fuel consumption exceeds production' : 'Crude oil consumption exceeds production'} /></strong>
-          <button onClick={() => state.routeWorkspace({ kind: 'fuel-help', targetCountryId: state.playerCountryId })}><LocaleText value="How to get Fuel?" /></button>
-        </aside>
-      )}
-
       <section className="production-hero">
         <div className="production-hero-title">
           <IndustryIcon size={28} />
@@ -95,7 +88,7 @@ export function MilitaryHardwareView({ country, onOpenNuclear }: { country: Coun
 
       <div className="production-input-strip">
         <span><SteelIcon size={16} /><i><small><LocaleText value={"STEEL / DAY"} /></small><strong><LocaleText value={production.lastInputUse.steel.toFixed(2)} /></strong></i></span>
-        <span><FuelIcon size={16} /><i><small><LocaleText value={"FUEL / DAY"} /></small><strong><LocaleText value={production.lastInputUse.fuel.toFixed(2)} /></strong></i></span>
+        <span><FuelIcon size={16} /><i><small style={{display:'inline-flex',alignItems:'center',gap:4}}><LocaleText value={"FUEL / DAY"} />{isPlayer && <button type="button" className="fuel-mini-help-btn" title={translateLive("How to get Fuel?")} aria-label={translateLive("How to get Fuel?")} onClick={() => state.routeWorkspace({ kind: 'fuel-help', targetCountryId: state.playerCountryId })}>?</button>}</small><strong><LocaleText value={production.lastInputUse.fuel.toFixed(2)} /></strong></i></span>
         <span><IndustryIcon size={16} /><i><small><LocaleText value={"POWER / DAY"} /></small><strong><LocaleText value={production.lastInputUse.electricity.toFixed(2)} /></strong></i></span>
         <span><i><small><LocaleText value={"TREASURY / DAY"} /></small><strong><LocaleText value={'$' + production.lastInputUse.treasury.toFixed(3) + 'B'} /></strong></i></span>
       </div>

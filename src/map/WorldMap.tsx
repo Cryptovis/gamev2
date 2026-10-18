@@ -15,6 +15,7 @@ import {LandmarkSymbols,landmarkSymbolId} from './landmarkIcons';
 import {NightLayer,RiverLayer,ShelfHalo,useSunHour} from './LivingMapLayers';
 import {gameDate} from '../engine/systems/leadership';
 import {useMapDesk} from '../presentation/mapDeskSettings';
+import {useMapEventPins} from '../presentation/mapEventPins';
 import {toViewBox,untilt} from './deskTilt';
 import {capitalPins,capitalPinScale} from './capitalPins';
 import {flagEmoji} from '../data/countryThemes';
@@ -102,6 +103,7 @@ function WorldMapView() {
   const labelScale = useGameStore((s) => s.mapLabelScale);
   const [surfaceReady,setSurfaceReady]=useState(false);
   const reliefOn=useMapDesk(s=>s.relief),pinsOn=useMapDesk(s=>s.pins);
+  const eventsOn=useMapEventPins(s=>s.enabled);
   const mapMode = useGameStore((s) => s.mapMode);
   const mapPresentation = useGameStore((s) => s.mapPresentation);
   const projectionMode = useGameStore((s) => s.mapProjection);
@@ -562,7 +564,7 @@ function WorldMapView() {
           {iso2.length===2&&<text className="capital-flag" y={landmarkSymbolId(pin.id)?-30.5:-18.5} textAnchor="middle" clipPath={landmarkSymbolId(pin.id)?'url(#capital-flag-clip-landmark)':'url(#capital-flag-clip)'}>{flagEmoji(iso2)}</text>}
         </g>;})}
       </g>}
-      {eventMarkers.length>0&&<g className="event-pin-layer" pointerEvents="none" aria-hidden="true">
+      {eventsOn&&eventMarkers.length>0&&<g className="event-pin-layer" pointerEvents="none" aria-hidden="true">
         {eventMarkers.map(pin=><g key={pin.id} className={`event-pin kind-${pin.kind}`} transform={`translate(${pin.point[0]},${pin.point[1]}) scale(${capitalPinScale(mapZoom)})`} data-event={pin.id} data-kind={pin.kind}>
           <circle className="event-pin-pulse" r={13}/>
           <circle className="event-pin-disc" r={11}/>

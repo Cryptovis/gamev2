@@ -131,25 +131,32 @@ export function RecruitmentPanel() {
       <p>
         <LocaleText value="Recruitment costs include mobilization and training. New personnel reduce civilian workforce and temporarily reduce readiness; wages enter military upkeep." />
       </p>
-      <input
-        aria-label="Recruit personnel count"
-        type="number"
-        min="100"
-        max="100000"
-        step="100"
-        value={count}
-        onChange={(e) =>
-          setCount(
-            Math.max(
-              100,
-              Math.min(100000, Math.floor(Number(e.target.value) || 100)),
-            ),
-          )
-        }
-      />
-      <button onClick={() => setReview(true)}>
-        <LocaleText value="Review recruitment" />
-      </button>
+      <div className="recruitment-controls">
+        <div className="recruitment-quick">
+          {[5000, 10000, 25000].map(n => (
+            <button key={n} type="button" onClick={() => setCount(n)}>+{n / 1000}k</button>
+          ))}
+        </div>
+        <input
+          aria-label="Recruit personnel count"
+          type="number"
+          min="100"
+          max="100000"
+          step="100"
+          value={count}
+          onChange={(e) =>
+            setCount(
+              Math.max(
+                100,
+                Math.min(100000, Math.floor(Number(e.target.value) || 100)),
+              ),
+            )
+          }
+        />
+        <button className="primary" onClick={() => setReview(true)}>
+          <LocaleText value="Review recruitment" />
+        </button>
+      </div>
       {review && (
         <ReviewDialog
           title="Review recruitment"

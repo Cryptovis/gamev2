@@ -99,6 +99,10 @@ export const OBJECTIVES_GUIDANCE_HINT:TacticalHintSpec={
   id:'objectives.guidance',titleKey:'Strategic Objectives',
   bodyKey:'National milestones and crisis mitigation directives. Fulfilling objectives unlocks campaign victory progression.',
 };
+export const MAP_COMMAND_HINT:TacticalHintSpec={
+  id:'map.command',titleKey:'Map Command',
+  bodyKey:'Inspect geographic overlays, diplomatic alignments, alliance blocs and resource distribution across the globe.',
+};
 
 export const ALL_HINTS:readonly TacticalHintSpec[]=[
   ...Object.values(INTERNATIONAL_HINTS),
