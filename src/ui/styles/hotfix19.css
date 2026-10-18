@@ -763,52 +763,42 @@
   border-top-right-radius: inherit !important;
 }
 
+:root :is(
+  .executive-workspace,
+  .command-window,
+  .floating-command-window,
+  .player-options-modal,
+  .review-dialog,
+  .war-theatre,
+  #country-section-window,
+  #diplomacy-window,
+  #desk-window,
+  #alliances-window,
+  #pulse-window,
+  #market-window,
+  #resource-command-window,
+  #alerts-window,
+  #sitrep-window
+) {
+  overflow: visible !important;
+  position: relative !important;
+}
+
 :root .executive-header.header-hidden {
   background: transparent !important;
   border-bottom: none !important;
   min-height: 0 !important;
-  padding: 8px 14px 0 !important;
+  height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  position: relative !important;
 }
 
-:root .executive-header [data-guide="close-workspace"] {
-  position: absolute !important;
-  top: 8px !important;
-  right: 8px !important;
-}
-:root .executive-header .tactical-hint-beacon {
-  position: absolute !important;
-  top: 8px !important;
-  right: 48px !important;
-}
-
-:root .command-window-header > [data-guide="close-workspace"] {
-  position: absolute !important;
-  top: 8px !important;
-  right: 8px !important;
-}
-:root .command-window-header .tactical-hint-beacon {
-  position: absolute !important;
-  top: 8px !important;
-  right: 48px !important;
-}
 :root .topbar .command-overview-island .governance-metrics {
   gap: 4px !important;
 }
 :root .topbar .command-overview-island .governance-metrics .top-metric {
   padding: 3px 6px !important;
-}
-
-:root :is(.command-window, .national-supply-window, #country-section-window, .executive-workspace) :is(.command-window-header, .executive-header) > [data-guide="close-workspace"],
-:root :is(.command-window, .national-supply-window, #country-section-window, .executive-workspace) :is(.command-window-header, .executive-header) [data-guide="close-workspace"] {
-  position: absolute !important;
-  top: 0 !important;
-  right: 0 !important;
-}
-
-:root :is(.command-window, .national-supply-window, #country-section-window, .executive-workspace) :is(.command-window-header, .executive-header) .tactical-hint-beacon {
-  position: absolute !important;
-  top: 0 !important;
-  right: 40px !important;
 }
 
 /* Executive Desk action buttons: dark red decline, dark green accept across both themes */
@@ -2208,10 +2198,7 @@ body:has(.review-backdrop) :is(.executive-backdrop, .command-window-backdrop, .f
 :root #country-section-window .executive-header.header-hidden .header-actions,
 :root #country-section-window .floating-command-header.header-hidden .header-actions,
 :root #country-section-window.draggable-window .floating-command-header.header-hidden .floating-command-actions {
-  position: absolute !important;
-  top: -12px !important;
-  right: -12px !important;
-  z-index: 70 !important;
+  position: static !important;
 }
 
 /* Military Recruit Hub & Produce subviews */
@@ -2272,5 +2259,90 @@ body:has(.review-backdrop) :is(.executive-backdrop, .command-window-backdrop, .f
   filter: brightness(1.12) !important;
   transform: translateY(-1px) !important;
 }
+
+/* Diplomatic Post Pending proposals response buttons: decline on right, soft red, spaced */
+:root .proposal-response-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  margin-top: 10px !important;
+}
+
+:root .proposal-response-actions .decline-action {
+  background: #b91c1c !important;
+  color: #ffffff !important;
+  border: 1px solid #dc2626 !important;
+  border-radius: 8px !important;
+  padding: 8px 16px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  box-shadow: 0 2px 8px rgba(185, 28, 28, 0.4) !important;
+  transition: background 0.15s ease, transform 0.15s ease !important;
+}
+
+:root .proposal-response-actions .decline-action:hover {
+  background: #dc2626 !important;
+  border-color: #ef4444 !important;
+  transform: translateY(-1px) !important;
+}
+
+:root .proposal-response-actions .accept-action {
+  border-radius: 8px !important;
+  padding: 8px 16px !important;
+  font-weight: 600 !important;
+}
+
+/* Top-right national flag card widget */
+:root .national-flag-card {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  padding: 8px 14px !important;
+  border-radius: 12px !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+  cursor: pointer !important;
+}
+
+:root .national-flag-card > b {
+  font-size: 26px !important;
+  line-height: 1 !important;
+  display: inline-block !important;
+  transition: transform 0.2s ease !important;
+}
+
+:root .national-flag-card:hover > b {
+  transform: scale(1.22) !important;
+}
+
+:root .national-flag-card:hover {
+  border-color: #ffd16d !important;
+  box-shadow: 0 0 16px rgba(255, 209, 109, 0.45) !important;
+}
+
+:root .national-flag-card strong {
+  display: block !important;
+  text-align: center !important;
+  width: 100% !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  margin-top: 3px !important;
+}
+
+:root .national-flag-card em {
+  display: block !important;
+  text-align: center !important;
+  font-style: normal !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  color: #ffd16d !important;
+  margin-top: 2px !important;
+}
+
+:root[data-theme="light"] .national-flag-card em {
+  color: #1e3a8a !important;
+}
+
 
 

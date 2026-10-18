@@ -32,6 +32,7 @@ import { MapModeBar } from './MapModeBar';
 import {ResourceCommandWindow} from '../panels/ResourceCommandWindow';
 import {AssetThumbnail} from '../icons/AssetThumbnail';
 import {InternationalAffairsWorkspace} from '../panels/InternationalAffairsWorkspace';
+import { DIPLOMACY_RULES_HINT, INTERNATIONAL_AFFAIRS_HINT, NATIONAL_ALERTS_HINT, NEWS_ARCHIVE_HINT, OBJECTIVES_GUIDANCE_HINT } from '../hints/registry';
 
 type ToolId='objectives'|'market'|'pulse'|'map'|'resources'|'sitrep'|'alerts'|'diplomacy'|'desk'|'alliances';
 
@@ -84,22 +85,22 @@ export function CommandRails(){
   {open.has('map')&&<div className="left-command-dock map-command-dock"><header className="map-dock-header"><strong><LocaleText value="MAP COMMAND"/></strong><button className="map-close" data-guide="close-workspace" onClick={state.closeWorkspace} aria-label={translateLive("Close map command")}><LocaleText value={"×"}/></button></header><div className="map-dock-body"><GuideBriefing/><MapModeBar/></div></div>}
   {mounted.has('resources')&&<ResourceCommandWindow onClose={()=>close('resources')}/>}
 
-  {mounted.has('objectives')&&<DraggableWindow id="objectives-window" kicker="CAMPAIGN / GUIDANCE" title={translateLive("Strategic Objectives")} initialX={88} initialY={170} width={470} onClose={()=>close('objectives')}>
+  {mounted.has('objectives')&&<DraggableWindow id="objectives-window" kicker="CAMPAIGN / GUIDANCE" title={translateLive("Strategic Objectives")} initialX={88} initialY={170} width={470} onClose={()=>close('objectives')} hint={OBJECTIVES_GUIDANCE_HINT}>
    <div className="floating-progress"><span><b><LocaleText value={done}/></b><LocaleText value={" of "}/><LocaleText value={objectives.length}/><LocaleText value={" complete"}/></span><i><b style={{width:`${done/objectives.length*100}%`}}/></i></div>
    <div className="floating-objectives">{objectives.map((o,i)=><div className={o.done?'done':''} key={o.label}><b><LocaleText value={o.done?'✓':String(i+1).padStart(2,'0')}/></b><span><strong><LocaleText value={o.label}/></strong><small><LocaleText value={o.done?'Completed':'Active objective'}/></small></span></div>)}</div>
    <CampaignVictoryProgress/>
   </DraggableWindow>}
 
-  {mounted.has('alliances')&&<ExecutiveWorkspaceShell id="alliances-window" hideHeader title={translateLive("Alliances")} onClose={()=>close('alliances')}><InternationalAffairsWorkspace/></ExecutiveWorkspaceShell>}
+  {mounted.has('alliances')&&<ExecutiveWorkspaceShell id="alliances-window" hideHeader title={translateLive("Alliances")} onClose={()=>close('alliances')} hint={INTERNATIONAL_AFFAIRS_HINT}><InternationalAffairsWorkspace/></ExecutiveWorkspaceShell>}
   {mounted.has('pulse')&&<WorldRankingsWindow/>}
   {mounted.has('desk')&&<ExecutiveDesk onClose={()=>close('desk')}/>}
 
-  {mounted.has('diplomacy')&&<ExecutiveWorkspaceShell id="diplomacy-window" kicker="FOREIGN MINISTRY" title={translateLive("Diplomatic Inbox")} onClose={()=>close('diplomacy')}>
+  {mounted.has('diplomacy')&&<ExecutiveWorkspaceShell id="diplomacy-window" hideHeader kicker="FOREIGN MINISTRY" title={translateLive("Diplomatic Inbox")} onClose={()=>close('diplomacy')} hint={DIPLOMACY_RULES_HINT}>
    <DiplomaticPost/>
-   <div className="diplomatic-offer-list">{offers.length?offers.map(offer=>{const sender=state.countries[offer.senderId];return <article key={offer.id}><header><b><LocaleText value={sender?.iso2??'--'}/></b><span><small><LocaleText value={offer.type==='embassy'?'EMBASSY EXCHANGE':'TRADE FRAMEWORK'}/></small><strong><LocaleText value={sender?.name??offer.senderId}/></strong></span><em><LocaleText value={"D"}/><LocaleText value={offer.expiresDay-state.day}/></em></header><p><LocaleText value={offer.message}/></p><div><button className="decline-action" onClick={()=>state.resolveDiplomaticOffer(offer.id,false)}><span aria-hidden="true">×</span> <LocaleText value={"DECLINE"}/></button><button className="primary accept-action" onClick={()=>state.resolveDiplomaticOffer(offer.id,true)}><span aria-hidden="true">✓</span> <LocaleText value={"ACCEPT"}/></button></div></article>}):null}</div>
+   <div className="diplomatic-offer-list">{offers.length?offers.map(offer=>{const sender=state.countries[offer.senderId];return <article key={offer.id}><header><b><LocaleText value={sender?.iso2??'--'}/></b><span><small><LocaleText value={offer.type==='embassy'?'EMBASSY EXCHANGE':'TRADE FRAMEWORK'}/></small><strong><LocaleText value={sender?.name??offer.senderId}/></strong></span><em><LocaleText value={"D"}/><LocaleText value={offer.expiresDay-state.day}/></em></header><p><LocaleText value={offer.message}/></p><div><button className="primary accept-action" onClick={()=>state.resolveDiplomaticOffer(offer.id,true)}><span aria-hidden="true">✓</span> <LocaleText value={"ACCEPT"}/></button><button className="decline-action" onClick={()=>state.resolveDiplomaticOffer(offer.id,false)}><span aria-hidden="true">×</span> <LocaleText value={"DECLINE"}/></button></div></article>}):null}</div>
   </ExecutiveWorkspaceShell>}
 
-  {mounted.has('alerts')&&<DraggableWindow expanded id="alerts-window" kicker="COMMAND CHANNEL" title={translateLive("National Alerts")} initialX={window.innerWidth-640} initialY={175} width={580} onClose={()=>close('alerts')}><CommandAlerts/></DraggableWindow>}
-  {mounted.has('sitrep')&&<DraggableWindow expanded id="sitrep-window" kicker="COMMAND CHANNEL" title={translateLive("News Archive")} initialX={window.innerWidth-680} initialY={170} width={620} onClose={()=>close('sitrep')}><CommandNews/></DraggableWindow>}
+  {mounted.has('alerts')&&<DraggableWindow expanded id="alerts-window" kicker="COMMAND CHANNEL" title={translateLive("National Alerts")} initialX={window.innerWidth-640} initialY={175} width={580} onClose={()=>close('alerts')} hint={NATIONAL_ALERTS_HINT}><CommandAlerts/></DraggableWindow>}
+  {mounted.has('sitrep')&&<DraggableWindow expanded id="sitrep-window" kicker="COMMAND CHANNEL" title={translateLive("News Archive")} initialX={window.innerWidth-680} initialY={170} width={620} onClose={()=>close('sitrep')} hint={NEWS_ARCHIVE_HINT}><CommandNews/></DraggableWindow>}
  </Suspense>;
 }

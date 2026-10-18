@@ -47,8 +47,63 @@ export const RANKING_HINTS={
   diplomacy:{id:'rankings.diplomacy',titleKey:'Diplomacy ranking',bodyKey:'Score combines reputation (60%), council influence (30%) and up to 10 allied partners.'},
 } satisfies Record<string,TacticalHintSpec>;
 
+export const ECONOMY_OVERVIEW_HINT:TacticalHintSpec={
+  id:'economy.overview',titleKey:'National Economy',
+  bodyKey:'Economic health reflects GDP trend, inflation, and budgetary balance. Population living standards and birth/death rates drive civic stability.',
+};
+export const POLICIES_LAWS_HINT:TacticalHintSpec={
+  id:'policies.laws',titleKey:'Policies & Laws',
+  bodyKey:'Enacting policies courts faction alignment and shapes national approval and stability. Tax rates adjust state revenue but impact living standards.',
+};
+export const MILITARY_COMMAND_HINT:TacticalHintSpec={
+  id:'military.command',titleKey:'Military Command',
+  bodyKey:'Conventional capability reflects active personnel, armor, artillery, and airpower. Recruit personnel or produce heavy hardware to reinforce active defenses.',
+};
+export const TECHNOLOGY_RESEARCH_HINT:TacticalHintSpec={
+  id:'technology.research',titleKey:'Technology & Research',
+  bodyKey:'National research teams advance civil, economic, and defense technologies. University campuses increase research throughput.',
+};
+export const COUNTRY_INFO_HINT:TacticalHintSpec={
+  id:'country.info',titleKey:'Country Info',
+  bodyKey:'Comparative assessment of sovereign capabilities, economic health, and societal cohesion. Benchmark radars highlight strategic strengths and vulnerabilities.',
+};
+export const GLOBAL_MARKET_HINT:TacticalHintSpec={
+  id:'market.global',titleKey:'Global Market',
+  bodyKey:'Trade commodities and industrial materials on international exchanges. Price swings and transit lead times respond to global stability.',
+};
+export const NATIONAL_ALERTS_HINT:TacticalHintSpec={
+  id:'alerts.national',titleKey:'National Alerts',
+  bodyKey:'Operational alerts notify leadership of critical supply shortages, diplomatic ultimatums, and emerging geopolitical crises.',
+};
+export const NEWS_ARCHIVE_HINT:TacticalHintSpec={
+  id:'news.archive',titleKey:'News Archive',
+  bodyKey:'Intelligence briefs, world chronicles, and global sitreps detailing foreign conflicts and international developments.',
+};
+export const NUCLEAR_COMMAND_HINT:TacticalHintSpec={
+  id:'nuclear.command',titleKey:'Nuclear Command',
+  bodyKey:'Enrichment cascades produce fissile material for deterrent warheads. Undeclared facilities risk IAEA inspections and sanctions.',
+};
+export const PARLIAMENT_HINT:TacticalHintSpec={
+  id:'parliament.coalition',titleKey:'Parliament',
+  bodyKey:'Maintain legislative coalitions and party confidence to pass national budgets, social reforms, and emergency declarations.',
+};
+export const PROFILE_OPTIONS_HINT:TacticalHintSpec={
+  id:'profile.options',titleKey:'Player Profile',
+  bodyKey:'Manage presidential credentials, campaign settings, audio preferences, and cloud synchronization.',
+};
+export const INTERNATIONAL_AFFAIRS_HINT:TacticalHintSpec={
+  id:'world.affairs',titleKey:'International Affairs',
+  bodyKey:'Multilateral alliances, security pacts, and regional coalitions. Maintain diplomatic alignment to participate in collective security.',
+};
+export const OBJECTIVES_GUIDANCE_HINT:TacticalHintSpec={
+  id:'objectives.guidance',titleKey:'Strategic Objectives',
+  bodyKey:'National milestones and crisis mitigation directives. Fulfilling objectives unlocks campaign victory progression.',
+};
+
 export const ALL_HINTS:readonly TacticalHintSpec[]=[
   ...Object.values(INTERNATIONAL_HINTS),
   WAR_TACTICAL_HINT,WAR_TASK_GROUPS_HINT,DIPLOMACY_RULES_HINT,SUPPLY_INVESTMENT_HINT,DESK_PROPOSALS_HINT,
   PRODUCTION_DOCTRINE_HINT,RESOURCES_SHORTAGE_HINT,SOVEREIGN_CREDIT_HINT,...Object.values(RANKING_HINTS),
 ];
+
+

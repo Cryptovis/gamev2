@@ -155,20 +155,7 @@ export function DiplomaticPost() {
                   />
                 </small>
                 {pending && (
-                  <div>
-                    <button
-                      onClick={() =>
-                        setReview({
-                          title: "Decline proposal",
-                          summary:
-                            "The proposal will close without spending funds or opening an agreement.",
-                          execute: (commandId) => s.resolveIncomingLetter(x.id, false, commandId),
-                        })
-                      }
-                      className="decline-action"
-                    >
-                      <span aria-hidden="true">×</span> <LocaleText value="Decline" />
-                    </button>
+                  <div className="proposal-response-actions">
                     <button
                       onClick={() =>
                         setReview({
@@ -198,6 +185,19 @@ export function DiplomaticPost() {
                       className="primary accept-action"
                     >
                       <span aria-hidden="true">✓</span> <LocaleText value="Review shared offer" />
+                    </button>
+                    <button
+                      onClick={() =>
+                        setReview({
+                          title: "Decline proposal",
+                          summary:
+                            "The proposal will close without spending funds or opening an agreement.",
+                          execute: (commandId) => s.resolveIncomingLetter(x.id, false, commandId),
+                        })
+                      }
+                      className="decline-action"
+                    >
+                      <span aria-hidden="true">×</span> <LocaleText value="Decline" />
                     </button>
                   </div>
                 )}

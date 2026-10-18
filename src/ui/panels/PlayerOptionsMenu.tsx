@@ -18,6 +18,8 @@ import { flagEmoji } from '../../data/countryThemes';
 import { useGameStore } from '../../store/gameStore';
 import { AvatarPortrait } from '../profile/AvatarPortrait';
 import { OverviewIcon } from '../icons/GameIcons';
+import { TacticalHint } from '../hints/TacticalHint';
+import { PROFILE_OPTIONS_HINT } from '../hints/registry';
 import { StoreModal } from './StoreModal';
 
 export function PlayerOptionsMenu({onClose}:{onClose:()=>void}){
@@ -43,6 +45,7 @@ export function PlayerOptionsMenu({onClose}:{onClose:()=>void}){
   <div className="player-options-backdrop" hidden={confirmNew} onMouseDown={event=>{event.preventDefault();onClose();}}>
    <ManagedDialog enabled={!confirmNew} className="player-options-modal" label="National Command" onClose={onClose} layer={WINDOW_LAYERS.modal}>
     <header className="player-options-header header-hidden">
+     <TacticalHint spec={PROFILE_OPTIONS_HINT}/>
      <button className="player-options-close" onClick={onClose} aria-label={translateLive("Close commander menu")}><LocaleText value={"×"}/></button>
     </header>
 

@@ -6,9 +6,9 @@ import { calculateEconomicHealth, calculateIndustrialOutput, calculateMilitaryPo
 import { CommandArt } from '../icons/CommandArt';
 import { ReligionGlyph } from '../icons/GameIcons';
 import { CommandWindow } from './CommandWindow';
-import { CountryTradeDesk } from './TradeDesk';
+import { COUNTRY_INFO_HINT } from '../hints/registry';
 
-type DossierTab='power'|'economy'|'trade'|'society';
+type DossierTab='power'|'economy'|'society';
 const clamp=(v:number)=>Math.max(0,Math.min(100,v));
 function Radar({values}:{values:{label:string;value:number}[]}){
  const size=260,c=size/2,r=92,point=(i:number,value:number)=>{const a=-Math.PI/2+i*Math.PI*2/values.length,rr=r*clamp(value)/100;return [c+Math.cos(a)*rr,c+Math.sin(a)*rr]};
@@ -26,11 +26,10 @@ export function CountryDossierWindow({country,onClose}:{country:CountryState;onC
   {label:'LOG',value:country.military.logistics},
   {label:'TECH',value:country.military.technology},
  ],[country]);
- return <CommandWindow kicker="STRATEGIC DOSSIER" title={translateLive(country.name)} subtitle={`${country.politics.regime.replaceAll('_',' ')} · ${country.region||'Global'} · population ${(country.demographics.population/1e6).toFixed(1)}M`} onClose={onClose} wide className="country-dossier-window">
-   <div className="command-subtabs">{(['power','economy','trade','society'] as DossierTab[]).map((id)=><button key={id} className={tab===id?'active':''} onClick={()=>setTab(id)}><LocaleText value={id==='power'?'National power':id.charAt(0).toUpperCase()+id.slice(1)}/></button>)}</div>
+ return <CommandWindow kicker="COUNTRY INFO" title={translateLive(country.name)} subtitle={`${country.politics.regime.replaceAll('_',' ')} · ${country.region||'Global'} · population ${(country.demographics.population/1e6).toFixed(1)}M`} onClose={onClose} wide className="country-dossier-window" hint={COUNTRY_INFO_HINT}>
+   <div className="command-subtabs">{(['power','economy','society'] as DossierTab[]).map((id)=><button key={id} className={tab===id?'active':''} onClick={()=>setTab(id)}><LocaleText value={id==='power'?'National power':id.charAt(0).toUpperCase()+id.slice(1)}/></button>)}</div>
    {tab==='power'&&<div className="dossier-power"><Radar values={radar}/><div className="dossier-score-stack"><div><small><LocaleText value={"COMPOSITE MILITARY POWER"}/></small><strong><LocaleText value={calculateMilitaryPower(country).toLocaleString()}/></strong></div><div><small><LocaleText value={"CONVENTIONAL CAPABILITY"}/></small><strong><LocaleText value={country.military.assessment.capability.toFixed(1)}/></strong></div><div><small><LocaleText value={"READINESS / LOGISTICS"}/></small><strong><LocaleText value={country.military.readiness.toFixed(0)}/><LocaleText value={" / "}/><LocaleText value={country.military.logistics.toFixed(0)}/></strong></div><div><small><LocaleText value={"TECHNOLOGY"}/></small><strong><LocaleText value={country.military.technology.toFixed(0)}/></strong></div></div></div>}
    {tab==='economy'&&<div className="dossier-economy-grid"><div><small><LocaleText value={"GDP"}/></small><strong><LocaleText value={"$"}/><LocaleText value={country.economy.gdp.toFixed(1)}/><LocaleText value={"B"}/></strong></div><div><small><LocaleText value={"ECONOMIC HEALTH"}/></small><strong><LocaleText value={calculateEconomicHealth(country)}/><LocaleText value={"%"}/></strong></div><div><small><LocaleText value={"INDUSTRIAL OUTPUT"}/></small><strong><LocaleText value={calculateIndustrialOutput(country)}/></strong></div><div><small><LocaleText value={"RESOURCE PRESSURE"}/></small><strong><LocaleText value={calculateResourcePressure(country)}/><LocaleText value={"%"}/></strong></div><div><small><LocaleText value={"FACTORIES"}/></small><strong><LocaleText value={country.industry.factories}/></strong></div><div><small><LocaleText value={"REFINERIES"}/></small><strong><LocaleText value={country.industry.refineries}/></strong></div><div><small><LocaleText value={"MINES"}/></small><strong><LocaleText value={country.industry.mines}/></strong></div><div><small><LocaleText value={"POWER CAPACITY"}/></small><strong><LocaleText value={country.industry.powerCapacity.toFixed(0)}/></strong></div></div>}
-   {tab==='trade'&&<CountryTradeDesk country={country}/>}
    {tab==='society'&&<div className="dossier-society">
     <div className="society-identity-grid">
      <article><ReligionGlyph religion={country.society.dominantReligion} size={38}/><span><small><LocaleText value="DOMINANT RELIGION"/></small><strong><LocaleText value={country.society.dominantReligion.replaceAll('_',' ')}/></strong></span></article>

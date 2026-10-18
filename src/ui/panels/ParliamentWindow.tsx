@@ -10,6 +10,7 @@ import { formatLive, LocaleText, translateLive } from '../../i18n/localeText';
 import { useGameStore } from '../../store/gameStore';
 import { useStoreView } from '../../store/useStoreView';
 import { CommandWindow } from './CommandWindow';
+import { PARLIAMENT_HINT } from '../hints/registry';
 import { ReviewDialog } from './ReviewDialog';
 import { HEMICYCLE_HEIGHT, HEMICYCLE_ORDER, HEMICYCLE_WIDTH, SEAT_RADIUS, hemicycleLayout } from './hemicycle';
 
@@ -250,7 +251,7 @@ export function ParliamentWindow({ onClose }: { onClose: () => void }) {
   const [talks, setTalks] = useState(false);
   const [snap, setSnap] = useState(false);
   return (
-    <CommandWindow kicker="DOMESTIC // PARLIAMENT" title="Parliament" subtitle="Seats, coalition and the unions" onClose={onClose} wide className="parliament-window">
+    <CommandWindow kicker="DOMESTIC // PARLIAMENT" title="Parliament" subtitle="Seats, coalition and the unions" onClose={onClose} wide className="parliament-window" hint={PARLIAMENT_HINT}>
       <div data-testid="parliament-window">
         {!view.ready ? (
           <p className="par-empty" data-testid="parliament-waiting"><LocaleText value="The chamber meets after the first day of the campaign." /></p>

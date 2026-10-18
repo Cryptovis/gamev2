@@ -9,6 +9,7 @@ import { formatLive, LocaleText, translateLive } from '../../i18n/localeText';
 import { useGameStore } from '../../store/gameStore';
 import { useStoreView } from '../../store/useStoreView';
 import { CommandWindow } from './CommandWindow';
+import { NUCLEAR_COMMAND_HINT } from '../hints/registry';
 import { ReviewDialog } from './ReviewDialog';
 
 /**
@@ -323,7 +324,7 @@ export function NuclearCommandWindow({ onClose }: { onClose: () => void }) {
   const view = useStoreView(s => nuclearView(s, s.playerCountryId));
   const dispatch = useGameStore(s => s.dispatch);
   return (
-    <CommandWindow kicker="STRATEGIC // NUCLEAR COMMAND" title="Nuclear Command" subtitle="Enrichment, strategic forces and IAEA safeguards" onClose={onClose} wide className="nuclear-window">
+    <CommandWindow kicker="STRATEGIC // NUCLEAR COMMAND" title="Nuclear Command" subtitle="Enrichment, strategic forces and IAEA safeguards" onClose={onClose} wide className="nuclear-window" hint={NUCLEAR_COMMAND_HINT}>
       <div data-testid="nuclear-window">
         {!view.eligible ? (
           <p className="nuclear-locked" data-testid="nuclear-locked"><LocaleText value="Research Civil Nuclear Infrastructure to open an enrichment programme." /></p>
