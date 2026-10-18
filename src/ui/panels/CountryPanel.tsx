@@ -29,7 +29,7 @@ import { ParliamentIcon, ParliamentWindow } from './ParliamentWindow';
 import {ResourceCommandWindow} from './ResourceCommandWindow';
 import { SupplyCommandWindow } from './SupplyCommandWindow';
 import { DiplomacyPanel } from './DiplomacyPanel';
-import { ProductionPanel } from './ProductionPanel';
+import { ProductionPanel, MilitaryHardwareView } from './ProductionPanel';
 import type { CountryState, MinistryKey, TradeResource } from '../../domain/game';
 import { useGameStore } from '../../store/gameStore';
 import { calculateDailyResourceFlow, calculateEconomicHealth, calculateEconomyForecast, calculateIndustrialOutput, calculateMilitaryPower, calculateResourcePressure } from '../../store/selectors';
@@ -143,7 +143,51 @@ export function CountryPanel({onBrowse,suspended=false,countryId,navigationFrame
     {tab==='diplomacy'&&<DiplomacyPanel selectedId={selected.id}/>}
 
     {tab==='technology'&&<ResearchWindow embedded readOnly={!isPlayer}/>}
-    {tab==='military'&&<div className="military-panel"><SectionMenu items={[{id:'overview',label:'Military overview',icon:<CommandArt kind="military"/>},...(isPlayer?[{id:'pilots',label:'Pilot training',icon:<CommandArt kind="investment"/>}]:[])]} selected={militarySection} onSelect={setMilitarySection} contentId="military-section-content" label="Military sections"/><div id="military-section-content">{isPlayer&&militarySection==='pilots'?<InvestmentWindow embedded section="pilots"/>:<>{isPlayer&&<RecruitmentPanel/>}<div className="military-score"><div><span><LocaleText value={"CONVENTIONAL CAPABILITY"}/></span><strong><LocaleText value={selected.military.assessment.capability.toFixed(1)}/></strong></div><div><span><LocaleText value={"2026 GFP"}/></span><strong><LocaleText value={selected.military.assessment.gfpRank?`#${selected.military.assessment.gfpRank}`:'N/A'}/></strong></div></div><div className="unit-grid"><UnitStat icon={<PersonnelIcon/>} label="Personnel" value={selected.military.personnel}/><UnitStat icon={<TankIcon/>} label="Tanks" value={selected.military.tanks}/><UnitStat icon={<ArtilleryIcon/>} label="Artillery" value={selected.military.artillery}/><UnitStat icon={<JetIcon/>} label="Fighters" value={selected.military.fighters}/><UnitStat icon={<JetIcon/>} label="Bombers" value={selected.military.bombers}/><UnitStat icon={<ShipIcon/>} label="Warships" value={selected.military.warships}/></div><div className="quality-bars">{[['Readiness',selected.military.readiness],['Logistics',selected.military.logistics],['Technology',selected.military.technology],['Morale',selected.military.morale]].map(([label,value])=><div key={String(label)}><span><LocaleText value={label}/></span><i><b style={{width:`${value}%`}}/></i><strong><LocaleText value={Number(value).toFixed(0)}/><LocaleText value={"%"}/></strong></div>)}</div><p className="data-note"><LocaleText value={"Military capability uses 2026 GFP rank/index where available; inventories are gameplay estimates unless authored."}/></p></>}</div></div>}
+    {tab==='military'&&<div className="military-panel">
+      <SectionMenu items={[
+        {id:'overview',label:'Military overview',icon:<CommandArt kind="military"/>},
+        ...(isPlayer?[
+          {id:'recruit',label:'Recruit',icon:<CommandArt kind="investment"/>},
+          {id:'produce',label:'Produce',icon:<CommandArt kind="production"/>},
+        ]:[])
+      ]} selected={militarySection} onSelect={setMilitarySection} contentId="military-section-content" label="Military sections"/>
+      <div id="military-section-content">
+        {militarySection==='overview'&&(
+          <>
+            <div className="military-score">
+              <div><span><LocaleText value={"CONVENTIONAL CAPABILITY"}/></span><strong><LocaleText value={selected.military.assessment.capability.toFixed(1)}/></strong></div>
+              <div><span><LocaleText value={"2026 GFP"}/></span><strong><LocaleText value={selected.military.assessment.gfpRank?`#${selected.military.assessment.gfpRank}`:'N/A'}/></strong></div>
+            </div>
+            <div className="unit-grid">
+              <UnitStat icon={<PersonnelIcon/>} label="Personnel" value={selected.military.personnel}/>
+              <UnitStat icon={<TankIcon/>} label="Tanks" value={selected.military.tanks}/>
+              <UnitStat icon={<ArtilleryIcon/>} label="Artillery" value={selected.military.artillery}/>
+              <UnitStat icon={<JetIcon/>} label="Fighters" value={selected.military.fighters}/>
+              <UnitStat icon={<JetIcon/>} label="Bombers" value={selected.military.bombers}/>
+              <UnitStat icon={<ShipIcon/>} label="Warships" value={selected.military.warships}/>
+            </div>
+            <div className="quality-bars">
+              {[['Readiness',selected.military.readiness],['Logistics',selected.military.logistics],['Technology',selected.military.technology],['Morale',selected.military.morale]].map(([label,value])=><div key={String(label)}><span><LocaleText value={label}/></span><i><b style={{width:`${value}%`}}/></i><strong><LocaleText value={Number(value).toFixed(0)}/><LocaleText value={"%"}/></strong></div>)}
+            </div>
+            <p className="data-note"><LocaleText value={"Military capability uses 2026 GFP rank/index where available; inventories are gameplay estimates unless authored."}/></p>
+          </>
+        )}
+        {isPlayer&&militarySection==='recruit'&&(
+          <div className="military-recruit-hub">
+            <div className="recruit-sub-section">
+              <RecruitmentPanel/>
+            </div>
+            <div className="recruit-sub-section pilot-academy-section">
+              <div className="subhead"><LocaleText value={"Air Force Pilot Academy"}/></div>
+              <InvestmentWindow embedded section="pilots"/>
+            </div>
+          </div>
+        )}
+        {isPlayer&&militarySection==='produce'&&(
+          <MilitaryHardwareView country={selected} onOpenNuclear={()=>setCommandWindow('nuclear')}/>
+        )}
+      </div>
+    </div>}
 
     {tab==='intel'&&<div className="intel-panel">
       <div className="intel-hero"><IntelligenceIcon size={30}/><span><small><LocaleText value={"STRATEGIC INTELLIGENCE"}/></small><strong><LocaleText value={isPlayer?'National intelligence command':`${selected.name} intelligence picture`}/></strong><em><LocaleText value={isPlayer?`Network ${player.intelligence.networkStrength.toFixed(0)} · Counter-intel ${player.intelligence.counterIntelligence.toFixed(0)}`:`Knowledge ${intelKnowledge.toFixed(0)}% · Influence ${culturalInfluence.toFixed(1)}%`}/></em></span></div>

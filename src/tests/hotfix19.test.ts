@@ -97,3 +97,46 @@ describe('hotfix 1.9 hardware card (task 4)',()=>{
 describe('hotfix 1.9 stylesheet order',()=>{
   it('loads hotfix19.css last',()=>{expect(source('main.tsx').trimEnd().split('\n').pop()).toContain('hotfix19.css');});
 });
+
+describe('hotfix 1.9 unrest pin auto-expiry and dismissal',()=>{
+  it('dismisses pin when marked dismissed or expires after 3 days',async()=>{
+    const {eventPins} = await import('../map/eventPins');
+    const {makeInitialState} = await import('../data/initialState');
+    const {CAPITAL_POSITIONS} = await import('../data/capitalPositions');
+    const s = makeInitialState();
+    const mockCountries = {
+      ...s.countries,
+      TUR: { ...s.countries.TUR, politics: { ...s.countries.TUR.politics, stability: 10 } },
+    };
+    const project = (p: [number, number]): [number, number] => [p[0] * 2, p[1] * 2];
+
+    // Day 1: unrest pin appears for TUR
+    const pinsDay1 = eventPins({
+      wars: {}, countries: mockCountries, playerCountryId: 'TUR', capitals: CAPITAL_POSITIONS,
+      project, width: 1200, height: 700, currentDay: 1, unrestStartDays: { TUR: 1 }, dismissedPins: {},
+    });
+    expect(pinsDay1.some(p => p.id === 'unrest:TUR')).toBe(true);
+
+    // Day 4: 3 days have passed (4 - 1 >= 3), unrest pin auto-expires
+    const pinsDay4 = eventPins({
+      wars: {}, countries: mockCountries, playerCountryId: 'TUR', capitals: CAPITAL_POSITIONS,
+      project, width: 1200, height: 700, currentDay: 4, unrestStartDays: { TUR: 1 }, dismissedPins: {},
+    });
+    expect(pinsDay4.some(p => p.id === 'unrest:TUR')).toBe(false);
+
+    // When clicked/dismissed on Day 2:
+    const pinsDismissed = eventPins({
+      wars: {}, countries: mockCountries, playerCountryId: 'TUR', capitals: CAPITAL_POSITIONS,
+      project, width: 1200, height: 700, currentDay: 2, unrestStartDays: { TUR: 1 }, dismissedPins: { TUR: true },
+    });
+    expect(pinsDismissed.some(p => p.id === 'unrest:TUR')).toBe(false);
+  });
+
+  it('translates Return to Map into all supported languages',()=>{
+    expect(translateText('tr','Return to Map').toLowerCase()).toBe('haritaya dön');
+    expect(translateText('es','Return to Map').toLowerCase()).toBe('volver al mapa');
+    expect(translateText('zh','Return to Map')).toBe('返回地图');
+    expect(translateText('ru','Return to Map').toLowerCase()).toBe('вернуться на карту');
+  });
+});
+

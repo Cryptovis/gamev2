@@ -22,7 +22,8 @@ import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { geoArea, geoDistance, geoGraticule10, geoNaturalEarth1, geoOrthographic, geoPath } from 'd3-geo';
 import { countryMapAnchor, microstateVisible, nearestMapMarker, type MapPoint } from './mapCoordinates';
 import { findCountryAtGeoPoint } from './mapSelection';
-import { eventPins } from './eventPins';
+import { eventPins, unrestLevel, UNREST_PIN_LEVEL } from './eventPins';
+import { factionsFor } from '../engine/systems/factions';
 import { CAPITAL_POSITIONS } from '../data/capitalPositions';
 import { labelFontSize, labelRevealThreshold, layoutScreenLabels, maxCountryLabels, type ScreenLabelCandidate } from './labelLayout';
 import { useGameStore } from '../store/gameStore';
@@ -222,7 +223,20 @@ function WorldMapView() {
   const countryRings=useMemo(()=>{const out:Record<string,Ring[]>={};for(const f of geojson?.features??[]){const id=String(f.properties?.iso_a3??'');if(id)out[id]=outerRings(f.geometry);}return out;},[geojson]);
   const fronts=useMemo(()=>warFronts({wars,countries,playerCountryId,day:campaignDay,rings:countryRings,project:flightProjector,anchors:CAPITAL_POSITIONS}),[wars,countries,playerCountryId,campaignDay,countryRings,flightProjector]);
   const tradeLanes=useMemo(()=>tradeRoutes({tradeDeals,contracts,countries,playerCountryId,anchors:TRADE_ANCHORS,project:flightProjector,jump:projectionMode==='flat'?500*flatZoom:undefined}),[tradeDeals,contracts,countries,playerCountryId,flightProjector,projectionMode,flatZoom]);
-  const eventMarkers=useMemo(()=>eventPins({wars,countries,playerCountryId,capitals:CAPITAL_POSITIONS,project:flightProjector,width:W,height:H}),[wars,countries,playerCountryId,flightProjector]);
+  const [dismissedUnrestPins, setDismissedUnrestPins] = useState<Record<string, boolean>>({});
+  const unrestStartDaysRef = useRef<Record<string, number>>({});
+  const eventMarkers=useMemo(()=>{
+    for(const c of Object.values(countries)){
+      if(unrestLevel(c)>=UNREST_PIN_LEVEL){
+        if(unrestStartDaysRef.current[c.id]===undefined){
+          unrestStartDaysRef.current[c.id]=campaignDay;
+        }
+      }else{
+        delete unrestStartDaysRef.current[c.id];
+      }
+    }
+    return eventPins({wars,countries,playerCountryId,capitals:CAPITAL_POSITIONS,project:flightProjector,width:W,height:H,currentDay:campaignDay,dismissedPins:dismissedUnrestPins,unrestStartDays:unrestStartDaysRef.current});
+  },[wars,countries,playerCountryId,flightProjector,campaignDay,dismissedUnrestPins]);
   const visibleMarkers=Object.entries(MICROSTATE_POINTS).flatMap(([id,position])=>{
     if(!countries[id]||countries[id].annexedBy||!microstateVisible(mapZoom,projectionMode==='flat',id===selectedCountryId,id===hovered,id===playerCountryId))return [];
     if(projectionMode==='globe'&&geoDistance(position,globeCenter)>Math.PI/2)return [];
@@ -311,7 +325,19 @@ function WorldMapView() {
     const eventHit=nearestMapMarker(eventMarkers.map(p=>({id:p.id,point:p.point})),clickScreen,14);
     if(eventHit){
       const pin=eventMarkers.find(p=>p.id===eventHit.id)!;
-      if(pin.kind==='war')openWarWindow(pin.target);else selectCountry(pin.target);
+      if(pin.kind==='war'){
+        openWarWindow(pin.target);
+      } else {
+        const targetCountry=countries[pin.target];
+        const isCrisis=targetCountry?factionsFor(targetCountry).crisis:false;
+        const stab=targetCountry?targetCountry.politics.stability.toFixed(0):'0';
+        const report=isCrisis
+          ?`SITREP: Regime crisis declared in ${targetCountry?.name??pin.target}. Institutional collapse threatens sovereign governance.`
+          :`SITREP: Civil unrest in ${targetCountry?.name??pin.target}. Domestic stability at ${stab}%. Public demonstrations ongoing.`;
+        setMapNotice(report);
+        setDismissedUnrestPins(prev=>({...prev,[pin.target]:true}));
+        selectCountry(pin.target);
+      }
       return;
     }
     const micro=nearestMapMarker(visibleMarkers,clickScreen);

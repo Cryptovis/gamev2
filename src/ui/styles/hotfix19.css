@@ -1114,36 +1114,46 @@ body:has(.review-backdrop) :is(.executive-backdrop, .command-window-backdrop, .f
 :root .commander-profile-hero {
   position: relative !important;
   width: 100% !important;
-  aspect-ratio: 16 / 13 !important;
-  max-height: 155px !important;
+  height: 180px !important;
+  max-height: 180px !important;
+  aspect-ratio: auto !important;
   border: none !important;
   border-radius: 0 !important;
   border-bottom: 1px solid var(--h19-box-line) !important;
   overflow: hidden !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  background: radial-gradient(circle, #1a2f42 0%, #0d1a26 100%) !important;
+  display: block !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: #0d1a26 !important;
 }
 
 :root .commander-profile-hero :is(svg, .portrait-generated, img) {
   width: 100% !important;
   height: 100% !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  outline: none !important;
+  border: none !important;
   object-fit: cover !important;
+  background-size: cover !important;
+  background-position: center 20% !important;
+  display: block !important;
   max-width: 100% !important;
 }
 
 :root .commander-profile-flag {
   position: absolute !important;
-  bottom: 6px !important;
-  right: 6px !important;
+  bottom: 8px !important;
+  right: 8px !important;
   background: rgba(10, 20, 30, 0.88) !important;
-  border: 1px solid rgba(212, 175, 55, 0.5) !important;
-  border-radius: 6px !important;
-  padding: 2px 6px !important;
-  font-size: 16px !important;
+  border: 1.5px solid rgba(212, 175, 55, 0.65) !important;
+  border-radius: 8px !important;
+  padding: 3px 8px !important;
+  font-size: 24px !important;
   line-height: 1 !important;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.65) !important;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4)) !important;
+  z-index: 5 !important;
 }
 
 :root .commander-profile-details {
@@ -2115,6 +2125,149 @@ body:has(.review-backdrop) :is(.executive-backdrop, .command-window-backdrop, .f
   background: #ffffff !important;
   border-color: #c9ab65 !important;
   color: #12222d !important;
+}
+
+/* Map Pins & Microstate adjustments */
+:root .capital-pin.role-player .capital-flag-ring {
+  stroke: rgba(255, 255, 255, 0.45) !important;
+}
+:root .microstate-point.selected {
+  display: none !important;
+}
+
+/* Executive Desk floating help & close buttons and high-contrast countdown */
+:root #desk-window .executive-header.header-hidden .header-actions {
+  position: absolute !important;
+  top: -12px !important;
+  right: -12px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  z-index: 100 !important;
+}
+
+:root .desk-countdown {
+  background: #081520 !important;
+  color: #f1e4c3 !important;
+  border: 1px solid rgba(220, 180, 70, 0.45) !important;
+  padding: 3px 8px !important;
+  border-radius: 6px !important;
+  font-weight: 700 !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4) !important;
+}
+:root .desk-countdown.urgent {
+  background: #3a1010 !important;
+  color: #ffb4a8 !important;
+  border-color: #d0533e !important;
+}
+
+/* Market & Trade: uniform 10-column commodity grid and compact review buttons */
+:root .trade-good-picker {
+  display: grid !important;
+  grid-template-columns: repeat(10, minmax(0, 1fr)) !important;
+  gap: 6px !important;
+  overflow: visible !important;
+}
+:root .trade-good-picker button {
+  flex: none !important;
+  width: 100% !important;
+  min-height: 86px !important;
+}
+:root .supply-contract-review footer {
+  display: flex !important;
+  justify-content: center !important;
+  gap: 12px !important;
+}
+:root .supply-contract-review footer button {
+  width: auto !important;
+  min-width: 150px !important;
+  max-width: 260px !important;
+  padding: 10px 20px !important;
+  transition: all 0.15s ease !important;
+}
+:root .supply-contract-review footer button.primary:hover:not(:disabled) {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 16px rgba(212, 175, 55, 0.4) !important;
+  filter: brightness(1.1) !important;
+}
+
+/* Country Section Frame & National Command Header Cleanups */
+:root #country-section-window .executive-header.header-hidden,
+:root #country-section-window.draggable-window .floating-command-header.header-hidden {
+  height: 0 !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  position: relative !important;
+}
+:root #country-section-window .executive-header.header-hidden .header-actions,
+:root #country-section-window .floating-command-header.header-hidden .header-actions,
+:root #country-section-window.draggable-window .floating-command-header.header-hidden .floating-command-actions {
+  position: absolute !important;
+  top: -12px !important;
+  right: -12px !important;
+  z-index: 70 !important;
+}
+
+/* Military Recruit Hub & Produce subviews */
+:root .military-recruit-hub {
+  display: grid !important;
+  gap: 16px !important;
+}
+:root .military-recruit-hub .recruit-sub-section {
+  background: rgba(14, 25, 38, 0.45) !important;
+  border: 1px solid rgba(135, 185, 220, 0.15) !important;
+  border-radius: 10px !important;
+  padding: 12px !important;
+}
+:root .military-recruit-hub .subhead {
+  margin-top: 0 !important;
+  margin-bottom: 10px !important;
+}
+
+/* Nuclear deterrent shortcut in Military/Production */
+:root .nuclear-production-strip {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+  padding: 10px 14px !important;
+  margin: 10px 0 !important;
+  background: linear-gradient(90deg, rgba(30, 48, 62, 0.8), rgba(20, 32, 44, 0.9)) !important;
+  border: 1px solid rgba(220, 180, 70, 0.35) !important;
+  border-radius: 10px !important;
+}
+:root .nuclear-strip-info {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+:root .nuclear-strip-info strong {
+  display: block !important;
+  font-size: 13px !important;
+  color: #f5e4bf !important;
+}
+:root .nuclear-strip-info small {
+  display: block !important;
+  font-size: 11px !important;
+  color: #9cb5c5 !important;
+}
+:root .nuclear-shortcut-button {
+  background: linear-gradient(180deg, #d4af37, #997819) !important;
+  color: #0b141c !important;
+  border: 1px solid #f5e4bf !important;
+  font-weight: 700 !important;
+  font-size: 11.5px !important;
+  padding: 6px 14px !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+}
+:root .nuclear-shortcut-button:hover {
+  filter: brightness(1.12) !important;
+  transform: translateY(-1px) !important;
 }
 
 

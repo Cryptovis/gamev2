@@ -521,6 +521,12 @@ export const UI_CATALOG: Record<string, string[]> = {
     "返回指挥",
     "ВЕРНУТЬСЯ",
   ],
+  "Return to Map": [
+    "Haritaya Dön",
+    "Volver al mapa",
+    "返回地图",
+    "Вернуться к карте",
+  ],
   "COMMAND REVIEW": [
     "KARAR İNCELEMESİ",
     "REVISIÓN DE DECISIÓN",

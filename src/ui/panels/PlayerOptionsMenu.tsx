@@ -163,7 +163,7 @@ export function PlayerOptionsMenu({onClose}:{onClose:()=>void}){
      </div>
     </div>
     <footer className="player-options-footer">
-     <button onClick={onClose}><LocaleText value={"RETURN TO COMMAND"}/></button>
+     <button onClick={onClose}><LocaleText value={"Return to Map"}/></button>
     </footer>
    </ManagedDialog>
   </div>

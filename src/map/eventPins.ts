@@ -9,6 +9,9 @@ export interface EventPinInput{
  wars:Record<string,WarState>;countries:Record<string,CountryState>;playerCountryId:string;
  capitals:Record<string,[number,number]>;project:EventProjector;
  width:number;height:number;maxWar?:number;maxUnrest?:number;
+ currentDay?:number;
+ dismissedPins?:ReadonlySet<string>|Record<string,boolean>;
+ unrestStartDays?:Record<string,number>;
 }
 export const UNREST_PIN_LEVEL=40,UNREST_STABILITY=30,UNREST_OFFSET=-18,EDGE_MARGIN=12;
 
@@ -32,7 +35,16 @@ export function eventPins(i:EventPinInput):EventPin[]{
   if(!inside(point,i.width,i.height))continue;
   out.push({id:`war:${w.id}`,kind:'war',point,target:w.id,severity:mine?100:60,label:{key:'Active war: {0} vs {1}',values:[i.countries[w.attackerId].name,i.countries[w.defenderId].name]}});
  }
- const troubled=Object.values(i.countries).filter(c=>!c.annexedBy&&!c.controllerCountryId&&unrestLevel(c)>=UNREST_PIN_LEVEL)
+ const isDismissed=(id:string)=>{
+  if(!i.dismissedPins)return false;
+  return i.dismissedPins instanceof Set?i.dismissedPins.has(id):Boolean((i.dismissedPins as Record<string,boolean>)[id]);
+ };
+ const isExpired=(id:string)=>{
+  if(i.currentDay===undefined||!i.unrestStartDays)return false;
+  const start=i.unrestStartDays[id];
+  return start!==undefined&&i.currentDay-start>=3;
+ };
+ const troubled=Object.values(i.countries).filter(c=>!c.annexedBy&&!c.controllerCountryId&&unrestLevel(c)>=UNREST_PIN_LEVEL&&!isDismissed(c.id)&&!isExpired(c.id))
   .map(c=>({c,level:unrestLevel(c)})).sort((a,b)=>(b.c.id===i.playerCountryId?1:0)-(a.c.id===i.playerCountryId?1:0)||b.level-a.level||a.c.id.localeCompare(b.c.id));
  let unrest=0;
  for(const {c,level} of troubled){
