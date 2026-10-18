@@ -1099,6 +1099,10 @@ body:has(.review-backdrop) :is(.executive-backdrop, .command-window-backdrop, .f
 }
 
 :root .player-options-modal .commander-profile-card {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  align-self: stretch !important;
   padding: 0 !important;
   margin: 0 !important;
   background: var(--h19-box-bg) !important;
@@ -1114,8 +1118,8 @@ body:has(.review-backdrop) :is(.executive-backdrop, .command-window-backdrop, .f
 :root .commander-profile-hero {
   position: relative !important;
   width: 100% !important;
-  height: 180px !important;
-  max-height: 180px !important;
+  height: 190px !important;
+  max-height: 190px !important;
   aspect-ratio: auto !important;
   border: none !important;
   border-radius: 0 !important;
@@ -1134,9 +1138,8 @@ body:has(.review-backdrop) :is(.executive-backdrop, .command-window-backdrop, .f
   box-shadow: none !important;
   outline: none !important;
   border: none !important;
-  object-fit: cover !important;
-  background-size: cover !important;
-  background-position: center 20% !important;
+  background-size: 500% auto !important;
+  background-repeat: no-repeat !important;
   display: block !important;
   max-width: 100% !important;
 }
